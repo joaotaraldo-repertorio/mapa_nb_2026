@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>Mapa de Vendas - Noite Beneficente</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <style>
         :root {
             --azul-fundo: #0A192F; --azul-card: #112240; --ciano-destaque: #66FFFF;
@@ -11,14 +15,16 @@
 
         body { background-color: var(--azul-fundo); color: var(--texto-claro); font-family: Arial, sans-serif; padding: 15px; margin: 0; display: flex; flex-direction: column; align-items: center; }
         
-        /* Reduzimos as margens do topo também */
-        .painel-topo { width: 100%; max-width: 1300px; display: flex; justify-content: space-between; align-items: center; background-color: var(--azul-card); padding: 10px 30px; border-radius: 8px; margin-bottom: 15px; box-sizing: border-box; }
+        /* A ÁREA QUE VAI SER FOTOGRAFADA PELO SISTEMA */
+        #area-exportacao { width: 100%; max-width: 1300px; display: flex; flex-direction: column; align-items: center; background-color: var(--azul-fundo); padding: 10px; border-radius: 8px; }
+
+        .painel-topo { width: 100%; display: flex; justify-content: space-between; align-items: center; background-color: var(--azul-card); padding: 10px 30px; border-radius: 8px; margin-bottom: 15px; box-sizing: border-box; }
         .area-logo { width: 150px; display: flex; justify-content: flex-start; cursor: pointer; transition: transform 0.2s; }
         .area-logo:hover { transform: scale(1.05); }
         .area-logo img { max-height: 100px; width: auto; }
         
         .titulo-evento { text-align: center; flex-grow: 1; color: var(--ciano-destaque); margin: 0 20px; font-size: 32px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }
-        .area-botoes-topo { display: flex; gap: 10px; width: 300px; justify-content: flex-end; }
+        .area-botoes-topo { display: flex; gap: 10px; width: 350px; justify-content: flex-end; }
         
         .botao-acao { background-color: var(--ciano-destaque); color: #000; border: none; padding: 10px 15px; font-weight: bold; font-size: 13px; border-radius: 4px; cursor: pointer; transition: 0.3s; white-space: nowrap; }
         .botao-acao:hover:not(:disabled) { box-shadow: 0 0 10px var(--ciano-destaque); }
@@ -27,8 +33,7 @@
         .btn-sincronizar { background-color: #47D359; }
         .btn-sincronizar:hover { box-shadow: 0 0 10px #47D359; }
 
-        /* O APERTO DE CINTO NO SALÃO (GAP REDUZIDO) */
-        #container-salao { width: 100%; max-width: 1300px; padding: 0 70px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 15px; position: relative; margin-bottom: 15px;}
+        #container-salao { width: 100%; padding: 0 70px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 15px; position: relative; margin-bottom: 15px;}
         
         .palco { width: 50%; background-color: var(--cor-palco); color: #fff; text-align: center; padding: 10px 0; font-size: 22px; font-weight: bold; letter-spacing: 5px; border-radius: 8px; border: 2px solid #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.5); margin-bottom: 5px; z-index: 2;}
         
@@ -42,7 +47,6 @@
         .tarja-texto { writing-mode: vertical-rl; transform: rotate(180deg); margin-top: 10px; }
         .tarja-icone { font-size: 20px; }
 
-        /* Posicionamento adaptado ao salão enxuto */
         .tarja-wc-masc { left: 0; top: 13%; height: 12%; border-color: #3b82f6; background-color: rgba(59, 130, 246, 0.15); color: #3b82f6; }
         .tarja-wc-fem { left: 0; top: 26%; height: 12%; border-color: #ec4899; background-color: rgba(236, 72, 153, 0.15); color: #ec4899; }
         .tarja-aparador-esq { left: 0; top: 70%; height: 18%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
@@ -51,11 +55,9 @@
         .tarja-aparador-dir2 { right: 0; top: 49%; height: 25%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
         .tarja-entrada { right: 0; top: 92%; height: 8%; border-color: var(--ciano-destaque); background-color: rgba(102, 255, 255, 0.15); color: var(--ciano-destaque); }
 
-        /* O EFEITO ESPELHO NOS SETORES (PADDING E BORDAS REDUZIDAS) */
         .setor { padding: 12px 20px; border-radius: 8px; width: 100%; box-sizing: border-box; z-index: 2;}
         .setor h3 { margin-top: 0; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; text-align: center; font-size: 22px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
         
-        /* MARGEM ENTRE AS FILEIRAS SUCATEADA PARA CABER MAIS */
         .fileira-mesas { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; width: 100%; }
         .wrapper-mesa { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 140px; position: relative; }
 
@@ -77,7 +79,6 @@
         .tamanho-m { width: 90px; height: 90px; font-size: 24px; }
         .tamanho-p { width: 75px; height: 75px; font-size: 19px; }
 
-        /* HOUSE MIX AJUSTADA PARA O NOVO ESPAÇAMENTO */
         .grande-house-mix { 
             position: absolute; top: 0; left: 0; width: 180px; height: 190px;
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
@@ -92,7 +93,7 @@
         .badge-divida { position: absolute; bottom: 20px; right: 0px; background-color: #ff4d4d; color: #fff; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.8); border: 2px solid #fff; z-index: 10; }
 
         /* LEGENDA ESPREMIDA */
-        .painel-rodape { width: 100%; max-width: 1300px; background-color: var(--azul-card); border-radius: 8px; padding: 15px 20px; margin-bottom: 20px; border: 1px solid var(--ciano-destaque); box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 15px; }
+        .painel-rodape { width: 100%; background-color: var(--azul-card); border-radius: 8px; padding: 15px 20px; border: 1px solid var(--ciano-destaque); box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 15px; }
         .titulo-rodape { margin: 0; color: var(--ciano-destaque); text-transform: uppercase; letter-spacing: 2px; font-size: 18px; border-bottom: 1px solid #233554; padding-bottom: 5px; width: 100%; text-align: center; }
         
         .legenda-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; width: 100%; justify-items: center; }
@@ -159,65 +160,70 @@
 
     <div id="modalAlerta" class="modal-overlay" style="z-index: 3000;">
         <div class="alerta-customizado">
-            <h3>⚠️ Atenção</h3>
+            <h3 id="tituloAlertaCustomizado">⚠️ Atenção</h3>
             <p id="textoAlertaCustomizado">Mensagem de erro aqui.</p>
             <button class="btn-alerta-ok" onclick="fecharAlertaCustomizado()">Entendi</button>
         </div>
     </div>
 
-    <div class="painel-topo">
-        <div class="area-logo" id="logoSecreta" title="Área Restrita">
-            <img id="img-logo" src="" alt="Logo">
-        </div>
-        <h2 id="titulo-dinamico" class="titulo-evento">Carregando...</h2>
-        <div class="area-botoes-topo">
-            <button class="botao-acao btn-sincronizar" id="btnSincronizar" onclick="carregarDadosDaNuvem()">🔄 Sincronizar</button>
-        </div>
-    </div>
+    <div id="area-exportacao">
 
-    <div id="container-salao">
-        <div class="tarja-lateral tarja-wc-masc"><span class="tarja-icone">🚹</span><span class="tarja-texto">WC Masc</span></div>
-        <div class="tarja-lateral tarja-wc-fem"><span class="tarja-icone">🚺♿</span><span class="tarja-texto">WC Fem</span></div>
-        <div class="tarja-lateral tarja-aparador-esq"><span class="tarja-texto">Aparador</span></div>
-        
-        <div class="tarja-lateral tarja-aparador-dir1"><span class="tarja-texto">Aparador</span></div>
-        <div class="tarja-lateral tarja-aparador-dir2"><span class="tarja-texto">Aparador</span></div>
-        <div class="tarja-lateral tarja-entrada"><span class="tarja-icone">🚪</span><span class="tarja-texto">Entrada</span></div>
-
-        <div class="palco">PALCO</div>
-    </div>
-
-    <div class="painel-rodape">
-        <h3 class="titulo-rodape">Formas de Adesão</h3>
-        <div class="legenda-grid">
-            <div class="item-legenda">
-                <span class="cor-box" style="background-color: #FFFF00;"></span> 
-                <span class="texto-legenda">Cota Família <span class="sub-legenda">12 Lugares - R$ 25.000,00</span></span>
+        <div class="painel-topo">
+            <div class="area-logo" id="logoSecreta" title="Área Restrita">
+                <img id="img-logo" src="" alt="Logo">
             </div>
-            <div class="item-legenda">
-                <span class="cor-box" style="background-color: #00FFFF;"></span> 
-                <span class="texto-legenda">Cota Criança <span class="sub-legenda">08 Lugares - R$ 12.000,00</span></span>
-            </div>
-            <div class="item-legenda">
-                <span class="cor-box" style="background-color: #47D359;"></span> 
-                <span class="texto-legenda">Mesa Premium <span class="sub-legenda">08 Lugares - R$ 8.000,00</span></span>
-            </div>
-            <div class="item-legenda">
-                <span class="cor-box" style="background-color: #FF9900;"></span> 
-                <span class="texto-legenda">Mesa Master <span class="sub-legenda">06 Lugares - R$ 5.400,00</span></span>
-            </div>
-            <div class="item-legenda">
-                <span class="cor-box" style="background-color: #FF0000;"></span> 
-                <span class="texto-legenda">Mesa Diamante <span class="sub-legenda">06 Lugares - R$ 4.800,00</span></span>
+            <h2 id="titulo-dinamico" class="titulo-evento">Carregando...</h2>
+            
+            <div class="area-botoes-topo">
+                <button class="botao-acao" onclick="exportarMapa('img')" style="background-color: #f59e0b; color: #fff;">📷 Imagem</button>
+                <button class="botao-acao" onclick="exportarMapa('pdf')" style="background-color: #ec4899; color: #fff;">📄 PDF</button>
+                <button class="botao-acao btn-sincronizar" id="btnSincronizar" onclick="carregarDadosDaNuvem()">🔄 Sincronizar</button>
             </div>
         </div>
-        <div class="info-contato">
-            📞 Reservas: (17) 98816-3551
-            <span class="realizacao">Realização: Educandário Santo Antonio de Bebedouro</span>
-        </div>
-    </div>
 
-    <div id="meuModal" class="modal-overlay">
+        <div id="container-salao">
+            <div class="tarja-lateral tarja-wc-masc"><span class="tarja-icone">🚹</span><span class="tarja-texto">WC Masc</span></div>
+            <div class="tarja-lateral tarja-wc-fem"><span class="tarja-icone">🚺♿</span><span class="tarja-texto">WC Fem</span></div>
+            <div class="tarja-lateral tarja-aparador-esq"><span class="tarja-texto">Aparador</span></div>
+            
+            <div class="tarja-lateral tarja-aparador-dir1"><span class="tarja-texto">Aparador</span></div>
+            <div class="tarja-lateral tarja-aparador-dir2"><span class="tarja-texto">Aparador</span></div>
+            <div class="tarja-lateral tarja-entrada"><span class="tarja-icone">🚪</span><span class="tarja-texto">Entrada</span></div>
+
+            <div class="palco">PALCO</div>
+        </div>
+
+        <div class="painel-rodape">
+            <h3 class="titulo-rodape">Formas de Adesão</h3>
+            <div class="legenda-grid">
+                <div class="item-legenda">
+                    <span class="cor-box" style="background-color: #FFFF00;"></span> 
+                    <span class="texto-legenda">Cota Família <span class="sub-legenda">12 Lugares - R$ 25.000,00</span></span>
+                </div>
+                <div class="item-legenda">
+                    <span class="cor-box" style="background-color: #00FFFF;"></span> 
+                    <span class="texto-legenda">Cota Criança <span class="sub-legenda">08 Lugares - R$ 12.000,00</span></span>
+                </div>
+                <div class="item-legenda">
+                    <span class="cor-box" style="background-color: #47D359;"></span> 
+                    <span class="texto-legenda">Mesa Premium <span class="sub-legenda">08 Lugares - R$ 8.000,00</span></span>
+                </div>
+                <div class="item-legenda">
+                    <span class="cor-box" style="background-color: #FF9900;"></span> 
+                    <span class="texto-legenda">Mesa Master <span class="sub-legenda">06 Lugares - R$ 5.400,00</span></span>
+                </div>
+                <div class="item-legenda">
+                    <span class="cor-box" style="background-color: #FF0000;"></span> 
+                    <span class="texto-legenda">Mesa Diamante <span class="sub-legenda">06 Lugares - R$ 4.800,00</span></span>
+                </div>
+            </div>
+            <div class="info-contato">
+                📞 Reservas: (17) 98816-3551
+                <span class="realizacao">Realização: Educandário Santo Antonio de Bebedouro</span>
+            </div>
+        </div>
+
+    </div> <div id="meuModal" class="modal-overlay">
         <div class="modal-box">
             <h2 id="tituloModal"><span>Gerenciar Mesa</span> <span id="statusBadge">Livre</span></h2> 
             
@@ -346,7 +352,6 @@
         document.getElementById('titulo-dinamico').textContent = `${CONFIG_GERAL.edicao} ${CONFIG_GERAL.nomeEvento} ${CONFIG_GERAL.ano}`;
         document.getElementById('img-logo').src = CONFIG_GERAL.caminhoLogo;
 
-        // CORES DO EFEITO ESPELHO (VIDRO) PARA CADA SETOR
         const CONFIG_MESAS = {
             "Familia": { prefixo: "F", nome: "Cota Família", classeTamanho: "tamanho-g", corNormal: "#FFFF00", corVendida: "#FFFFD1", layout: [ [6], [6] ], valorBase: 25000, bgTranslucido: "rgba(255, 255, 0, 0.08)", bordaFina: "rgba(255, 255, 0, 0.3)" },
             "Crianca": { prefixo: "C", nome: "Cota Criança", classeTamanho: "tamanho-m", corNormal: "#00FFFF", corVendida: "#66CCCC", layout: [ [7], [7], [7], [7] ], valorBase: 12000, bgTranslucido: "rgba(0, 255, 255, 0.08)", bordaFina: "rgba(0, 255, 255, 0.3)" },
@@ -355,7 +360,8 @@
             "Diamante": { prefixo: "D", nome: "Mesa Diamante", classeTamanho: "tamanho-p", corNormal: "#FF0000", corVendida: "#FFCDCD", layout: [ [7], [7], [7] ], valorBase: 4800, bgTranslucido: "rgba(255, 0, 0, 0.08)", bordaFina: "rgba(255, 0, 0, 0.3)" }
         };
 
-        function mostrarAlerta(mensagem) {
+        function mostrarAlerta(mensagem, titulo = "⚠️ Atenção") {
+            document.getElementById('tituloAlertaCustomizado').innerHTML = titulo;
             document.getElementById('textoAlertaCustomizado').textContent = mensagem;
             document.getElementById('modalAlerta').style.display = 'flex';
         }
@@ -368,14 +374,61 @@
                 let senhaDigitada = prompt("Área Restrita. Digite a senha de Acesso:");
                 if (senhaDigitada === SENHA_DIRETORIA) {
                     document.body.classList.remove('modo-apresentacao');
-                    mostrarAlerta("Acesso Liberado! Nomes, cadeiras extras e exclusão revelados.\n\nAtualize a página (F5) para voltar ao modo seguro.");
+                    mostrarAlerta("Acesso Liberado! Nomes, cadeiras extras e exclusão revelados.\n\nAtualize a página (F5) para voltar ao modo seguro.", "🔓 Acesso Concedido");
                 } else if (senhaDigitada !== null) {
-                    mostrarAlerta("Senha incorreta.");
+                    mostrarAlerta("Senha incorreta.", "❌ Erro");
                 }
             } else {
                 document.body.classList.add('modo-apresentacao');
             }
         };
+
+        // ======================================================================
+        // A MÁGICA DA FOTOGRAFIA (EXPORTAÇÃO PARA PDF/IMG)
+        // ======================================================================
+        async function exportarMapa(tipo) {
+            const areaExportacao = document.getElementById('area-exportacao');
+            const botoesTopo = document.querySelector('.area-botoes-topo');
+
+            botoesTopo.style.display = 'none';
+            mostrarAlerta("Preparando sua imagem, aguarde um instante... 📸", "⏳ Gerando Arquivo");
+
+            try {
+                // A biblioteca tira a foto (Agora com permissão CORS liberada pro GitHub)
+                const canvas = await html2canvas(areaExportacao, {
+                    backgroundColor: '#0A192F',
+                    scale: 2, 
+                    useCORS: true,
+                    allowTaint: true 
+                });
+
+                const imgData = canvas.toDataURL('image/jpeg', 0.9);
+
+                if (tipo === 'img') {
+                    const link = document.createElement('a');
+                    link.download = 'Mapa_Educandario_2026.jpg';
+                    link.href = imgData;
+                    link.click();
+                } else if (tipo === 'pdf') {
+                    const { jsPDF } = window.jspdf;
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                    
+                    pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+                    pdf.save('Mapa_Educandario_2026.pdf');
+                }
+                fecharAlertaCustomizado();
+            } catch (erro) {
+                fecharAlertaCustomizado();
+                console.error(erro);
+                mostrarAlerta("O navegador bloqueou a foto por estar rodando no computador local. Quando subir pro GitHub vai funcionar perfeitamente! 🚀", "❌ Bloqueio Local");
+            } finally {
+                botoesTopo.style.display = 'flex';
+            }
+        }
+
 
         function inicializarBancoDeDados() {
             for (const chave in CONFIG_MESAS) {
@@ -619,14 +672,13 @@
                 const divSetor = document.createElement('div');
                 divSetor.className = 'setor';
                 
-                // APLICAÇÃO DO "GLASSMORPHISM" (EFEITO ESPELHO)
                 divSetor.style.backgroundColor = setorConfig.bgTranslucido;
                 divSetor.style.border = `1px solid ${setorConfig.bordaFina}`;
                 divSetor.style.boxShadow = `0 0 15px ${setorConfig.bgTranslucido}`;
                 
                 const tituloSetor = document.createElement('h3');
                 tituloSetor.textContent = setorConfig.nome;
-                tituloSetor.style.color = setorConfig.corNormal; // Título combinando com a cor do setor
+                tituloSetor.style.color = setorConfig.corNormal; 
                 divSetor.appendChild(tituloSetor);
 
                 setorConfig.layout.forEach(fileira => {
