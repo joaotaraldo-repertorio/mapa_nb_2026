@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Mapa de Vendas - Noite Beneficente</title>
+    <title>Mapa de Vendas - 19ª Noite Beneficente</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -15,16 +15,18 @@
 
         body { background-color: var(--azul-fundo); color: var(--texto-claro); font-family: Arial, sans-serif; padding: 15px; margin: 0; display: flex; flex-direction: column; align-items: center; }
         
-        /* A ÁREA QUE VAI SER FOTOGRAFADA PELO SISTEMA */
         #area-exportacao { width: 100%; max-width: 1300px; display: flex; flex-direction: column; align-items: center; background-color: var(--azul-fundo); padding: 10px; border-radius: 8px; }
 
-        .painel-topo { width: 100%; display: flex; justify-content: space-between; align-items: center; background-color: var(--azul-card); padding: 10px 30px; border-radius: 8px; margin-bottom: 15px; box-sizing: border-box; }
+        .painel-topo { width: 100%; display: flex; justify-content: space-between; align-items: center; background-color: var(--azul-card); padding: 15px 30px; border-radius: 8px; margin-bottom: 15px; box-sizing: border-box; }
         .area-logo { width: 150px; display: flex; justify-content: flex-start; cursor: pointer; transition: transform 0.2s; }
         .area-logo:hover { transform: scale(1.05); }
         .area-logo img { max-height: 100px; width: auto; }
         
-        .titulo-evento { text-align: center; flex-grow: 1; color: var(--ciano-destaque); margin: 0 20px; font-size: 32px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }
-        .area-botoes-topo { display: flex; gap: 10px; width: 350px; justify-content: flex-end; }
+        .titulo-evento { text-align: center; flex-grow: 1; color: var(--ciano-destaque); margin: 0 20px; font-size: 32px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; line-height: 1.2;}
+        .subtitulo-evento { display: block; font-size: 16px; color: #fff; letter-spacing: 1px; font-weight: normal; margin-top: 5px; text-transform: none;}
+        .subtitulo-evento span { color: #f59e0b; font-weight: bold; }
+
+        .area-botoes-topo { display: flex; gap: 10px; width: 400px; justify-content: flex-end; }
         
         .botao-acao { background-color: var(--ciano-destaque); color: #000; border: none; padding: 10px 15px; font-weight: bold; font-size: 13px; border-radius: 4px; cursor: pointer; transition: 0.3s; white-space: nowrap; }
         .botao-acao:hover:not(:disabled) { box-shadow: 0 0 10px var(--ciano-destaque); }
@@ -71,6 +73,7 @@
         body.modo-apresentacao .badge-extra { display: none; }
         body.modo-apresentacao .badge-divida { display: none; }
         body.modo-apresentacao #btnLimpar { display: none; }
+        body.modo-apresentacao #btnCofre { display: none; } /* O botão do cofre some */
 
         .mesa { border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #000; cursor: pointer; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.4); transition: transform 0.2s; border: 2px solid rgba(0,0,0,0.1); }
         .mesa:hover { transform: scale(1.05); }
@@ -105,6 +108,29 @@
         .info-contato { text-align: center; font-size: 18px; font-weight: bold; color: #47D359; border-top: 1px dashed #233554; padding-top: 10px; width: 100%; }
         .info-contato span.realizacao { display: block; color: var(--texto-claro); font-size: 14px; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
+        /* O NOVO PAINEL DO COFRE FINANCEIRO */
+        #painel-cofre { display: none; width: 100%; max-width: 1300px; flex-direction: column; gap: 20px; padding: 20px; box-sizing: border-box; }
+        .cofre-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--ciano-destaque); padding-bottom: 15px;}
+        .cofre-header h2 { margin: 0; color: var(--ciano-destaque); font-size: 28px; display: flex; align-items: center; gap: 10px;}
+        
+        .cofre-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 20px;}
+        .cofre-card { background-color: var(--azul-card); border-radius: 8px; padding: 25px; border: 1px solid #233554; text-align: center; box-shadow: 0 10px 20px rgba(0,0,0,0.5); position: relative; overflow: hidden;}
+        .cofre-card h4 { margin: 0 0 10px 0; color: #8892b0; font-size: 16px; text-transform: uppercase; letter-spacing: 1px;}
+        .cofre-card .valor { font-size: 32px; font-weight: bold; margin: 0;}
+        
+        .cofre-previsao { border-top: 4px solid #f59e0b; }
+        .cofre-previsao .valor { color: #f59e0b; }
+        
+        .cofre-fechado { border-top: 4px solid var(--ciano-destaque); }
+        .cofre-fechado .valor { color: var(--ciano-destaque); }
+        
+        .cofre-recebido { border-top: 4px solid #47D359; }
+        .cofre-recebido .valor { color: #47D359; }
+        
+        .cofre-pendente { border-top: 4px solid #ff4d4d; }
+        .cofre-pendente .valor { color: #ff4d4d; }
+
+        /* MODAIS PADRÃO */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); z-index: 1000; justify-content: center; align-items: center; }
         .modal-box { background-color: var(--azul-card); border: 1px solid var(--ciano-destaque); border-radius: 8px; padding: 25px; width: 650px; max-width: 95%; box-shadow: 0 10px 25px rgba(0,0,0,0.8); max-height: 90vh; overflow-y: auto; }
         .modal-box h2 { margin-top: 0; color: var(--ciano-destaque); border-bottom: 1px solid #233554; padding-bottom: 10px; font-size: 22px; display: flex; justify-content: space-between; }
@@ -178,6 +204,32 @@
                 <button class="botao-acao" onclick="exportarMapa('img')" style="background-color: #f59e0b; color: #fff;">📷 Imagem</button>
                 <button class="botao-acao" onclick="exportarMapa('pdf')" style="background-color: #ec4899; color: #fff;">📄 PDF</button>
                 <button class="botao-acao btn-sincronizar" id="btnSincronizar" onclick="carregarDadosDaNuvem()">🔄 Sincronizar</button>
+                <button class="botao-acao" id="btnCofre" onclick="abrirCofre()" style="background-color: #ff9900; color: #000; border: 1px solid #fff;">📊 Cofre</button>
+            </div>
+        </div>
+
+        <div id="painel-cofre">
+            <div class="cofre-header">
+                <h2><span>📊</span> Painel Financeiro Geral</h2>
+                <button class="botao-acao" onclick="fecharCofre()" style="background-color: #233554; color: #fff;">❌ Voltar ao Mapa</button>
+            </div>
+            <div class="cofre-grid">
+                <div class="cofre-card cofre-previsao">
+                    <h4>🎯 Previsão (100% Vendido)</h4>
+                    <p class="valor" id="cofrePrevisao">R$ 0,00</p>
+                </div>
+                <div class="cofre-card cofre-fechado">
+                    <h4>🤝 Total Fechado</h4>
+                    <p class="valor" id="cofreFechado">R$ 0,00</p>
+                </div>
+                <div class="cofre-card cofre-recebido">
+                    <h4>💰 Já Recebido (Em Caixa)</h4>
+                    <p class="valor" id="cofreRecebido">R$ 0,00</p>
+                </div>
+                <div class="cofre-card cofre-pendente">
+                    <h4>⏳ Saldo a Receber</h4>
+                    <p class="valor" id="cofrePendente">R$ 0,00</p>
+                </div>
             </div>
         </div>
 
@@ -347,9 +399,16 @@
         let arrayParcelasAtuais = []; 
 
         const SENHA_DIRETORIA = "diretoria26";
+        const SENHA_FINANCEIRO = "financeiro26"; // A senha mestra do cofre
 
-        const CONFIG_GERAL = { edicao: "19ª", nomeEvento: "Noite Beneficente", ano: "2026", caminhoLogo: "logo.png" };
-        document.getElementById('titulo-dinamico').textContent = `${CONFIG_GERAL.edicao} ${CONFIG_GERAL.nomeEvento} ${CONFIG_GERAL.ano}`;
+        // O LETREIRO DE LUXO (Agora com HTML embutido na data e show)
+        const CONFIG_GERAL = { 
+            edicao: "19ª", nomeEvento: "Noite Beneficente", ano: "2026", 
+            data: "17 de Outubro", show: "Marcos & Belutti", 
+            caminhoLogo: "logo.png" 
+        };
+        
+        document.getElementById('titulo-dinamico').innerHTML = `${CONFIG_GERAL.edicao} ${CONFIG_GERAL.nomeEvento} ${CONFIG_GERAL.ano}<br><span class="subtitulo-evento">${CONFIG_GERAL.data} • Show: <span>${CONFIG_GERAL.show}</span></span>`;
         document.getElementById('img-logo').src = CONFIG_GERAL.caminhoLogo;
 
         const CONFIG_MESAS = {
@@ -369,22 +428,77 @@
             document.getElementById('modalAlerta').style.display = 'none'; 
         }
 
+        // A LÓGICA DA SENHA DUPLA
         document.getElementById('logoSecreta').onclick = function() {
             if (document.body.classList.contains('modo-apresentacao')) {
                 let senhaDigitada = prompt("Área Restrita. Digite a senha de Acesso:");
                 if (senhaDigitada === SENHA_DIRETORIA) {
                     document.body.classList.remove('modo-apresentacao');
-                    mostrarAlerta("Acesso Liberado! Nomes, cadeiras extras e exclusão revelados.\n\nAtualize a página (F5) para voltar ao modo seguro.", "🔓 Acesso Concedido");
+                    mostrarAlerta("Acesso de Vendas Liberado! Nomes e edições disponíveis.\n\nAtualize a página (F5) para voltar ao modo seguro.", "🔓 Acesso Concedido");
+                } else if (senhaDigitada === SENHA_FINANCEIRO) {
+                    document.body.classList.remove('modo-apresentacao');
+                    document.getElementById('btnCofre').style.display = 'block'; // Libera o botão do cofre!
+                    mostrarAlerta("Acesso Financeiro Liberado! O Painel do Cofre está disponível no topo da tela.", "💰 Cofre Destravado");
                 } else if (senhaDigitada !== null) {
                     mostrarAlerta("Senha incorreta.", "❌ Erro");
                 }
             } else {
                 document.body.classList.add('modo-apresentacao');
+                document.getElementById('btnCofre').style.display = 'none'; // Esconde de novo
             }
         };
 
         // ======================================================================
-        // A MÁGICA DA FOTOGRAFIA COM O TAMANHO DE PAPEL CORRIGIDO
+        // A INTELIGÊNCIA DA SALA COFRE
+        // ======================================================================
+        function abrirCofre() {
+            let previsaoTotal = 0;
+            let totalFechado = 0;
+            let totalRecebido = 0;
+
+            // 1. Calcula a Previsão (100% das mesas base vendidas)
+            for (const chave in CONFIG_MESAS) {
+                const config = CONFIG_MESAS[chave];
+                let qtdMesasNesteSetor = 0;
+                config.layout.forEach(fileira => {
+                    fileira.forEach(item => {
+                        if (typeof item === 'number') qtdMesasNesteSetor += item;
+                    });
+                });
+                previsaoTotal += (qtdMesasNesteSetor * config.valorBase);
+            }
+
+            // 2. Calcula o Realizado e o Dinheiro em Caixa lendo o Banco de Dados
+            for (const id in bancoDeDados) {
+                const mesa = bancoDeDados[id];
+                if (mesa.status === "Vendida" || mesa.status === "Reservada") {
+                    totalFechado += converterParaNumero(mesa.valorTotal); // Pega o valor com cadeiras extras
+                    totalRecebido += converterParaNumero(mesa.valorPago);
+                }
+            }
+
+            let saldoReceber = totalFechado - totalRecebido;
+
+            // Injeta na tela
+            document.getElementById('cofrePrevisao').textContent = `R$ ${converterParaMoeda(previsaoTotal)}`;
+            document.getElementById('cofreFechado').textContent = `R$ ${converterParaMoeda(totalFechado)}`;
+            document.getElementById('cofreRecebido').textContent = `R$ ${converterParaMoeda(totalRecebido)}`;
+            document.getElementById('cofrePendente').textContent = `R$ ${converterParaMoeda(saldoReceber)}`;
+
+            // Troca as telas
+            document.getElementById('container-salao').style.display = 'none';
+            document.querySelector('.painel-rodape').style.display = 'none';
+            document.getElementById('painel-cofre').style.display = 'flex';
+        }
+
+        function fecharCofre() {
+            document.getElementById('painel-cofre').style.display = 'none';
+            document.getElementById('container-salao').style.display = 'flex';
+            document.querySelector('.painel-rodape').style.display = 'flex';
+        }
+
+        // ======================================================================
+        // EXPORTAÇÃO PARA PDF/IMG
         // ======================================================================
         async function exportarMapa(tipo) {
             const areaExportacao = document.getElementById('area-exportacao');
@@ -410,8 +524,6 @@
                     link.click();
                 } else if (tipo === 'pdf') {
                     const { jsPDF } = window.jspdf;
-                    
-                    // A SOLUÇÃO DO CORTE: Criando um papel com o tamanho exato da nossa imagem!
                     const orientation = canvas.width >= canvas.height ? 'l' : 'p';
                     const pdf = new jsPDF({
                         orientation: orientation,
