@@ -26,32 +26,32 @@
         .btn-sincronizar { background-color: #47D359; }
         .btn-sincronizar:hover { box-shadow: 0 0 10px #47D359; }
 
-        /* O SALÃO CRESCEU PARA ACOMODAR AS TARJAS */
+        /* SALÃO AJUSTADO COM LATERAIS DE 70PX PARA AS TARJAS */
         #container-salao { width: 100%; max-width: 1300px; padding: 0 70px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 30px; position: relative; margin-bottom: 20px;}
         
-        .palco { width: 50%; background-color: var(--cor-palco); color: #fff; text-align: center; padding: 15px 0; font-size: 24px; font-weight: bold; letter-spacing: 5px; border-radius: 8px; border: 2px solid #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.5); margin-bottom: 10px; }
+        .palco { width: 50%; background-color: var(--cor-palco); color: #fff; text-align: center; padding: 15px 0; font-size: 24px; font-weight: bold; letter-spacing: 5px; border-radius: 8px; border: 2px solid #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.5); margin-bottom: 10px; z-index: 2;}
         
-        /* AS TARJAS LATERAIS DO LAYOUT FÍSICO */
+        /* O NOVO VISUAL DAS TARJAS LATERAIS COM FUNDO TRANSLÚCIDO */
         .tarja-lateral {
-            position: absolute; width: 45px; background-color: rgba(17, 34, 64, 0.8);
-            border: 2px dashed #8892b0; color: #8892b0; display: flex; flex-direction: column;
+            position: absolute; width: 45px;
+            border: 2px solid; display: flex; flex-direction: column;
             align-items: center; justify-content: center; font-weight: bold; font-size: 13px;
             border-radius: 8px; text-align: center; letter-spacing: 2px; text-transform: uppercase; z-index: 1;
         }
         .tarja-texto { writing-mode: vertical-rl; transform: rotate(180deg); margin-top: 10px; }
         .tarja-icone { font-size: 22px; }
 
-        /* Posicionamento Esquerda */
-        .tarja-wc-masc { left: 0; top: 16%; height: 10%; border-color: #3b82f6; color: #3b82f6; }
-        .tarja-wc-fem { left: 0; top: 28%; height: 10%; border-color: #ec4899; color: #ec4899; }
-        .tarja-aparador-esq { left: 0; top: 72%; height: 15%; }
+        /* Lado Esquerdo */
+        .tarja-wc-masc { left: 0; top: 15%; height: 12%; border-color: #3b82f6; background-color: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+        .tarja-wc-fem { left: 0; top: 28%; height: 12%; border-color: #ec4899; background-color: rgba(236, 72, 153, 0.15); color: #ec4899; }
+        .tarja-aparador-esq { left: 0; top: 72%; height: 16%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
         
-        /* Posicionamento Direita */
-        .tarja-aparador-dir1 { right: 0; top: 24%; height: 20%; }
-        .tarja-aparador-dir2 { right: 0; top: 62%; height: 15%; }
-        .tarja-entrada { right: 0; top: 82%; height: 15%; border-color: var(--ciano-destaque); color: var(--ciano-destaque); background-color: rgba(102, 255, 255, 0.1); }
+        /* Lado Direito */
+        .tarja-aparador-dir1 { right: 0; top: 15%; height: 25%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+        .tarja-aparador-dir2 { right: 0; top: 51%; height: 25%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+        .tarja-entrada { right: 0; top: 82%; height: 16%; border-color: var(--ciano-destaque); background-color: rgba(102, 255, 255, 0.15); color: var(--ciano-destaque); }
 
-        .setor { background-color: var(--azul-card); padding: 20px; border-radius: 8px; width: 100%; box-sizing: border-box; }
+        .setor { background-color: var(--azul-card); padding: 20px; border-radius: 8px; width: 100%; box-sizing: border-box; z-index: 2;}
         .setor h3 { margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid #233554; padding-bottom: 10px; color: var(--ciano-destaque); text-align: center; font-size: 24px; }
         
         .fileira-mesas { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; width: 100%; }
@@ -63,6 +63,7 @@
 
         .texto-abaixo { font-size: 14px; color: #ffffff; text-align: center; width: 100%; white-space: normal; word-wrap: break-word; line-height: 1.2; font-weight: bold; min-height: 17px; }
         
+        /* O MODO APRESENTAÇÃO ESCONDE TUDO CONFIDENCIAL */
         body.modo-apresentacao .texto-abaixo { display: none; }
         body.modo-apresentacao .badge-extra { display: none; }
         body.modo-apresentacao .badge-divida { display: none; }
@@ -82,7 +83,7 @@
         
         .badge-divida { position: absolute; bottom: 20px; right: 0px; background-color: #ff4d4d; color: #fff; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.8); border: 2px solid #fff; z-index: 10; }
 
-        /* O NOVO PAINEL DE RODAPÉ (LEGENDA E CONTATO) */
+        /* PAINEL DE LEGENDA DO RODAPÉ */
         .painel-rodape { width: 100%; max-width: 1300px; background-color: var(--azul-card); border-radius: 8px; padding: 30px; margin-bottom: 40px; border: 1px solid var(--ciano-destaque); box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 25px; }
         .titulo-rodape { margin: 0; color: var(--ciano-destaque); text-transform: uppercase; letter-spacing: 2px; font-size: 20px; border-bottom: 1px solid #233554; padding-bottom: 10px; width: 100%; text-align: center; }
         
@@ -103,6 +104,7 @@
         .form-group { display: flex; flex-direction: column; flex: 1; }
         .form-group label { margin-bottom: 5px; font-size: 13px; color: #8892b0; font-weight: bold; }
         .form-group input, .form-group select, .form-group textarea { padding: 8px 10px; border-radius: 4px; border: 1px solid #233554; background-color: #0A192F; color: var(--texto-claro); font-size: 14px; }
+        
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
 
         .form-group textarea { resize: vertical; min-height: 40px; }
@@ -132,6 +134,7 @@
         .spinner { border: 6px solid #112240; border-top: 6px solid var(--ciano-destaque); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 20px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+        /* ESTILOS DO ALERTA CUSTOMIZADO */
         .alerta-customizado { background-color: var(--azul-card); border: 2px solid #ff4d4d; border-radius: 8px; padding: 25px; width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.9); }
         .alerta-customizado h3 { color: #ff4d4d; margin-top: 0; font-size: 22px; }
         .alerta-customizado p { color: #fff; font-size: 16px; margin-bottom: 25px; line-height: 1.5; white-space: pre-wrap; }
@@ -337,8 +340,9 @@
         document.getElementById('titulo-dinamico').textContent = `${CONFIG_GERAL.edicao} ${CONFIG_GERAL.nomeEvento} ${CONFIG_GERAL.ano}`;
         document.getElementById('img-logo').src = CONFIG_GERAL.caminhoLogo;
 
+        // A MUDANÇA ESTÁ AQUI: Cota Família agora tem 2 fileiras de 6 [ [6], [6] ]
         const CONFIG_MESAS = {
-            "Familia": { prefixo: "F", nome: "Cota Família", classeTamanho: "tamanho-g", corNormal: "#FFFF00", corVendida: "#FFFFD1", layout: [ [5], [5] ], valorBase: 25000 },
+            "Familia": { prefixo: "F", nome: "Cota Família", classeTamanho: "tamanho-g", corNormal: "#FFFF00", corVendida: "#FFFFD1", layout: [ [6], [6] ], valorBase: 25000 },
             "Crianca": { prefixo: "C", nome: "Cota Criança", classeTamanho: "tamanho-m", corNormal: "#00FFFF", corVendida: "#66CCCC", layout: [ [7], [7], [7], [7] ], valorBase: 12000 },
             "Premium": { prefixo: "P", nome: "Mesa Premium", classeTamanho: "tamanho-m", corNormal: "#47D359", corVendida: "#75D982", layout: [ [7], [7] ], valorBase: 8000 },
             "Master": { prefixo: "M", nome: "Mesa Master", classeTamanho: "tamanho-p", corNormal: "#FF9900", corVendida: "#FFE2B7", layout: [ [3, "MIX", 3], [3, "MIX", 3], [7] ], valorBase: 5400 },
@@ -594,7 +598,6 @@
         function renderizarMapa() {
             const containerSalao = document.getElementById('container-salao');
             Array.from(containerSalao.children).forEach(child => {
-                // Apenas a classe "tarja-lateral" e "palco" sobrevivem à faxina
                 if (!child.classList.contains('palco') && !child.classList.contains('tarja-lateral')) { 
                     containerSalao.removeChild(child); 
                 }
