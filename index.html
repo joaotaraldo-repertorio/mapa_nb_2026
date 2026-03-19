@@ -9,12 +9,9 @@
             --texto-claro: #e6f1ff; --cor-palco: #8A2BE2; --cor-reservada: #ffc107; --cor-vendida-texto: #ff4d4d;
         }
 
-        /* Adicionando a classe modo-apresentacao no body logo de cara para nascer seguro */
         body { background-color: var(--azul-fundo); color: var(--texto-claro); font-family: Arial, sans-serif; padding: 20px; margin: 0; display: flex; flex-direction: column; align-items: center; }
         
         .painel-topo { width: 100%; max-width: 1200px; display: flex; justify-content: space-between; align-items: center; background-color: var(--azul-card); padding: 15px 30px; border-radius: 8px; margin-bottom: 20px; box-sizing: border-box; }
-        
-        /* A logo agora tem o cursor de "clicável" (mãozinha) */
         .area-logo { width: 150px; display: flex; justify-content: flex-start; cursor: pointer; transition: transform 0.2s; }
         .area-logo:hover { transform: scale(1.05); }
         .area-logo img { max-height: 120px; width: auto; }
@@ -43,8 +40,10 @@
 
         .texto-abaixo { font-size: 14px; color: #ffffff; text-align: center; width: 100%; white-space: normal; word-wrap: break-word; line-height: 1.2; font-weight: bold; min-height: 17px; }
         
-        /* O MAPA ESCONDE OS NOMES POR PADRÃO AGORA */
+        /* O MODO APRESENTAÇÃO ESCONDE NOMES E CADEIRAS EXTRAS */
         body.modo-apresentacao .texto-abaixo { display: none; }
+        body.modo-apresentacao .badge-extra { display: none; }
+        body.modo-apresentacao .badge-divida { display: none; }
 
         .mesa { border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #000; cursor: pointer; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.4); transition: transform 0.2s; border: 2px solid rgba(0,0,0,0.1); }
         .mesa:hover { transform: scale(1.05); }
@@ -56,13 +55,12 @@
         .house-mix { display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #1d2d50; border: 2px dashed var(--ciano-destaque); border-radius: 8px; width: 180px; height: 90px; color: var(--ciano-destaque); font-size: 14px; font-weight: bold; text-transform: uppercase; }
         .house-mix span.icone { font-size: 32px; margin-bottom: 5px; }
         
-        .badge-extra { position: absolute; top: -2px; right: -2px; background-color: var(--azul-fundo); color: var(--ciano-destaque); border: 2px solid var(--ciano-destaque); border-radius: 50%; width: 28px; height: 28px; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .badge-extra { position: absolute; top: -2px; right: -2px; background-color: var(--azul-fundo); color: var(--ciano-destaque); border: 2px solid var(--ciano-destaque); border-radius: 50%; width: 28px; height: 28px; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5); z-index: 5;}
         
         .badge-divida { position: absolute; bottom: 20px; right: 0px; background-color: #ff4d4d; color: #fff; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.8); border: 2px solid #fff; z-index: 10; }
-        body.modo-apresentacao .badge-divida { display: none; } /* Esconde o cifrão de dívida pro cliente não ver */
 
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-box { background-color: var(--azul-card); border: 1px solid var(--ciano-destaque); border-radius: 8px; padding: 25px; width: 600px; max-width: 95%; box-shadow: 0 10px 25px rgba(0,0,0,0.8); max-height: 90vh; overflow-y: auto; }
+        .modal-box { background-color: var(--azul-card); border: 1px solid var(--ciano-destaque); border-radius: 8px; padding: 25px; width: 650px; max-width: 95%; box-shadow: 0 10px 25px rgba(0,0,0,0.8); max-height: 90vh; overflow-y: auto; }
         .modal-box h2 { margin-top: 0; color: var(--ciano-destaque); border-bottom: 1px solid #233554; padding-bottom: 10px; font-size: 22px; display: flex; justify-content: space-between; }
         
         .form-row { display: flex; gap: 15px; margin-bottom: 12px; }
@@ -71,7 +69,8 @@
         .form-group input, .form-group select, .form-group textarea { padding: 8px 10px; border-radius: 4px; border: 1px solid #233554; background-color: #0A192F; color: var(--texto-claro); font-size: 14px; }
         .form-group textarea { resize: vertical; min-height: 40px; }
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--ciano-destaque); }
-        .campo-bloqueado { background-color: #061020 !important; color: #ff4d4d !important; font-weight: bold; cursor: not-allowed; }
+        .campo-bloqueado { background-color: #061020 !important; color: #47D359 !important; font-weight: bold; cursor: not-allowed; }
+        .campo-bloqueado-vermelho { background-color: #061020 !important; color: #ff4d4d !important; font-weight: bold; cursor: not-allowed; }
 
         .painel-financeiro { background-color: #061020; border: 1px dashed #47D359; border-radius: 8px; padding: 15px; margin-top: 15px; margin-bottom: 15px; }
         .painel-financeiro h4 { margin: 0 0 10px 0; color: #47D359; font-size: 15px; display: flex; justify-content: space-between; }
@@ -143,7 +142,7 @@
                 </div>
                 <div class="form-group" style="flex: 0.3;">
                     <label>Cadeiras Extras</label>
-                    <input type="number" id="campoCadeiras" min="0" value="0" oninput="calcularFinanceiro(true)" onchange="calcularFinanceiro(true)">
+                    <input type="number" id="campoCadeiras" min="0" value="0" oninput="calcularFinanceiroEParcelas()" onchange="calcularFinanceiroEParcelas()">
                 </div>
                 <div class="form-group" style="justify-content: flex-end;">
                     <div class="checkbox-group" style="margin-bottom: 0; padding: 8px;">
@@ -157,8 +156,8 @@
                 <h4>💰 Resumo Financeiro <span id="textoValorPadrao" style="color: #8892b0; font-size: 12px;">Valor Base: R$ 0,00</span></h4>
                 
                 <div class="form-row" style="margin-bottom: 10px;">
-                    <div class="form-group">
-                        <label>Pgto Principal</label>
+                    <div class="form-group" style="flex: 0.4;">
+                        <label>Forma Pgto</label>
                         <select id="campoPagamento">
                             <option value="Nenhum">-</option>
                             <option value="Dinheiro">Dinheiro</option>
@@ -170,38 +169,38 @@
                             <option value="Cortesia">Cortesia</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label>Parcelas</label>
-                        <select id="campoParcelas">
-                            <option value="1x">À vista</option>
-                            <option value="2x">2x</option>
-                            <option value="3x">3x</option>
-                            <option value="4x">4x</option>
-                            <option value="5x">5x</option>
-                            <option value="6x">6x</option>
-                            <option value="10x">10x</option>
-                            <option value="12x">12x</option>
-                        </select>
+                    <div class="form-group" style="flex: 0.6;">
+                        <label>Valor Total Fechado (R$)</label>
+                        <input type="text" id="campoValorTotal" class="mascara-dinheiro" oninput="formatarMoeda(this); recalcularDivisaoParcelas()" placeholder="0,00">
                     </div>
                 </div>
 
-                <div class="form-group" style="margin-bottom: 10px;">
-                    <label>Detalhamento de Parcelas / Vencimentos</label>
-                    <textarea id="campoDetalhesParcelas" placeholder="Ex: 1ª parcela R$ 500 (15/04). 2ª parcela R$ 500 (15/05)..."></textarea>
+                <div style="background-color: #0A192F; border: 1px solid #233554; border-radius: 4px; padding: 10px; margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <label style="color: #8892b0; font-size: 13px; font-weight: bold; margin: 0;">Plano de Parcelas</label>
+                        <select id="campoParcelas" onchange="gerarParcelasDaTela()" style="padding: 3px 5px; background: #112240; color: #fff; border: 1px solid #47D359; border-radius: 4px;">
+                            <option value="1">1x (À vista)</option>
+                            <option value="2">2x</option>
+                            <option value="3">3x</option>
+                            <option value="4">4x</option>
+                            <option value="5">5x</option>
+                            <option value="6">6x</option>
+                            <option value="10">10x</option>
+                            <option value="12">12x</option>
+                        </select>
+                    </div>
+                    
+                    <div id="containerParcelas"></div>
                 </div>
 
                 <div class="form-row" style="margin-bottom: 0;">
                     <div class="form-group">
-                        <label>Valor Total Fechado (R$)</label>
-                        <input type="text" id="campoValorTotal" class="mascara-dinheiro" oninput="formatarMoeda(this); calcularSaldo()" placeholder="0,00">
-                    </div>
-                    <div class="form-group">
-                        <label>Valor Já Pago (R$)</label>
-                        <input type="text" id="campoValorPago" class="mascara-dinheiro" oninput="formatarMoeda(this); calcularSaldo()" placeholder="0,00">
+                        <label>Total Já Pago (R$)</label>
+                        <input type="text" id="campoValorPago" class="campo-bloqueado" readonly placeholder="0,00">
                     </div>
                     <div class="form-group">
                         <label>Saldo Devedor (R$)</label>
-                        <input type="text" id="campoSaldo" class="campo-bloqueado" readonly placeholder="0,00">
+                        <input type="text" id="campoSaldo" class="campo-bloqueado-vermelho" readonly placeholder="0,00">
                     </div>
                 </div>
             </div>
@@ -232,15 +231,14 @@
     </div>
 
     <script>
-        // SEU LINK DO GOOGLE SCRIPT
         const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbxCOJv1V8KMAyQ_ECyF7cdVkAiwRQcXQ6tQtNiI-SzGiMP0QeGJz-UsYQQezolsROzM/exec";
         
         const bancoDeDados = {}; 
         let mesaEditandoAtual = ""; 
-        let statusAoAbrirMesa = ""; // Usado para a trava de colisão
+        let statusAoAbrirMesa = ""; 
         let valorCadeiraAvulsa = 800.00; 
+        let arrayParcelasAtuais = []; // A Memória RAM das parcelas
 
-        // SENHA DE ACESSO AOS NOMES (Pode mudar aqui depois!)
         const SENHA_DIRETORIA = "diretoria26";
 
         const CONFIG_GERAL = { edicao: "19ª", nomeEvento: "Noite Beneficente", ano: "2026", caminhoLogo: "logo.png" };
@@ -255,18 +253,16 @@
             "Diamante": { prefixo: "D", nome: "Mesa Diamante", classeTamanho: "tamanho-p", corNormal: "#FF0000", corVendida: "#FFCDCD", layout: [ [7], [7], [7] ], valorBase: 4800 }
         };
 
-        // A MÁGICA DA LOGO SECRETA
         document.getElementById('logoSecreta').onclick = function() {
             if (document.body.classList.contains('modo-apresentacao')) {
-                let senhaDigitada = prompt("Área Restrita. Digite a senha da diretoria para visualizar os nomes:");
+                let senhaDigitada = prompt("Área Restrita. Digite a senha da diretoria:");
                 if (senhaDigitada === SENHA_DIRETORIA) {
                     document.body.classList.remove('modo-apresentacao');
-                    alert("Nomes revelados! Atualize a página (F5) para voltar ao modo seguro.");
+                    alert("Acesso Liberado! Nomes e cadeiras extras revelados. \n\nAtualize a página (F5) para voltar ao modo seguro.");
                 } else if (senhaDigitada !== null) {
                     alert("Senha incorreta.");
                 }
             } else {
-                // Se já tá mostrando, clica e esconde
                 document.body.classList.add('modo-apresentacao');
             }
         };
@@ -285,7 +281,7 @@
                                     setor: config.nome, status: "Livre", nome: "", telefone: "", email: "",
                                     cadeiras: 0, pagamento: "Nenhum", parcelas: "1x", 
                                     valorTotal: "", valorPago: "", saldoDevedor: 0,
-                                    logoPropaganda: false, obs: "", detalhesParcelas: ""
+                                    logoPropaganda: false, obs: "", detalhesParcelas: "[]" // Inicia com array JSON vazio
                                 };
                                 contador++;
                             }
@@ -296,7 +292,6 @@
         }
 
         async function carregarDadosDaNuvemBackground() {
-            // Essa função roda invisível a cada 15 segundos sem atrapalhar a tela
             try {
                 const response = await fetch(URL_GOOGLE_SCRIPT);
                 const dadosNuvem = await response.json();
@@ -306,8 +301,6 @@
                 renderizarMapa();
             } catch (error) { console.log("Falha na sincronização de fundo."); }
         }
-
-        // Liga o "Coração" do sistema (atualiza a cada 15 segundos)
         setInterval(carregarDadosDaNuvemBackground, 15000);
 
         async function carregarDadosDaNuvem() {
@@ -330,11 +323,7 @@
 
         async function enviarParaNuvem(idMesa, dados) {
             try {
-                await fetch(URL_GOOGLE_SCRIPT, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
-                    body: JSON.stringify({ idMesa: idMesa, dados: dados })
-                });
+                await fetch(URL_GOOGLE_SCRIPT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ idMesa: idMesa, dados: dados }) });
             } catch (error) { throw new Error("Erro de conexão"); }
         }
 
@@ -352,25 +341,101 @@
             return numero.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
 
-        function calcularFinanceiro(forcarCalculo = false) {
+        // ======================================================================
+        // O NOVO CÉREBRO DE PARCELAS
+        // ======================================================================
+        
+        function calcularFinanceiroEParcelas() {
+            // Recalcula o total baseado nas cadeiras extras
             const configSetor = Object.values(CONFIG_MESAS).find(c => mesaEditandoAtual.startsWith(c.prefixo));
             const base = configSetor ? configSetor.valorBase : 0;
             const cadeiras = parseInt(document.getElementById('campoCadeiras').value) || 0;
             const valorSugerido = base + (cadeiras * valorCadeiraAvulsa);
             
             document.getElementById('textoValorPadrao').textContent = `Mesa + Cadeiras: R$ ${converterParaMoeda(valorSugerido)}`;
-            const campoTotal = document.getElementById('campoValorTotal');
-            if (campoTotal.value === "" || forcarCalculo) { campoTotal.value = converterParaMoeda(valorSugerido); }
-            calcularSaldo();
+            
+            // Atualiza o total
+            document.getElementById('campoValorTotal').value = converterParaMoeda(valorSugerido);
+            
+            // Como mexeu no preço base da mesa, refaz as parcelas dividindo por igual
+            gerarParcelasDaTela(); 
         }
 
-        function calcularSaldo() {
-            const total = converterParaNumero(document.getElementById('campoValorTotal').value);
-            const pago = converterParaNumero(document.getElementById('campoValorPago').value);
-            let saldo = total - pago;
-            if (saldo < 0) saldo = 0; 
+        function recalcularDivisaoParcelas() {
+            // Chamado quando o diretor edita o "Valor Total Fechado" na mão
+            // Refaz as parcelas dividindo o novo total por igual
+            gerarParcelasDaTela();
+        }
+
+        function gerarParcelasDaTela() {
+            const qtdParcelas = parseInt(document.getElementById('campoParcelas').value) || 1;
+            const totalFechado = converterParaNumero(document.getElementById('campoValorTotal').value);
+            const valorPorParcela = totalFechado / qtdParcelas;
+
+            arrayParcelasAtuais = [];
+            for (let i = 1; i <= qtdParcelas; i++) {
+                arrayParcelasAtuais.push({ numero: i, valor: valorPorParcela, pago: false });
+            }
+            desenharListaDeParcelas();
+        }
+
+        function desenharListaDeParcelas() {
+            const container = document.getElementById('containerParcelas');
+            container.innerHTML = ''; // Limpa a tela
+            
+            arrayParcelasAtuais.forEach((parcela, index) => {
+                const linha = document.createElement('div');
+                linha.style.display = 'flex'; linha.style.gap = '10px'; linha.style.alignItems = 'center'; linha.style.marginBottom = '8px';
+
+                linha.innerHTML = `
+                    <span style="color: var(--ciano-destaque); font-size: 13px; width: 65px; font-weight: bold;">${parcela.numero}ª Parc.</span>
+                    
+                    <input type="text" value="${converterParaMoeda(parcela.valor)}" 
+                           oninput="formatarMoeda(this)" onchange="atualizarValorUnico(${index}, this)" 
+                           style="flex: 1; padding: 6px; border-radius: 4px; background: #112240; color: #fff; border: 1px solid #233554; text-align: right;">
+                    
+                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; color: ${parcela.pago ? '#47D359' : '#8892b0'}; font-size: 13px; width: 70px; font-weight: bold;">
+                        <input type="checkbox" style="width: 16px; height: 16px;" ${parcela.pago ? 'checked' : ''} onchange="marcarComoPago(${index}, this)">
+                        ${parcela.pago ? 'PAGO' : 'Pagar'}
+                    </label>
+                `;
+                container.appendChild(linha);
+            });
+            somarValoresPagos();
+        }
+
+        function atualizarValorUnico(index, inputElement) {
+            // O diretor mudou o valor de uma parcela específica (ex: deu R$ 2000 na primeira)
+            arrayParcelasAtuais[index].valor = converterParaNumero(inputElement.value);
+            somarValoresPagos();
+        }
+
+        function marcarComoPago(index, checkboxElement) {
+            // O diretor clicou no checkbox de "Pago"
+            arrayParcelasAtuais[index].pago = checkboxElement.checked;
+            desenharListaDeParcelas(); // Redesenha para ficar verde o texto
+        }
+
+        function somarValoresPagos() {
+            let totalPagoAteAgora = 0;
+            
+            arrayParcelasAtuais.forEach(parcela => {
+                if (parcela.pago) {
+                    totalPagoAteAgora += parcela.valor;
+                }
+            });
+
+            // Atualiza os campos bloqueados
+            document.getElementById('campoValorPago').value = converterParaMoeda(totalPagoAteAgora);
+            
+            const totalGeral = converterParaNumero(document.getElementById('campoValorTotal').value);
+            let saldo = totalGeral - totalPagoAteAgora;
+            if (saldo < 0) saldo = 0;
+            
             document.getElementById('campoSaldo').value = converterParaMoeda(saldo);
         }
+
+        // ======================================================================
 
         function renderizarMapa() {
             const containerSalao = document.getElementById('container-salao');
@@ -458,7 +523,7 @@
         function abrirModal(idMesa) {
             mesaEditandoAtual = idMesa;
             const dados = bancoDeDados[idMesa];
-            statusAoAbrirMesa = dados.status; // Grava como a mesa estava ao abrir (Para a trava de segurança)
+            statusAoAbrirMesa = dados.status; 
 
             document.getElementById('tituloModal').innerHTML = `Gerenciar ${dados.setor} (${idMesa})`;
             
@@ -467,14 +532,36 @@
             document.getElementById('campoTelefone').value = dados.telefone;
             document.getElementById('campoCadeiras').value = dados.cadeiras;
             document.getElementById('campoPagamento').value = dados.pagamento;
-            document.getElementById('campoParcelas').value = dados.parcelas || "1x";
-            document.getElementById('campoDetalhesParcelas').value = dados.detalhesParcelas || "";
             document.getElementById('campoValorTotal').value = dados.valorTotal;
-            document.getElementById('campoValorPago').value = dados.valorPago;
             document.getElementById('campoLogoPropaganda').checked = dados.logoPropaganda;
             document.getElementById('campoObs').value = dados.obs;
 
-            if (dados.status === "Livre" && dados.valorTotal === "") { calcularFinanceiro(true); } else { calcularFinanceiro(false); }
+            // CARREGANDO AS PARCELAS DA MEMÓRIA
+            try {
+                // Tenta ler o código JSON. Se a mesa for nova, ele lê "[]" e vira um array vazio.
+                arrayParcelasAtuais = JSON.parse(dados.detalhesParcelas || "[]");
+            } catch (e) {
+                arrayParcelasAtuais = []; // Se der erro de leitura, zera.
+            }
+
+            // Define a quantidade no dropdown com base em quantas parcelas existem na memória
+            document.getElementById('campoParcelas').value = arrayParcelasAtuais.length > 0 ? arrayParcelasAtuais.length : 1;
+
+            if (dados.status === "Livre" && dados.valorTotal === "") { 
+                // É mesa nova! Calcula o valor e já divide na hora
+                calcularFinanceiroEParcelas(); 
+            } else { 
+                // A mesa já estava salva. Apenas desenha na tela o que veio da memória.
+                const configSetor = Object.values(CONFIG_MESAS).find(c => mesaEditandoAtual.startsWith(c.prefixo));
+                const valorSugerido = (configSetor ? configSetor.valorBase : 0) + ((parseInt(dados.cadeiras) || 0) * valorCadeiraAvulsa);
+                document.getElementById('textoValorPadrao').textContent = `Mesa + Cadeiras: R$ ${converterParaMoeda(valorSugerido)}`;
+                
+                if(arrayParcelasAtuais.length === 0) {
+                    gerarParcelasDaTela(); // Se por acaso não tinha parcela salva, gera agora.
+                } else {
+                    desenharListaDeParcelas(); // Desenha as parcelas com os valores customizados
+                }
+            }
 
             const areaTransf = document.getElementById('areaTransferencia');
             if (dados.status !== "Livre") {
@@ -504,27 +591,17 @@
             btnSalvar.textContent = "Verificando...";
             btnSalvar.disabled = true; 
 
-            // ==========================================
-            // A TRAVA DE SEGURANÇA (ANTI COLISÃO)
-            // ==========================================
             try {
-                // Vai rapidamente na nuvem perguntar como essa mesa está AGORA
                 const response = await fetch(URL_GOOGLE_SCRIPT);
                 const dbNuvem = await response.json();
-                
-                // Se a mesa estava Livre quando você abriu, mas na nuvem já não está mais Livre... COLISÃO!
                 if (statusAoAbrirMesa === "Livre" && dbNuvem[mesaEditandoAtual].status !== "Livre") {
                     alert(`🚨 ALERTA: Outro diretor acabou de registrar a mesa ${mesaEditandoAtual}! O salão será atualizado para você escolher outra mesa.`);
-                    Object.assign(bancoDeDados[mesaEditandoAtual], dbNuvem[mesaEditandoAtual]); // Atualiza sua tela com os dados do colega rápido
-                    fecharModal();
-                    renderizarMapa();
-                    btnSalvar.textContent = "Salvar na Nuvem";
-                    btnSalvar.disabled = false;
-                    return; // Aborta o salvamento para não estragar a venda do colega!
+                    Object.assign(bancoDeDados[mesaEditandoAtual], dbNuvem[mesaEditandoAtual]); 
+                    fecharModal(); renderizarMapa();
+                    btnSalvar.textContent = "Salvar na Nuvem"; btnSalvar.disabled = false;
+                    return; 
                 }
-            } catch (error) {
-                // Se der erro de rede, segue o jogo (pode estar offline)
-            }
+            } catch (error) {}
 
             btnSalvar.textContent = "Salvando nas nuvens...";
 
@@ -534,22 +611,22 @@
             bancoDeDados[mesaEditandoAtual].cadeiras = parseInt(document.getElementById('campoCadeiras').value) || 0;
             bancoDeDados[mesaEditandoAtual].pagamento = document.getElementById('campoPagamento').value;
             bancoDeDados[mesaEditandoAtual].parcelas = document.getElementById('campoParcelas').value;
-            bancoDeDados[mesaEditandoAtual].detalhesParcelas = document.getElementById('campoDetalhesParcelas').value;
             bancoDeDados[mesaEditandoAtual].valorTotal = document.getElementById('campoValorTotal').value;
             bancoDeDados[mesaEditandoAtual].valorPago = document.getElementById('campoValorPago').value;
             bancoDeDados[mesaEditandoAtual].saldoDevedor = converterParaNumero(document.getElementById('campoSaldo').value);
             bancoDeDados[mesaEditandoAtual].logoPropaganda = document.getElementById('campoLogoPropaganda').checked;
             bancoDeDados[mesaEditandoAtual].obs = document.getElementById('campoObs').value;
+            
+            // SALVA A MATRIZ DE PARCELAS COMO TEXTO NA COLUNA N
+            bancoDeDados[mesaEditandoAtual].detalhesParcelas = JSON.stringify(arrayParcelasAtuais);
 
             try {
                 await enviarParaNuvem(mesaEditandoAtual, bancoDeDados[mesaEditandoAtual]);
-                fecharModal();
-                renderizarMapa(); 
+                fecharModal(); renderizarMapa(); 
             } catch (error) {
                 alert("Erro ao salvar na nuvem! Verifique a internet e tente novamente.");
             } finally {
-                btnSalvar.textContent = "Salvar na Nuvem";
-                btnSalvar.disabled = false;
+                btnSalvar.textContent = "Salvar na Nuvem"; btnSalvar.disabled = false;
             }
         }
 
@@ -560,15 +637,14 @@
 
                 bancoDeDados[mesaEditandoAtual] = { 
                     setor: bancoDeDados[mesaEditandoAtual].setor, status: "Livre", nome: "", telefone: "", email: "",
-                    cadeiras: 0, pagamento: "Nenhum", parcelas: "1x", detalhesParcelas: "",
+                    cadeiras: 0, pagamento: "Nenhum", parcelas: "1x", detalhesParcelas: "[]",
                     valorTotal: "", valorPago: "", saldoDevedor: 0,
                     logoPropaganda: false, obs: ""
                 };
 
                 try {
                     await enviarParaNuvem(mesaEditandoAtual, bancoDeDados[mesaEditandoAtual]);
-                    fecharModal();
-                    renderizarMapa();
+                    fecharModal(); renderizarMapa();
                 } catch (error) {
                     alert("Erro ao apagar da nuvem!");
                 } finally {
@@ -596,10 +672,8 @@
                 try {
                     await enviarParaNuvem(mesaEditandoAtual, bancoDeDados[mesaEditandoAtual]);
                     await enviarParaNuvem(idDestino, bancoDeDados[idDestino]);
-                    
                     alert("Transferência realizada com sucesso!");
-                    fecharModal();
-                    renderizarMapa();
+                    fecharModal(); renderizarMapa();
                 } catch (error) {
                     alert("Erro ao transferir na nuvem!");
                 } finally {
