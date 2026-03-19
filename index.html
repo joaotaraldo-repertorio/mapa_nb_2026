@@ -90,14 +90,11 @@
         .info-contato { text-align: center; font-size: 18px; font-weight: bold; color: #47D359; border-top: 1px dashed #233554; padding-top: 10px; width: 100%; }
         .info-contato span.realizacao { display: block; color: var(--texto-claro); font-size: 14px; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* ======================================================= */
-        /* ESTILOS DO NOVO COFRE FINANCEIRO (TABELA + SIMULADOR)   */
-        /* ======================================================= */
+        /* ESTILOS DO COFRE FINANCEIRO */
         #painel-cofre { display: none; width: 100%; max-width: 1300px; flex-direction: column; gap: 20px; padding: 20px; box-sizing: border-box; }
         .cofre-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--ciano-destaque); padding-bottom: 15px;}
         .cofre-header h2 { margin: 0; color: var(--ciano-destaque); font-size: 28px; display: flex; align-items: center; gap: 10px;}
         
-        /* 1. Os 4 Quadros de Resumo Geral */
         .cofre-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;}
         .cofre-card { background-color: var(--azul-card); border-radius: 8px; padding: 25px; border: 1px solid #233554; text-align: center; box-shadow: 0 10px 20px rgba(0,0,0,0.5); position: relative; overflow: hidden;}
         .cofre-card h4 { margin: 0 0 10px 0; color: #8892b0; font-size: 15px; text-transform: uppercase; letter-spacing: 1px;}
@@ -107,7 +104,6 @@
         .cofre-recebido { border-top: 4px solid #47D359; } .cofre-recebido .valor { color: #47D359; }
         .cofre-pendente { border-top: 4px solid #ff4d4d; } .cofre-pendente .valor { color: #ff4d4d; }
 
-        /* 2. Tabela de Detalhamento por Modalidade */
         .area-tabela { overflow-x: auto; background-color: var(--azul-card); border-radius: 8px; border: 1px solid #233554; padding: 15px;}
         .area-tabela h3 { margin-top: 0; color: var(--ciano-destaque); font-size: 20px; border-bottom: 1px solid #233554; padding-bottom: 10px;}
         .tabela-financeira { width: 100%; border-collapse: collapse; min-width: 800px;}
@@ -118,7 +114,6 @@
         .tabela-financeira tr:hover td { background-color: rgba(102, 255, 255, 0.05); }
         .tabela-financeira tfoot td { background-color: #112240; color: var(--ciano-destaque); font-size: 16px; border-top: 2px solid var(--ciano-destaque); border-bottom: none;}
 
-        /* 3. O Simulador de Cenários */
         .painel-simulador { background-color: #061020; border: 1px dashed #f59e0b; border-radius: 8px; padding: 25px; margin-top: 10px;}
         .painel-simulador h3 { margin: 0 0 5px 0; color: #f59e0b; font-size: 22px; display: flex; align-items: center; gap: 8px;}
         .painel-simulador > p { color: #8892b0; margin: 0 0 20px 0; font-size: 14px;}
@@ -507,17 +502,18 @@
             for (const chave in CONFIG_MESAS) {
                 const config = CONFIG_MESAS[chave];
                 
-                // Capacidade Total da Modalidade
+                // CONTA 1: PREVISÃO É ESTÁTICA (SÓ O VALOR BASE)
                 let qtdTotalSetor = 0;
                 config.layout.forEach(fileira => {
                     fileira.forEach(item => { if (typeof item === 'number') qtdTotalSetor += item; });
                 });
                 
                 let previsaoSetor = qtdTotalSetor * config.valorBase;
+                
                 totaisGlobais.qtdTotalGeral += qtdTotalSetor;
                 totaisGlobais.previsao += previsaoSetor;
 
-                // Realidade Atual (Banco de Dados)
+                // CONTA 2: TOTAL FECHADO É DINÂMICO (PEGA O VALOR REAL COM CADEIRAS EXTRAS)
                 let qtdVendidaSetor = 0;
                 let fechadoSetor = 0;
                 let recebidoSetor = 0;
@@ -527,7 +523,7 @@
                         const mesa = bancoDeDados[id];
                         if (mesa.status === "Vendida" || mesa.status === "Reservada") {
                             qtdVendidaSetor++;
-                            fechadoSetor += converterParaNumero(mesa.valorTotal);
+                            fechadoSetor += converterParaNumero(mesa.valorTotal); // Aqui entra a cadeira extra
                             recebidoSetor += converterParaNumero(mesa.valorPago);
                         }
                     }
@@ -540,7 +536,6 @@
                 totaisGlobais.recebido += recebidoSetor;
                 totaisGlobais.pendente += saldoSetor;
 
-                // INJETA LINHA NA TABELA DE DETALHES
                 htmlDetalhes += `
                     <tr>
                         <td style="color:${config.corNormal};">${config.nome}</td>
@@ -553,7 +548,6 @@
                     </tr>
                 `;
 
-                // INJETA CAIXINHA NO SIMULADOR DE CENÁRIOS
                 let disponiveis = qtdTotalSetor - qtdVendidaSetor;
                 htmlSimulador += `
                     <div class="sim-item">
@@ -567,7 +561,6 @@
                 `;
             }
 
-            // Injeta o Rodapé dos Totais da Tabela
             let htmlRodapeTabela = `
                 <tr>
                     <td>TOTAIS GERAIS</td>
@@ -580,24 +573,20 @@
                 </tr>
             `;
 
-            // Atualiza os Cards Superiores
             document.getElementById('cofrePrevisao').textContent = `R$ ${converterParaMoeda(totaisGlobais.previsao)}`;
             document.getElementById('cofreFechado').textContent = `R$ ${converterParaMoeda(totaisGlobais.fechado)}`;
             document.getElementById('cofreRecebido').textContent = `R$ ${converterParaMoeda(totaisGlobais.recebido)}`;
             document.getElementById('cofrePendente').textContent = `R$ ${converterParaMoeda(totaisGlobais.pendente)}`;
 
-            // Atualiza as views de tabela e simulador
             document.getElementById('tbodyDetalhes').innerHTML = htmlDetalhes;
             document.getElementById('tfootDetalhes').innerHTML = htmlRodapeTabela;
             
             const containerSimulador = document.getElementById('containerSimuladorInputs');
             containerSimulador.innerHTML = htmlSimulador;
-            // Salva o total fechado atual no container para o simulador usar de base
             containerSimulador.setAttribute('data-fechado-atual', totaisGlobais.fechado); 
             
-            calcularSimulacao(); // Roda a primeira vez pra zerar os campos da simulação
+            calcularSimulacao();
 
-            // Troca as telas
             document.getElementById('container-salao').style.display = 'none';
             document.querySelector('.painel-rodape').style.display = 'none';
             document.getElementById('painel-cofre').style.display = 'flex';
@@ -613,7 +602,6 @@
                 let qtd = parseInt(inp.value) || 0;
                 let max = parseInt(inp.getAttribute('max')) || 0;
                 
-                // Trava pro usuário não simular mais mesas do que existem
                 if (qtd > max) { qtd = max; inp.value = max; }
                 if (qtd < 0) { qtd = 0; inp.value = 0; }
 
@@ -737,6 +725,7 @@
             } catch (error) { throw new Error("Erro de conexão"); }
         }
 
+        // FUNÇÕES DE BLINDAGEM DE MOEDA (TRATAM ZEROS, STRINGS E NULOS)
         function formatarMoeda(elemento) {
             let valor = String(elemento.value).replace(/\D/g, ''); 
             if (valor === '') { elemento.value = ''; return; }
