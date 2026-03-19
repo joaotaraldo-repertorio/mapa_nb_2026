@@ -118,7 +118,7 @@
     </style>
 </head>
 <body class="modo-apresentacao"> 
-    
+
     <div id="telaCarregamento">
         <div class="spinner"></div>
         <h2 style="color: var(--ciano-destaque);">Conectando à Nuvem...</h2>
@@ -140,8 +140,7 @@
         <h2 id="titulo-dinamico" class="titulo-evento">Carregando...</h2>
         <div class="area-botoes-topo">
             <button class="botao-acao btn-sincronizar" id="btnSincronizar" onclick="carregarDadosDaNuvem()">🔄 Sincronizar</button>
-            <button class="botao-acao">💰 Financeiro</button>
-        </div>
+            </div>
     </div>
 
     <div id="container-salao">
@@ -295,7 +294,7 @@
 
         document.getElementById('logoSecreta').onclick = function() {
             if (document.body.classList.contains('modo-apresentacao')) {
-                let senhaDigitada = prompt("Área Restrita. Digite a senha de acesso:");
+                let senhaDigitada = prompt("Área Restrita. Digite a senha de Acesso:");
                 if (senhaDigitada === SENHA_DIRETORIA) {
                     document.body.classList.remove('modo-apresentacao');
                     mostrarAlerta("Acesso Liberado! Nomes, cadeiras extras e exclusão revelados.\n\nAtualize a página (F5) para voltar ao modo seguro.");
@@ -635,9 +634,8 @@
         function abrirModal(idMesa) {
             const dados = bancoDeDados[idMesa];
             
-            // A TRAVA MESTRA PARA MESAS OCUPADAS (SEM SENHA)
             if (dados.status !== "Livre" && document.body.classList.contains('modo-apresentacao')) {
-                mostrarAlerta("🔒 Mesa Bloqueada!\n\nEsta mesa já foi Vendida ou Reservada. Para alterar os dados financeiros, por favor insira a senha de Acesso.");
+                mostrarAlerta("🔒 Mesa Bloqueada!\n\nEsta mesa já foi Vendida ou Reservada. Para alterar os dados financeiros, por favor insira a senha de Acesso clicando na logo do Educandário.");
                 return;
             }
 
