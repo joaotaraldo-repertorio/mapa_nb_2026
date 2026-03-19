@@ -199,6 +199,7 @@
             <div class="area-logo" id="logoSecreta" title="Área Restrita">
                 <img id="img-logo" src="" alt="Logo">
             </div>
+            
             <h2 id="titulo-dinamico" class="titulo-evento">Carregando...</h2>
             
             <div class="area-botoes-topo">
@@ -242,7 +243,7 @@
                             <th>Modalidade</th>
                             <th>Mesas<br>(Total)</th>
                             <th>Prev. Máxima<br>(R$)</th>
-                            <th>Mesas<br>(Vendidas)</th>
+                            <th>Mesas/Itens<br>(Vendidos)</th>
                             <th>Total Fechado<br>(R$)</th>
                             <th>Já Recebido<br>(R$)</th>
                             <th>Saldo a Receber<br>(R$)</th>
@@ -257,7 +258,7 @@
 
             <div class="painel-simulador">
                 <h3>🔮 Simulador de Cenários</h3>
-                <p>O que acontece com o faturamento se vendermos mais algumas mesas hoje? Preencha as quantidades abaixo:</p>
+                <p>O que acontece com o faturamento se vendermos mais algumas mesas ou cadeiras hoje? Preencha as quantidades abaixo:</p>
                 
                 <div class="sim-grid-inputs" id="containerSimuladorInputs">
                     </div>
@@ -492,17 +493,18 @@
         };
 
         // ======================================================================
-        // A INTELIGÊNCIA DA SALA COFRE (DETALHES E SIMULADOR)
+        // A INTELIGÊNCIA DA SALA COFRE COM AS CADEIRAS DESMEMBRADAS
         // ======================================================================
         function abrirCofre() {
             let totaisGlobais = { previsao: 0, fechado: 0, recebido: 0, pendente: 0, qtdVendidaGeral: 0, qtdTotalGeral: 0 };
+            let totaisCadeiras = { qtd: 0, fechado: 0, recebido: 0 };
+            
             let htmlDetalhes = '';
             let htmlSimulador = '';
 
             for (const chave in CONFIG_MESAS) {
                 const config = CONFIG_MESAS[chave];
                 
-                // CONTA 1: PREVISÃO É ESTÁTICA (SÓ O VALOR BASE)
                 let qtdTotalSetor = 0;
                 config.layout.forEach(fileira => {
                     fileira.forEach(item => { if (typeof item === 'number') qtdTotalSetor += item; });
@@ -513,7 +515,6 @@
                 totaisGlobais.qtdTotalGeral += qtdTotalSetor;
                 totaisGlobais.previsao += previsaoSetor;
 
-                // CONTA 2: TOTAL FECHADO É DINÂMICO (PEGA O VALOR REAL COM CADEIRAS EXTRAS)
                 let qtdVendidaSetor = 0;
                 let fechadoSetor = 0;
                 let recebidoSetor = 0;
@@ -523,8 +524,33 @@
                         const mesa = bancoDeDados[id];
                         if (mesa.status === "Vendida" || mesa.status === "Reservada") {
                             qtdVendidaSetor++;
-                            fechadoSetor += converterParaNumero(mesa.valorTotal); // Aqui entra a cadeira extra
-                            recebidoSetor += converterParaNumero(mesa.valorPago);
+                            
+                            // MATEMÁTICA DE SEPARAÇÃO DA CADEIRA
+                            let qtdCadeirasExtra = parseInt(mesa.cadeiras) || 0;
+                            let valorTotalCobrado = converterParaNumero(mesa.valorTotal);
+                            let valorPago = converterParaNumero(mesa.valorPago);
+                            
+                            let valorDasCadeiras = qtdCadeirasExtra * valorCadeiraAvulsa;
+                            let valorDaMesaSemCadeiras = valorTotalCobrado - valorDasCadeiras;
+                            
+                            // Tratamento para caso de descontos gigantescos
+                            if (valorDaMesaSemCadeiras < 0) {
+                                valorDaMesaSemCadeiras = valorTotalCobrado;
+                                valorDasCadeiras = 0;
+                            }
+                            
+                            // Rateio do dinheiro recebido (Paga a mesa primeiro, o que sobra paga a cadeira)
+                            let pagoNaMesa = Math.min(valorPago, valorDaMesaSemCadeiras);
+                            let pagoNaCadeira = Math.max(0, valorPago - pagoNaMesa);
+                            
+                            // Aloca no Setor
+                            fechadoSetor += valorDaMesaSemCadeiras;
+                            recebidoSetor += pagoNaMesa;
+                            
+                            // Aloca nas Cadeiras Globais
+                            totaisCadeiras.qtd += qtdCadeirasExtra;
+                            totaisCadeiras.fechado += valorDasCadeiras;
+                            totaisCadeiras.recebido += pagoNaCadeira;
                         }
                     }
                 }
@@ -560,6 +586,37 @@
                     </div>
                 `;
             }
+
+            // INJETA A LINHA EXCLUSIVA DAS CADEIRAS NA TABELA
+            let saldoCadeiras = totaisCadeiras.fechado - totaisCadeiras.recebido;
+            htmlDetalhes += `
+                <tr style="background-color: rgba(255, 255, 255, 0.05);">
+                    <td style="color:#fff;">🪑 Cadeiras Avulsas</td>
+                    <td style="color:#8892b0;">-</td>
+                    <td style="color:#8892b0;">-</td>
+                    <td style="color: ${totaisCadeiras.qtd > 0 ? '#fff' : '#4a5568'}">${totaisCadeiras.qtd}</td>
+                    <td style="color: var(--ciano-destaque);">R$ ${converterParaMoeda(totaisCadeiras.fechado)}</td>
+                    <td style="color: #47D359;">R$ ${converterParaMoeda(totaisCadeiras.recebido)}</td>
+                    <td style="color: #ff4d4d;">R$ ${converterParaMoeda(saldoCadeiras)}</td>
+                </tr>
+            `;
+
+            // INJETA AS CADEIRAS NO SIMULADOR
+            htmlSimulador += `
+                <div class="sim-item" style="border-color: #fff;">
+                    <label style="color:#fff">🪑 Cadeiras Avulsas</label>
+                    <div class="sim-input-row">
+                        <input type="number" min="0" max="999" value="0" class="input-simulador" data-valorbase="${valorCadeiraAvulsa}" oninput="calcularSimulacao()">
+                        <span>x R$ ${converterParaMoeda(valorCadeiraAvulsa)}</span>
+                    </div>
+                    <span style="margin-top:2px;">(Venda Extra Opcional)</span>
+                </div>
+            `;
+
+            // Soma as cadeiras no Caixa Geral do Educandário
+            totaisGlobais.fechado += totaisCadeiras.fechado;
+            totaisGlobais.recebido += totaisCadeiras.recebido;
+            totaisGlobais.pendente += saldoCadeiras;
 
             let htmlRodapeTabela = `
                 <tr>
@@ -725,18 +782,19 @@
             } catch (error) { throw new Error("Erro de conexão"); }
         }
 
-        // FUNÇÕES DE BLINDAGEM DE MOEDA (TRATAM ZEROS, STRINGS E NULOS)
         function formatarMoeda(elemento) {
             let valor = String(elemento.value).replace(/\D/g, ''); 
             if (valor === '') { elemento.value = ''; return; }
             valor = (parseInt(valor) / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             elemento.value = valor;
         }
+
         function converterParaNumero(str) {
             if (str === null || str === undefined || str === "") return 0;
             if (typeof str === 'number') return str;
             return parseFloat(String(str).replace(/\./g, '').replace(',', '.'));
         }
+
         function converterParaMoeda(numero) {
             let val = Number(numero);
             if (isNaN(val)) val = 0;
@@ -867,7 +925,6 @@
 
         function recalcularDivisaoParcelas() { recalcularMatrizParcelas('MUDOU_VALOR_TOTAL'); }
 
-        // A MUDANÇA DA FORÇA BRUTA ACONTECE AQUI! O parâmetro forcarCalculo força a atualização.
         function calcularFinanceiroEParcelas(forcarCalculo = false) {
             const configSetor = Object.values(CONFIG_MESAS).find(c => mesaEditandoAtual.startsWith(c.prefixo));
             const base = configSetor ? configSetor.valorBase : 0;
