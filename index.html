@@ -346,7 +346,7 @@
                 </div>
                 <div class="form-group" style="flex: 0.3;">
                     <label>Cadeiras Extras</label>
-                    <input type="number" id="campoCadeiras" min="0" value="0" oninput="calcularFinanceiroEParcelas()" onchange="calcularFinanceiroEParcelas()">
+                    <input type="number" id="campoCadeiras" min="0" value="0" oninput="calcularFinanceiroEParcelas(true)" onchange="calcularFinanceiroEParcelas(true)">
                 </div>
                 <div class="form-group" style="justify-content: flex-end;">
                     <div class="checkbox-group" style="margin-bottom: 0; padding: 8px;">
@@ -867,6 +867,7 @@
 
         function recalcularDivisaoParcelas() { recalcularMatrizParcelas('MUDOU_VALOR_TOTAL'); }
 
+        // A MUDANÇA DA FORÇA BRUTA ACONTECE AQUI! O parâmetro forcarCalculo força a atualização.
         function calcularFinanceiroEParcelas(forcarCalculo = false) {
             const configSetor = Object.values(CONFIG_MESAS).find(c => mesaEditandoAtual.startsWith(c.prefixo));
             const base = configSetor ? configSetor.valorBase : 0;
@@ -876,7 +877,9 @@
             document.getElementById('textoValorPadrao').textContent = `Mesa + Cadeiras: R$ ${converterParaMoeda(valorSugerido)}`;
             
             const campoTotal = document.getElementById('campoValorTotal');
-            if (campoTotal.value === "" || forcarCalculo) { campoTotal.value = converterParaMoeda(valorSugerido); }
+            if (campoTotal.value === "" || forcarCalculo) { 
+                campoTotal.value = converterParaMoeda(valorSugerido); 
+            }
             
             recalcularMatrizParcelas('MUDOU_VALOR_TOTAL');
         }
