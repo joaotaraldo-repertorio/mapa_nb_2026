@@ -96,7 +96,7 @@
         .badge-divida { position: absolute; bottom: 20px; right: 0px; background-color: #ff4d4d; color: #fff; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.8); border: 2px solid #fff; z-index: 10; }
 
         /* LEGENDA ESPREMIDA */
-        .painel-rodape { width: 100%; background-color: var(--azul-card); border-radius: 8px; padding: 15px 20px; border: 1px solid var(--ciano-destaque); box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 15px; }
+        .painel-rodape { width: 100%; background-color: var(--azul-card); border-radius: 8px; padding: 15px 20px; border: 1px solid var(--ciano-destaque); box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 20px;}
         .titulo-rodape { margin: 0; color: var(--ciano-destaque); text-transform: uppercase; letter-spacing: 2px; font-size: 18px; border-bottom: 1px solid #233554; padding-bottom: 5px; width: 100%; text-align: center; }
         
         .legenda-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; width: 100%; justify-items: center; }
@@ -198,6 +198,7 @@
             <div class="area-logo" id="logoSecreta" title="Área Restrita">
                 <img id="img-logo" src="" alt="Logo">
             </div>
+            
             <h2 id="titulo-dinamico" class="titulo-evento">Carregando...</h2>
             
             <div class="area-botoes-topo">
@@ -399,9 +400,8 @@
         let arrayParcelasAtuais = []; 
 
         const SENHA_DIRETORIA = "diretoria26";
-        const SENHA_FINANCEIRO = "financeiro26"; // A senha mestra do cofre
+        const SENHA_FINANCEIRO = "financeiro26"; 
 
-        // O LETREIRO DE LUXO (Agora com HTML embutido na data e show)
         const CONFIG_GERAL = { 
             edicao: "19ª", nomeEvento: "Noite Beneficente", ano: "2026", 
             data: "17 de Outubro", show: "Marcos & Belutti", 
@@ -428,7 +428,6 @@
             document.getElementById('modalAlerta').style.display = 'none'; 
         }
 
-        // A LÓGICA DA SENHA DUPLA
         document.getElementById('logoSecreta').onclick = function() {
             if (document.body.classList.contains('modo-apresentacao')) {
                 let senhaDigitada = prompt("Área Restrita. Digite a senha de Acesso:");
@@ -437,26 +436,23 @@
                     mostrarAlerta("Acesso de Vendas Liberado! Nomes e edições disponíveis.\n\nAtualize a página (F5) para voltar ao modo seguro.", "🔓 Acesso Concedido");
                 } else if (senhaDigitada === SENHA_FINANCEIRO) {
                     document.body.classList.remove('modo-apresentacao');
-                    document.getElementById('btnCofre').style.display = 'block'; // Libera o botão do cofre!
+                    document.getElementById('btnCofre').style.display = 'block'; 
                     mostrarAlerta("Acesso Financeiro Liberado! O Painel do Cofre está disponível no topo da tela.", "💰 Cofre Destravado");
                 } else if (senhaDigitada !== null) {
                     mostrarAlerta("Senha incorreta.", "❌ Erro");
                 }
             } else {
                 document.body.classList.add('modo-apresentacao');
-                document.getElementById('btnCofre').style.display = 'none'; // Esconde de novo
+                document.getElementById('btnCofre').style.display = 'none'; 
             }
         };
 
-        // ======================================================================
-        // A INTELIGÊNCIA DA SALA COFRE
-        // ======================================================================
         function abrirCofre() {
             let previsaoTotal = 0;
             let totalFechado = 0;
             let totalRecebido = 0;
 
-            // 1. Calcula a Previsão (100% das mesas base vendidas)
+            // Calcula Previsão 100%
             for (const chave in CONFIG_MESAS) {
                 const config = CONFIG_MESAS[chave];
                 let qtdMesasNesteSetor = 0;
@@ -468,24 +464,22 @@
                 previsaoTotal += (qtdMesasNesteSetor * config.valorBase);
             }
 
-            // 2. Calcula o Realizado e o Dinheiro em Caixa lendo o Banco de Dados
+            // Calcula Caixa e Recebimentos (Com Conversão Segura)
             for (const id in bancoDeDados) {
                 const mesa = bancoDeDados[id];
                 if (mesa.status === "Vendida" || mesa.status === "Reservada") {
-                    totalFechado += converterParaNumero(mesa.valorTotal); // Pega o valor com cadeiras extras
+                    totalFechado += converterParaNumero(mesa.valorTotal);
                     totalRecebido += converterParaNumero(mesa.valorPago);
                 }
             }
 
             let saldoReceber = totalFechado - totalRecebido;
 
-            // Injeta na tela
             document.getElementById('cofrePrevisao').textContent = `R$ ${converterParaMoeda(previsaoTotal)}`;
             document.getElementById('cofreFechado').textContent = `R$ ${converterParaMoeda(totalFechado)}`;
             document.getElementById('cofreRecebido').textContent = `R$ ${converterParaMoeda(totalRecebido)}`;
             document.getElementById('cofrePendente').textContent = `R$ ${converterParaMoeda(saldoReceber)}`;
 
-            // Troca as telas
             document.getElementById('container-salao').style.display = 'none';
             document.querySelector('.painel-rodape').style.display = 'none';
             document.getElementById('painel-cofre').style.display = 'flex';
@@ -497,9 +491,6 @@
             document.querySelector('.painel-rodape').style.display = 'flex';
         }
 
-        // ======================================================================
-        // EXPORTAÇÃO PARA PDF/IMG
-        // ======================================================================
         async function exportarMapa(tipo) {
             const areaExportacao = document.getElementById('area-exportacao');
             const botoesTopo = document.querySelector('.area-botoes-topo');
@@ -605,19 +596,28 @@
             } catch (error) { throw new Error("Erro de conexão"); }
         }
 
+        // ======================================================================
+        // FUNÇÕES MATEMÁTICAS 100% BLINDADAS (RESOLVE O ERRO DO COFRE E DA MESA)
+        // ======================================================================
         function formatarMoeda(elemento) {
-            let valor = elemento.value.replace(/\D/g, ''); 
+            let valor = String(elemento.value).replace(/\D/g, ''); 
             if (valor === '') { elemento.value = ''; return; }
             valor = (parseInt(valor) / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             elemento.value = valor;
         }
-        function converterParaNumero(stringMoeda) {
-            if (!stringMoeda) return 0;
-            return parseFloat(stringMoeda.replace(/\./g, '').replace(',', '.'));
+
+        function converterParaNumero(str) {
+            if (str === null || str === undefined || str === "") return 0;
+            if (typeof str === 'number') return str;
+            return parseFloat(String(str).replace(/\./g, '').replace(',', '.'));
         }
+
         function converterParaMoeda(numero) {
-            return numero.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            let val = Number(numero);
+            if (isNaN(val)) val = 0;
+            return val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
+        // ======================================================================
 
         function recalcularMatrizParcelas(tipoEvento, indexEditado = -1) {
             const totalFechado = converterParaNumero(document.getElementById('campoValorTotal').value);
@@ -743,14 +743,16 @@
 
         function recalcularDivisaoParcelas() { recalcularMatrizParcelas('MUDOU_VALOR_TOTAL'); }
 
-        function calcularFinanceiroEParcelas() {
+        function calcularFinanceiroEParcelas(forcarCalculo = false) {
             const configSetor = Object.values(CONFIG_MESAS).find(c => mesaEditandoAtual.startsWith(c.prefixo));
             const base = configSetor ? configSetor.valorBase : 0;
             const cadeiras = parseInt(document.getElementById('campoCadeiras').value) || 0;
             const valorSugerido = base + (cadeiras * valorCadeiraAvulsa);
             
             document.getElementById('textoValorPadrao').textContent = `Mesa + Cadeiras: R$ ${converterParaMoeda(valorSugerido)}`;
-            document.getElementById('campoValorTotal').value = converterParaMoeda(valorSugerido);
+            
+            const campoTotal = document.getElementById('campoValorTotal');
+            if (campoTotal.value === "" || forcarCalculo) { campoTotal.value = converterParaMoeda(valorSugerido); }
             
             recalcularMatrizParcelas('MUDOU_VALOR_TOTAL');
         }
@@ -892,14 +894,14 @@
 
             document.getElementById('tituloModal').innerHTML = `Gerenciar ${dados.setor} (${idMesa})`;
             
-            document.getElementById('campoStatus').value = dados.status;
-            document.getElementById('campoNome').value = dados.nome;
-            document.getElementById('campoTelefone').value = dados.telefone;
-            document.getElementById('campoCadeiras').value = dados.cadeiras;
-            document.getElementById('campoPagamento').value = dados.pagamento;
-            document.getElementById('campoValorTotal').value = dados.valorTotal;
-            document.getElementById('campoLogoPropaganda').checked = dados.logoPropaganda;
-            document.getElementById('campoObs').value = dados.obs;
+            // PROTEÇÃO CONTRA CAMPOS VAZIOS
+            document.getElementById('campoStatus').value = dados.status || "Livre";
+            document.getElementById('campoNome').value = dados.nome || "";
+            document.getElementById('campoTelefone').value = dados.telefone || "";
+            document.getElementById('campoCadeiras').value = dados.cadeiras || 0;
+            document.getElementById('campoPagamento').value = dados.pagamento || "Nenhum";
+            document.getElementById('campoLogoPropaganda').checked = dados.logoPropaganda || false;
+            document.getElementById('campoObs').value = dados.obs || "";
 
             try {
                 arrayParcelasAtuais = JSON.parse(dados.detalhesParcelas || "[]");
@@ -907,8 +909,14 @@
 
             document.getElementById('campoParcelas').value = arrayParcelasAtuais.length > 0 ? arrayParcelasAtuais.length : 1;
 
-            if (dados.status === "Livre" && dados.valorTotal === "") { 
-                calcularFinanceiroEParcelas(); 
+            // BLINDAGEM DE VALOR: Trata Strings vazias e Zeros vindo do Google
+            let valTotalStr = String(dados.valorTotal || "").trim();
+            if (valTotalStr === "0" || valTotalStr === "0.00" || valTotalStr === "0,00" || valTotalStr === "") { valTotalStr = ""; }
+            
+            document.getElementById('campoValorTotal').value = valTotalStr; 
+
+            if (valTotalStr === "") { 
+                calcularFinanceiroEParcelas(true); // AUTO-PREENCHE 25.000,00 etc.
             } else { 
                 const configSetor = Object.values(CONFIG_MESAS).find(c => mesaEditandoAtual.startsWith(c.prefixo));
                 const valorSugerido = (configSetor ? configSetor.valorBase : 0) + ((parseInt(dados.cadeiras) || 0) * valorCadeiraAvulsa);
