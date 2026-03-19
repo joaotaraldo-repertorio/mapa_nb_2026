@@ -31,7 +31,7 @@
         
         .palco { width: 50%; background-color: var(--cor-palco); color: #fff; text-align: center; padding: 15px 0; font-size: 24px; font-weight: bold; letter-spacing: 5px; border-radius: 8px; border: 2px solid #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.5); margin-bottom: 10px; z-index: 2;}
         
-        /* O NOVO VISUAL DAS TARJAS LATERAIS COM FUNDO TRANSLÚCIDO (SOMBRA) */
+        /* O VISUAL DAS TARJAS LATERAIS COM FUNDO TRANSLÚCIDO (SOMBRA) */
         .tarja-lateral {
             position: absolute; width: 45px;
             border: 2px solid; display: flex; flex-direction: column;
@@ -44,13 +44,11 @@
         /* Posicionamento Lado Esquerdo */
         .tarja-wc-masc { left: 0; top: 15%; height: 12%; border-color: #3b82f6; background-color: rgba(59, 130, 246, 0.15); color: #3b82f6; }
         .tarja-wc-fem { left: 0; top: 28%; height: 12%; border-color: #ec4899; background-color: rgba(236, 72, 153, 0.15); color: #ec4899; }
-        /* Aumentei tamanho deste aparador */
         .tarja-aparador-esq { left: 0; top: 72%; height: 18%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
         
         /* Posicionamento Lado Direito */
         .tarja-aparador-dir1 { right: 0; top: 15%; height: 25%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
         .tarja-aparador-dir2 { right: 0; top: 51%; height: 25%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
-        /* Entrada agora menor (metade da altura de um setor) e no canto inferior absoluto */
         .tarja-entrada { right: 0; top: 92%; height: 8%; border-color: var(--ciano-destaque); background-color: rgba(102, 255, 255, 0.15); color: var(--ciano-destaque); }
 
         .setor { background-color: var(--azul-card); padding: 20px; border-radius: 8px; width: 100%; box-sizing: border-box; z-index: 2;}
@@ -71,6 +69,7 @@
         body.modo-apresentacao .badge-divida { display: none; }
         body.modo-apresentacao #btnLimpar { display: none; }
 
+        /* Mesas voltaram para o tamanho clássico e perfeito */
         .mesa { border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #000; cursor: pointer; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.4); transition: transform 0.2s; border: 2px solid rgba(0,0,0,0.1); }
         .mesa:hover { transform: scale(1.05); }
 
@@ -78,14 +77,21 @@
         .tamanho-m { width: 90px; height: 90px; font-size: 24px; }
         .tamanho-p { width: 75px; height: 75px; font-size: 19px; }
 
-        .house-mix { display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #1d2d50; border: 2px dashed var(--ciano-destaque); border-radius: 8px; width: 180px; height: 90px; color: var(--ciano-destaque); font-size: 14px; font-weight: bold; text-transform: uppercase; }
-        .house-mix span.icone { font-size: 32px; margin-bottom: 5px; }
+        /* A HOUSE MIX GIGANTE E INTELIGENTE */
+        .grande-house-mix { 
+            position: absolute; top: 0; left: 0; width: 180px; height: 215px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            background-color: #1d2d50; border: 2px dashed var(--ciano-destaque); border-radius: 8px; 
+            color: var(--ciano-destaque); font-size: 16px; font-weight: bold; text-transform: uppercase; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5); z-index: 5;
+        }
+        .grande-house-mix span.icone { font-size: 60px; margin-bottom: 10px; }
         
         .badge-extra { position: absolute; top: -2px; right: -2px; background-color: var(--azul-fundo); color: var(--ciano-destaque); border: 2px solid var(--ciano-destaque); border-radius: 50%; width: 28px; height: 28px; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5); z-index: 5;}
         
         .badge-divida { position: absolute; bottom: 20px; right: 0px; background-color: #ff4d4d; color: #fff; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.8); border: 2px solid #fff; z-index: 10; }
 
-        /* PAINEL DE LEGENDA E CONTATO NO RODAPÉ */
+        /* PAINEL DE LEGENDA DO RODAPÉ */
         .painel-rodape { width: 100%; max-width: 1300px; background-color: var(--azul-card); border-radius: 8px; padding: 30px; margin-bottom: 40px; border: 1px solid var(--ciano-destaque); box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 25px; }
         .titulo-rodape { margin: 0; color: var(--ciano-destaque); text-transform: uppercase; letter-spacing: 2px; font-size: 20px; border-bottom: 1px solid #233554; padding-bottom: 10px; width: 100%; text-align: center; }
         
@@ -93,7 +99,6 @@
         .item-legenda { display: flex; align-items: center; gap: 15px; font-size: 15px; font-weight: bold; color: var(--texto-claro); width: 100%; justify-content: center;}
         .cor-box { width: 25px; height: 25px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.5); flex-shrink: 0;}
         .texto-legenda { display: flex; flex-direction: column; }
-        /* Aumentei fonte de lugares e valores */
         .sub-legenda { color: #8892b0; font-size: 14px; font-weight: normal; margin-top: 2px;}
 
         .info-contato { text-align: center; font-size: 20px; font-weight: bold; color: #47D359; border-top: 1px dashed #233554; padding-top: 20px; width: 100%; }
@@ -185,7 +190,8 @@
     </div>
 
     <div class="painel-rodape">
-        <h3 class="titulo-rodape">Formas de Adesão</h3> <div class="legenda-grid">
+        <h3 class="titulo-rodape">Formas de Adesão</h3>
+        <div class="legenda-grid">
             <div class="item-legenda">
                 <span class="cor-box" style="background-color: #FFFF00;"></span> 
                 <span class="texto-legenda">Cota Família <span class="sub-legenda">12 Lugares - R$ 25.000,00</span></span>
@@ -342,12 +348,15 @@
         document.getElementById('titulo-dinamico').textContent = `${CONFIG_GERAL.edicao} ${CONFIG_GERAL.nomeEvento} ${CONFIG_GERAL.ano}`;
         document.getElementById('img-logo').src = CONFIG_GERAL.caminhoLogo;
 
-        // Cota Família agora tem 2 fileiras de 6 mesas
+        // ==========================================
+        // CONFIGURAÇÃO DOS SETORES E DA HOUSE MIX
+        // ==========================================
+        // Note o "BIG_MIX" e "GAP" na Mesa Master para criar a grande central
         const CONFIG_MESAS = {
             "Familia": { prefixo: "F", nome: "Cota Família", classeTamanho: "tamanho-g", corNormal: "#FFFF00", corVendida: "#FFFFD1", layout: [ [6], [6] ], valorBase: 25000 },
             "Crianca": { prefixo: "C", nome: "Cota Criança", classeTamanho: "tamanho-m", corNormal: "#00FFFF", corVendida: "#66CCCC", layout: [ [7], [7], [7], [7] ], valorBase: 12000 },
             "Premium": { prefixo: "P", nome: "Mesa Premium", classeTamanho: "tamanho-m", corNormal: "#47D359", corVendida: "#75D982", layout: [ [7], [7] ], valorBase: 8000 },
-            "Master": { prefixo: "M", nome: "Mesa Master", classeTamanho: "tamanho-p", corNormal: "#FF9900", corVendida: "#FFE2B7", layout: [ [3, "MIX", 3], [3, "MIX", 3], [7] ], valorBase: 5400 },
+            "Master": { prefixo: "M", nome: "Mesa Master", classeTamanho: "tamanho-p", corNormal: "#FF9900", corVendida: "#FFE2B7", layout: [ [3, "BIG_MIX", 3], [3, "GAP", 3], [7] ], valorBase: 5400 },
             "Diamante": { prefixo: "D", nome: "Mesa Diamante", classeTamanho: "tamanho-p", corNormal: "#FF0000", corVendida: "#FFCDCD", layout: [ [7], [7], [7] ], valorBase: 4800 }
         };
 
@@ -379,7 +388,7 @@
                 let contador = 1;
                 config.layout.forEach(fileira => {
                     fileira.forEach(item => {
-                        if (item !== "MIX") {
+                        if (item !== "BIG_MIX" && item !== "GAP") {
                             for (let i = 0; i < item; i++) {
                                 const num = contador < 10 ? '0' + contador : contador;
                                 const id = `${config.prefixo}-${num}`;
@@ -600,7 +609,6 @@
         function renderizarMapa() {
             const containerSalao = document.getElementById('container-salao');
             Array.from(containerSalao.children).forEach(child => {
-                // Preserva as tarjas e o palco ao redesenhar
                 if (!child.classList.contains('palco') && !child.classList.contains('tarja-lateral')) { 
                     containerSalao.removeChild(child); 
                 }
@@ -624,9 +632,28 @@
                     divFileira.className = 'fileira-mesas';
 
                     fileira.forEach(item => {
-                        if (item === "MIX") {
-                            const divMix = document.createElement('div'); divMix.className = 'house-mix';
-                            divMix.innerHTML = '<span class="icone">🎛️</span> House Mix'; divFileira.appendChild(divMix);
+                        // A ENGENHARIA DA HOUSE MIX GIGANTE NO SETOR MASTER
+                        if (item === "BIG_MIX") {
+                            const divMixContainer = document.createElement('div');
+                            divMixContainer.style.position = "relative";
+                            divMixContainer.style.width = "180px";
+                            divMixContainer.style.display = "flex";
+                            divMixContainer.style.justifyContent = "center";
+                            
+                            // A caixa se ancora aqui, mas estica para baixo com 210px de altura
+                            divMixContainer.innerHTML = `
+                                <div class="grande-house-mix">
+                                    <span class="icone">🎛️</span> House Mix
+                                </div>
+                            `;
+                            divFileira.appendChild(divMixContainer);
+
+                        } else if (item === "GAP") {
+                            // O "buraco" que a House Mix preenche na linha de baixo
+                            const divGap = document.createElement('div');
+                            divGap.style.width = "180px";
+                            divFileira.appendChild(divGap);
+
                         } else {
                             for (let i = 0; i < item; i++) {
                                 const num = contadorMesa < 10 ? '0' + contadorMesa : contadorMesa;
