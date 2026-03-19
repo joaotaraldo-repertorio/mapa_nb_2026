@@ -9,20 +9,23 @@
             --texto-claro: #e6f1ff; --cor-palco: #8A2BE2; --cor-reservada: #ffc107; --cor-vendida-texto: #ff4d4d;
         }
 
+        /* Adicionando a classe modo-apresentacao no body logo de cara para nascer seguro */
         body { background-color: var(--azul-fundo); color: var(--texto-claro); font-family: Arial, sans-serif; padding: 20px; margin: 0; display: flex; flex-direction: column; align-items: center; }
+        
         .painel-topo { width: 100%; max-width: 1200px; display: flex; justify-content: space-between; align-items: center; background-color: var(--azul-card); padding: 15px 30px; border-radius: 8px; margin-bottom: 20px; box-sizing: border-box; }
-        .area-logo { width: 150px; display: flex; justify-content: flex-start; }
+        
+        /* A logo agora tem o cursor de "clicável" (mãozinha) */
+        .area-logo { width: 150px; display: flex; justify-content: flex-start; cursor: pointer; transition: transform 0.2s; }
+        .area-logo:hover { transform: scale(1.05); }
         .area-logo img { max-height: 120px; width: auto; }
+        
         .titulo-evento { text-align: center; flex-grow: 1; color: var(--ciano-destaque); margin: 0 20px; font-size: 38px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }
-        .area-botoes-topo { display: flex; gap: 10px; width: 350px; justify-content: flex-end; }
+        .area-botoes-topo { display: flex; gap: 10px; width: 300px; justify-content: flex-end; }
         
         .botao-acao { background-color: var(--ciano-destaque); color: #000; border: none; padding: 10px 15px; font-weight: bold; font-size: 13px; border-radius: 4px; cursor: pointer; transition: 0.3s; white-space: nowrap; }
         .botao-acao:hover:not(:disabled) { box-shadow: 0 0 10px var(--ciano-destaque); }
         .botao-acao:disabled { background-color: #4a5568; color: #a0aec0; cursor: not-allowed; box-shadow: none; }
         
-        .btn-apresentacao { background-color: #ff9900; }
-        .btn-apresentacao:hover { box-shadow: 0 0 10px #ff9900; }
-
         .btn-sincronizar { background-color: #47D359; }
         .btn-sincronizar:hover { box-shadow: 0 0 10px #47D359; }
 
@@ -39,6 +42,8 @@
         .texto-acima.reservada { color: var(--cor-reservada); }
 
         .texto-abaixo { font-size: 14px; color: #ffffff; text-align: center; width: 100%; white-space: normal; word-wrap: break-word; line-height: 1.2; font-weight: bold; min-height: 17px; }
+        
+        /* O MAPA ESCONDE OS NOMES POR PADRÃO AGORA */
         body.modo-apresentacao .texto-abaixo { display: none; }
 
         .mesa { border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #000; cursor: pointer; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.4); transition: transform 0.2s; border: 2px solid rgba(0,0,0,0.1); }
@@ -54,7 +59,7 @@
         .badge-extra { position: absolute; top: -2px; right: -2px; background-color: var(--azul-fundo); color: var(--ciano-destaque); border: 2px solid var(--ciano-destaque); border-radius: 50%; width: 28px; height: 28px; font-size: 14px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         
         .badge-divida { position: absolute; bottom: 20px; right: 0px; background-color: #ff4d4d; color: #fff; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.8); border: 2px solid #fff; z-index: 10; }
-        body.modo-apresentacao .badge-divida { display: none; }
+        body.modo-apresentacao .badge-divida { display: none; } /* Esconde o cifrão de dívida pro cliente não ver */
 
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); z-index: 1000; justify-content: center; align-items: center; }
         .modal-box { background-color: var(--azul-card); border: 1px solid var(--ciano-destaque); border-radius: 8px; padding: 25px; width: 600px; max-width: 95%; box-shadow: 0 10px 25px rgba(0,0,0,0.8); max-height: 90vh; overflow-y: auto; }
@@ -85,31 +90,26 @@
         .btn-excluir { background-color: transparent; color: #ff4d4d; border: 1px solid #ff4d4d; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .btn-excluir:hover { background-color: #ff4d4d; color: #fff; }
 
-        /* Estilo do aviso de tela inteira carregando */
-        #telaCarregamento {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--azul-fundo); z-index: 2000;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-        }
+        #telaCarregamento { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--azul-fundo); z-index: 2000; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .spinner { border: 6px solid #112240; border-top: 6px solid var(--ciano-destaque); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 20px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
     </style>
 </head>
-<body>
-
-    <div id="telaCarregamento">
+<body class="modo-apresentacao"> <div id="telaCarregamento">
         <div class="spinner"></div>
         <h2 style="color: var(--ciano-destaque);">Conectando à Nuvem...</h2>
         <p style="color: #8892b0;">Carregando o salão e as vendas mais recentes.</p>
     </div>
 
     <div class="painel-topo">
-        <div class="area-logo"><img id="img-logo" src="" alt="Logo"></div>
+        <div class="area-logo" id="logoSecreta" title="Área Restrita">
+            <img id="img-logo" src="" alt="Logo">
+        </div>
         <h2 id="titulo-dinamico" class="titulo-evento">Carregando...</h2>
         <div class="area-botoes-topo">
-            <button class="botao-acao btn-apresentacao" id="btnModoApresentacao" onclick="alternarModoApresentacao()">🎭 Ocultar Nomes</button>
             <button class="botao-acao btn-sincronizar" id="btnSincronizar" onclick="carregarDadosDaNuvem()">🔄 Sincronizar</button>
+            <button class="botao-acao">💰 Financeiro</button>
         </div>
     </div>
 
@@ -185,6 +185,11 @@
                     </div>
                 </div>
 
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <label>Detalhamento de Parcelas / Vencimentos</label>
+                    <textarea id="campoDetalhesParcelas" placeholder="Ex: 1ª parcela R$ 500 (15/04). 2ª parcela R$ 500 (15/05)..."></textarea>
+                </div>
+
                 <div class="form-row" style="margin-bottom: 0;">
                     <div class="form-group">
                         <label>Valor Total Fechado (R$)</label>
@@ -227,14 +232,16 @@
     </div>
 
     <script>
-        // ======================================================================
-        // A PONTE PARA O GOOGLE SHEETS
-        // ======================================================================
+        // SEU LINK DO GOOGLE SCRIPT
         const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbxCOJv1V8KMAyQ_ECyF7cdVkAiwRQcXQ6tQtNiI-SzGiMP0QeGJz-UsYQQezolsROzM/exec";
         
         const bancoDeDados = {}; 
         let mesaEditandoAtual = ""; 
+        let statusAoAbrirMesa = ""; // Usado para a trava de colisão
         let valorCadeiraAvulsa = 800.00; 
+
+        // SENHA DE ACESSO AOS NOMES (Pode mudar aqui depois!)
+        const SENHA_DIRETORIA = "diretoria26";
 
         const CONFIG_GERAL = { edicao: "19ª", nomeEvento: "Noite Beneficente", ano: "2026", caminhoLogo: "logo.png" };
         document.getElementById('titulo-dinamico').textContent = `${CONFIG_GERAL.edicao} ${CONFIG_GERAL.nomeEvento} ${CONFIG_GERAL.ano}`;
@@ -248,7 +255,22 @@
             "Diamante": { prefixo: "D", nome: "Mesa Diamante", classeTamanho: "tamanho-p", corNormal: "#FF0000", corVendida: "#FFCDCD", layout: [ [7], [7], [7] ], valorBase: 4800 }
         };
 
-        // INICIALIZA O BANCO VAZIO PRIMEIRO
+        // A MÁGICA DA LOGO SECRETA
+        document.getElementById('logoSecreta').onclick = function() {
+            if (document.body.classList.contains('modo-apresentacao')) {
+                let senhaDigitada = prompt("Área Restrita. Digite a senha da diretoria para visualizar os nomes:");
+                if (senhaDigitada === SENHA_DIRETORIA) {
+                    document.body.classList.remove('modo-apresentacao');
+                    alert("Nomes revelados! Atualize a página (F5) para voltar ao modo seguro.");
+                } else if (senhaDigitada !== null) {
+                    alert("Senha incorreta.");
+                }
+            } else {
+                // Se já tá mostrando, clica e esconde
+                document.body.classList.add('modo-apresentacao');
+            }
+        };
+
         function inicializarBancoDeDados() {
             for (const chave in CONFIG_MESAS) {
                 const config = CONFIG_MESAS[chave];
@@ -263,7 +285,7 @@
                                     setor: config.nome, status: "Livre", nome: "", telefone: "", email: "",
                                     cadeiras: 0, pagamento: "Nenhum", parcelas: "1x", 
                                     valorTotal: "", valorPago: "", saldoDevedor: 0,
-                                    logoPropaganda: false, obs: ""
+                                    logoPropaganda: false, obs: "", detalhesParcelas: ""
                                 };
                                 contador++;
                             }
@@ -273,56 +295,48 @@
             }
         }
 
-        // ======================================================================
-        // FUNÇÕES DE COMUNICAÇÃO COM A NUVEM
-        // ======================================================================
-        
-        async function carregarDadosDaNuvem() {
-            const btnSinc = document.getElementById('btnSincronizar');
-            btnSinc.textContent = "⌛ Baixando...";
-            
+        async function carregarDadosDaNuvemBackground() {
+            // Essa função roda invisível a cada 15 segundos sem atrapalhar a tela
             try {
                 const response = await fetch(URL_GOOGLE_SCRIPT);
                 const dadosNuvem = await response.json();
-                
-                // Puxa as informações da planilha e substitui no banco local
                 for (const idMesa in dadosNuvem) {
-                    if (bancoDeDados[idMesa]) {
-                        // Mescla os dados para garantir que não dê erro se faltar coluna
-                        Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]);
-                    }
+                    if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); }
                 }
-                
                 renderizarMapa();
-                
-                // Esconde a tela preta de carregamento inicial
+            } catch (error) { console.log("Falha na sincronização de fundo."); }
+        }
+
+        // Liga o "Coração" do sistema (atualiza a cada 15 segundos)
+        setInterval(carregarDadosDaNuvemBackground, 15000);
+
+        async function carregarDadosDaNuvem() {
+            const btnSinc = document.getElementById('btnSincronizar');
+            btnSinc.textContent = "⌛ Baixando...";
+            try {
+                const response = await fetch(URL_GOOGLE_SCRIPT);
+                const dadosNuvem = await response.json();
+                for (const idMesa in dadosNuvem) {
+                    if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); }
+                }
+                renderizarMapa();
                 document.getElementById('telaCarregamento').style.display = 'none';
             } catch (error) {
-                console.error("Erro na nuvem:", error);
-                alert("Falha ao conectar com o banco de dados da nuvem. O mapa carregará em modo Offline.");
+                alert("Falha ao conectar. O mapa carregará offline.");
                 document.getElementById('telaCarregamento').style.display = 'none';
                 renderizarMapa();
-            } finally {
-                btnSinc.textContent = "🔄 Sincronizar";
-            }
+            } finally { btnSinc.textContent = "🔄 Sincronizar"; }
         }
 
         async function enviarParaNuvem(idMesa, dados) {
             try {
                 await fetch(URL_GOOGLE_SCRIPT, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // Truque pro Google não bloquear
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' }, 
                     body: JSON.stringify({ idMesa: idMesa, dados: dados })
                 });
-            } catch (error) {
-                console.error("Erro ao salvar:", error);
-                throw new Error("Erro de conexão");
-            }
+            } catch (error) { throw new Error("Erro de conexão"); }
         }
-
-        // ======================================================================
-        // RESTANTE DAS FUNÇÕES (O CORE DO SISTEMA)
-        // ======================================================================
 
         function formatarMoeda(elemento) {
             let valor = elemento.value.replace(/\D/g, ''); 
@@ -356,17 +370,6 @@
             let saldo = total - pago;
             if (saldo < 0) saldo = 0; 
             document.getElementById('campoSaldo').value = converterParaMoeda(saldo);
-        }
-
-        function alternarModoApresentacao() {
-            const body = document.body;
-            const btn = document.getElementById('btnModoApresentacao');
-            body.classList.toggle('modo-apresentacao'); 
-            if (body.classList.contains('modo-apresentacao')) {
-                btn.innerHTML = "👀 Mostrar Nomes"; btn.style.backgroundColor = "#28a745"; 
-            } else {
-                btn.innerHTML = "🎭 Ocultar Nomes"; btn.style.backgroundColor = "#ff9900"; 
-            }
         }
 
         function renderizarMapa() {
@@ -455,6 +458,7 @@
         function abrirModal(idMesa) {
             mesaEditandoAtual = idMesa;
             const dados = bancoDeDados[idMesa];
+            statusAoAbrirMesa = dados.status; // Grava como a mesa estava ao abrir (Para a trava de segurança)
 
             document.getElementById('tituloModal').innerHTML = `Gerenciar ${dados.setor} (${idMesa})`;
             
@@ -464,6 +468,7 @@
             document.getElementById('campoCadeiras').value = dados.cadeiras;
             document.getElementById('campoPagamento').value = dados.pagamento;
             document.getElementById('campoParcelas').value = dados.parcelas || "1x";
+            document.getElementById('campoDetalhesParcelas').value = dados.detalhesParcelas || "";
             document.getElementById('campoValorTotal').value = dados.valorTotal;
             document.getElementById('campoValorPago').value = dados.valorPago;
             document.getElementById('campoLogoPropaganda').checked = dados.logoPropaganda;
@@ -494,22 +499,42 @@
 
         function fecharModal() { document.getElementById('meuModal').style.display = 'none'; }
 
-        // ======================================================================
-        // SALVAR, LIMPAR E TRANSFERIR COM ENVIO PARA A NUVEM
-        // ======================================================================
-
         async function salvarMesa() {
             const btnSalvar = document.getElementById('btnSalvar');
-            btnSalvar.textContent = "Salvando nas nuvens...";
-            btnSalvar.disabled = true; // Bloqueia para não clicar 2x
+            btnSalvar.textContent = "Verificando...";
+            btnSalvar.disabled = true; 
 
-            // Puxa os dados da tela
+            // ==========================================
+            // A TRAVA DE SEGURANÇA (ANTI COLISÃO)
+            // ==========================================
+            try {
+                // Vai rapidamente na nuvem perguntar como essa mesa está AGORA
+                const response = await fetch(URL_GOOGLE_SCRIPT);
+                const dbNuvem = await response.json();
+                
+                // Se a mesa estava Livre quando você abriu, mas na nuvem já não está mais Livre... COLISÃO!
+                if (statusAoAbrirMesa === "Livre" && dbNuvem[mesaEditandoAtual].status !== "Livre") {
+                    alert(`🚨 ALERTA: Outro diretor acabou de registrar a mesa ${mesaEditandoAtual}! O salão será atualizado para você escolher outra mesa.`);
+                    Object.assign(bancoDeDados[mesaEditandoAtual], dbNuvem[mesaEditandoAtual]); // Atualiza sua tela com os dados do colega rápido
+                    fecharModal();
+                    renderizarMapa();
+                    btnSalvar.textContent = "Salvar na Nuvem";
+                    btnSalvar.disabled = false;
+                    return; // Aborta o salvamento para não estragar a venda do colega!
+                }
+            } catch (error) {
+                // Se der erro de rede, segue o jogo (pode estar offline)
+            }
+
+            btnSalvar.textContent = "Salvando nas nuvens...";
+
             bancoDeDados[mesaEditandoAtual].status = document.getElementById('campoStatus').value;
             bancoDeDados[mesaEditandoAtual].nome = document.getElementById('campoNome').value;
             bancoDeDados[mesaEditandoAtual].telefone = document.getElementById('campoTelefone').value;
             bancoDeDados[mesaEditandoAtual].cadeiras = parseInt(document.getElementById('campoCadeiras').value) || 0;
             bancoDeDados[mesaEditandoAtual].pagamento = document.getElementById('campoPagamento').value;
             bancoDeDados[mesaEditandoAtual].parcelas = document.getElementById('campoParcelas').value;
+            bancoDeDados[mesaEditandoAtual].detalhesParcelas = document.getElementById('campoDetalhesParcelas').value;
             bancoDeDados[mesaEditandoAtual].valorTotal = document.getElementById('campoValorTotal').value;
             bancoDeDados[mesaEditandoAtual].valorPago = document.getElementById('campoValorPago').value;
             bancoDeDados[mesaEditandoAtual].saldoDevedor = converterParaNumero(document.getElementById('campoSaldo').value);
@@ -517,7 +542,6 @@
             bancoDeDados[mesaEditandoAtual].obs = document.getElementById('campoObs').value;
 
             try {
-                // Manda pra planilha!
                 await enviarParaNuvem(mesaEditandoAtual, bancoDeDados[mesaEditandoAtual]);
                 fecharModal();
                 renderizarMapa(); 
@@ -536,7 +560,8 @@
 
                 bancoDeDados[mesaEditandoAtual] = { 
                     setor: bancoDeDados[mesaEditandoAtual].setor, status: "Livre", nome: "", telefone: "", email: "",
-                    cadeiras: 0, pagamento: "Nenhum", parcelas: "1x", valorTotal: "", valorPago: "", saldoDevedor: 0,
+                    cadeiras: 0, pagamento: "Nenhum", parcelas: "1x", detalhesParcelas: "",
+                    valorTotal: "", valorPago: "", saldoDevedor: 0,
                     logoPropaganda: false, obs: ""
                 };
 
@@ -569,7 +594,6 @@
                 bancoDeDados[idDestino] = dadosOrigem; bancoDeDados[idDestino].setor = setorDestino; 
 
                 try {
-                    // Manda as duas mesas pra nuvem
                     await enviarParaNuvem(mesaEditandoAtual, bancoDeDados[mesaEditandoAtual]);
                     await enviarParaNuvem(idDestino, bancoDeDados[idDestino]);
                     
@@ -584,11 +608,7 @@
             }
         }
 
-        // ======================================================================
-        // START DO SISTEMA
-        // ======================================================================
         inicializarBancoDeDados();
-        // A primeira coisa que o sistema faz é desenhar vazio, depois ir buscar na nuvem os dados reais
         renderizarMapa(); 
         carregarDadosDaNuvem();
 
