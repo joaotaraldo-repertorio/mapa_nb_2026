@@ -26,8 +26,18 @@
         .btn-sincronizar { background-color: #47D359; }
         .btn-sincronizar:hover { box-shadow: 0 0 10px #47D359; }
 
-        #container-salao { width: 100%; max-width: 1200px; display: flex; flex-direction: column; align-items: center; gap: 30px; }
+        #container-salao { width: 100%; max-width: 1200px; display: flex; flex-direction: column; align-items: center; gap: 30px; position: relative; padding-bottom: 50px;}
+        
         .palco { width: 50%; background-color: var(--cor-palco); color: #fff; text-align: center; padding: 15px 0; font-size: 24px; font-weight: bold; letter-spacing: 5px; border-radius: 8px; border: 2px solid #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.5); margin-bottom: 10px; }
+        
+        .area-comum { display: flex; justify-content: center; align-items: center; border: 2px dashed #8892b0; color: #8892b0; font-weight: bold; text-transform: uppercase; border-radius: 8px; background-color: rgba(17, 34, 64, 0.5); letter-spacing: 2px; text-align: center; }
+        .entrada-principal { width: 40%; height: 60px; font-size: 20px; margin-top: 20px; border-color: var(--ciano-destaque); color: var(--ciano-destaque); }
+        
+        .bloco-servicos { display: flex; justify-content: space-between; width: 100%; margin-top: 20px; gap: 20px;}
+        .bar-buffet { flex: 1; height: 100px; font-size: 22px; }
+        .banheiros { flex: 1; height: 100px; font-size: 18px; display: flex; flex-direction: column; gap: 5px;}
+        .icones-banheiro { font-size: 28px; }
+
         .setor { background-color: var(--azul-card); padding: 20px; border-radius: 8px; width: 100%; box-sizing: border-box; }
         .setor h3 { margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid #233554; padding-bottom: 10px; color: var(--ciano-destaque); text-align: center; font-size: 24px; }
         
@@ -40,10 +50,11 @@
 
         .texto-abaixo { font-size: 14px; color: #ffffff; text-align: center; width: 100%; white-space: normal; word-wrap: break-word; line-height: 1.2; font-weight: bold; min-height: 17px; }
         
-        /* O MODO APRESENTAÇÃO ESCONDE TUDO */
+        /* O MODO APRESENTAÇÃO ESCONDE NOMES, CADEIRAS E O BOTÃO DE EXCLUIR */
         body.modo-apresentacao .texto-abaixo { display: none; }
         body.modo-apresentacao .badge-extra { display: none; }
         body.modo-apresentacao .badge-divida { display: none; }
+        body.modo-apresentacao #btnLimpar { display: none; }
 
         .mesa { border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #000; cursor: pointer; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.4); transition: transform 0.2s; border: 2px solid rgba(0,0,0,0.1); }
         .mesa:hover { transform: scale(1.05); }
@@ -68,7 +79,6 @@
         .form-group label { margin-bottom: 5px; font-size: 13px; color: #8892b0; font-weight: bold; }
         .form-group input, .form-group select, .form-group textarea { padding: 8px 10px; border-radius: 4px; border: 1px solid #233554; background-color: #0A192F; color: var(--texto-claro); font-size: 14px; }
         
-        /* Ajuste pro campo de data ficar com ícone bonitinho */
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
 
         .form-group textarea { resize: vertical; min-height: 40px; }
@@ -87,7 +97,9 @@
         .area-transferencia h4 { margin: 0 0 10px 0; color: #ff9900; font-size: 14px; }
         
         .modal-botoes { display: flex; justify-content: space-between; margin-top: 25px; border-top: 1px solid #233554; padding-top: 15px; }
-        .grupo-direita { display: flex; gap: 10px; }
+        /* O margin-left: auto garante que os botões de Salvar fiquem sempre à direita, mesmo sem o botão Excluir */
+        .grupo-direita { display: flex; gap: 10px; margin-left: auto; }
+        
         .btn-cancelar { background-color: transparent; color: #8892b0; border: 1px solid #8892b0; padding: 10px 15px; border-radius: 4px; cursor: pointer; }
         .btn-cancelar:hover { background-color: #233554; color: #fff; }
         .btn-excluir { background-color: transparent; color: #ff4d4d; border: 1px solid #ff4d4d; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
@@ -107,7 +119,7 @@
     </style>
 </head>
 <body class="modo-apresentacao"> 
-    
+
     <div id="telaCarregamento">
         <div class="spinner"></div>
         <h2 style="color: var(--ciano-destaque);">Conectando à Nuvem...</h2>
@@ -274,7 +286,7 @@
             "Diamante": { prefixo: "D", nome: "Mesa Diamante", classeTamanho: "tamanho-p", corNormal: "#FF0000", corVendida: "#FFCDCD", layout: [ [7], [7], [7] ], valorBase: 4800 }
         };
 
-        // FUNÇÕES DO ALERTA CUSTOMIZADO
+        // FUNÇÕES DO ALERTA CUSTOMIZADO (FIM DOS ALERTAS FEIOS DO NAVEGADOR)
         function mostrarAlerta(mensagem) {
             document.getElementById('textoAlertaCustomizado').textContent = mensagem;
             document.getElementById('modalAlerta').style.display = 'flex';
@@ -288,7 +300,7 @@
                 let senhaDigitada = prompt("Área Restrita. Digite a senha da diretoria:");
                 if (senhaDigitada === SENHA_DIRETORIA) {
                     document.body.classList.remove('modo-apresentacao');
-                    mostrarAlerta("Acesso Liberado! Nomes e cadeiras extras revelados.\n\nAtualize a página (F5) para voltar ao modo seguro.");
+                    mostrarAlerta("Acesso Liberado! Nomes, cadeiras extras e botão de exclusão revelados.\n\nAtualize a página (F5) para voltar ao modo seguro.");
                 } else if (senhaDigitada !== null) {
                     mostrarAlerta("Senha incorreta.");
                 }
@@ -402,7 +414,7 @@
                         novoArray.push(arrayParcelasAtuais[i]);
                         somaPagas += arrayParcelasAtuais[i].valor;
                     } else if (i < arrayParcelasAtuais.length && !arrayParcelasAtuais[i].pago) {
-                        novoArray.push(arrayParcelasAtuais[i]); 
+                        novoArray.push(arrayParcelasAtuais[i]); // Preserva datas de vencimento antigas se existirem
                     } else {
                         novoArray.push({ numero: i + 1, valor: 0, pago: false, vencimento: "" });
                     }
@@ -530,8 +542,14 @@
         function renderizarMapa() {
             const containerSalao = document.getElementById('container-salao');
             Array.from(containerSalao.children).forEach(child => {
-                if (!child.classList.contains('palco')) { containerSalao.removeChild(child); }
+                // Preserva o palco, o bar e a entrada ao desenhar as mesas de novo
+                if (!child.classList.contains('palco') && !child.classList.contains('bloco-servicos') && !child.classList.contains('entrada-principal')) { 
+                    containerSalao.removeChild(child); 
+                }
             });
+            
+            const palco = document.querySelector('.palco');
+            let elementoDeReferencia = palco.nextSibling;
             
             for (const chave in CONFIG_MESAS) {
                 const setorConfig = CONFIG_MESAS[chave];
@@ -606,7 +624,20 @@
                     });
                     divSetor.appendChild(divFileira);
                 });
-                containerSalao.appendChild(divSetor);
+                containerSalao.insertBefore(divSetor, elementoDeReferencia);
+            }
+
+            if(!document.querySelector('.bloco-servicos')) {
+                containerSalao.insertAdjacentHTML('beforeend', `
+                    <div class="bloco-servicos">
+                        <div class="area-comum bar-buffet">🍸 Bar / Buffet</div>
+                        <div class="area-comum banheiros">
+                            <div class="icones-banheiro">🚺 🚹 ♿</div>
+                            Banheiros
+                        </div>
+                    </div>
+                    <div class="area-comum entrada-principal">🚪 Entrada Principal</div>
+                `);
             }
         }
 
@@ -700,7 +731,6 @@
             bancoDeDados[mesaEditandoAtual].logoPropaganda = document.getElementById('campoLogoPropaganda').checked;
             bancoDeDados[mesaEditandoAtual].obs = document.getElementById('campoObs').value;
             
-            // Grava o Array de parcelas em formato de texto para a Planilha do Google
             bancoDeDados[mesaEditandoAtual].detalhesParcelas = JSON.stringify(arrayParcelasAtuais);
 
             try {
