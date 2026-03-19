@@ -384,7 +384,7 @@
         };
 
         // ======================================================================
-        // A MÁGICA DA FOTOGRAFIA (EXPORTAÇÃO PARA PDF/IMG)
+        // A MÁGICA DA FOTOGRAFIA COM O TAMANHO DE PAPEL CORRIGIDO
         // ======================================================================
         async function exportarMapa(tipo) {
             const areaExportacao = document.getElementById('area-exportacao');
@@ -394,7 +394,6 @@
             mostrarAlerta("Preparando sua imagem, aguarde um instante... 📸", "⏳ Gerando Arquivo");
 
             try {
-                // A biblioteca tira a foto (Agora com permissão CORS liberada pro GitHub)
                 const canvas = await html2canvas(areaExportacao, {
                     backgroundColor: '#0A192F',
                     scale: 2, 
@@ -411,12 +410,16 @@
                     link.click();
                 } else if (tipo === 'pdf') {
                     const { jsPDF } = window.jspdf;
-                    const pdf = new jsPDF('p', 'mm', 'a4');
                     
-                    const pdfWidth = pdf.internal.pageSize.getWidth();
-                    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                    // A SOLUÇÃO DO CORTE: Criando um papel com o tamanho exato da nossa imagem!
+                    const orientation = canvas.width >= canvas.height ? 'l' : 'p';
+                    const pdf = new jsPDF({
+                        orientation: orientation,
+                        unit: 'px',
+                        format: [canvas.width, canvas.height]
+                    });
                     
-                    pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight);
+                    pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height);
                     pdf.save('Mapa_Educandario_2026.pdf');
                 }
                 fecharAlertaCustomizado();
