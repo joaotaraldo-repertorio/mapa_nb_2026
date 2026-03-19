@@ -97,7 +97,6 @@
         .area-transferencia h4 { margin: 0 0 10px 0; color: #ff9900; font-size: 14px; }
         
         .modal-botoes { display: flex; justify-content: space-between; margin-top: 25px; border-top: 1px solid #233554; padding-top: 15px; }
-        /* O margin-left: auto garante que os botões de Salvar fiquem sempre à direita, mesmo sem o botão Excluir */
         .grupo-direita { display: flex; gap: 10px; margin-left: auto; }
         
         .btn-cancelar { background-color: transparent; color: #8892b0; border: 1px solid #8892b0; padding: 10px 15px; border-radius: 4px; cursor: pointer; }
@@ -119,7 +118,7 @@
     </style>
 </head>
 <body class="modo-apresentacao"> 
-
+    
     <div id="telaCarregamento">
         <div class="spinner"></div>
         <h2 style="color: var(--ciano-destaque);">Conectando à Nuvem...</h2>
@@ -286,7 +285,6 @@
             "Diamante": { prefixo: "D", nome: "Mesa Diamante", classeTamanho: "tamanho-p", corNormal: "#FF0000", corVendida: "#FFCDCD", layout: [ [7], [7], [7] ], valorBase: 4800 }
         };
 
-        // FUNÇÕES DO ALERTA CUSTOMIZADO (FIM DOS ALERTAS FEIOS DO NAVEGADOR)
         function mostrarAlerta(mensagem) {
             document.getElementById('textoAlertaCustomizado').textContent = mensagem;
             document.getElementById('modalAlerta').style.display = 'flex';
@@ -300,7 +298,7 @@
                 let senhaDigitada = prompt("Área Restrita. Digite a senha da diretoria:");
                 if (senhaDigitada === SENHA_DIRETORIA) {
                     document.body.classList.remove('modo-apresentacao');
-                    mostrarAlerta("Acesso Liberado! Nomes, cadeiras extras e botão de exclusão revelados.\n\nAtualize a página (F5) para voltar ao modo seguro.");
+                    mostrarAlerta("Acesso Liberado! Nomes, cadeiras extras e exclusão revelados.\n\nAtualize a página (F5) para voltar ao modo seguro.");
                 } else if (senhaDigitada !== null) {
                     mostrarAlerta("Senha incorreta.");
                 }
@@ -383,10 +381,6 @@
             return numero.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
 
-        // ======================================================================
-        // A MATEMÁTICA CASCATA DAS PARCELAS
-        // ======================================================================
-
         function recalcularMatrizParcelas(tipoEvento, indexEditado = -1) {
             const totalFechado = converterParaNumero(document.getElementById('campoValorTotal').value);
             const qtdParcelasDesejada = parseInt(document.getElementById('campoParcelas').value) || 1;
@@ -414,7 +408,7 @@
                         novoArray.push(arrayParcelasAtuais[i]);
                         somaPagas += arrayParcelasAtuais[i].valor;
                     } else if (i < arrayParcelasAtuais.length && !arrayParcelasAtuais[i].pago) {
-                        novoArray.push(arrayParcelasAtuais[i]); // Preserva datas de vencimento antigas se existirem
+                        novoArray.push(arrayParcelasAtuais[i]); 
                     } else {
                         novoArray.push({ numero: i + 1, valor: 0, pago: false, vencimento: "" });
                     }
@@ -537,12 +531,9 @@
             document.getElementById('campoSaldo').value = converterParaMoeda(saldo);
         }
 
-        // ======================================================================
-
         function renderizarMapa() {
             const containerSalao = document.getElementById('container-salao');
             Array.from(containerSalao.children).forEach(child => {
-                // Preserva o palco, o bar e a entrada ao desenhar as mesas de novo
                 if (!child.classList.contains('palco') && !child.classList.contains('bloco-servicos') && !child.classList.contains('entrada-principal')) { 
                     containerSalao.removeChild(child); 
                 }
@@ -642,8 +633,15 @@
         }
 
         function abrirModal(idMesa) {
-            mesaEditandoAtual = idMesa;
             const dados = bancoDeDados[idMesa];
+            
+            // A TRAVA MESTRA PARA MESAS OCUPADAS (SEM SENHA)
+            if (dados.status !== "Livre" && document.body.classList.contains('modo-apresentacao')) {
+                mostrarAlerta("🔒 Mesa Bloqueada!\n\nEsta mesa já foi Vendida ou Reservada. Para alterar os dados financeiros, insira a senha da diretoria clicando na logo do Educandário.");
+                return;
+            }
+
+            mesaEditandoAtual = idMesa;
             statusAoAbrirMesa = dados.status; 
 
             document.getElementById('tituloModal').innerHTML = `Gerenciar ${dados.setor} (${idMesa})`;
