@@ -371,7 +371,7 @@
         }
 
         // =========================================================
-        // FUNÇÕES MATEMÁTICAS BLINDADAS CONTRA TEXTO DO GOOGLE SHEETS
+        // FUNÇÕES MATEMÁTICAS (BLINDADAS)
         // =========================================================
         function formatarMoeda(elemento) { 
             let valor = elemento.value.replace(/\D/g, ''); 
@@ -379,11 +379,13 @@
             valor = (parseInt(valor) / 100);
             elemento.value = valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); 
         }
+        
         function converterParaNumero(str) { 
             if (str === null || str === undefined || str === "") return 0;
             if (typeof str === 'number') return str;
             return parseFloat(String(str).replace(/\./g, '').replace(',', '.')); 
         }
+        
         function converterParaMoeda(numero) { 
             let val = Number(numero);
             if (isNaN(val)) val = 0;
@@ -567,26 +569,50 @@
             } finally { btnSalvar.textContent = "Solicitar Mesa"; btnSalvar.disabled = false; }
         }
 
+        // ====================================================================
+        // A FUNÇÃO DA DIRETORIA (AGORA 100% BLINDADA)
+        // ====================================================================
         function abrirModal(idMesa) {
-            mesaEditandoAtual = idMesa; const dados = bancoDeDados[idMesa]; statusAoAbrirMesa = dados.status; 
+            mesaEditandoAtual = idMesa; 
+            const dados = bancoDeDados[idMesa]; 
+            statusAoAbrirMesa = dados.status; 
+            
             document.getElementById('tituloModal').innerHTML = `Gerenciar ${dados.setor} (${idMesa})`;
-            document.getElementById('campoStatus').value = dados.status; document.getElementById('campoNome').value = dados.nome; document.getElementById('campoTelefone').value = dados.telefone; document.getElementById('campoCadeiras').value = dados.cadeiras; document.getElementById('campoPagamento').value = dados.pagamento; document.getElementById('campoValorTotal').value = dados.valorTotal; document.getElementById('campoLogoPropaganda').checked = dados.logoPropaganda; document.getElementById('campoObs').value = dados.obs;
+            
+            // Preenche os campos protegendo contra vazios
+            document.getElementById('campoStatus').value = dados.status || "Livre"; 
+            document.getElementById('campoNome').value = dados.nome || ""; 
+            document.getElementById('campoTelefone').value = dados.telefone || ""; 
+            document.getElementById('campoCadeiras').value = dados.cadeiras || 0; 
+            document.getElementById('campoPagamento').value = dados.pagamento || "Nenhum"; 
+            document.getElementById('campoLogoPropaganda').checked = dados.logoPropaganda || false; 
+            document.getElementById('campoObs').value = dados.obs || "";
 
-            try { arrayParcelasAtuais = JSON.parse(dados.detalhesParcelas || "[]"); } catch (e) { arrayParcelasAtuais = []; }
+            // Trata o Array de Parcelas
+            try { arrayParcelasAtuais = JSON.parse(dados.detalhesParcelas || "[]"); } 
+            catch (e) { arrayParcelasAtuais = []; }
             document.getElementById('campoParcelas').value = arrayParcelasAtuais.length > 0 ? arrayParcelasAtuais.length : 1;
 
-            // Se o valor estiver vazio ou zerado (ex: cliente que só reservou), calcula sozinho:
-            if (!dados.valorTotal || String(dados.valorTotal).trim() === "" || String(dados.valorTotal) === "0,00" || dados.valorTotal === 0) { 
+            // BLINDAGEM DO VALOR TOTAL: Lê o valor da nuvem. Se for vazio, nulo, ou zero (tipo a reserva da Lislene), ele zera na tela pra função calcular.
+            let valTotalStr = String(dados.valorTotal || "").trim();
+            if (valTotalStr === "0" || valTotalStr === "0,00" || valTotalStr === "") { valTotalStr = ""; }
+            document.getElementById('campoValorTotal').value = valTotalStr; 
+
+            // Se a tela abriu com o valor vazio, o sistema de imediato calcula sozinho os R$ 25.000 da mesa!
+            if (valTotalStr === "") { 
                 calcularFinanceiroEParcelas(true); 
             } else { 
+                // Se já tinha valor salvo, apenas desenha.
                 const configSetor = Object.values(CONFIG_MESAS).find(c => mesaEditandoAtual.startsWith(c.prefixo));
                 const valorSugerido = (configSetor ? configSetor.valorBase : 0) + ((parseInt(dados.cadeiras) || 0) * valorCadeiraAvulsa);
                 document.getElementById('textoValorPadrao').textContent = `Mesa + Cadeiras: R$ ${converterParaMoeda(valorSugerido)}`;
+                
                 if(arrayParcelasAtuais.length === 0) { recalcularMatrizParcelas('MUDOU_QTD_PARCELAS'); } else { desenharListaDeParcelas(); }
             }
 
             const areaTransf = document.getElementById('areaTransferencia');
             if (dados.status !== "Livre") { areaTransf.style.display = 'block'; carregarListaDeDestino(idMesa); } else { areaTransf.style.display = 'none'; }
+            
             document.getElementById('meuModal').style.display = 'flex';
         }
 
