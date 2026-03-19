@@ -40,7 +40,7 @@
 
         .texto-abaixo { font-size: 14px; color: #ffffff; text-align: center; width: 100%; white-space: normal; word-wrap: break-word; line-height: 1.2; font-weight: bold; min-height: 17px; }
         
-        /* O MODO APRESENTAÇÃO ESCONDE NOMES E CADEIRAS EXTRAS */
+        /* O MODO APRESENTAÇÃO ESCONDE TUDO */
         body.modo-apresentacao .texto-abaixo { display: none; }
         body.modo-apresentacao .badge-extra { display: none; }
         body.modo-apresentacao .badge-divida { display: none; }
@@ -67,6 +67,10 @@
         .form-group { display: flex; flex-direction: column; flex: 1; }
         .form-group label { margin-bottom: 5px; font-size: 13px; color: #8892b0; font-weight: bold; }
         .form-group input, .form-group select, .form-group textarea { padding: 8px 10px; border-radius: 4px; border: 1px solid #233554; background-color: #0A192F; color: var(--texto-claro); font-size: 14px; }
+        
+        /* Ajuste pro campo de data ficar com ícone bonitinho */
+        input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+
         .form-group textarea { resize: vertical; min-height: 40px; }
         .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--ciano-destaque); }
         .campo-bloqueado { background-color: #061020 !important; color: #47D359 !important; font-weight: bold; cursor: not-allowed; }
@@ -178,7 +182,7 @@
                 <div style="background-color: #0A192F; border: 1px solid #233554; border-radius: 4px; padding: 10px; margin-bottom: 15px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                         <label style="color: #8892b0; font-size: 13px; font-weight: bold; margin: 0;">Plano de Parcelas</label>
-                        <select id="campoParcelas" onchange="gerarParcelasDaTela()" style="padding: 3px 5px; background: #112240; color: #fff; border: 1px solid #47D359; border-radius: 4px;">
+                        <select id="campoParcelas" onchange="mudouQtdParcelas()" style="padding: 3px 5px; background: #112240; color: #fff; border: 1px solid #47D359; border-radius: 4px;">
                             <option value="1">1x (À vista)</option>
                             <option value="2">2x</option>
                             <option value="3">3x</option>
@@ -237,7 +241,7 @@
         let mesaEditandoAtual = ""; 
         let statusAoAbrirMesa = ""; 
         let valorCadeiraAvulsa = 800.00; 
-        let arrayParcelasAtuais = []; // A Memória RAM das parcelas
+        let arrayParcelasAtuais = []; 
 
         const SENHA_DIRETORIA = "diretoria26";
 
@@ -281,7 +285,7 @@
                                     setor: config.nome, status: "Livre", nome: "", telefone: "", email: "",
                                     cadeiras: 0, pagamento: "Nenhum", parcelas: "1x", 
                                     valorTotal: "", valorPago: "", saldoDevedor: 0,
-                                    logoPropaganda: false, obs: "", detalhesParcelas: "[]" // Inicia com array JSON vazio
+                                    logoPropaganda: false, obs: "", detalhesParcelas: "[]"
                                 };
                                 contador++;
                             }
@@ -299,7 +303,7 @@
                     if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); }
                 }
                 renderizarMapa();
-            } catch (error) { console.log("Falha na sincronização de fundo."); }
+            } catch (error) {}
         }
         setInterval(carregarDadosDaNuvemBackground, 15000);
 
@@ -342,60 +346,109 @@
         }
 
         // ======================================================================
-        // O NOVO CÉREBRO DE PARCELAS
+        // A MATEMÁTICA CASCATA DAS PARCELAS
         // ======================================================================
-        
-        function calcularFinanceiroEParcelas() {
-            // Recalcula o total baseado nas cadeiras extras
-            const configSetor = Object.values(CONFIG_MESAS).find(c => mesaEditandoAtual.startsWith(c.prefixo));
-            const base = configSetor ? configSetor.valorBase : 0;
-            const cadeiras = parseInt(document.getElementById('campoCadeiras').value) || 0;
-            const valorSugerido = base + (cadeiras * valorCadeiraAvulsa);
-            
-            document.getElementById('textoValorPadrao').textContent = `Mesa + Cadeiras: R$ ${converterParaMoeda(valorSugerido)}`;
-            
-            // Atualiza o total
-            document.getElementById('campoValorTotal').value = converterParaMoeda(valorSugerido);
-            
-            // Como mexeu no preço base da mesa, refaz as parcelas dividindo por igual
-            gerarParcelasDaTela(); 
-        }
 
-        function recalcularDivisaoParcelas() {
-            // Chamado quando o diretor edita o "Valor Total Fechado" na mão
-            // Refaz as parcelas dividindo o novo total por igual
-            gerarParcelasDaTela();
-        }
-
-        function gerarParcelasDaTela() {
-            const qtdParcelas = parseInt(document.getElementById('campoParcelas').value) || 1;
+        function recalcularMatrizParcelas(tipoEvento, indexEditado = -1) {
             const totalFechado = converterParaNumero(document.getElementById('campoValorTotal').value);
-            const valorPorParcela = totalFechado / qtdParcelas;
+            const qtdParcelasDesejada = parseInt(document.getElementById('campoParcelas').value) || 1;
 
-            arrayParcelasAtuais = [];
-            for (let i = 1; i <= qtdParcelas; i++) {
-                arrayParcelasAtuais.push({ numero: i, valor: valorPorParcela, pago: false });
+            if (arrayParcelasAtuais.length === 0) {
+                for (let i = 0; i < qtdParcelasDesejada; i++) {
+                    arrayParcelasAtuais.push({ numero: i + 1, valor: 0, pago: false, vencimento: "" });
+                }
             }
+
+            if (tipoEvento === 'MUDOU_QTD_PARCELAS') {
+                const pagas = arrayParcelasAtuais.filter(p => p.pago);
+                let novaQtd = qtdParcelasDesejada;
+
+                if (novaQtd < pagas.length) {
+                    novaQtd = pagas.length;
+                    document.getElementById('campoParcelas').value = novaQtd;
+                    alert("Não é possível reduzir para menos parcelas do que as já pagas.");
+                }
+
+                const novoArray = [];
+                let somaPagas = 0;
+                for (let i = 0; i < novaQtd; i++) {
+                    if (i < arrayParcelasAtuais.length && arrayParcelasAtuais[i].pago) {
+                        novoArray.push(arrayParcelasAtuais[i]);
+                        somaPagas += arrayParcelasAtuais[i].valor;
+                    } else if (i < arrayParcelasAtuais.length && !arrayParcelasAtuais[i].pago) {
+                        novoArray.push(arrayParcelasAtuais[i]); // Preserva datas de vencimento antigas se existirem
+                    } else {
+                        novoArray.push({ numero: i + 1, valor: 0, pago: false, vencimento: "" });
+                    }
+                }
+                arrayParcelasAtuais = novoArray;
+
+                const qtdNaoPagas = novaQtd - pagas.length;
+                if (qtdNaoPagas > 0) {
+                    const valorPorParcela = Math.max(0, totalFechado - somaPagas) / qtdNaoPagas;
+                    arrayParcelasAtuais.forEach(p => { if (!p.pago) p.valor = valorPorParcela; });
+                }
+            }
+            else if (tipoEvento === 'MUDOU_VALOR_TOTAL') {
+                let somaPagas = 0;
+                let qtdNaoPagas = 0;
+                arrayParcelasAtuais.forEach(p => {
+                    if (p.pago) somaPagas += p.valor;
+                    else qtdNaoPagas++;
+                });
+
+                if (arrayParcelasAtuais.length !== qtdParcelasDesejada) {
+                    return recalcularMatrizParcelas('MUDOU_QTD_PARCELAS');
+                }
+
+                if (qtdNaoPagas > 0) {
+                    const valorPorParcela = Math.max(0, totalFechado - somaPagas) / qtdNaoPagas;
+                    arrayParcelasAtuais.forEach(p => { if (!p.pago) p.valor = valorPorParcela; });
+                }
+            }
+            else if (tipoEvento === 'MUDOU_VALOR_PARCELA') {
+                let somaTravada = 0;
+                let qtdProximasNaoPagas = 0;
+
+                for (let i = 0; i < arrayParcelasAtuais.length; i++) {
+                    if (i <= indexEditado || arrayParcelasAtuais[i].pago) {
+                        somaTravada += arrayParcelasAtuais[i].valor;
+                    } else {
+                        qtdProximasNaoPagas++;
+                    }
+                }
+
+                if (qtdProximasNaoPagas > 0) {
+                    const valorPorParcela = Math.max(0, totalFechado - somaTravada) / qtdProximasNaoPagas;
+                    for (let i = indexEditado + 1; i < arrayParcelasAtuais.length; i++) {
+                        if (!arrayParcelasAtuais[i].pago) arrayParcelasAtuais[i].valor = valorPorParcela;
+                    }
+                }
+            }
+
             desenharListaDeParcelas();
         }
 
         function desenharListaDeParcelas() {
             const container = document.getElementById('containerParcelas');
-            container.innerHTML = ''; // Limpa a tela
+            container.innerHTML = ''; 
             
             arrayParcelasAtuais.forEach((parcela, index) => {
                 const linha = document.createElement('div');
-                linha.style.display = 'flex'; linha.style.gap = '10px'; linha.style.alignItems = 'center'; linha.style.marginBottom = '8px';
+                linha.style.display = 'flex'; linha.style.gap = '8px'; linha.style.alignItems = 'center'; linha.style.marginBottom = '8px';
 
                 linha.innerHTML = `
-                    <span style="color: var(--ciano-destaque); font-size: 13px; width: 65px; font-weight: bold;">${parcela.numero}ª Parc.</span>
+                    <span style="color: var(--ciano-destaque); font-size: 13px; width: 60px; font-weight: bold;">${parcela.numero}ª Parc.</span>
                     
+                    <input type="date" value="${parcela.vencimento || ''}" onchange="atualizarVencimento(${index}, this)" title="Vencimento"
+                           style="padding: 6px; border-radius: 4px; background: #112240; color: #fff; border: 1px solid #233554; width: 115px; font-size: 13px; cursor: pointer;">
+
                     <input type="text" value="${converterParaMoeda(parcela.valor)}" 
                            oninput="formatarMoeda(this)" onchange="atualizarValorUnico(${index}, this)" 
-                           style="flex: 1; padding: 6px; border-radius: 4px; background: #112240; color: #fff; border: 1px solid #233554; text-align: right;">
+                           style="flex: 1; padding: 6px; border-radius: 4px; background: #112240; color: #fff; border: 1px solid #233554; text-align: right; font-size: 14px;">
                     
                     <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; color: ${parcela.pago ? '#47D359' : '#8892b0'}; font-size: 13px; width: 70px; font-weight: bold;">
-                        <input type="checkbox" style="width: 16px; height: 16px;" ${parcela.pago ? 'checked' : ''} onchange="marcarComoPago(${index}, this)">
+                        <input type="checkbox" style="width: 16px; height: 16px; cursor: pointer;" ${parcela.pago ? 'checked' : ''} onchange="marcarComoPago(${index}, this)">
                         ${parcela.pago ? 'PAGO' : 'Pagar'}
                     </label>
                 `;
@@ -404,30 +457,41 @@
             somarValoresPagos();
         }
 
+        function atualizarVencimento(index, inputElement) { arrayParcelasAtuais[index].vencimento = inputElement.value; }
+        
         function atualizarValorUnico(index, inputElement) {
-            // O diretor mudou o valor de uma parcela específica (ex: deu R$ 2000 na primeira)
             arrayParcelasAtuais[index].valor = converterParaNumero(inputElement.value);
-            somarValoresPagos();
+            recalcularMatrizParcelas('MUDOU_VALOR_PARCELA', index);
         }
 
         function marcarComoPago(index, checkboxElement) {
-            // O diretor clicou no checkbox de "Pago"
             arrayParcelasAtuais[index].pago = checkboxElement.checked;
-            desenharListaDeParcelas(); // Redesenha para ficar verde o texto
+            desenharListaDeParcelas(); 
+        }
+
+        function mudouQtdParcelas() { recalcularMatrizParcelas('MUDOU_QTD_PARCELAS'); }
+
+        function recalcularDivisaoParcelas() { recalcularMatrizParcelas('MUDOU_VALOR_TOTAL'); }
+
+        function calcularFinanceiroEParcelas() {
+            const configSetor = Object.values(CONFIG_MESAS).find(c => mesaEditandoAtual.startsWith(c.prefixo));
+            const base = configSetor ? configSetor.valorBase : 0;
+            const cadeiras = parseInt(document.getElementById('campoCadeiras').value) || 0;
+            const valorSugerido = base + (cadeiras * valorCadeiraAvulsa);
+            
+            document.getElementById('textoValorPadrao').textContent = `Mesa + Cadeiras: R$ ${converterParaMoeda(valorSugerido)}`;
+            document.getElementById('campoValorTotal').value = converterParaMoeda(valorSugerido);
+            
+            recalcularMatrizParcelas('MUDOU_VALOR_TOTAL');
         }
 
         function somarValoresPagos() {
             let totalPagoAteAgora = 0;
-            
             arrayParcelasAtuais.forEach(parcela => {
-                if (parcela.pago) {
-                    totalPagoAteAgora += parcela.valor;
-                }
+                if (parcela.pago) totalPagoAteAgora += parcela.valor;
             });
 
-            // Atualiza os campos bloqueados
             document.getElementById('campoValorPago').value = converterParaMoeda(totalPagoAteAgora);
-            
             const totalGeral = converterParaNumero(document.getElementById('campoValorTotal').value);
             let saldo = totalGeral - totalPagoAteAgora;
             if (saldo < 0) saldo = 0;
@@ -536,30 +600,23 @@
             document.getElementById('campoLogoPropaganda').checked = dados.logoPropaganda;
             document.getElementById('campoObs').value = dados.obs;
 
-            // CARREGANDO AS PARCELAS DA MEMÓRIA
             try {
-                // Tenta ler o código JSON. Se a mesa for nova, ele lê "[]" e vira um array vazio.
                 arrayParcelasAtuais = JSON.parse(dados.detalhesParcelas || "[]");
-            } catch (e) {
-                arrayParcelasAtuais = []; // Se der erro de leitura, zera.
-            }
+            } catch (e) { arrayParcelasAtuais = []; }
 
-            // Define a quantidade no dropdown com base em quantas parcelas existem na memória
             document.getElementById('campoParcelas').value = arrayParcelasAtuais.length > 0 ? arrayParcelasAtuais.length : 1;
 
             if (dados.status === "Livre" && dados.valorTotal === "") { 
-                // É mesa nova! Calcula o valor e já divide na hora
                 calcularFinanceiroEParcelas(); 
             } else { 
-                // A mesa já estava salva. Apenas desenha na tela o que veio da memória.
                 const configSetor = Object.values(CONFIG_MESAS).find(c => mesaEditandoAtual.startsWith(c.prefixo));
                 const valorSugerido = (configSetor ? configSetor.valorBase : 0) + ((parseInt(dados.cadeiras) || 0) * valorCadeiraAvulsa);
                 document.getElementById('textoValorPadrao').textContent = `Mesa + Cadeiras: R$ ${converterParaMoeda(valorSugerido)}`;
                 
                 if(arrayParcelasAtuais.length === 0) {
-                    gerarParcelasDaTela(); // Se por acaso não tinha parcela salva, gera agora.
+                    recalcularMatrizParcelas('MUDOU_QTD_PARCELAS'); 
                 } else {
-                    desenharListaDeParcelas(); // Desenha as parcelas com os valores customizados
+                    desenharListaDeParcelas(); 
                 }
             }
 
@@ -617,7 +674,7 @@
             bancoDeDados[mesaEditandoAtual].logoPropaganda = document.getElementById('campoLogoPropaganda').checked;
             bancoDeDados[mesaEditandoAtual].obs = document.getElementById('campoObs').value;
             
-            // SALVA A MATRIZ DE PARCELAS COMO TEXTO NA COLUNA N
+            // Grava o Array de parcelas em formato de texto para a Planilha do Google
             bancoDeDados[mesaEditandoAtual].detalhesParcelas = JSON.stringify(arrayParcelasAtuais);
 
             try {
