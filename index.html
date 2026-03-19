@@ -370,9 +370,25 @@
             } catch (error) { throw new Error("Erro de conexão"); }
         }
 
-        function formatarMoeda(elemento) { let valor = elemento.value.replace(/\D/g, ''); if (valor === '') { elemento.value = ''; return; } valor = (parseInt(valor) / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); elemento.value = valor; }
-        function converterParaNumero(stringMoeda) { if (!stringMoeda) return 0; return parseFloat(stringMoeda.replace(/\./g, '').replace(',', '.')); }
-        function converterParaMoeda(numero) { return numero.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+        // =========================================================
+        // FUNÇÕES MATEMÁTICAS BLINDADAS CONTRA TEXTO DO GOOGLE SHEETS
+        // =========================================================
+        function formatarMoeda(elemento) { 
+            let valor = elemento.value.replace(/\D/g, ''); 
+            if (valor === '') { elemento.value = ''; return; } 
+            valor = (parseInt(valor) / 100);
+            elemento.value = valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); 
+        }
+        function converterParaNumero(str) { 
+            if (str === null || str === undefined || str === "") return 0;
+            if (typeof str === 'number') return str;
+            return parseFloat(String(str).replace(/\./g, '').replace(',', '.')); 
+        }
+        function converterParaMoeda(numero) { 
+            let val = Number(numero);
+            if (isNaN(val)) val = 0;
+            return val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); 
+        }
 
         function recalcularMatrizParcelas(tipoEvento, indexEditado = -1) {
             const totalFechado = converterParaNumero(document.getElementById('campoValorTotal').value);
@@ -530,7 +546,6 @@
             const btnSalvar = document.getElementById('btnSalvarCliente'); btnSalvar.textContent = "Enviando..."; btnSalvar.disabled = true;
 
             try {
-                // Checa a nuvem primeiro para ver se existe e se já não foi pega
                 const response = await fetch(URL_GOOGLE_SCRIPT); const dbNuvem = await response.json();
                 if (dbNuvem[mesaEditandoAtual] && dbNuvem[mesaEditandoAtual].status !== "Livre") {
                     mostrarAlerta("Puxa, alguém acabou de pegar essa mesa na sua frente! O mapa será atualizado para você escolher outra.");
@@ -538,14 +553,13 @@
                     fecharModalCliente(); renderizarMapa(); return;
                 }
 
-                // O pacote especial do cliente
                 const pacoteReserva = {
                     ...bancoDeDados[mesaEditandoAtual],
                     status: "Reservada", nome: nome, telefone: telefone, obs: "⚠️ SOLICITAÇÃO FEITA PELO LINK PÚBLICO!"
                 };
 
                 await enviarParaNuvem(mesaEditandoAtual, pacoteReserva);
-                bancoDeDados[mesaEditandoAtual] = pacoteReserva; // Só atualiza localmente se a nuvem aceitar
+                bancoDeDados[mesaEditandoAtual] = pacoteReserva; 
                 mostrarAlerta("Reserva solicitada com sucesso! \n\nNossa equipe financeira entrará em contato em breve para concluir a venda.");
                 fecharModalCliente(); renderizarMapa();
             } catch(e) {
@@ -561,8 +575,9 @@
             try { arrayParcelasAtuais = JSON.parse(dados.detalhesParcelas || "[]"); } catch (e) { arrayParcelasAtuais = []; }
             document.getElementById('campoParcelas').value = arrayParcelasAtuais.length > 0 ? arrayParcelasAtuais.length : 1;
 
-            if (dados.valorTotal === "") { 
-                calcularFinanceiroEParcelas(true); // O Cliente não mexeu no valor, então o sistema calcula sozinho ao abrir
+            // Se o valor estiver vazio ou zerado (ex: cliente que só reservou), calcula sozinho:
+            if (!dados.valorTotal || String(dados.valorTotal).trim() === "" || String(dados.valorTotal) === "0,00" || dados.valorTotal === 0) { 
+                calcularFinanceiroEParcelas(true); 
             } else { 
                 const configSetor = Object.values(CONFIG_MESAS).find(c => mesaEditandoAtual.startsWith(c.prefixo));
                 const valorSugerido = (configSetor ? configSetor.valorBase : 0) + ((parseInt(dados.cadeiras) || 0) * valorCadeiraAvulsa);
