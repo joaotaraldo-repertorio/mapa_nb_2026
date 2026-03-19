@@ -26,9 +26,8 @@
         .btn-sincronizar { background-color: #47D359; }
         .btn-sincronizar:hover { box-shadow: 0 0 10px #47D359; }
 
-        /* MODO DIRETORIA BOTÃO SECRETO */
-        #btnFinanceiro { display: none; } /* Escondido pro cliente */
-        body:not(.modo-apresentacao) #btnFinanceiro { display: block; } /* Aparece pro Diretor */
+        #btnFinanceiro { display: none; } 
+        body:not(.modo-apresentacao) #btnFinanceiro { display: block; } 
 
         #container-salao { width: 100%; max-width: 1200px; display: flex; flex-direction: column; align-items: center; gap: 30px; position: relative; padding-bottom: 50px;}
         
@@ -171,7 +170,6 @@
         </div>
     </div>
 
-
     <div id="meuModal" class="modal-overlay">
         <div class="modal-box">
             <h2 id="tituloModal"><span>Gerenciar Mesa</span> <span id="statusBadge">Livre</span></h2> 
@@ -294,9 +292,7 @@
         let valorCadeiraAvulsa = 800.00; 
         let arrayParcelasAtuais = []; 
         
-        // A VARIÁVEL DE CONTROLE DO SISTEMA
         let MODO_DIRETOR_ATIVO = false;
-
         const SENHA_DIRETORIA = "diretoria26";
 
         const CONFIG_GERAL = { edicao: "19ª", nomeEvento: "Noite Beneficente", ano: "2026", caminhoLogo: "logo.png" };
@@ -311,14 +307,12 @@
             "Diamante": { prefixo: "D", nome: "Mesa Diamante", classeTamanho: "tamanho-p", corNormal: "#FF0000", corVendida: "#FFCDCD", layout: [ [7], [7], [7] ], valorBase: 4800 }
         };
 
-        // ALERTA BONITO
         function mostrarAlerta(mensagem) {
             document.getElementById('textoAlertaCustomizado').textContent = mensagem;
             document.getElementById('modalAlerta').style.display = 'flex';
         }
         function fecharAlertaCustomizado() { document.getElementById('modalAlerta').style.display = 'none'; }
 
-        // A SENHA PARA VIRAR O BATMAN
         document.getElementById('logoSecreta').onclick = function() {
             if (!MODO_DIRETOR_ATIVO) {
                 let senhaDigitada = prompt("Área Restrita da Diretoria. Digite a senha:");
@@ -326,11 +320,8 @@
                     document.body.classList.remove('modo-apresentacao');
                     MODO_DIRETOR_ATIVO = true;
                     mostrarAlerta("Acesso Liberado! O Painel Financeiro foi ativado. Atualize a página (F5) caso precise voltar ao modo Cliente.");
-                } else if (senhaDigitada !== null) {
-                    mostrarAlerta("Senha incorreta.");
-                }
+                } else if (senhaDigitada !== null) { mostrarAlerta("Senha incorreta."); }
             } else { 
-                // Se o diretor quiser "deslogar" sem dar F5
                 document.body.classList.add('modo-apresentacao'); 
                 MODO_DIRETOR_ATIVO = false;
                 mostrarAlerta("Modo Cliente ativado com segurança.");
@@ -339,20 +330,13 @@
 
         function inicializarBancoDeDados() {
             for (const chave in CONFIG_MESAS) {
-                const config = CONFIG_MESAS[chave];
-                let contador = 1;
+                const config = CONFIG_MESAS[chave]; let contador = 1;
                 config.layout.forEach(fileira => {
                     fileira.forEach(item => {
                         if (item !== "MIX") {
                             for (let i = 0; i < item; i++) {
-                                const num = contador < 10 ? '0' + contador : contador;
-                                const id = `${config.prefixo}-${num}`;
-                                bancoDeDados[id] = {
-                                    setor: config.nome, status: "Livre", nome: "", telefone: "", email: "",
-                                    cadeiras: 0, pagamento: "Nenhum", parcelas: "1x", 
-                                    valorTotal: "", valorPago: "", saldoDevedor: 0,
-                                    logoPropaganda: false, obs: "", detalhesParcelas: "[]"
-                                };
+                                const num = contador < 10 ? '0' + contador : contador; const id = `${config.prefixo}-${num}`;
+                                bancoDeDados[id] = { setor: config.nome, status: "Livre", nome: "", telefone: "", email: "", cadeiras: 0, pagamento: "Nenhum", parcelas: "1x", valorTotal: "", valorPago: "", saldoDevedor: 0, logoPropaganda: false, obs: "", detalhesParcelas: "[]" };
                                 contador++;
                             }
                         }
@@ -363,8 +347,7 @@
 
         async function carregarDadosDaNuvemBackground() {
             try {
-                const response = await fetch(URL_GOOGLE_SCRIPT);
-                const dadosNuvem = await response.json();
+                const response = await fetch(URL_GOOGLE_SCRIPT); const dadosNuvem = await response.json();
                 for (const idMesa in dadosNuvem) { if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); } }
                 renderizarMapa();
             } catch (error) {}
@@ -374,13 +357,11 @@
         async function carregarDadosDaNuvem() {
             const btnSinc = document.getElementById('btnSincronizar'); btnSinc.textContent = "⌛ Baixando...";
             try {
-                const response = await fetch(URL_GOOGLE_SCRIPT);
-                const dadosNuvem = await response.json();
+                const response = await fetch(URL_GOOGLE_SCRIPT); const dadosNuvem = await response.json();
                 for (const idMesa in dadosNuvem) { if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); } }
                 renderizarMapa(); document.getElementById('telaCarregamento').style.display = 'none';
             } catch (error) {
-                mostrarAlerta("Falha ao conectar. O mapa carregará offline.");
-                document.getElementById('telaCarregamento').style.display = 'none'; renderizarMapa();
+                mostrarAlerta("Falha ao conectar. O mapa carregará offline."); document.getElementById('telaCarregamento').style.display = 'none'; renderizarMapa();
             } finally { btnSinc.textContent = "🔄 Sincronizar"; }
         }
 
@@ -396,14 +377,10 @@
         function recalcularMatrizParcelas(tipoEvento, indexEditado = -1) {
             const totalFechado = converterParaNumero(document.getElementById('campoValorTotal').value);
             const qtdParcelasDesejada = parseInt(document.getElementById('campoParcelas').value) || 1;
-
-            if (arrayParcelasAtuais.length === 0) {
-                for (let i = 0; i < qtdParcelasDesejada; i++) { arrayParcelasAtuais.push({ numero: i + 1, valor: 0, pago: false, vencimento: "" }); }
-            }
+            if (arrayParcelasAtuais.length === 0) { for (let i = 0; i < qtdParcelasDesejada; i++) { arrayParcelasAtuais.push({ numero: i + 1, valor: 0, pago: false, vencimento: "" }); } }
 
             if (tipoEvento === 'MUDOU_QTD_PARCELAS') {
-                const pagas = arrayParcelasAtuais.filter(p => p.pago);
-                let novaQtd = qtdParcelasDesejada;
+                const pagas = arrayParcelasAtuais.filter(p => p.pago); let novaQtd = qtdParcelasDesejada;
                 if (novaQtd < pagas.length) { novaQtd = pagas.length; document.getElementById('campoParcelas').value = novaQtd; mostrarAlerta("Não é possível reduzir para menos parcelas do que as já pagas."); }
 
                 const novoArray = []; let somaPagas = 0;
@@ -414,29 +391,17 @@
                 }
                 arrayParcelasAtuais = novoArray;
                 const qtdNaoPagas = novaQtd - pagas.length;
-                if (qtdNaoPagas > 0) {
-                    const valorPorParcela = Math.max(0, totalFechado - somaPagas) / qtdNaoPagas;
-                    arrayParcelasAtuais.forEach(p => { if (!p.pago) p.valor = valorPorParcela; });
-                }
+                if (qtdNaoPagas > 0) { const valorPorParcela = Math.max(0, totalFechado - somaPagas) / qtdNaoPagas; arrayParcelasAtuais.forEach(p => { if (!p.pago) p.valor = valorPorParcela; }); }
             }
             else if (tipoEvento === 'MUDOU_VALOR_TOTAL') {
-                let somaPagas = 0; let qtdNaoPagas = 0;
-                arrayParcelasAtuais.forEach(p => { if (p.pago) somaPagas += p.valor; else qtdNaoPagas++; });
+                let somaPagas = 0; let qtdNaoPagas = 0; arrayParcelasAtuais.forEach(p => { if (p.pago) somaPagas += p.valor; else qtdNaoPagas++; });
                 if (arrayParcelasAtuais.length !== qtdParcelasDesejada) { return recalcularMatrizParcelas('MUDOU_QTD_PARCELAS'); }
-                if (qtdNaoPagas > 0) {
-                    const valorPorParcela = Math.max(0, totalFechado - somaPagas) / qtdNaoPagas;
-                    arrayParcelasAtuais.forEach(p => { if (!p.pago) p.valor = valorPorParcela; });
-                }
+                if (qtdNaoPagas > 0) { const valorPorParcela = Math.max(0, totalFechado - somaPagas) / qtdNaoPagas; arrayParcelasAtuais.forEach(p => { if (!p.pago) p.valor = valorPorParcela; }); }
             }
             else if (tipoEvento === 'MUDOU_VALOR_PARCELA') {
                 let somaTravada = 0; let qtdProximasNaoPagas = 0;
-                for (let i = 0; i < arrayParcelasAtuais.length; i++) {
-                    if (i <= indexEditado || arrayParcelasAtuais[i].pago) { somaTravada += arrayParcelasAtuais[i].valor; } else { qtdProximasNaoPagas++; }
-                }
-                if (qtdProximasNaoPagas > 0) {
-                    const valorPorParcela = Math.max(0, totalFechado - somaTravada) / qtdProximasNaoPagas;
-                    for (let i = indexEditado + 1; i < arrayParcelasAtuais.length; i++) { if (!arrayParcelasAtuais[i].pago) arrayParcelasAtuais[i].valor = valorPorParcela; }
-                }
+                for (let i = 0; i < arrayParcelasAtuais.length; i++) { if (i <= indexEditado || arrayParcelasAtuais[i].pago) { somaTravada += arrayParcelasAtuais[i].valor; } else { qtdProximasNaoPagas++; } }
+                if (qtdProximasNaoPagas > 0) { const valorPorParcela = Math.max(0, totalFechado - somaTravada) / qtdProximasNaoPagas; for (let i = indexEditado + 1; i < arrayParcelasAtuais.length; i++) { if (!arrayParcelasAtuais[i].pago) arrayParcelasAtuais[i].valor = valorPorParcela; } }
             }
             desenharListaDeParcelas();
         }
@@ -466,13 +431,16 @@
         function mudouQtdParcelas() { recalcularMatrizParcelas('MUDOU_QTD_PARCELAS'); }
         function recalcularDivisaoParcelas() { recalcularMatrizParcelas('MUDOU_VALOR_TOTAL'); }
 
-        function calcularFinanceiroEParcelas() {
+        function calcularFinanceiroEParcelas(forcarCalculo = false) {
             const configSetor = Object.values(CONFIG_MESAS).find(c => mesaEditandoAtual.startsWith(c.prefixo));
             const base = configSetor ? configSetor.valorBase : 0;
             const cadeiras = parseInt(document.getElementById('campoCadeiras').value) || 0;
             const valorSugerido = base + (cadeiras * valorCadeiraAvulsa);
             document.getElementById('textoValorPadrao').textContent = `Mesa + Cadeiras: R$ ${converterParaMoeda(valorSugerido)}`;
-            document.getElementById('campoValorTotal').value = converterParaMoeda(valorSugerido);
+            
+            const campoTotal = document.getElementById('campoValorTotal');
+            if (campoTotal.value === "" || forcarCalculo) { campoTotal.value = converterParaMoeda(valorSugerido); }
+            
             recalcularMatrizParcelas('MUDOU_VALOR_TOTAL');
         }
 
@@ -496,31 +464,21 @@
             let elementoDeReferencia = palco.nextSibling;
 
             for (const chave in CONFIG_MESAS) {
-                const setorConfig = CONFIG_MESAS[chave];
-                let contadorMesa = 1; 
+                const setorConfig = CONFIG_MESAS[chave]; let contadorMesa = 1; 
 
-                const divSetor = document.createElement('div');
-                divSetor.className = 'setor';
-                const tituloSetor = document.createElement('h3');
-                tituloSetor.textContent = setorConfig.nome;
-                divSetor.appendChild(tituloSetor);
+                const divSetor = document.createElement('div'); divSetor.className = 'setor';
+                const tituloSetor = document.createElement('h3'); tituloSetor.textContent = setorConfig.nome; divSetor.appendChild(tituloSetor);
 
                 setorConfig.layout.forEach(fileira => {
-                    const divFileira = document.createElement('div');
-                    divFileira.className = 'fileira-mesas';
+                    const divFileira = document.createElement('div'); divFileira.className = 'fileira-mesas';
 
                     fileira.forEach(item => {
                         if (item === "MIX") {
-                            const divMix = document.createElement('div'); divMix.className = 'house-mix';
-                            divMix.innerHTML = '<span class="icone">🎛️</span> House Mix'; divFileira.appendChild(divMix);
+                            const divMix = document.createElement('div'); divMix.className = 'house-mix'; divMix.innerHTML = '<span class="icone">🎛️</span> House Mix'; divFileira.appendChild(divMix);
                         } else {
                             for (let i = 0; i < item; i++) {
-                                const num = contadorMesa < 10 ? '0' + contadorMesa : contadorMesa;
-                                const idDaMesa = `${setorConfig.prefixo}-${num}`;
-                                const dadosDestaMesa = bancoDeDados[idDaMesa];
-
+                                const num = contadorMesa < 10 ? '0' + contadorMesa : contadorMesa; const idDaMesa = `${setorConfig.prefixo}-${num}`; const dadosDestaMesa = bancoDeDados[idDaMesa];
                                 const wrapperMesa = document.createElement('div'); wrapperMesa.className = 'wrapper-mesa';
-
                                 const textoAcima = document.createElement('div'); textoAcima.className = 'texto-acima';
                                 if (dadosDestaMesa.status === "Vendida") { textoAcima.textContent = "VENDIDA"; textoAcima.classList.add('vendida'); } 
                                 else if (dadosDestaMesa.status === "Reservada") { textoAcima.textContent = "RESERVADA"; textoAcima.classList.add('reservada'); }
@@ -531,27 +489,16 @@
                                 else if (dadosDestaMesa.status === "Reservada") { divMesa.style.backgroundColor = "var(--cor-reservada)"; } 
                                 else { divMesa.style.backgroundColor = setorConfig.corNormal; }
 
-                                if (dadosDestaMesa.cadeiras > 0) {
-                                    const badge = document.createElement('div'); badge.className = 'badge-extra'; badge.textContent = `+${dadosDestaMesa.cadeiras}`; divMesa.appendChild(badge);
-                                }
+                                if (dadosDestaMesa.cadeiras > 0) { const badge = document.createElement('div'); badge.className = 'badge-extra'; badge.textContent = `+${dadosDestaMesa.cadeiras}`; divMesa.appendChild(badge); }
+                                if (dadosDestaMesa.status !== "Livre" && dadosDestaMesa.saldoDevedor > 0) { const badgeDivida = document.createElement('div'); badgeDivida.className = 'badge-divida'; badgeDivida.textContent = '💲'; badgeDivida.title = `Saldo pendente: R$ ${converterParaMoeda(dadosDestaMesa.saldoDevedor)}`; wrapperMesa.appendChild(badgeDivida); }
 
-                                if (dadosDestaMesa.status !== "Livre" && dadosDestaMesa.saldoDevedor > 0) {
-                                    const badgeDivida = document.createElement('div'); badgeDivida.className = 'badge-divida'; badgeDivida.textContent = '💲'; badgeDivida.title = `Saldo pendente: R$ ${converterParaMoeda(dadosDestaMesa.saldoDevedor)}`; wrapperMesa.appendChild(badgeDivida);
-                                }
-
-                                // O CLIQUE AGORA É INTELIGENTE!
                                 divMesa.onclick = function() { 
-                                    if (MODO_DIRETOR_ATIVO) {
-                                        abrirModal(idDaMesa); // O Modal Financeiro
-                                    } else {
-                                        abrirModalCliente(idDaMesa); // O Modal Simples de Reserva
-                                    }
+                                    if (MODO_DIRETOR_ATIVO) { abrirModal(idDaMesa); } 
+                                    else { abrirModalCliente(idDaMesa); }
                                 };
 
                                 const textoAbaixo = document.createElement('div'); textoAbaixo.className = 'texto-abaixo'; textoAbaixo.textContent = dadosDestaMesa.status !== "Livre" ? dadosDestaMesa.nome : "";
-
-                                wrapperMesa.appendChild(textoAcima); wrapperMesa.appendChild(divMesa); wrapperMesa.appendChild(textoAbaixo);
-                                divFileira.appendChild(wrapperMesa); contadorMesa++; 
+                                wrapperMesa.appendChild(textoAcima); wrapperMesa.appendChild(divMesa); wrapperMesa.appendChild(textoAbaixo); divFileira.appendChild(wrapperMesa); contadorMesa++; 
                             }
                         }
                     });
@@ -562,77 +509,49 @@
 
             if(!document.querySelector('.bloco-servicos')) {
                 containerSalao.insertAdjacentHTML('beforeend', `
-                    <div class="bloco-servicos">
-                        <div class="area-comum bar-buffet">🍸 Bar / Buffet</div>
-                        <div class="area-comum banheiros"><div class="icones-banheiro">🚺 🚹 ♿</div>Banheiros</div>
-                    </div>
+                    <div class="bloco-servicos"><div class="area-comum bar-buffet">🍸 Bar / Buffet</div><div class="area-comum banheiros"><div class="icones-banheiro">🚺 🚹 ♿</div>Banheiros</div></div>
                     <div class="area-comum entrada-principal">🚪 Entrada Principal</div>
                 `);
             }
         }
 
-
-        // ======================================================================
-        // FUNÇÕES DO MODAL CLIENTE (BRUCE WAYNE)
-        // ======================================================================
         function abrirModalCliente(idMesa) {
             const dados = bancoDeDados[idMesa];
-            if (dados.status !== "Livre") {
-                mostrarAlerta("Desculpe, esta mesa já foi reservada ou vendida. Por favor, escolha outra.");
-                return;
-            }
-            mesaEditandoAtual = idMesa;
-            document.getElementById('lblMesaCliente').textContent = idMesa;
-            document.getElementById('campoNomeCliente').value = "";
-            document.getElementById('campoTelefoneCliente').value = "";
-            document.getElementById('modalCliente').style.display = 'flex';
+            if (dados.status !== "Livre") { mostrarAlerta("Desculpe, esta mesa já foi reservada ou vendida. Por favor, escolha outra."); return; }
+            mesaEditandoAtual = idMesa; document.getElementById('lblMesaCliente').textContent = idMesa; document.getElementById('campoNomeCliente').value = ""; document.getElementById('campoTelefoneCliente').value = ""; document.getElementById('modalCliente').style.display = 'flex';
         }
 
         function fecharModalCliente() { document.getElementById('modalCliente').style.display = 'none'; }
 
         async function enviarReservaCliente() {
-            const nome = document.getElementById('campoNomeCliente').value.trim();
-            const telefone = document.getElementById('campoTelefoneCliente').value.trim();
-            
-            if(!nome || !telefone) {
-                mostrarAlerta("Por favor, preencha seu nome e telefone para que possamos entrar em contato!"); 
-                return;
-            }
+            const nome = document.getElementById('campoNomeCliente').value.trim(); const telefone = document.getElementById('campoTelefoneCliente').value.trim();
+            if(!nome || !telefone) { mostrarAlerta("Por favor, preencha seu nome e telefone para que possamos entrar em contato!"); return; }
 
-            const btnSalvar = document.getElementById('btnSalvarCliente');
-            btnSalvar.textContent = "Enviando..."; btnSalvar.disabled = true;
-
-            // Prepara o pacote de reserva básica
-            bancoDeDados[mesaEditandoAtual].status = "Reservada";
-            bancoDeDados[mesaEditandoAtual].nome = nome;
-            bancoDeDados[mesaEditandoAtual].telefone = telefone;
-            bancoDeDados[mesaEditandoAtual].obs = "⚠️ SOLICITAÇÃO FEITA PELO LINK PÚBLICO!";
+            const btnSalvar = document.getElementById('btnSalvarCliente'); btnSalvar.textContent = "Enviando..."; btnSalvar.disabled = true;
 
             try {
-                // Checa colisão pra garantir que o cliente não passe raiva
-                const response = await fetch(URL_GOOGLE_SCRIPT);
-                const dbNuvem = await response.json();
-                if (dbNuvem[mesaEditandoAtual].status !== "Livre") {
+                // Checa a nuvem primeiro para ver se existe e se já não foi pega
+                const response = await fetch(URL_GOOGLE_SCRIPT); const dbNuvem = await response.json();
+                if (dbNuvem[mesaEditandoAtual] && dbNuvem[mesaEditandoAtual].status !== "Livre") {
                     mostrarAlerta("Puxa, alguém acabou de pegar essa mesa na sua frente! O mapa será atualizado para você escolher outra.");
                     Object.assign(bancoDeDados[mesaEditandoAtual], dbNuvem[mesaEditandoAtual]); 
-                    fecharModalCliente(); renderizarMapa();
-                    return;
+                    fecharModalCliente(); renderizarMapa(); return;
                 }
 
-                await enviarParaNuvem(mesaEditandoAtual, bancoDeDados[mesaEditandoAtual]);
+                // O pacote especial do cliente
+                const pacoteReserva = {
+                    ...bancoDeDados[mesaEditandoAtual],
+                    status: "Reservada", nome: nome, telefone: telefone, obs: "⚠️ SOLICITAÇÃO FEITA PELO LINK PÚBLICO!"
+                };
+
+                await enviarParaNuvem(mesaEditandoAtual, pacoteReserva);
+                bancoDeDados[mesaEditandoAtual] = pacoteReserva; // Só atualiza localmente se a nuvem aceitar
                 mostrarAlerta("Reserva solicitada com sucesso! \n\nNossa equipe financeira entrará em contato em breve para concluir a venda.");
                 fecharModalCliente(); renderizarMapa();
             } catch(e) {
-                mostrarAlerta("Erro de conexão. Tente novamente.");
-            } finally {
-                btnSalvar.textContent = "Solicitar Mesa"; btnSalvar.disabled = false;
-            }
+                mostrarAlerta("Erro de conexão com o servidor. Verifique sua internet e tente novamente.");
+            } finally { btnSalvar.textContent = "Solicitar Mesa"; btnSalvar.disabled = false; }
         }
-
-
-        // ======================================================================
-        // FUNÇÕES DO MODAL DIRETORIA (BATMAN)
-        // ======================================================================
 
         function abrirModal(idMesa) {
             mesaEditandoAtual = idMesa; const dados = bancoDeDados[idMesa]; statusAoAbrirMesa = dados.status; 
@@ -642,8 +561,9 @@
             try { arrayParcelasAtuais = JSON.parse(dados.detalhesParcelas || "[]"); } catch (e) { arrayParcelasAtuais = []; }
             document.getElementById('campoParcelas').value = arrayParcelasAtuais.length > 0 ? arrayParcelasAtuais.length : 1;
 
-            if (dados.status === "Livre" && dados.valorTotal === "") { calcularFinanceiroEParcelas(); } 
-            else { 
+            if (dados.valorTotal === "") { 
+                calcularFinanceiroEParcelas(true); // O Cliente não mexeu no valor, então o sistema calcula sozinho ao abrir
+            } else { 
                 const configSetor = Object.values(CONFIG_MESAS).find(c => mesaEditandoAtual.startsWith(c.prefixo));
                 const valorSugerido = (configSetor ? configSetor.valorBase : 0) + ((parseInt(dados.cadeiras) || 0) * valorCadeiraAvulsa);
                 document.getElementById('textoValorPadrao').textContent = `Mesa + Cadeiras: R$ ${converterParaMoeda(valorSugerido)}`;
@@ -661,12 +581,11 @@
             const btnSalvar = document.getElementById('btnSalvar'); btnSalvar.textContent = "Verificando..."; btnSalvar.disabled = true; 
             try {
                 const response = await fetch(URL_GOOGLE_SCRIPT); const dbNuvem = await response.json();
-                if (statusAoAbrirMesa === "Livre" && dbNuvem[mesaEditandoAtual].status !== "Livre") {
+                if (statusAoAbrirMesa === "Livre" && dbNuvem[mesaEditandoAtual] && dbNuvem[mesaEditandoAtual].status !== "Livre") {
                     mostrarAlerta(`A mesa ${mesaEditandoAtual} acabou de ser reservada por outro diretor! O mapa será atualizado para você escolher outra.`);
                     Object.assign(bancoDeDados[mesaEditandoAtual], dbNuvem[mesaEditandoAtual]); 
                     fecharModal(); renderizarMapa();
-                    btnSalvar.textContent = "Salvar na Nuvem"; btnSalvar.disabled = false;
-                    return; 
+                    btnSalvar.textContent = "Salvar na Nuvem"; btnSalvar.disabled = false; return; 
                 }
             } catch (error) {}
 
