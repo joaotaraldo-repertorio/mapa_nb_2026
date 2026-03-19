@@ -11,7 +11,7 @@
 
         body { background-color: var(--azul-fundo); color: var(--texto-claro); font-family: Arial, sans-serif; padding: 20px; margin: 0; display: flex; flex-direction: column; align-items: center; }
         
-        .painel-topo { width: 100%; max-width: 1200px; display: flex; justify-content: space-between; align-items: center; background-color: var(--azul-card); padding: 15px 30px; border-radius: 8px; margin-bottom: 20px; box-sizing: border-box; }
+        .painel-topo { width: 100%; max-width: 1300px; display: flex; justify-content: space-between; align-items: center; background-color: var(--azul-card); padding: 15px 30px; border-radius: 8px; margin-bottom: 20px; box-sizing: border-box; }
         .area-logo { width: 150px; display: flex; justify-content: flex-start; cursor: pointer; transition: transform 0.2s; }
         .area-logo:hover { transform: scale(1.05); }
         .area-logo img { max-height: 120px; width: auto; }
@@ -26,17 +26,30 @@
         .btn-sincronizar { background-color: #47D359; }
         .btn-sincronizar:hover { box-shadow: 0 0 10px #47D359; }
 
-        #container-salao { width: 100%; max-width: 1200px; display: flex; flex-direction: column; align-items: center; gap: 30px; position: relative; padding-bottom: 50px;}
+        /* O SALÃO CRESCEU PARA ACOMODAR AS TARJAS */
+        #container-salao { width: 100%; max-width: 1300px; padding: 0 70px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 30px; position: relative; margin-bottom: 20px;}
         
         .palco { width: 50%; background-color: var(--cor-palco); color: #fff; text-align: center; padding: 15px 0; font-size: 24px; font-weight: bold; letter-spacing: 5px; border-radius: 8px; border: 2px solid #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.5); margin-bottom: 10px; }
         
-        .area-comum { display: flex; justify-content: center; align-items: center; border: 2px dashed #8892b0; color: #8892b0; font-weight: bold; text-transform: uppercase; border-radius: 8px; background-color: rgba(17, 34, 64, 0.5); letter-spacing: 2px; text-align: center; }
-        .entrada-principal { width: 40%; height: 60px; font-size: 20px; margin-top: 20px; border-color: var(--ciano-destaque); color: var(--ciano-destaque); }
+        /* AS TARJAS LATERAIS DO LAYOUT FÍSICO */
+        .tarja-lateral {
+            position: absolute; width: 45px; background-color: rgba(17, 34, 64, 0.8);
+            border: 2px dashed #8892b0; color: #8892b0; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; font-weight: bold; font-size: 13px;
+            border-radius: 8px; text-align: center; letter-spacing: 2px; text-transform: uppercase; z-index: 1;
+        }
+        .tarja-texto { writing-mode: vertical-rl; transform: rotate(180deg); margin-top: 10px; }
+        .tarja-icone { font-size: 22px; }
+
+        /* Posicionamento Esquerda */
+        .tarja-wc-masc { left: 0; top: 16%; height: 10%; border-color: #3b82f6; color: #3b82f6; }
+        .tarja-wc-fem { left: 0; top: 28%; height: 10%; border-color: #ec4899; color: #ec4899; }
+        .tarja-aparador-esq { left: 0; top: 72%; height: 15%; }
         
-        .bloco-servicos { display: flex; justify-content: space-between; width: 100%; margin-top: 20px; gap: 20px;}
-        .bar-buffet { flex: 1; height: 100px; font-size: 22px; }
-        .banheiros { flex: 1; height: 100px; font-size: 18px; display: flex; flex-direction: column; gap: 5px;}
-        .icones-banheiro { font-size: 28px; }
+        /* Posicionamento Direita */
+        .tarja-aparador-dir1 { right: 0; top: 24%; height: 20%; }
+        .tarja-aparador-dir2 { right: 0; top: 62%; height: 15%; }
+        .tarja-entrada { right: 0; top: 82%; height: 15%; border-color: var(--ciano-destaque); color: var(--ciano-destaque); background-color: rgba(102, 255, 255, 0.1); }
 
         .setor { background-color: var(--azul-card); padding: 20px; border-radius: 8px; width: 100%; box-sizing: border-box; }
         .setor h3 { margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid #233554; padding-bottom: 10px; color: var(--ciano-destaque); text-align: center; font-size: 24px; }
@@ -50,7 +63,6 @@
 
         .texto-abaixo { font-size: 14px; color: #ffffff; text-align: center; width: 100%; white-space: normal; word-wrap: break-word; line-height: 1.2; font-weight: bold; min-height: 17px; }
         
-        /* O MODO APRESENTAÇÃO ESCONDE NOMES, CADEIRAS E O BOTÃO DE EXCLUIR */
         body.modo-apresentacao .texto-abaixo { display: none; }
         body.modo-apresentacao .badge-extra { display: none; }
         body.modo-apresentacao .badge-divida { display: none; }
@@ -70,6 +82,19 @@
         
         .badge-divida { position: absolute; bottom: 20px; right: 0px; background-color: #ff4d4d; color: #fff; border-radius: 50%; width: 24px; height: 24px; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.8); border: 2px solid #fff; z-index: 10; }
 
+        /* O NOVO PAINEL DE RODAPÉ (LEGENDA E CONTATO) */
+        .painel-rodape { width: 100%; max-width: 1300px; background-color: var(--azul-card); border-radius: 8px; padding: 30px; margin-bottom: 40px; border: 1px solid var(--ciano-destaque); box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 25px; }
+        .titulo-rodape { margin: 0; color: var(--ciano-destaque); text-transform: uppercase; letter-spacing: 2px; font-size: 20px; border-bottom: 1px solid #233554; padding-bottom: 10px; width: 100%; text-align: center; }
+        
+        .legenda-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; width: 100%; justify-items: center; }
+        .item-legenda { display: flex; align-items: center; gap: 15px; font-size: 15px; font-weight: bold; color: var(--texto-claro); width: 100%; justify-content: center;}
+        .cor-box { width: 25px; height: 25px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.5); flex-shrink: 0;}
+        .texto-legenda { display: flex; flex-direction: column; }
+        .sub-legenda { color: #8892b0; font-size: 12px; font-weight: normal; margin-top: 2px;}
+
+        .info-contato { text-align: center; font-size: 20px; font-weight: bold; color: #47D359; border-top: 1px dashed #233554; padding-top: 20px; width: 100%; }
+        .info-contato span.realizacao { display: block; color: var(--texto-claro); font-size: 16px; margin-top: 10px; text-transform: uppercase; letter-spacing: 1px; }
+
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); z-index: 1000; justify-content: center; align-items: center; }
         .modal-box { background-color: var(--azul-card); border: 1px solid var(--ciano-destaque); border-radius: 8px; padding: 25px; width: 650px; max-width: 95%; box-shadow: 0 10px 25px rgba(0,0,0,0.8); max-height: 90vh; overflow-y: auto; }
         .modal-box h2 { margin-top: 0; color: var(--ciano-destaque); border-bottom: 1px solid #233554; padding-bottom: 10px; font-size: 22px; display: flex; justify-content: space-between; }
@@ -78,7 +103,6 @@
         .form-group { display: flex; flex-direction: column; flex: 1; }
         .form-group label { margin-bottom: 5px; font-size: 13px; color: #8892b0; font-weight: bold; }
         .form-group input, .form-group select, .form-group textarea { padding: 8px 10px; border-radius: 4px; border: 1px solid #233554; background-color: #0A192F; color: var(--texto-claro); font-size: 14px; }
-        
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
 
         .form-group textarea { resize: vertical; min-height: 40px; }
@@ -108,7 +132,6 @@
         .spinner { border: 6px solid #112240; border-top: 6px solid var(--ciano-destaque); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 20px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* ESTILOS DO ALERTA CUSTOMIZADO */
         .alerta-customizado { background-color: var(--azul-card); border: 2px solid #ff4d4d; border-radius: 8px; padding: 25px; width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.9); }
         .alerta-customizado h3 { color: #ff4d4d; margin-top: 0; font-size: 22px; }
         .alerta-customizado p { color: #fff; font-size: 16px; margin-bottom: 25px; line-height: 1.5; white-space: pre-wrap; }
@@ -140,11 +163,49 @@
         <h2 id="titulo-dinamico" class="titulo-evento">Carregando...</h2>
         <div class="area-botoes-topo">
             <button class="botao-acao btn-sincronizar" id="btnSincronizar" onclick="carregarDadosDaNuvem()">🔄 Sincronizar</button>
-            </div>
+        </div>
     </div>
 
     <div id="container-salao">
+        <div class="tarja-lateral tarja-wc-masc"><span class="tarja-icone">🚹</span><span class="tarja-texto">WC Masc</span></div>
+        <div class="tarja-lateral tarja-wc-fem"><span class="tarja-icone">🚺♿</span><span class="tarja-texto">WC Fem</span></div>
+        <div class="tarja-lateral tarja-aparador-esq"><span class="tarja-texto">Aparador</span></div>
+        
+        <div class="tarja-lateral tarja-aparador-dir1"><span class="tarja-texto">Aparador</span></div>
+        <div class="tarja-lateral tarja-aparador-dir2"><span class="tarja-texto">Aparador</span></div>
+        <div class="tarja-lateral tarja-entrada"><span class="tarja-icone">🚪</span><span class="tarja-texto">Entrada</span></div>
+
         <div class="palco">PALCO</div>
+    </div>
+
+    <div class="painel-rodape">
+        <h3 class="titulo-rodape">Valores e Capacidade</h3>
+        <div class="legenda-grid">
+            <div class="item-legenda">
+                <span class="cor-box" style="background-color: #FFFF00;"></span> 
+                <span class="texto-legenda">Cota Família <span class="sub-legenda">12 Lugares - R$ 25.000,00</span></span>
+            </div>
+            <div class="item-legenda">
+                <span class="cor-box" style="background-color: #00FFFF;"></span> 
+                <span class="texto-legenda">Cota Criança <span class="sub-legenda">08 Lugares - R$ 12.000,00</span></span>
+            </div>
+            <div class="item-legenda">
+                <span class="cor-box" style="background-color: #47D359;"></span> 
+                <span class="texto-legenda">Mesa Premium <span class="sub-legenda">08 Lugares - R$ 8.000,00</span></span>
+            </div>
+            <div class="item-legenda">
+                <span class="cor-box" style="background-color: #FF9900;"></span> 
+                <span class="texto-legenda">Mesa Master <span class="sub-legenda">06 Lugares - R$ 5.400,00</span></span>
+            </div>
+            <div class="item-legenda">
+                <span class="cor-box" style="background-color: #FF0000;"></span> 
+                <span class="texto-legenda">Mesa Diamante <span class="sub-legenda">06 Lugares - R$ 4.800,00</span></span>
+            </div>
+        </div>
+        <div class="info-contato">
+            📞 Reservas: (17) 98816-3551
+            <span class="realizacao">Realização: Educandário Santo Antonio de Bebedouro</span>
+        </div>
     </div>
 
     <div id="meuModal" class="modal-overlay">
@@ -533,7 +594,8 @@
         function renderizarMapa() {
             const containerSalao = document.getElementById('container-salao');
             Array.from(containerSalao.children).forEach(child => {
-                if (!child.classList.contains('palco') && !child.classList.contains('bloco-servicos') && !child.classList.contains('entrada-principal')) { 
+                // Apenas a classe "tarja-lateral" e "palco" sobrevivem à faxina
+                if (!child.classList.contains('palco') && !child.classList.contains('tarja-lateral')) { 
                     containerSalao.removeChild(child); 
                 }
             });
@@ -615,19 +677,6 @@
                     divSetor.appendChild(divFileira);
                 });
                 containerSalao.insertBefore(divSetor, elementoDeReferencia);
-            }
-
-            if(!document.querySelector('.bloco-servicos')) {
-                containerSalao.insertAdjacentHTML('beforeend', `
-                    <div class="bloco-servicos">
-                        <div class="area-comum bar-buffet">🍸 Bar / Buffet</div>
-                        <div class="area-comum banheiros">
-                            <div class="icones-banheiro">🚺 🚹 ♿</div>
-                            Banheiros
-                        </div>
-                    </div>
-                    <div class="area-comum entrada-principal">🚪 Entrada Principal</div>
-                `);
             }
         }
 
