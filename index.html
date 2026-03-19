@@ -97,12 +97,29 @@
         .spinner { border: 6px solid #112240; border-top: 6px solid var(--ciano-destaque); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 20px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+        /* ESTILOS DO ALERTA CUSTOMIZADO */
+        .alerta-customizado { background-color: var(--azul-card); border: 2px solid #ff4d4d; border-radius: 8px; padding: 25px; width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.9); }
+        .alerta-customizado h3 { color: #ff4d4d; margin-top: 0; font-size: 22px; }
+        .alerta-customizado p { color: #fff; font-size: 16px; margin-bottom: 25px; line-height: 1.5; white-space: pre-wrap; }
+        .btn-alerta-ok { background-color: #ff4d4d; color: #fff; border: none; padding: 10px 30px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.2s;}
+        .btn-alerta-ok:hover { background-color: #ff3333; transform: scale(1.05);}
+
     </style>
 </head>
-<body class="modo-apresentacao"> <div id="telaCarregamento">
+<body class="modo-apresentacao"> 
+    
+    <div id="telaCarregamento">
         <div class="spinner"></div>
         <h2 style="color: var(--ciano-destaque);">Conectando à Nuvem...</h2>
         <p style="color: #8892b0;">Carregando o salão e as vendas mais recentes.</p>
+    </div>
+
+    <div id="modalAlerta" class="modal-overlay" style="z-index: 3000;">
+        <div class="alerta-customizado">
+            <h3>⚠️ Atenção</h3>
+            <p id="textoAlertaCustomizado">Mensagem de erro aqui.</p>
+            <button class="btn-alerta-ok" onclick="fecharAlertaCustomizado()">Entendi</button>
+        </div>
     </div>
 
     <div class="painel-topo">
@@ -257,14 +274,23 @@
             "Diamante": { prefixo: "D", nome: "Mesa Diamante", classeTamanho: "tamanho-p", corNormal: "#FF0000", corVendida: "#FFCDCD", layout: [ [7], [7], [7] ], valorBase: 4800 }
         };
 
+        // FUNÇÕES DO ALERTA CUSTOMIZADO
+        function mostrarAlerta(mensagem) {
+            document.getElementById('textoAlertaCustomizado').textContent = mensagem;
+            document.getElementById('modalAlerta').style.display = 'flex';
+        }
+        function fecharAlertaCustomizado() { 
+            document.getElementById('modalAlerta').style.display = 'none'; 
+        }
+
         document.getElementById('logoSecreta').onclick = function() {
             if (document.body.classList.contains('modo-apresentacao')) {
                 let senhaDigitada = prompt("Área Restrita. Digite a senha da diretoria:");
                 if (senhaDigitada === SENHA_DIRETORIA) {
                     document.body.classList.remove('modo-apresentacao');
-                    alert("Acesso Liberado! Nomes e cadeiras extras revelados. \n\nAtualize a página (F5) para voltar ao modo seguro.");
+                    mostrarAlerta("Acesso Liberado! Nomes e cadeiras extras revelados.\n\nAtualize a página (F5) para voltar ao modo seguro.");
                 } else if (senhaDigitada !== null) {
-                    alert("Senha incorreta.");
+                    mostrarAlerta("Senha incorreta.");
                 }
             } else {
                 document.body.classList.add('modo-apresentacao');
@@ -319,7 +345,7 @@
                 renderizarMapa();
                 document.getElementById('telaCarregamento').style.display = 'none';
             } catch (error) {
-                alert("Falha ao conectar. O mapa carregará offline.");
+                mostrarAlerta("Falha ao conectar. O mapa carregará offline.");
                 document.getElementById('telaCarregamento').style.display = 'none';
                 renderizarMapa();
             } finally { btnSinc.textContent = "🔄 Sincronizar"; }
@@ -366,7 +392,7 @@
                 if (novaQtd < pagas.length) {
                     novaQtd = pagas.length;
                     document.getElementById('campoParcelas').value = novaQtd;
-                    alert("Não é possível reduzir para menos parcelas do que as já pagas.");
+                    mostrarAlerta("Não é possível reduzir para menos parcelas do que as já pagas.");
                 }
 
                 const novoArray = [];
@@ -376,7 +402,7 @@
                         novoArray.push(arrayParcelasAtuais[i]);
                         somaPagas += arrayParcelasAtuais[i].valor;
                     } else if (i < arrayParcelasAtuais.length && !arrayParcelasAtuais[i].pago) {
-                        novoArray.push(arrayParcelasAtuais[i]); // Preserva datas de vencimento antigas se existirem
+                        novoArray.push(arrayParcelasAtuais[i]); 
                     } else {
                         novoArray.push({ numero: i + 1, valor: 0, pago: false, vencimento: "" });
                     }
@@ -652,7 +678,7 @@
                 const response = await fetch(URL_GOOGLE_SCRIPT);
                 const dbNuvem = await response.json();
                 if (statusAoAbrirMesa === "Livre" && dbNuvem[mesaEditandoAtual].status !== "Livre") {
-                    alert(`🚨 ALERTA: Outro diretor acabou de registrar a mesa ${mesaEditandoAtual}! O salão será atualizado para você escolher outra mesa.`);
+                    mostrarAlerta(`A mesa ${mesaEditandoAtual} já foi reservada/vendida! O mapa será atualizado para você escolher outra mesa.`);
                     Object.assign(bancoDeDados[mesaEditandoAtual], dbNuvem[mesaEditandoAtual]); 
                     fecharModal(); renderizarMapa();
                     btnSalvar.textContent = "Salvar na Nuvem"; btnSalvar.disabled = false;
@@ -681,7 +707,7 @@
                 await enviarParaNuvem(mesaEditandoAtual, bancoDeDados[mesaEditandoAtual]);
                 fecharModal(); renderizarMapa(); 
             } catch (error) {
-                alert("Erro ao salvar na nuvem! Verifique a internet e tente novamente.");
+                mostrarAlerta("Erro ao salvar na nuvem! Verifique a internet e tente novamente.");
             } finally {
                 btnSalvar.textContent = "Salvar na Nuvem"; btnSalvar.disabled = false;
             }
@@ -703,7 +729,7 @@
                     await enviarParaNuvem(mesaEditandoAtual, bancoDeDados[mesaEditandoAtual]);
                     fecharModal(); renderizarMapa();
                 } catch (error) {
-                    alert("Erro ao apagar da nuvem!");
+                    mostrarAlerta("Erro ao apagar da nuvem!");
                 } finally {
                     btnLimpar.textContent = "🗑️ Limpar Dados"; btnLimpar.disabled = false;
                 }
@@ -712,7 +738,7 @@
 
         async function executarTransferencia() {
             const idDestino = document.getElementById('selectDestino').value;
-            if (!idDestino) { alert("Selecione uma mesa de destino primeiro!"); return; }
+            if (!idDestino) { mostrarAlerta("Selecione uma mesa de destino primeiro!"); return; }
 
             if (confirm(`Cruzar os dados da mesa ${mesaEditandoAtual} com a mesa ${idDestino}?`)) {
                 const btnTransferir = document.getElementById('btnTransferir');
@@ -729,10 +755,10 @@
                 try {
                     await enviarParaNuvem(mesaEditandoAtual, bancoDeDados[mesaEditandoAtual]);
                     await enviarParaNuvem(idDestino, bancoDeDados[idDestino]);
-                    alert("Transferência realizada com sucesso!");
+                    mostrarAlerta("Transferência realizada com sucesso!");
                     fecharModal(); renderizarMapa();
                 } catch (error) {
-                    alert("Erro ao transferir na nuvem!");
+                    mostrarAlerta("Erro ao transferir na nuvem!");
                 } finally {
                     btnTransferir.textContent = "Confirmar Troca"; btnTransferir.disabled = false;
                 }
