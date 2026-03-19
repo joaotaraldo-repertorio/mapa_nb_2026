@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Mapa de Vendas - Noite Beneficente</title>
+    <title>Mapa de Vendas - 19ª Noite Beneficente 2026</title>
     <style>
         :root {
             --azul-fundo: #0A192F; --azul-card: #112240; --ciano-destaque: #66FFFF;
@@ -26,9 +26,12 @@
         .btn-sincronizar { background-color: #47D359; }
         .btn-sincronizar:hover { box-shadow: 0 0 10px #47D359; }
 
+        /* MODO DIRETORIA BOTÃO SECRETO */
+        #btnFinanceiro { display: none; } /* Escondido pro cliente */
+        body:not(.modo-apresentacao) #btnFinanceiro { display: block; } /* Aparece pro Diretor */
+
         #container-salao { width: 100%; max-width: 1200px; display: flex; flex-direction: column; align-items: center; gap: 30px; position: relative; padding-bottom: 50px;}
         
-        /* ELEMENTOS VISUAIS DO SALÃO */
         .palco { width: 50%; background-color: var(--cor-palco); color: #fff; text-align: center; padding: 15px 0; font-size: 24px; font-weight: bold; letter-spacing: 5px; border-radius: 8px; border: 2px solid #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.5); margin-bottom: 10px; }
         
         .area-comum { display: flex; justify-content: center; align-items: center; border: 2px dashed #8892b0; color: #8892b0; font-weight: bold; text-transform: uppercase; border-radius: 8px; background-color: rgba(17, 34, 64, 0.5); letter-spacing: 2px; text-align: center; }
@@ -104,12 +107,11 @@
         .spinner { border: 6px solid #112240; border-top: 6px solid var(--ciano-destaque); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 20px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* ESTILO DO ALERTA CUSTOMIZADO */
         .alerta-customizado { background-color: var(--azul-card); border: 2px solid #ff4d4d; border-radius: 8px; padding: 25px; width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.9); }
         .alerta-customizado h3 { color: #ff4d4d; margin-top: 0; font-size: 22px; }
         .alerta-customizado p { color: #fff; font-size: 16px; margin-bottom: 25px; line-height: 1.5; }
-        .btn-alerta-ok { background-color: #ff4d4d; color: #fff; border: none; padding: 10px 30px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 16px; }
-        .btn-alerta-ok:hover { background-color: #ff3333; }
+        .btn-alerta-ok { background-color: #ff4d4d; color: #fff; border: none; padding: 10px 30px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.2s;}
+        .btn-alerta-ok:hover { background-color: #ff3333; transform: scale(1.05);}
 
     </style>
 </head>
@@ -130,20 +132,45 @@
     </div>
 
     <div class="painel-topo">
-        <div class="area-logo" id="logoSecreta" title="Área Restrita">
+        <div class="area-logo" id="logoSecreta" title="Educandário Santo Antonio">
             <img id="img-logo" src="" alt="Logo">
         </div>
         <h2 id="titulo-dinamico" class="titulo-evento">Carregando...</h2>
         <div class="area-botoes-topo">
             <button class="botao-acao btn-sincronizar" id="btnSincronizar" onclick="carregarDadosDaNuvem()">🔄 Sincronizar</button>
-            <button class="botao-acao">💰 Financeiro</button>
+            <button class="botao-acao" id="btnFinanceiro">💰 Painel Diretoria Ativo</button>
         </div>
     </div>
 
     <div id="container-salao">
         <div class="palco">PALCO</div>
-        
+    </div>
+
+    <div id="modalCliente" class="modal-overlay">
+        <div class="modal-box" style="width: 400px; border-color: #47D359;">
+            <h2 style="color: #47D359; border-bottom-color: #1d2d50;">Solicitar Reserva</h2>
+            <p style="color: #8892b0; font-size: 14px; margin-bottom: 20px; line-height: 1.4;">
+                Você está solicitando a mesa <strong id="lblMesaCliente" style="color: #fff; font-size: 16px;"></strong>.<br>
+                Informe seus dados para que nossa equipe entre em contato.
+            </p>
+            
+            <div class="form-group" style="margin-bottom: 15px;">
+                <label>Seu Nome / Empresa</label>
+                <input type="text" id="campoNomeCliente" placeholder="Ex: João da Silva">
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 25px;">
+                <label>Seu Telefone / WhatsApp</label>
+                <input type="tel" id="campoTelefoneCliente" placeholder="(17) 99999-9999">
+            </div>
+            
+            <div class="modal-botoes" style="justify-content: flex-end; gap: 10px; margin-top: 10px;">
+                <button class="btn-cancelar" onclick="fecharModalCliente()">Cancelar</button>
+                <button class="botao-acao" style="background-color: #47D359;" id="btnSalvarCliente" onclick="enviarReservaCliente()">Solicitar Mesa</button>
+            </div>
         </div>
+    </div>
+
 
     <div id="meuModal" class="modal-overlay">
         <div class="modal-box">
@@ -266,6 +293,9 @@
         let statusAoAbrirMesa = ""; 
         let valorCadeiraAvulsa = 800.00; 
         let arrayParcelasAtuais = []; 
+        
+        // A VARIÁVEL DE CONTROLE DO SISTEMA
+        let MODO_DIRETOR_ATIVO = false;
 
         const SENHA_DIRETORIA = "diretoria26";
 
@@ -281,23 +311,30 @@
             "Diamante": { prefixo: "D", nome: "Mesa Diamante", classeTamanho: "tamanho-p", corNormal: "#FF0000", corVendida: "#FFCDCD", layout: [ [7], [7], [7] ], valorBase: 4800 }
         };
 
-        // FUNÇÕES DO ALERTA CUSTOMIZADO
+        // ALERTA BONITO
         function mostrarAlerta(mensagem) {
             document.getElementById('textoAlertaCustomizado').textContent = mensagem;
             document.getElementById('modalAlerta').style.display = 'flex';
         }
         function fecharAlertaCustomizado() { document.getElementById('modalAlerta').style.display = 'none'; }
 
+        // A SENHA PARA VIRAR O BATMAN
         document.getElementById('logoSecreta').onclick = function() {
-            if (document.body.classList.contains('modo-apresentacao')) {
-                let senhaDigitada = prompt("Área Restrita. Digite a senha da diretoria:");
+            if (!MODO_DIRETOR_ATIVO) {
+                let senhaDigitada = prompt("Área Restrita da Diretoria. Digite a senha:");
                 if (senhaDigitada === SENHA_DIRETORIA) {
                     document.body.classList.remove('modo-apresentacao');
-                    mostrarAlerta("Acesso Liberado! Nomes e cadeiras extras revelados. Atualize a página (F5) para voltar ao modo seguro.");
+                    MODO_DIRETOR_ATIVO = true;
+                    mostrarAlerta("Acesso Liberado! O Painel Financeiro foi ativado. Atualize a página (F5) caso precise voltar ao modo Cliente.");
                 } else if (senhaDigitada !== null) {
                     mostrarAlerta("Senha incorreta.");
                 }
-            } else { document.body.classList.add('modo-apresentacao'); }
+            } else { 
+                // Se o diretor quiser "deslogar" sem dar F5
+                document.body.classList.add('modo-apresentacao'); 
+                MODO_DIRETOR_ATIVO = false;
+                mostrarAlerta("Modo Cliente ativado com segurança.");
+            }
         };
 
         function inicializarBancoDeDados() {
@@ -449,14 +486,12 @@
 
         function renderizarMapa() {
             const containerSalao = document.getElementById('container-salao');
-            // Limpa tudo menos os visuais estruturais (Palco, Bar, Entrada...)
             Array.from(containerSalao.children).forEach(child => {
                 if (!child.classList.contains('palco') && !child.classList.contains('bloco-servicos') && !child.classList.contains('entrada-principal')) { 
                     containerSalao.removeChild(child); 
                 }
             });
             
-            // Para inserir os setores ABAIXO do palco e ACIMA do Bar/Entrada, vamos achar o Palco e inserir depois dele
             const palco = document.querySelector('.palco');
             let elementoDeReferencia = palco.nextSibling;
 
@@ -504,7 +539,14 @@
                                     const badgeDivida = document.createElement('div'); badgeDivida.className = 'badge-divida'; badgeDivida.textContent = '💲'; badgeDivida.title = `Saldo pendente: R$ ${converterParaMoeda(dadosDestaMesa.saldoDevedor)}`; wrapperMesa.appendChild(badgeDivida);
                                 }
 
-                                divMesa.onclick = function() { abrirModal(idDaMesa); };
+                                // O CLIQUE AGORA É INTELIGENTE!
+                                divMesa.onclick = function() { 
+                                    if (MODO_DIRETOR_ATIVO) {
+                                        abrirModal(idDaMesa); // O Modal Financeiro
+                                    } else {
+                                        abrirModalCliente(idDaMesa); // O Modal Simples de Reserva
+                                    }
+                                };
 
                                 const textoAbaixo = document.createElement('div'); textoAbaixo.className = 'texto-abaixo'; textoAbaixo.textContent = dadosDestaMesa.status !== "Livre" ? dadosDestaMesa.nome : "";
 
@@ -518,20 +560,79 @@
                 containerSalao.insertBefore(divSetor, elementoDeReferencia);
             }
 
-            // Garante que o Bar e a Entrada fiquem no final
             if(!document.querySelector('.bloco-servicos')) {
                 containerSalao.insertAdjacentHTML('beforeend', `
                     <div class="bloco-servicos">
                         <div class="area-comum bar-buffet">🍸 Bar / Buffet</div>
-                        <div class="area-comum banheiros">
-                            <div class="icones-banheiro">🚺 🚹 ♿</div>
-                            Banheiros
-                        </div>
+                        <div class="area-comum banheiros"><div class="icones-banheiro">🚺 🚹 ♿</div>Banheiros</div>
                     </div>
                     <div class="area-comum entrada-principal">🚪 Entrada Principal</div>
                 `);
             }
         }
+
+
+        // ======================================================================
+        // FUNÇÕES DO MODAL CLIENTE (BRUCE WAYNE)
+        // ======================================================================
+        function abrirModalCliente(idMesa) {
+            const dados = bancoDeDados[idMesa];
+            if (dados.status !== "Livre") {
+                mostrarAlerta("Desculpe, esta mesa já foi reservada ou vendida. Por favor, escolha outra.");
+                return;
+            }
+            mesaEditandoAtual = idMesa;
+            document.getElementById('lblMesaCliente').textContent = idMesa;
+            document.getElementById('campoNomeCliente').value = "";
+            document.getElementById('campoTelefoneCliente').value = "";
+            document.getElementById('modalCliente').style.display = 'flex';
+        }
+
+        function fecharModalCliente() { document.getElementById('modalCliente').style.display = 'none'; }
+
+        async function enviarReservaCliente() {
+            const nome = document.getElementById('campoNomeCliente').value.trim();
+            const telefone = document.getElementById('campoTelefoneCliente').value.trim();
+            
+            if(!nome || !telefone) {
+                mostrarAlerta("Por favor, preencha seu nome e telefone para que possamos entrar em contato!"); 
+                return;
+            }
+
+            const btnSalvar = document.getElementById('btnSalvarCliente');
+            btnSalvar.textContent = "Enviando..."; btnSalvar.disabled = true;
+
+            // Prepara o pacote de reserva básica
+            bancoDeDados[mesaEditandoAtual].status = "Reservada";
+            bancoDeDados[mesaEditandoAtual].nome = nome;
+            bancoDeDados[mesaEditandoAtual].telefone = telefone;
+            bancoDeDados[mesaEditandoAtual].obs = "⚠️ SOLICITAÇÃO FEITA PELO LINK PÚBLICO!";
+
+            try {
+                // Checa colisão pra garantir que o cliente não passe raiva
+                const response = await fetch(URL_GOOGLE_SCRIPT);
+                const dbNuvem = await response.json();
+                if (dbNuvem[mesaEditandoAtual].status !== "Livre") {
+                    mostrarAlerta("Puxa, alguém acabou de pegar essa mesa na sua frente! O mapa será atualizado para você escolher outra.");
+                    Object.assign(bancoDeDados[mesaEditandoAtual], dbNuvem[mesaEditandoAtual]); 
+                    fecharModalCliente(); renderizarMapa();
+                    return;
+                }
+
+                await enviarParaNuvem(mesaEditandoAtual, bancoDeDados[mesaEditandoAtual]);
+                mostrarAlerta("Reserva solicitada com sucesso! \n\nNossa equipe financeira entrará em contato em breve para concluir a venda.");
+                fecharModalCliente(); renderizarMapa();
+            } catch(e) {
+                mostrarAlerta("Erro de conexão. Tente novamente.");
+            } finally {
+                btnSalvar.textContent = "Solicitar Mesa"; btnSalvar.disabled = false;
+            }
+        }
+
+
+        // ======================================================================
+        // FUNÇÕES DO MODAL DIRETORIA (BATMAN)
+        // ======================================================================
 
         function abrirModal(idMesa) {
             mesaEditandoAtual = idMesa; const dados = bancoDeDados[idMesa]; statusAoAbrirMesa = dados.status; 
@@ -552,11 +653,6 @@
             const areaTransf = document.getElementById('areaTransferencia');
             if (dados.status !== "Livre") { areaTransf.style.display = 'block'; carregarListaDeDestino(idMesa); } else { areaTransf.style.display = 'none'; }
             document.getElementById('meuModal').style.display = 'flex';
-        }
-
-        function carregarListaDeDestino(mesaOrigem) {
-            const select = document.getElementById('selectDestino'); select.innerHTML = '<option value="">-- Selecione a mesa de destino --</option>';
-            for (const id in bancoDeDados) { if (id !== mesaOrigem) { const info = bancoDeDados[id]; select.innerHTML += `<option value="${id}">${id} - ${info.status} ${info.nome ? '('+info.nome+')' : ''}</option>`; } }
         }
 
         function fecharModal() { document.getElementById('meuModal').style.display = 'none'; }
