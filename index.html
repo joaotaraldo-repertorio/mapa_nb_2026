@@ -67,7 +67,7 @@
         .texto-acima { font-size: 11px; font-weight: bold; text-transform: uppercase; height: 14px; letter-spacing: 1px; }
         .texto-acima.vendida { color: var(--cor-vendida-texto); }
         .texto-acima.reservada { color: var(--cor-reservada); }
-        .texto-acima.livre { color: var(--cor-livre-texto); } /* O NOVO VERDE DO LIVRE */
+        .texto-acima.livre { color: var(--cor-livre-texto); } 
         
         .texto-abaixo { font-size: 14px; color: #ffffff; text-align: center; width: 100%; white-space: normal; word-wrap: break-word; line-height: 1.1; font-weight: bold; min-height: 15px; }
         
@@ -75,21 +75,17 @@
         /* CAMADAS DE SEGURANÇA E VISUALIZAÇÃO                                    */
         /* ====================================================================== */
         
-        /* 1. MODO VISITANTE (Padrão ao abrir o link) - Tudo escondido */
         body.modo-visitante .texto-abaixo { display: none; }
         body.modo-visitante .badge-extra { display: none; }
         body.modo-visitante .badge-divida { display: none; }
         body.modo-visitante #btnLimpar { display: none; }
         
-        /* A MÁGICA DOS NOMES FORÇADOS (LINK DO CLIENTE) */
         body.modo-visitante .mostrar-forcado .texto-abaixo { display: block !important; color: var(--ciano-destaque); text-shadow: 0 0 5px #000;}
         body.modo-visitante .mostrar-forcado .badge-extra { display: flex !important; }
 
-        /* 2. MODO VENDAS (Senha 1) - Esconde dívidas, mas mostra nomes para o vendedor saber */
         body.modo-vendas .badge-divida { display: none; }
         body.modo-vendas #btnLimpar { display: none; }
         
-        /* 3. MODO BUFFET (Para a equipe de montagem do Salão) */
         body.modo-buffet .texto-acima { display: none !important; } 
         body.modo-buffet .badge-divida { display: none !important; } 
         body.modo-buffet .mesa[data-status="Livre"] {
@@ -100,7 +96,6 @@
         }
         body.modo-buffet .wrapper-mesa:has(.mesa[data-status="Livre"]) .texto-abaixo { display: none; }
 
-        /* 4. MODO CLIENTE (A câmera limpa do painel admin) */
         body.modo-cliente .texto-abaixo { display: none !important; }
         body.modo-cliente .badge-extra { display: none !important; }
         body.modo-cliente .badge-divida { display: none !important; }
@@ -128,22 +123,23 @@
         .info-contato { text-align: center; font-size: 18px; font-weight: bold; color: #47D359; border-top: 1px dashed #233554; padding-top: 10px; width: 100%; }
         .info-contato span.realizacao { display: block; color: var(--texto-claro); font-size: 14px; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* ESTILOS DO COFRE FINANCEIRO E QUANTIDADE DE PESSOAS */
+        /* ESTILOS DO COFRE FINANCEIRO (DRE) */
         #painel-cofre { display: none; width: 100%; max-width: 1300px; flex-direction: column; gap: 20px; padding: 20px; box-sizing: border-box; }
         .cofre-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--ciano-destaque); padding-bottom: 15px;}
         .cofre-header h2 { margin: 0; color: var(--ciano-destaque); font-size: 28px; display: flex; align-items: center; gap: 10px;}
         
-        .cofre-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;}
-        .cofre-card { background-color: var(--azul-card); border-radius: 8px; padding: 25px; border: 1px solid #233554; text-align: center; box-shadow: 0 10px 20px rgba(0,0,0,0.5); position: relative; overflow: hidden;}
-        .cofre-card h4 { margin: 0 0 10px 0; color: #8892b0; font-size: 15px; text-transform: uppercase; letter-spacing: 1px;}
-        .cofre-card .valor { font-size: 32px; font-weight: bold; margin: 0;}
-        .cofre-previsao { border-top: 4px solid #f59e0b; } .cofre-previsao .valor { color: #f59e0b; }
+        .cofre-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px;}
+        .cofre-card { background-color: var(--azul-card); border-radius: 8px; padding: 20px; border: 1px solid #233554; text-align: center; box-shadow: 0 10px 20px rgba(0,0,0,0.5); position: relative; overflow: hidden;}
+        .cofre-card h4 { margin: 0 0 10px 0; color: #8892b0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;}
+        .cofre-card .valor { font-size: 28px; font-weight: bold; margin: 0;}
         .cofre-fechado { border-top: 4px solid var(--ciano-destaque); } .cofre-fechado .valor { color: var(--ciano-destaque); }
-        .cofre-recebido { border-top: 4px solid #47D359; } .cofre-recebido .valor { color: #47D359; }
+        .cofre-custos { border-top: 4px solid #ef4444; } .cofre-custos .valor { color: #ef4444; }
+        .cofre-lucro { border-top: 4px solid #10b981; } .cofre-lucro .valor { color: #10b981; font-size: 34px; }
+        .cofre-recebido { border-top: 4px solid #f59e0b; } .cofre-recebido .valor { color: #f59e0b; }
         .cofre-pendente { border-top: 4px solid #ff4d4d; } .cofre-pendente .valor { color: #ff4d4d; }
 
         .area-tabela { overflow-x: auto; background-color: var(--azul-card); border-radius: 8px; border: 1px solid #233554; padding: 15px;}
-        .area-tabela h3 { margin-top: 0; color: var(--ciano-destaque); font-size: 20px; border-bottom: 1px solid #233554; padding-bottom: 10px;}
+        .area-tabela h3 { margin-top: 0; color: var(--ciano-destaque); font-size: 20px; border-bottom: 1px solid #233554; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center;}
         .tabela-financeira { width: 100%; border-collapse: collapse; min-width: 800px;}
         .tabela-financeira th { background-color: #1d2d50; color: #fff; padding: 12px; text-align: right; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid var(--ciano-destaque);}
         .tabela-financeira th:first-child { text-align: left; }
@@ -151,6 +147,9 @@
         .tabela-financeira td:first-child { text-align: left; font-size: 16px;}
         .tabela-financeira tr:hover td { background-color: rgba(102, 255, 255, 0.05); }
         .tabela-financeira tfoot td { background-color: #112240; color: var(--ciano-destaque); font-size: 16px; border-top: 2px solid var(--ciano-destaque); border-bottom: none;}
+
+        .btn-editar-custo { background-color: transparent; border: 1px solid var(--ciano-destaque); color: var(--ciano-destaque); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;}
+        .btn-editar-custo:hover { background-color: var(--ciano-destaque); color: #000; }
 
         .painel-simulador { background-color: #061020; border: 1px dashed #f59e0b; border-radius: 8px; padding: 25px; margin-top: 10px;}
         .painel-simulador h3 { margin: 0 0 5px 0; color: #f59e0b; font-size: 22px; display: flex; align-items: center; gap: 8px;}
@@ -172,7 +171,6 @@
         /* MODAIS PADRÃO */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); z-index: 1000; justify-content: center; align-items: center; }
         
-        /* O MODAL DE SENHA CHIQUE COM O OLHINHO */
         #modalSenha { z-index: 4000; }
         .caixa-senha { background-color: var(--azul-card); border: 2px solid var(--ciano-destaque); border-radius: 8px; padding: 30px; width: 350px; text-align: center; box-shadow: 0 15px 40px rgba(0,0,0,0.9); }
         .caixa-senha h3 { color: var(--ciano-destaque); margin-top: 0; font-size: 22px; text-transform: uppercase; letter-spacing: 2px; }
@@ -185,7 +183,7 @@
         .botoes-senha button { flex: 1; }
 
         .modal-box { background-color: var(--azul-card); border: 1px solid var(--ciano-destaque); border-radius: 8px; padding: 25px; width: 650px; max-width: 95%; box-shadow: 0 10px 25px rgba(0,0,0,0.8); max-height: 90vh; overflow-y: auto; }
-        .modal-box h2 { margin-top: 0; color: var(--ciano-destaque); border-bottom: 1px solid #233554; padding-bottom: 10px; font-size: 22px; display: flex; justify-content: space-between; }
+        .modal-box h2 { margin-top: 0; color: var(--ciano-destaque); border-bottom: 1px solid #233554; padding-bottom: 10px; font-size: 22px; display: flex; justify-content: space-between; align-items: center;}
         
         .form-row { display: flex; gap: 15px; margin-bottom: 12px; }
         .form-group { display: flex; flex-direction: column; flex: 1; }
@@ -216,7 +214,6 @@
         .btn-excluir { background-color: transparent; color: #ff4d4d; border: 1px solid #ff4d4d; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .btn-excluir:hover { background-color: #ff4d4d; color: #fff; }
         
-        /* O NOVO BOTÃO DE LINK MÁGICO */
         #btnLinkMagico { background-color: #10b981; color: #fff; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; display: none; }
         #btnLinkMagico:hover { box-shadow: 0 0 10px #10b981; }
 
@@ -237,7 +234,7 @@
     <div id="telaCarregamento">
         <div class="spinner"></div>
         <h2 style="color: var(--ciano-destaque);">Conectando à Nuvem...</h2>
-        <p style="color: #8892b0;">Carregando o salão e as vendas mais recentes.</p>
+        <p style="color: #8892b0;">Carregando o salão e os dados financeiros.</p>
     </div>
 
     <div id="modalAlerta" class="modal-overlay" style="z-index: 3000;">
@@ -286,31 +283,38 @@
 
         <div id="painel-cofre">
             <div class="cofre-header">
-                <h2><span>📊</span> Painel Financeiro Geral</h2>
-                <button class="botao-acao" onclick="fecharCofre()" style="background-color: #233554; color: #fff;">❌ Voltar ao Mapa</button>
+                <h2><span>📊</span> Painel Financeiro e DRE</h2>
+                <div style="display: flex; gap: 10px;">
+                    <button class="botao-acao" onclick="abrirModalCusto()" style="background-color: #ef4444; color: #fff; font-size: 15px;">➕ Lançar Despesa</button>
+                    <button class="botao-acao" onclick="fecharCofre()" style="background-color: #233554; color: #fff; font-size: 15px;">❌ Voltar ao Mapa</button>
+                </div>
             </div>
             
             <div class="cofre-grid">
-                <div class="cofre-card cofre-previsao">
-                    <h4>🎯 Previsão (100% Vendido)</h4>
-                    <p class="valor" id="cofrePrevisao">R$ 0,00</p>
-                </div>
                 <div class="cofre-card cofre-fechado">
-                    <h4>🤝 Total Fechado</h4>
+                    <h4>📈 Receita Total (Vendas)</h4>
                     <p class="valor" id="cofreFechado">R$ 0,00</p>
                 </div>
+                <div class="cofre-card cofre-custos">
+                    <h4>📉 Custos e Despesas</h4>
+                    <p class="valor" id="cofreCustosTotais">R$ 0,00</p>
+                </div>
+                <div class="cofre-card cofre-lucro">
+                    <h4>🏆 Lucro Líquido Projetado</h4>
+                    <p class="valor" id="cofreLucroLiquido">R$ 0,00</p>
+                </div>
                 <div class="cofre-card cofre-recebido">
-                    <h4>💰 Já Recebido (Em Caixa)</h4>
+                    <h4>💰 Em Caixa (Já Recebido)</h4>
                     <p class="valor" id="cofreRecebido">R$ 0,00</p>
                 </div>
                 <div class="cofre-card cofre-pendente">
-                    <h4>⏳ Saldo a Receber</h4>
+                    <h4>⏳ Saldo a Receber das Vendas</h4>
                     <p class="valor" id="cofrePendente">R$ 0,00</p>
                 </div>
             </div>
 
             <div class="area-tabela">
-                <h3>📋 Detalhamento por Modalidade</h3>
+                <h3>📋 Detalhamento de Receitas (Entradas)</h3>
                 <table class="tabela-financeira">
                     <thead>
                         <tr>
@@ -330,16 +334,33 @@
                 </table>
             </div>
 
+            <div class="area-tabela" style="margin-top: 10px;">
+                <h3 style="color: #ef4444; border-bottom-color: #ef4444;">💸 Detalhamento de Despesas (Saídas)</h3>
+                <table class="tabela-financeira" style="border-bottom: 2px solid #ef4444;">
+                    <thead>
+                        <tr>
+                            <th style="border-bottom-color: #ef4444;">Categoria</th>
+                            <th style="border-bottom-color: #ef4444;">Fornecedor / Profissional</th>
+                            <th style="border-bottom-color: #ef4444;">Descrição do Item</th>
+                            <th style="border-bottom-color: #ef4444;">Qtd</th>
+                            <th style="border-bottom-color: #ef4444;">Valor Unit.</th>
+                            <th style="border-bottom-color: #ef4444;">Valor Total</th>
+                            <th style="border-bottom-color: #ef4444; text-align: center;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyCustos">
+                        </tbody>
+                </table>
+            </div>
+
             <div class="painel-simulador">
-                <h3>🔮 Simulador de Cenários</h3>
-                <p>O que acontece com o faturamento se vendermos mais algumas mesas ou cadeiras hoje? Preencha as quantidades abaixo:</p>
-                
+                <h3>🔮 Simulador de Vendas</h3>
+                <p>O que acontece com a receita se vendermos mais algumas mesas ou cadeiras hoje? Preencha as quantidades abaixo:</p>
                 <div class="sim-grid-inputs" id="containerSimuladorInputs">
                     </div>
-
                 <div class="sim-resultado-box">
                     <div class="res-col">
-                        <span>Faturamento Atual (Fechado)</span>
+                        <span>Faturamento Atual</span>
                         <strong id="simAtual">R$ 0,00</strong>
                     </div>
                     <div class="res-col adicional">
@@ -510,21 +531,83 @@
         </div>
     </div>
 
+    <div id="modalCusto" class="modal-overlay" style="z-index: 3500;">
+        <div class="modal-box" style="width: 550px;">
+            <h2 style="color: #ef4444; border-bottom-color: #ef4444;"><span id="tituloModalCusto">Lançar Nova Despesa</span></h2> 
+            
+            <div class="form-row">
+                <div class="form-group" style="flex: 0.5;">
+                    <label>Categoria</label>
+                    <select id="custoCategoria">
+                        <option value="Atração Musical">Atração Musical</option>
+                        <option value="Estrutura e Som">Estrutura e Som</option>
+                        <option value="Buffet">Buffet</option>
+                        <option value="Bebidas">Bebidas</option>
+                        <option value="Decoração">Decoração</option>
+                        <option value="Publicidade">Publicidade</option>
+                        <option value="Taxas (Ecad, etc)">Taxas e Impostos</option>
+                        <option value="Outras Demandas">Outras Demandas</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Fornecedor / Profissional</label>
+                    <input type="text" id="custoFornecedor" placeholder="Ex: Banda X, Distribuidora Y">
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 12px;">
+                <label>Descrição do Item / Serviço</label>
+                <input type="text" id="custoDescricao" placeholder="Ex: Cachê Principal, Cerveja Heineken, Arranjos de Mesa...">
+            </div>
+
+            <div class="form-row" style="background-color: #061020; padding: 15px; border-radius: 8px; border: 1px dashed #ef4444;">
+                <div class="form-group" style="flex: 0.2;">
+                    <label>Quantidade</label>
+                    <input type="number" id="custoQtd" min="1" value="1" oninput="calcularCustoTotal()" onchange="calcularCustoTotal()">
+                </div>
+                <div class="form-group" style="flex: 0.4;">
+                    <label>Valor Unitário (R$)</label>
+                    <input type="text" id="custoUnitario" oninput="formatarMoeda(this); calcularCustoTotal()" placeholder="0,00">
+                </div>
+                <div class="form-group" style="flex: 0.4;">
+                    <label style="color: #ef4444;">Valor Total (R$)</label>
+                    <input type="text" id="custoTotal" class="campo-bloqueado" style="color: #ef4444 !important;" readonly placeholder="0,00">
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 12px;">
+                <label>Observações / Detalhes do Contrato</label>
+                <textarea id="custoObs" placeholder="Condições de pagamento, detalhes do pedido..."></textarea>
+            </div>
+
+            <div class="modal-botoes">
+                <button class="btn-excluir" id="btnExcluirCusto" onclick="excluirCusto()" style="display: none;">🗑️ Excluir Despesa</button>
+                <div class="grupo-direita">
+                    <button class="btn-cancelar" onclick="fecharModalCusto()">Cancelar</button>
+                    <button class="botao-acao" id="btnSalvarCusto" onclick="salvarCusto()" style="background-color: #ef4444; color: #fff;">Salvar Despesa</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbxCOJv1V8KMAyQ_ECyF7cdVkAiwRQcXQ6tQtNiI-SzGiMP0QeGJz-UsYQQezolsROzM/exec";
         
         const bancoDeDados = {}; 
+        let bancoDeCustos = {}; // O NOVO BANCO DE DADOS DE DESPESAS
+        
         let mesaEditandoAtual = ""; 
         let statusAoAbrirMesa = ""; 
         let valorCadeiraAvulsa = 800.00; 
         let arrayParcelasAtuais = []; 
+        let custoEditandoId = "";
 
-        // AS NOVAS TRANCAS DO SISTEMA
-        let nivelAcesso = 0; // 0=Visitante, 1=Vendas, 2=Admin
+        // AS TRANCAS DO SISTEMA
+        let nivelAcesso = 0; 
         const SENHA_VENDAS = "vendas2026";
         const SENHA_ADMIN = "educandario1958";
 
-        // VERIFICA SE EXISTE UM PARÂMETRO NA URL PARA MOSTRAR NOMES ESPECÍFICOS (O Link Mágico)
+        // LINK MÁGICO
         const urlParams = new URLSearchParams(window.location.search);
         const parametroMostrar = urlParams.get('mostrar');
         const mesasPermitidas = parametroMostrar ? parametroMostrar.split(',').map(s => s.trim().toUpperCase()) : [];
@@ -556,46 +639,32 @@
         }
 
         // ======================================================================
-        // A MÁGICA DA SENHA COM O NOVO MODAL E OLHINHO 👁️
+        // A MÁGICA DA SENHA COM O OLHINHO 👁️
         // ======================================================================
         const inputSenha = document.getElementById('inputSenha');
         const toggleSenha = document.getElementById('toggleSenha');
-
         const showPass = () => { inputSenha.type = 'text'; };
         const hidePass = () => { inputSenha.type = 'password'; };
 
-        toggleSenha.addEventListener('mousedown', showPass);
-        toggleSenha.addEventListener('touchstart', showPass);
-        toggleSenha.addEventListener('mouseup', hidePass);
-        toggleSenha.addEventListener('mouseleave', hidePass);
-        toggleSenha.addEventListener('touchend', hidePass);
+        toggleSenha.addEventListener('mousedown', showPass); toggleSenha.addEventListener('touchstart', showPass);
+        toggleSenha.addEventListener('mouseup', hidePass); toggleSenha.addEventListener('mouseleave', hidePass); toggleSenha.addEventListener('touchend', hidePass);
 
         document.getElementById('logoSecreta').onclick = function() {
             if (nivelAcesso === 0) {
-                // Abre o modal customizado para fazer Login
                 document.getElementById('inputSenha').value = '';
                 document.getElementById('modalSenha').style.display = 'flex';
                 document.getElementById('inputSenha').focus();
             } else {
-                // Fazer LOGOUT (Trancar o sistema)
                 nivelAcesso = 0;
                 document.body.className = 'modo-visitante';
+                document.getElementById('btnCofre').style.display = 'none'; document.getElementById('btnImg').style.display = 'none';
+                document.getElementById('btnPdf').style.display = 'none'; document.getElementById('btnBuffet').style.display = 'none';
+                document.getElementById('btnVisaoCliente').style.display = 'none'; document.getElementById('btnLinkMagico').style.display = 'none';
                 
-                // Esconde os botões
-                document.getElementById('btnCofre').style.display = 'none'; 
-                document.getElementById('btnImg').style.display = 'none';
-                document.getElementById('btnPdf').style.display = 'none';
-                document.getElementById('btnBuffet').style.display = 'none';
-                document.getElementById('btnVisaoCliente').style.display = 'none';
-                document.getElementById('btnLinkMagico').style.display = 'none';
+                document.getElementById('btnBuffet').style.backgroundColor = '#8b5cf6'; document.getElementById('btnBuffet').textContent = "🪑 Modo Buffet";
+                document.getElementById('btnVisaoCliente').style.backgroundColor = '#3b82f6'; document.getElementById('btnVisaoCliente').textContent = "👁️ Visão Cliente";
                 
-                // Reseta botões
-                document.getElementById('btnBuffet').style.backgroundColor = '#8b5cf6';
-                document.getElementById('btnBuffet').textContent = "🪑 Modo Buffet";
-                document.getElementById('btnVisaoCliente').style.backgroundColor = '#3b82f6';
-                document.getElementById('btnVisaoCliente').textContent = "👁️ Visão Cliente";
-                
-                renderizarMapa(); // Reaplica as regras visuais
+                renderizarMapa(); 
                 mostrarAlerta("Sistema trancado com sucesso. O mapa agora é apenas para visualização.", "🔒 Logout");
             }
         };
@@ -607,84 +676,64 @@
             fecharModalSenha();
 
             if (senhaDigitada === SENHA_ADMIN) {
-                nivelAcesso = 2; // DEUS
+                nivelAcesso = 2; 
                 document.body.className = 'modo-admin';
-                
-                document.getElementById('btnImg').style.display = 'block';
-                document.getElementById('btnPdf').style.display = 'block';
-                document.getElementById('btnBuffet').style.display = 'block';
-                document.getElementById('btnVisaoCliente').style.display = 'block';
-                document.getElementById('btnCofre').style.display = 'block';
-                document.getElementById('btnLinkMagico').style.display = 'block';
-                
+                document.getElementById('btnImg').style.display = 'block'; document.getElementById('btnPdf').style.display = 'block';
+                document.getElementById('btnBuffet').style.display = 'block'; document.getElementById('btnVisaoCliente').style.display = 'block';
+                document.getElementById('btnCofre').style.display = 'block'; document.getElementById('btnLinkMagico').style.display = 'block';
                 mostrarAlerta("Acesso Total (Admin) Liberado! Ferramentas financeiras e edições irrestritas disponíveis.\n\nClique na foto novamente para trancar o sistema.", "🔓 Acesso Mestre");
             } 
             else if (senhaDigitada === SENHA_VENDAS) {
-                nivelAcesso = 1; // VENDEDOR
+                nivelAcesso = 1; 
                 document.body.className = 'modo-vendas';
-                
                 mostrarAlerta("Acesso de Vendas Liberado!\n\nVocê pode alterar apenas mesas LIVRES. As mesas já vendidas ou reservadas estão trancadas.", "🔓 Acesso de Vendas");
             }
-            else {
-                mostrarAlerta("A senha digitada está incorreta.", "❌ Acesso Negado");
-            }
+            else { mostrarAlerta("A senha digitada está incorreta.", "❌ Acesso Negado"); }
             renderizarMapa();
         }
 
-        // ======================================================================
-        // LENTES DA CÂMERA (BUFFET E CLIENTE)
-        // ======================================================================
+        // LENTES DA CÂMERA
         function toggleBuffet() {
             document.body.classList.toggle('modo-buffet');
             const btn = document.getElementById('btnBuffet');
-            
             if(document.body.classList.contains('modo-cliente')) {
                 document.body.classList.remove('modo-cliente');
                 document.getElementById('btnVisaoCliente').style.backgroundColor = '#3b82f6';
                 document.getElementById('btnVisaoCliente').textContent = "👁️ Visão Cliente";
             }
-
             if (document.body.classList.contains('modo-buffet')) {
-                btn.style.backgroundColor = '#10b981'; 
-                btn.textContent = "✅ Buffet: Mapa da Montagem";
+                btn.style.backgroundColor = '#10b981'; btn.textContent = "✅ Buffet: Mapa da Montagem";
             } else {
-                btn.style.backgroundColor = '#8b5cf6'; 
-                btn.textContent = "🪑 Modo Buffet";
+                btn.style.backgroundColor = '#8b5cf6'; btn.textContent = "🪑 Modo Buffet";
             }
         }
 
         function toggleVisaoCliente() {
             document.body.classList.toggle('modo-cliente');
             const btn = document.getElementById('btnVisaoCliente');
-            
             if(document.body.classList.contains('modo-buffet')) {
                 document.body.classList.remove('modo-buffet');
                 document.getElementById('btnBuffet').style.backgroundColor = '#8b5cf6';
                 document.getElementById('btnBuffet').textContent = "🪑 Modo Buffet";
             }
-
             if (document.body.classList.contains('modo-cliente')) {
-                btn.style.backgroundColor = '#10b981'; 
-                btn.textContent = "✅ Cliente: Mapa Limpo";
+                btn.style.backgroundColor = '#10b981'; btn.textContent = "✅ Cliente: Mapa Limpo";
             } else {
-                btn.style.backgroundColor = '#3b82f6'; 
-                btn.textContent = "👁️ Visão Cliente";
+                btn.style.backgroundColor = '#3b82f6'; btn.textContent = "👁️ Visão Cliente";
             }
         }
         
-        // A FUNÇÃO DO LINK MÁGICO
         function gerarLinkCliente() {
-            let baseUrl = window.location.href.split('?')[0]; // Pega o link sem nada
+            let baseUrl = window.location.href.split('?')[0]; 
             let linkMagico = baseUrl + "?mostrar=" + mesaEditandoAtual;
-            
-            // Copia pro clipboard do Windows/Celular
             navigator.clipboard.writeText(linkMagico).then(() => {
                 mostrarAlerta("Link copiado com sucesso:\n" + linkMagico + "\n\nEnvie este link para o cliente no WhatsApp. Quando ele abrir, o mapa estará 100% trancado, mas mostrará o nome dele nessa mesa específica!", "🔗 Link Copiado!");
-            }).catch(err => {
-                mostrarAlerta("Erro ao copiar o link. Mas o link é este:\n" + linkMagico, "❌ Erro");
-            });
+            }).catch(err => { mostrarAlerta("Erro ao copiar o link. Mas o link é este:\n" + linkMagico, "❌ Erro"); });
         }
 
+        // ======================================================================
+        // A NOVA INTELIGÊNCIA DO DRE (SALA COFRE COM CUSTOS)
+        // ======================================================================
         function abrirCofre() {
             let totaisGlobais = { previsao: 0, fechado: 0, recebido: 0, pendente: 0, qtdVendidaGeral: 0, qtdTotalGeral: 0 };
             let totaisCadeiras = { qtd: 0, fechado: 0, recebido: 0 };
@@ -695,28 +744,19 @@
 
             for (const chave in CONFIG_MESAS) {
                 const config = CONFIG_MESAS[chave];
-                
                 let qtdTotalSetor = 0;
-                config.layout.forEach(fileira => {
-                    fileira.forEach(item => { if (typeof item === 'number') qtdTotalSetor += item; });
-                });
+                config.layout.forEach(fileira => { fileira.forEach(item => { if (typeof item === 'number') qtdTotalSetor += item; }); });
                 
                 let previsaoSetor = qtdTotalSetor * config.valorBase;
-                
-                totaisGlobais.qtdTotalGeral += qtdTotalSetor;
-                totaisGlobais.previsao += previsaoSetor;
+                totaisGlobais.qtdTotalGeral += qtdTotalSetor; totaisGlobais.previsao += previsaoSetor;
 
-                let qtdVendidaSetor = 0;
-                let fechadoSetor = 0;
-                let recebidoSetor = 0;
+                let qtdVendidaSetor = 0; let fechadoSetor = 0; let recebidoSetor = 0;
 
                 for (const id in bancoDeDados) {
                     if (id.startsWith(config.prefixo)) {
                         const mesa = bancoDeDados[id];
                         if (mesa.status === "Vendida" || mesa.status === "Reservada") {
-                            qtdVendidaSetor++;
-                            
-                            totalPessoasSalao += config.capacidade;
+                            qtdVendidaSetor++; totalPessoasSalao += config.capacidade;
                             
                             let qtdCadeirasExtra = parseInt(mesa.cadeiras) || 0;
                             totalPessoasSalao += qtdCadeirasExtra; 
@@ -727,30 +767,20 @@
                             let valorDasCadeiras = qtdCadeirasExtra * valorCadeiraAvulsa;
                             let valorDaMesaSemCadeiras = valorTotalCobrado - valorDasCadeiras;
                             
-                            if (valorDaMesaSemCadeiras < 0) {
-                                valorDaMesaSemCadeiras = valorTotalCobrado;
-                                valorDasCadeiras = 0;
-                            }
+                            if (valorDaMesaSemCadeiras < 0) { valorDaMesaSemCadeiras = valorTotalCobrado; valorDasCadeiras = 0; }
                             
                             let pagoNaMesa = Math.min(valorPago, valorDaMesaSemCadeiras);
                             let pagoNaCadeira = Math.max(0, valorPago - pagoNaMesa);
                             
-                            fechadoSetor += valorDaMesaSemCadeiras;
-                            recebidoSetor += pagoNaMesa;
-                            
-                            totaisCadeiras.qtd += qtdCadeirasExtra;
-                            totaisCadeiras.fechado += valorDasCadeiras;
-                            totaisCadeiras.recebido += pagoNaCadeira;
+                            fechadoSetor += valorDaMesaSemCadeiras; recebidoSetor += pagoNaMesa;
+                            totaisCadeiras.qtd += qtdCadeirasExtra; totaisCadeiras.fechado += valorDasCadeiras; totaisCadeiras.recebido += pagoNaCadeira;
                         }
                     }
                 }
 
                 let saldoSetor = fechadoSetor - recebidoSetor;
-                
-                totaisGlobais.qtdVendidaGeral += qtdVendidaSetor;
-                totaisGlobais.fechado += fechadoSetor;
-                totaisGlobais.recebido += recebidoSetor;
-                totaisGlobais.pendente += saldoSetor;
+                totaisGlobais.qtdVendidaGeral += qtdVendidaSetor; totaisGlobais.fechado += fechadoSetor;
+                totaisGlobais.recebido += recebidoSetor; totaisGlobais.pendente += saldoSetor;
 
                 htmlDetalhes += `
                     <tr>
@@ -794,7 +824,7 @@
                 <tr style="background-color: rgba(102, 255, 255, 0.1); border-top: 1px dashed var(--ciano-destaque);">
                     <td colspan="3" style="color: var(--ciano-destaque); text-align: right; font-size: 15px; text-transform: uppercase;">👥 Quantidade de Pessoas (No Salão):</td>
                     <td style="color: #fff; font-size: 22px; font-weight: bold;">${totalPessoasSalao}</td>
-                    <td colspan="3" style="color: #8892b0; font-size: 12px; text-align: left; vertical-align: middle;">(Soma de todos os assentos das mesas vendidas + cadeiras extras)</td>
+                    <td colspan="3" style="color: #8892b0; font-size: 12px; text-align: left; vertical-align: middle;">(Soma de assentos + cadeiras extras)</td>
                 </tr>
             `;
 
@@ -809,9 +839,7 @@
                 </div>
             `;
 
-            totaisGlobais.fechado += totaisCadeiras.fechado;
-            totaisGlobais.recebido += totaisCadeiras.recebido;
-            totaisGlobais.pendente += saldoCadeiras;
+            totaisGlobais.fechado += totaisCadeiras.fechado; totaisGlobais.recebido += totaisCadeiras.recebido; totaisGlobais.pendente += saldoCadeiras;
 
             let htmlRodapeTabela = `
                 <tr>
@@ -824,14 +852,46 @@
                     <td>R$ ${converterParaMoeda(totaisGlobais.pendente)}</td>
                 </tr>
             `;
+            
+            // PROCESSAMENTO DOS CUSTOS
+            let htmlCustos = "";
+            let totalCustos = 0;
+            
+            for (const id in bancoDeCustos) {
+                const c = bancoDeCustos[id];
+                let valTotal = converterParaNumero(c.valorTotal);
+                totalCustos += valTotal;
+                
+                htmlCustos += `
+                    <tr>
+                        <td style="color: #ef4444;">${c.categoria}</td>
+                        <td style="color: #fff;">${c.fornecedor}</td>
+                        <td style="color: #8892b0; font-weight: normal;">${c.descricao}</td>
+                        <td style="color: #fff;">${c.quantidade}</td>
+                        <td style="color: #8892b0; font-weight: normal;">R$ ${converterParaMoeda(c.valorUnitario)}</td>
+                        <td style="color: #ef4444;">R$ ${converterParaMoeda(valTotal)}</td>
+                        <td style="text-align: center;">
+                            <button class="btn-editar-custo" onclick="abrirModalCusto('${id}')">✏️ Editar</button>
+                        </td>
+                    </tr>
+                `;
+            }
+            
+            if (Object.keys(bancoDeCustos).length === 0) {
+                htmlCustos = `<tr><td colspan="7" style="text-align: center; color: #8892b0; font-weight: normal;">Nenhuma despesa lançada até o momento.</td></tr>`;
+            }
+            
+            let lucroLiquidoReal = totaisGlobais.fechado - totalCustos;
 
-            document.getElementById('cofrePrevisao').textContent = `R$ ${converterParaMoeda(totaisGlobais.previsao)}`;
             document.getElementById('cofreFechado').textContent = `R$ ${converterParaMoeda(totaisGlobais.fechado)}`;
+            document.getElementById('cofreCustosTotais').textContent = `R$ ${converterParaMoeda(totalCustos)}`;
+            document.getElementById('cofreLucroLiquido').textContent = `R$ ${converterParaMoeda(lucroLiquidoReal)}`;
             document.getElementById('cofreRecebido').textContent = `R$ ${converterParaMoeda(totaisGlobais.recebido)}`;
             document.getElementById('cofrePendente').textContent = `R$ ${converterParaMoeda(totaisGlobais.pendente)}`;
 
             document.getElementById('tbodyDetalhes').innerHTML = htmlDetalhes;
             document.getElementById('tfootDetalhes').innerHTML = htmlRodapeTabela;
+            document.getElementById('tbodyCustos').innerHTML = htmlCustos;
             
             const containerSimulador = document.getElementById('containerSimuladorInputs');
             containerSimulador.innerHTML = htmlSimulador;
@@ -844,23 +904,109 @@
             document.getElementById('painel-cofre').style.display = 'flex';
         }
 
+        // ======================================================================
+        // FUNÇÕES DO MODAL DE CUSTOS (A NOVA ENGENHARIA)
+        // ======================================================================
+        function abrirModalCusto(id = null) {
+            if (id && bancoDeCustos[id]) {
+                custoEditandoId = id;
+                const c = bancoDeCustos[id];
+                document.getElementById('tituloModalCusto').textContent = "Editar Despesa";
+                document.getElementById('custoCategoria').value = c.categoria;
+                document.getElementById('custoFornecedor').value = c.fornecedor;
+                document.getElementById('custoDescricao').value = c.descricao;
+                document.getElementById('custoQtd').value = c.quantidade;
+                document.getElementById('custoUnitario').value = converterParaMoeda(c.valorUnitario);
+                document.getElementById('custoTotal').value = converterParaMoeda(c.valorTotal);
+                document.getElementById('custoObs').value = c.obs;
+                document.getElementById('btnExcluirCusto').style.display = 'block';
+            } else {
+                custoEditandoId = "";
+                document.getElementById('tituloModalCusto').textContent = "Lançar Nova Despesa";
+                document.getElementById('custoCategoria').value = "Atração Musical";
+                document.getElementById('custoFornecedor').value = "";
+                document.getElementById('custoDescricao').value = "";
+                document.getElementById('custoQtd').value = 1;
+                document.getElementById('custoUnitario').value = "";
+                document.getElementById('custoTotal').value = "";
+                document.getElementById('custoObs').value = "";
+                document.getElementById('btnExcluirCusto').style.display = 'none';
+            }
+            document.getElementById('modalCusto').style.display = 'flex';
+        }
+
+        function fecharModalCusto() { document.getElementById('modalCusto').style.display = 'none'; }
+
+        function calcularCustoTotal() {
+            let qtd = parseInt(document.getElementById('custoQtd').value) || 1;
+            let unitario = converterParaNumero(document.getElementById('custoUnitario').value);
+            let total = qtd * unitario;
+            document.getElementById('custoTotal').value = converterParaMoeda(total);
+        }
+
+        async function salvarCusto() {
+            const btnSalvar = document.getElementById('btnSalvarCusto');
+            btnSalvar.textContent = "Salvando..."; btnSalvar.disabled = true;
+
+            let idCusto = custoEditandoId ? custoEditandoId : "CST-" + new Date().getTime();
+            
+            let dadosCusto = {
+                id: idCusto,
+                categoria: document.getElementById('custoCategoria').value,
+                fornecedor: document.getElementById('custoFornecedor').value,
+                descricao: document.getElementById('custoDescricao').value,
+                quantidade: parseInt(document.getElementById('custoQtd').value) || 1,
+                valorUnitario: converterParaNumero(document.getElementById('custoUnitario').value),
+                valorTotal: converterParaNumero(document.getElementById('custoTotal').value),
+                obs: document.getElementById('custoObs').value
+            };
+
+            let payload = { tipo: "custo", acao: "salvar", dados: dadosCusto };
+
+            try {
+                await fetch(URL_GOOGLE_SCRIPT, { method: 'POST', body: JSON.stringify(payload) });
+                bancoDeCustos[idCusto] = dadosCusto; // Atualiza local pra ser rápido
+                fecharModalCusto(); 
+                abrirCofre(); // Recarrega o DRE
+            } catch (error) {
+                mostrarAlerta("Erro ao salvar despesa na nuvem!");
+            } finally {
+                btnSalvar.textContent = "Salvar Despesa"; btnSalvar.disabled = false;
+            }
+        }
+
+        async function excluirCusto() {
+            if (confirm("Tem certeza que deseja apagar esta despesa definitivamente?")) {
+                const btnExcluir = document.getElementById('btnExcluirCusto');
+                btnExcluir.textContent = "Apagando..."; btnExcluir.disabled = true;
+                
+                let payload = { tipo: "custo", acao: "excluir", dados: { id: custoEditandoId } };
+                try {
+                    await fetch(URL_GOOGLE_SCRIPT, { method: 'POST', body: JSON.stringify(payload) });
+                    delete bancoDeCustos[custoEditandoId];
+                    fecharModalCusto(); 
+                    abrirCofre(); 
+                } catch (error) {
+                    mostrarAlerta("Erro ao excluir despesa da nuvem!");
+                } finally {
+                    btnExcluir.textContent = "🗑️ Excluir Despesa"; btnExcluir.disabled = false;
+                }
+            }
+        }
+
         function calcularSimulacao() {
             const container = document.getElementById('containerSimuladorInputs');
             let fechadoAtual = parseFloat(container.getAttribute('data-fechado-atual')) || 0;
             let projecaoExtra = 0;
-
             const inputs = document.querySelectorAll('.input-simulador');
             inputs.forEach(inp => {
                 let qtd = parseInt(inp.value) || 0;
                 let max = parseInt(inp.getAttribute('max')) || 0;
-                
                 if (qtd > max) { qtd = max; inp.value = max; }
                 if (qtd < 0) { qtd = 0; inp.value = 0; }
-
                 let valorBase = parseFloat(inp.getAttribute('data-valorbase')) || 0;
                 projecaoExtra += (qtd * valorBase);
             });
-
             document.getElementById('simAtual').textContent = `R$ ${converterParaMoeda(fechadoAtual)}`;
             document.getElementById('simExtra').textContent = `+ R$ ${converterParaMoeda(projecaoExtra)}`;
             document.getElementById('simProjetado').textContent = `R$ ${converterParaMoeda(fechadoAtual + projecaoExtra)}`;
@@ -880,36 +1026,20 @@
             mostrarAlerta("Preparando sua imagem, aguarde um instante... 📸", "⏳ Gerando Arquivo");
 
             try {
-                const canvas = await html2canvas(areaExportacao, {
-                    backgroundColor: '#0A192F',
-                    scale: 2, 
-                    useCORS: true,
-                    allowTaint: true 
-                });
-
+                const canvas = await html2canvas(areaExportacao, { backgroundColor: '#0A192F', scale: 2, useCORS: true, allowTaint: true });
                 const imgData = canvas.toDataURL('image/jpeg', 0.9);
 
                 if (tipo === 'img') {
-                    const link = document.createElement('a');
-                    link.download = 'Mapa_Educandario_2026.jpg';
-                    link.href = imgData;
-                    link.click();
+                    const link = document.createElement('a'); link.download = 'Mapa_Educandario_2026.jpg'; link.href = imgData; link.click();
                 } else if (tipo === 'pdf') {
                     const { jsPDF } = window.jspdf;
                     const orientation = canvas.width >= canvas.height ? 'l' : 'p';
-                    const pdf = new jsPDF({
-                        orientation: orientation,
-                        unit: 'px',
-                        format: [canvas.width, canvas.height]
-                    });
-                    
-                    pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height);
-                    pdf.save('Mapa_Educandario_2026.pdf');
+                    const pdf = new jsPDF({ orientation: orientation, unit: 'px', format: [canvas.width, canvas.height] });
+                    pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height); pdf.save('Mapa_Educandario_2026.pdf');
                 }
                 fecharAlertaCustomizado();
             } catch (erro) {
-                fecharAlertaCustomizado();
-                console.error(erro);
+                fecharAlertaCustomizado(); console.error(erro);
                 mostrarAlerta("O navegador bloqueou a foto por estar rodando no computador local. Quando subir pro GitHub vai funcionar perfeitamente! 🚀", "❌ Bloqueio Local");
             } finally {
                 botoesTopo.style.display = 'flex';
@@ -941,13 +1071,18 @@
             }
         }
 
+        // CARREGA VENDAS E CUSTOS SIMULTANEAMENTE DA NUVEM
         async function carregarDadosDaNuvemBackground() {
             try {
                 const response = await fetch(URL_GOOGLE_SCRIPT);
                 const dadosNuvem = await response.json();
-                for (const idMesa in dadosNuvem) {
-                    if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); }
-                }
+                for (const idMesa in dadosNuvem) { if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); } }
+                
+                const responseCustos = await fetch(URL_GOOGLE_SCRIPT + "?tipo=custos");
+                const dadosCustos = await responseCustos.json();
+                bancoDeCustos = {};
+                dadosCustos.forEach(c => bancoDeCustos[c.id] = c);
+
                 renderizarMapa();
             } catch (error) {}
         }
@@ -959,9 +1094,13 @@
             try {
                 const response = await fetch(URL_GOOGLE_SCRIPT);
                 const dadosNuvem = await response.json();
-                for (const idMesa in dadosNuvem) {
-                    if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); }
-                }
+                for (const idMesa in dadosNuvem) { if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); } }
+                
+                const responseCustos = await fetch(URL_GOOGLE_SCRIPT + "?tipo=custos");
+                const dadosCustos = await responseCustos.json();
+                bancoDeCustos = {};
+                dadosCustos.forEach(c => bancoDeCustos[c.id] = c);
+
                 renderizarMapa();
                 document.getElementById('telaCarregamento').style.display = 'none';
             } catch (error) {
@@ -972,8 +1111,7 @@
         }
 
         async function enviarParaNuvem(idMesa, dados) {
-            try {
-                await fetch(URL_GOOGLE_SCRIPT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ idMesa: idMesa, dados: dados }) });
+            try { await fetch(URL_GOOGLE_SCRIPT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ idMesa: idMesa, dados: dados }) });
             } catch (error) { throw new Error("Erro de conexão"); }
         }
 
@@ -983,14 +1121,15 @@
             valor = (parseInt(valor) / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             elemento.value = valor;
         }
+
         function converterParaNumero(str) {
             if (str === null || str === undefined || str === "") return 0;
             if (typeof str === 'number') return str;
             return parseFloat(String(str).replace(/\./g, '').replace(',', '.'));
         }
+
         function converterParaMoeda(numero) {
-            let val = Number(numero);
-            if (isNaN(val)) val = 0;
+            let val = Number(numero); if (isNaN(val)) val = 0;
             return val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
 
@@ -999,9 +1138,7 @@
             const qtdParcelasDesejada = parseInt(document.getElementById('campoParcelas').value) || 1;
 
             if (arrayParcelasAtuais.length === 0) {
-                for (let i = 0; i < qtdParcelasDesejada; i++) {
-                    arrayParcelasAtuais.push({ numero: i + 1, valor: 0, pago: false, vencimento: "" });
-                }
+                for (let i = 0; i < qtdParcelasDesejada; i++) { arrayParcelasAtuais.push({ numero: i + 1, valor: 0, pago: false, vencimento: "" }); }
             }
 
             if (tipoEvento === 'MUDOU_QTD_PARCELAS') {
@@ -1009,22 +1146,17 @@
                 let novaQtd = qtdParcelasDesejada;
 
                 if (novaQtd < pagas.length) {
-                    novaQtd = pagas.length;
-                    document.getElementById('campoParcelas').value = novaQtd;
+                    novaQtd = pagas.length; document.getElementById('campoParcelas').value = novaQtd;
                     mostrarAlerta("Não é possível reduzir para menos parcelas do que as já pagas.");
                 }
 
-                const novoArray = [];
-                let somaPagas = 0;
+                const novoArray = []; let somaPagas = 0;
                 for (let i = 0; i < novaQtd; i++) {
                     if (i < arrayParcelasAtuais.length && arrayParcelasAtuais[i].pago) {
-                        novoArray.push(arrayParcelasAtuais[i]);
-                        somaPagas += arrayParcelasAtuais[i].valor;
+                        novoArray.push(arrayParcelasAtuais[i]); somaPagas += arrayParcelasAtuais[i].valor;
                     } else if (i < arrayParcelasAtuais.length && !arrayParcelasAtuais[i].pago) {
                         novoArray.push(arrayParcelasAtuais[i]); 
-                    } else {
-                        novoArray.push({ numero: i + 1, valor: 0, pago: false, vencimento: "" });
-                    }
+                    } else { novoArray.push({ numero: i + 1, valor: 0, pago: false, vencimento: "" }); }
                 }
                 arrayParcelasAtuais = novoArray;
 
@@ -1035,34 +1167,20 @@
                 }
             }
             else if (tipoEvento === 'MUDOU_VALOR_TOTAL') {
-                let somaPagas = 0;
-                let qtdNaoPagas = 0;
-                arrayParcelasAtuais.forEach(p => {
-                    if (p.pago) somaPagas += p.valor;
-                    else qtdNaoPagas++;
-                });
+                let somaPagas = 0; let qtdNaoPagas = 0;
+                arrayParcelasAtuais.forEach(p => { if (p.pago) somaPagas += p.valor; else qtdNaoPagas++; });
 
-                if (arrayParcelasAtuais.length !== qtdParcelasDesejada) {
-                    return recalcularMatrizParcelas('MUDOU_QTD_PARCELAS');
-                }
-
+                if (arrayParcelasAtuais.length !== qtdParcelasDesejada) { return recalcularMatrizParcelas('MUDOU_QTD_PARCELAS'); }
                 if (qtdNaoPagas > 0) {
                     const valorPorParcela = Math.max(0, totalFechado - somaPagas) / qtdNaoPagas;
                     arrayParcelasAtuais.forEach(p => { if (!p.pago) p.valor = valorPorParcela; });
                 }
             }
             else if (tipoEvento === 'MUDOU_VALOR_PARCELA') {
-                let somaTravada = 0;
-                let qtdProximasNaoPagas = 0;
-
+                let somaTravada = 0; let qtdProximasNaoPagas = 0;
                 for (let i = 0; i < arrayParcelasAtuais.length; i++) {
-                    if (i <= indexEditado || arrayParcelasAtuais[i].pago) {
-                        somaTravada += arrayParcelasAtuais[i].valor;
-                    } else {
-                        qtdProximasNaoPagas++;
-                    }
+                    if (i <= indexEditado || arrayParcelasAtuais[i].pago) { somaTravada += arrayParcelasAtuais[i].valor; } else { qtdProximasNaoPagas++; }
                 }
-
                 if (qtdProximasNaoPagas > 0) {
                     const valorPorParcela = Math.max(0, totalFechado - somaTravada) / qtdProximasNaoPagas;
                     for (let i = indexEditado + 1; i < arrayParcelasAtuais.length; i++) {
@@ -1070,31 +1188,20 @@
                     }
                 }
             }
-
             desenharListaDeParcelas();
         }
 
         function desenharListaDeParcelas() {
-            const container = document.getElementById('containerParcelas');
-            container.innerHTML = ''; 
-            
+            const container = document.getElementById('containerParcelas'); container.innerHTML = ''; 
             arrayParcelasAtuais.forEach((parcela, index) => {
                 const linha = document.createElement('div');
                 linha.style.display = 'flex'; linha.style.gap = '8px'; linha.style.alignItems = 'center'; linha.style.marginBottom = '8px';
-
                 linha.innerHTML = `
                     <span style="color: var(--ciano-destaque); font-size: 13px; width: 60px; font-weight: bold;">${parcela.numero}ª Parc.</span>
-                    
-                    <input type="date" value="${parcela.vencimento || ''}" onchange="atualizarVencimento(${index}, this)" title="Vencimento"
-                           style="padding: 6px; border-radius: 4px; background: #112240; color: #fff; border: 1px solid #233554; width: 115px; font-size: 13px; cursor: pointer;">
-
-                    <input type="text" value="${converterParaMoeda(parcela.valor)}" 
-                           oninput="formatarMoeda(this)" onchange="atualizarValorUnico(${index}, this)" 
-                           style="flex: 1; padding: 6px; border-radius: 4px; background: #112240; color: #fff; border: 1px solid #233554; text-align: right; font-size: 14px;">
-                    
+                    <input type="date" value="${parcela.vencimento || ''}" onchange="atualizarVencimento(${index}, this)" title="Vencimento" style="padding: 6px; border-radius: 4px; background: #112240; color: #fff; border: 1px solid #233554; width: 115px; font-size: 13px; cursor: pointer;">
+                    <input type="text" value="${converterParaMoeda(parcela.valor)}" oninput="formatarMoeda(this)" onchange="atualizarValorUnico(${index}, this)" style="flex: 1; padding: 6px; border-radius: 4px; background: #112240; color: #fff; border: 1px solid #233554; text-align: right; font-size: 14px;">
                     <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; color: ${parcela.pago ? '#47D359' : '#8892b0'}; font-size: 13px; width: 70px; font-weight: bold;">
-                        <input type="checkbox" style="width: 16px; height: 16px; cursor: pointer;" ${parcela.pago ? 'checked' : ''} onchange="marcarComoPago(${index}, this)">
-                        ${parcela.pago ? 'PAGO' : 'Pagar'}
+                        <input type="checkbox" style="width: 16px; height: 16px; cursor: pointer;" ${parcela.pago ? 'checked' : ''} onchange="marcarComoPago(${index}, this)"> ${parcela.pago ? 'PAGO' : 'Pagar'}
                     </label>
                 `;
                 container.appendChild(linha);
@@ -1103,19 +1210,9 @@
         }
 
         function atualizarVencimento(index, inputElement) { arrayParcelasAtuais[index].vencimento = inputElement.value; }
-        
-        function atualizarValorUnico(index, inputElement) {
-            arrayParcelasAtuais[index].valor = converterParaNumero(inputElement.value);
-            recalcularMatrizParcelas('MUDOU_VALOR_PARCELA', index);
-        }
-
-        function marcarComoPago(index, checkboxElement) {
-            arrayParcelasAtuais[index].pago = checkboxElement.checked;
-            desenharListaDeParcelas(); 
-        }
-
+        function atualizarValorUnico(index, inputElement) { arrayParcelasAtuais[index].valor = converterParaNumero(inputElement.value); recalcularMatrizParcelas('MUDOU_VALOR_PARCELA', index); }
+        function marcarComoPago(index, checkboxElement) { arrayParcelasAtuais[index].pago = checkboxElement.checked; desenharListaDeParcelas(); }
         function mudouQtdParcelas() { recalcularMatrizParcelas('MUDOU_QTD_PARCELAS'); }
-
         function recalcularDivisaoParcelas() { recalcularMatrizParcelas('MUDOU_VALOR_TOTAL'); }
 
         function calcularFinanceiroEParcelas(forcarCalculo = false) {
@@ -1127,33 +1224,23 @@
             document.getElementById('textoValorPadrao').textContent = `Mesa + Cadeiras: R$ ${converterParaMoeda(valorSugerido)}`;
             
             const campoTotal = document.getElementById('campoValorTotal');
-            if (campoTotal.value === "" || forcarCalculo) { 
-                campoTotal.value = converterParaMoeda(valorSugerido); 
-            }
-            
+            if (campoTotal.value === "" || forcarCalculo) { campoTotal.value = converterParaMoeda(valorSugerido); }
             recalcularMatrizParcelas('MUDOU_VALOR_TOTAL');
         }
 
         function somarValoresPagos() {
             let totalPagoAteAgora = 0;
-            arrayParcelasAtuais.forEach(parcela => {
-                if (parcela.pago) totalPagoAteAgora += parcela.valor;
-            });
-
+            arrayParcelasAtuais.forEach(parcela => { if (parcela.pago) totalPagoAteAgora += parcela.valor; });
             document.getElementById('campoValorPago').value = converterParaMoeda(totalPagoAteAgora);
             const totalGeral = converterParaNumero(document.getElementById('campoValorTotal').value);
-            let saldo = totalGeral - totalPagoAteAgora;
-            if (saldo < 0) saldo = 0;
-            
+            let saldo = totalGeral - totalPagoAteAgora; if (saldo < 0) saldo = 0;
             document.getElementById('campoSaldo').value = converterParaMoeda(saldo);
         }
 
         function renderizarMapa() {
             const containerSalao = document.getElementById('container-salao');
             Array.from(containerSalao.children).forEach(child => {
-                if (!child.classList.contains('palco') && !child.classList.contains('tarja-lateral')) { 
-                    containerSalao.removeChild(child); 
-                }
+                if (!child.classList.contains('palco') && !child.classList.contains('tarja-lateral')) { containerSalao.removeChild(child); }
             });
             
             const palco = document.querySelector('.palco');
@@ -1165,102 +1252,47 @@
 
                 const divSetor = document.createElement('div');
                 divSetor.className = 'setor';
+                divSetor.style.backgroundColor = setorConfig.bgTranslucido; divSetor.style.border = `1px solid ${setorConfig.bordaFina}`; divSetor.style.boxShadow = `0 0 15px ${setorConfig.bgTranslucido}`;
                 
-                divSetor.style.backgroundColor = setorConfig.bgTranslucido;
-                divSetor.style.border = `1px solid ${setorConfig.bordaFina}`;
-                divSetor.style.boxShadow = `0 0 15px ${setorConfig.bgTranslucido}`;
-                
-                const tituloSetor = document.createElement('h3');
-                tituloSetor.textContent = setorConfig.nome;
-                tituloSetor.style.color = setorConfig.corNormal; 
-                divSetor.appendChild(tituloSetor);
+                const tituloSetor = document.createElement('h3'); tituloSetor.textContent = setorConfig.nome; tituloSetor.style.color = setorConfig.corNormal; divSetor.appendChild(tituloSetor);
 
                 setorConfig.layout.forEach(fileira => {
-                    const divFileira = document.createElement('div');
-                    divFileira.className = 'fileira-mesas';
+                    const divFileira = document.createElement('div'); divFileira.className = 'fileira-mesas';
 
                     fileira.forEach(item => {
                         if (item === "BIG_MIX") {
-                            const divMixContainer = document.createElement('div');
-                            divMixContainer.style.position = "relative";
-                            divMixContainer.style.width = "180px";
-                            divMixContainer.style.display = "flex";
-                            divMixContainer.style.justifyContent = "center";
-                            
-                            divMixContainer.innerHTML = `
-                                <div class="grande-house-mix">
-                                    <span class="icone">🎛️</span> House Mix
-                                </div>
-                            `;
+                            const divMixContainer = document.createElement('div'); divMixContainer.style.position = "relative"; divMixContainer.style.width = "180px"; divMixContainer.style.display = "flex"; divMixContainer.style.justifyContent = "center";
+                            divMixContainer.innerHTML = `<div class="grande-house-mix"><span class="icone">🎛️</span> House Mix</div>`;
                             divFileira.appendChild(divMixContainer);
-
                         } else if (item === "GAP") {
-                            const divGap = document.createElement('div');
-                            divGap.style.width = "180px";
-                            divFileira.appendChild(divGap);
-
+                            const divGap = document.createElement('div'); divGap.style.width = "180px"; divFileira.appendChild(divGap);
                         } else {
                             for (let i = 0; i < item; i++) {
                                 const num = contadorMesa < 10 ? '0' + contadorMesa : contadorMesa;
                                 const idDaMesa = `${setorConfig.prefixo}-${num}`;
                                 const dadosDestaMesa = bancoDeDados[idDaMesa];
+                                const wrapperMesa = document.createElement('div'); wrapperMesa.className = 'wrapper-mesa';
 
-                                const wrapperMesa = document.createElement('div');
-                                wrapperMesa.className = 'wrapper-mesa';
+                                if (nivelAcesso === 0 && mesasPermitidas.includes(idDaMesa)) { wrapperMesa.classList.add('mostrar-forcado'); }
 
-                                // SE A MESA FOR UMA DAS PERMITIDAS PELO LINK DO CLIENTE, APLICA A CLASSE MÁGICA
-                                if (nivelAcesso === 0 && mesasPermitidas.includes(idDaMesa)) {
-                                    wrapperMesa.classList.add('mostrar-forcado');
-                                }
-
-                                const textoAcima = document.createElement('div');
-                                textoAcima.className = 'texto-acima';
-                                textoAcima.textContent = dadosDestaMesa.status.toUpperCase(); // Escreve o Status
+                                const textoAcima = document.createElement('div'); textoAcima.className = 'texto-acima'; textoAcima.textContent = dadosDestaMesa.status.toUpperCase(); 
                                 
-                                if (dadosDestaMesa.status === "Vendida") {
-                                    textoAcima.classList.add('vendida');
-                                } else if (dadosDestaMesa.status === "Reservada") {
-                                    textoAcima.classList.add('reservada');
-                                } else {
-                                    textoAcima.classList.add('livre'); // O NOVO VERDE DA MESA LIVRE
-                                }
+                                if (dadosDestaMesa.status === "Vendida") { textoAcima.classList.add('vendida'); } else if (dadosDestaMesa.status === "Reservada") { textoAcima.classList.add('reservada'); } else { textoAcima.classList.add('livre'); }
 
-                                const divMesa = document.createElement('div');
-                                divMesa.className = `mesa ${setorConfig.classeTamanho}`;
-                                divMesa.textContent = idDaMesa;
+                                const divMesa = document.createElement('div'); divMesa.className = `mesa ${setorConfig.classeTamanho}`; divMesa.textContent = idDaMesa; divMesa.setAttribute('data-status', dadosDestaMesa.status);
                                 
-                                divMesa.setAttribute('data-status', dadosDestaMesa.status);
-                                
-                                // AGORA RESERVADA E VENDIDA TEM A MESMA COR DE FUNDO
                                 if (dadosDestaMesa.status === "Vendida" || dadosDestaMesa.status === "Reservada") {
-                                    divMesa.style.backgroundColor = setorConfig.corVendida; 
-                                    divMesa.style.border = "2px dashed #666"; 
-                                    divMesa.style.opacity = "0.9";
-                                } else {
-                                    divMesa.style.backgroundColor = setorConfig.corNormal;
-                                }
+                                    divMesa.style.backgroundColor = setorConfig.corVendida; divMesa.style.border = "2px dashed #666"; divMesa.style.opacity = "0.9";
+                                } else { divMesa.style.backgroundColor = setorConfig.corNormal; }
 
-                                if (dadosDestaMesa.cadeiras > 0) {
-                                    const badge = document.createElement('div');
-                                    badge.className = 'badge-extra'; badge.textContent = `+${dadosDestaMesa.cadeiras}`;
-                                    divMesa.appendChild(badge);
-                                }
-
-                                if (dadosDestaMesa.status !== "Livre" && dadosDestaMesa.saldoDevedor > 0) {
-                                    const badgeDivida = document.createElement('div');
-                                    badgeDivida.className = 'badge-divida'; badgeDivida.textContent = '💲';
-                                    badgeDivida.title = `Saldo pendente: R$ ${converterParaMoeda(dadosDestaMesa.saldoDevedor)}`;
-                                    wrapperMesa.appendChild(badgeDivida);
-                                }
+                                if (dadosDestaMesa.cadeiras > 0) { const badge = document.createElement('div'); badge.className = 'badge-extra'; badge.textContent = `+${dadosDestaMesa.cadeiras}`; divMesa.appendChild(badge); }
+                                if (dadosDestaMesa.status !== "Livre" && dadosDestaMesa.saldoDevedor > 0) { const badgeDivida = document.createElement('div'); badgeDivida.className = 'badge-divida'; badgeDivida.textContent = '💲'; badgeDivida.title = `Saldo pendente: R$ ${converterParaMoeda(dadosDestaMesa.saldoDevedor)}`; wrapperMesa.appendChild(badgeDivida); }
 
                                 divMesa.onclick = function() { abrirModal(idDaMesa); };
 
-                                const textoAbaixo = document.createElement('div');
-                                textoAbaixo.className = 'texto-abaixo';
-                                textoAbaixo.textContent = dadosDestaMesa.status !== "Livre" ? dadosDestaMesa.nome : "";
+                                const textoAbaixo = document.createElement('div'); textoAbaixo.className = 'texto-abaixo'; textoAbaixo.textContent = dadosDestaMesa.status !== "Livre" ? dadosDestaMesa.nome : "";
 
-                                wrapperMesa.appendChild(textoAcima); wrapperMesa.appendChild(divMesa); wrapperMesa.appendChild(textoAbaixo);
-                                divFileira.appendChild(wrapperMesa); contadorMesa++; 
+                                wrapperMesa.appendChild(textoAcima); wrapperMesa.appendChild(divMesa); wrapperMesa.appendChild(textoAbaixo); divFileira.appendChild(wrapperMesa); contadorMesa++; 
                             }
                         }
                     });
@@ -1272,142 +1304,75 @@
 
         function abrirModal(idMesa) {
             const dados = bancoDeDados[idMesa];
-            
-            // SISTEMA DE SEGURANÇA (VERIFICA O NÍVEL DE ACESSO DO USUÁRIO)
-            if (nivelAcesso === 0) {
-                mostrarAlerta("🔒 Mapa bloqueado para edição.\n\nClique na foto do evento lá em cima para digitar a senha de acesso e liberar o sistema.", "Acesso Restrito");
-                return;
-            }
+            if (nivelAcesso === 0) { mostrarAlerta("🔒 Mapa bloqueado para edição.\n\nClique na foto do evento lá em cima para digitar a senha de acesso e liberar o sistema.", "Acesso Restrito"); return; }
+            if (nivelAcesso === 1 && dados.status !== "Livre") { mostrarAlerta("🔒 Mesa Bloqueada!\n\nEsta mesa já foi Vendida ou Reservada. Com a sua senha de Vendedor, você só pode alterar mesas que ainda estão Livres.", "Acesso Restrito"); return; }
 
-            if (nivelAcesso === 1 && dados.status !== "Livre") {
-                mostrarAlerta("🔒 Mesa Bloqueada!\n\nEsta mesa já foi Vendida ou Reservada. Com a sua senha de Vendedor, você só pode alterar mesas que ainda estão Livres.", "Acesso Restrito");
-                return;
-            }
-
-            mesaEditandoAtual = idMesa;
-            statusAoAbrirMesa = dados.status; 
-
+            mesaEditandoAtual = idMesa; statusAoAbrirMesa = dados.status; 
             document.getElementById('tituloModal').innerHTML = `Gerenciar ${dados.setor} (${idMesa})`;
-            
-            document.getElementById('campoStatus').value = dados.status || "Livre";
-            document.getElementById('campoNome').value = dados.nome || "";
-            document.getElementById('campoTelefone').value = dados.telefone || "";
-            document.getElementById('campoCadeiras').value = dados.cadeiras || 0;
-            document.getElementById('campoPagamento').value = dados.pagamento || "Nenhum";
-            document.getElementById('campoLogoPropaganda').checked = dados.logoPropaganda || false;
-            document.getElementById('campoObs').value = dados.obs || "";
+            document.getElementById('campoStatus').value = dados.status || "Livre"; document.getElementById('campoNome').value = dados.nome || "";
+            document.getElementById('campoTelefone').value = dados.telefone || ""; document.getElementById('campoCadeiras').value = dados.cadeiras || 0;
+            document.getElementById('campoPagamento').value = dados.pagamento || "Nenhum"; document.getElementById('campoLogoPropaganda').checked = dados.logoPropaganda || false; document.getElementById('campoObs').value = dados.obs || "";
 
-            try {
-                arrayParcelasAtuais = JSON.parse(dados.detalhesParcelas || "[]");
-            } catch (e) { arrayParcelasAtuais = []; }
-
+            try { arrayParcelasAtuais = JSON.parse(dados.detalhesParcelas || "[]"); } catch (e) { arrayParcelasAtuais = []; }
             document.getElementById('campoParcelas').value = arrayParcelasAtuais.length > 0 ? arrayParcelasAtuais.length : 1;
 
             let valTotalStr = String(dados.valorTotal || "").trim();
             if (valTotalStr === "0" || valTotalStr === "0.00" || valTotalStr === "0,00" || valTotalStr === "") { valTotalStr = ""; }
-            
             document.getElementById('campoValorTotal').value = valTotalStr; 
 
-            if (valTotalStr === "") { 
-                calcularFinanceiroEParcelas(true); 
+            if (valTotalStr === "") { calcularFinanceiroEParcelas(true); 
             } else { 
                 const configSetor = Object.values(CONFIG_MESAS).find(c => mesaEditandoAtual.startsWith(c.prefixo));
                 const valorSugerido = (configSetor ? configSetor.valorBase : 0) + ((parseInt(dados.cadeiras) || 0) * valorCadeiraAvulsa);
                 document.getElementById('textoValorPadrao').textContent = `Mesa + Cadeiras: R$ ${converterParaMoeda(valorSugerido)}`;
-                
-                if(arrayParcelasAtuais.length === 0) {
-                    recalcularMatrizParcelas('MUDOU_QTD_PARCELAS'); 
-                } else {
-                    desenharListaDeParcelas(); 
-                }
+                if(arrayParcelasAtuais.length === 0) { recalcularMatrizParcelas('MUDOU_QTD_PARCELAS'); } else { desenharListaDeParcelas(); }
             }
 
             const areaTransf = document.getElementById('areaTransferencia');
-            if (dados.status !== "Livre") {
-                areaTransf.style.display = 'block'; carregarListaDeDestino(idMesa);
-            } else {
-                areaTransf.style.display = 'none';
-            }
-
+            if (dados.status !== "Livre") { areaTransf.style.display = 'block'; carregarListaDeDestino(idMesa); } else { areaTransf.style.display = 'none'; }
             document.getElementById('meuModal').style.display = 'flex';
         }
 
         function carregarListaDeDestino(mesaOrigem) {
-            const select = document.getElementById('selectDestino');
-            select.innerHTML = '<option value="">-- Selecione a mesa de destino --</option>';
+            const select = document.getElementById('selectDestino'); select.innerHTML = '<option value="">-- Selecione a mesa de destino --</option>';
             for (const id in bancoDeDados) {
-                if (id !== mesaOrigem) {
-                    const info = bancoDeDados[id];
-                    select.innerHTML += `<option value="${id}">${id} - ${info.status} ${info.nome ? '('+info.nome+')' : ''}</option>`;
-                }
+                if (id !== mesaOrigem) { const info = bancoDeDados[id]; select.innerHTML += `<option value="${id}">${id} - ${info.status} ${info.nome ? '('+info.nome+')' : ''}</option>`; }
             }
         }
 
         function fecharModal() { document.getElementById('meuModal').style.display = 'none'; }
 
         async function salvarMesa() {
-            const btnSalvar = document.getElementById('btnSalvar');
-            btnSalvar.textContent = "Verificando...";
-            btnSalvar.disabled = true; 
-
+            const btnSalvar = document.getElementById('btnSalvar'); btnSalvar.textContent = "Verificando..."; btnSalvar.disabled = true; 
             try {
-                const response = await fetch(URL_GOOGLE_SCRIPT);
-                const dbNuvem = await response.json();
+                const response = await fetch(URL_GOOGLE_SCRIPT); const dbNuvem = await response.json();
                 if (statusAoAbrirMesa === "Livre" && dbNuvem[mesaEditandoAtual].status !== "Livre") {
                     mostrarAlerta(`A mesa ${mesaEditandoAtual} já foi reservada/vendida! O mapa será atualizado para você escolher outra mesa.`);
                     Object.assign(bancoDeDados[mesaEditandoAtual], dbNuvem[mesaEditandoAtual]); 
-                    fecharModal(); renderizarMapa();
-                    btnSalvar.textContent = "Salvar na Nuvem"; btnSalvar.disabled = false;
-                    return; 
+                    fecharModal(); renderizarMapa(); btnSalvar.textContent = "Salvar na Nuvem"; btnSalvar.disabled = false; return; 
                 }
             } catch (error) {}
 
             btnSalvar.textContent = "Salvando nas nuvens...";
+            bancoDeDados[mesaEditandoAtual].status = document.getElementById('campoStatus').value; bancoDeDados[mesaEditandoAtual].nome = document.getElementById('campoNome').value;
+            bancoDeDados[mesaEditandoAtual].telefone = document.getElementById('campoTelefone').value; bancoDeDados[mesaEditandoAtual].cadeiras = parseInt(document.getElementById('campoCadeiras').value) || 0;
+            bancoDeDados[mesaEditandoAtual].pagamento = document.getElementById('campoPagamento').value; bancoDeDados[mesaEditandoAtual].parcelas = document.getElementById('campoParcelas').value;
+            bancoDeDados[mesaEditandoAtual].valorTotal = document.getElementById('campoValorTotal').value; bancoDeDados[mesaEditandoAtual].valorPago = document.getElementById('campoValorPago').value;
+            bancoDeDados[mesaEditandoAtual].saldoDevedor = converterParaNumero(document.getElementById('campoSaldo').value); bancoDeDados[mesaEditandoAtual].logoPropaganda = document.getElementById('campoLogoPropaganda').checked;
+            bancoDeDados[mesaEditandoAtual].obs = document.getElementById('campoObs').value; bancoDeDados[mesaEditandoAtual].detalhesParcelas = JSON.stringify(arrayParcelasAtuais);
 
-            bancoDeDados[mesaEditandoAtual].status = document.getElementById('campoStatus').value;
-            bancoDeDados[mesaEditandoAtual].nome = document.getElementById('campoNome').value;
-            bancoDeDados[mesaEditandoAtual].telefone = document.getElementById('campoTelefone').value;
-            bancoDeDados[mesaEditandoAtual].cadeiras = parseInt(document.getElementById('campoCadeiras').value) || 0;
-            bancoDeDados[mesaEditandoAtual].pagamento = document.getElementById('campoPagamento').value;
-            bancoDeDados[mesaEditandoAtual].parcelas = document.getElementById('campoParcelas').value;
-            bancoDeDados[mesaEditandoAtual].valorTotal = document.getElementById('campoValorTotal').value;
-            bancoDeDados[mesaEditandoAtual].valorPago = document.getElementById('campoValorPago').value;
-            bancoDeDados[mesaEditandoAtual].saldoDevedor = converterParaNumero(document.getElementById('campoSaldo').value);
-            bancoDeDados[mesaEditandoAtual].logoPropaganda = document.getElementById('campoLogoPropaganda').checked;
-            bancoDeDados[mesaEditandoAtual].obs = document.getElementById('campoObs').value;
-            
-            bancoDeDados[mesaEditandoAtual].detalhesParcelas = JSON.stringify(arrayParcelasAtuais);
-
-            try {
-                await enviarParaNuvem(mesaEditandoAtual, bancoDeDados[mesaEditandoAtual]);
-                fecharModal(); renderizarMapa(); 
-            } catch (error) {
-                mostrarAlerta("Erro ao salvar na nuvem! Verifique a internet e tente novamente.");
-            } finally {
-                btnSalvar.textContent = "Salvar na Nuvem"; btnSalvar.disabled = false;
-            }
+            try { await enviarParaNuvem(mesaEditandoAtual, bancoDeDados[mesaEditandoAtual]); fecharModal(); renderizarMapa(); 
+            } catch (error) { mostrarAlerta("Erro ao salvar na nuvem! Verifique a internet e tente novamente.");
+            } finally { btnSalvar.textContent = "Salvar na Nuvem"; btnSalvar.disabled = false; }
         }
 
         async function limparMesa() {
             if (confirm(`ATENÇÃO: Deseja apagar TODOS os dados da mesa ${mesaEditandoAtual} da nuvem?`)) {
-                const btnLimpar = document.getElementById('btnLimpar');
-                btnLimpar.textContent = "Apagando..."; btnLimpar.disabled = true;
-
-                bancoDeDados[mesaEditandoAtual] = { 
-                    setor: bancoDeDados[mesaEditandoAtual].setor, status: "Livre", nome: "", telefone: "", email: "",
-                    cadeiras: 0, pagamento: "Nenhum", parcelas: "1x", detalhesParcelas: "[]",
-                    valorTotal: "", valorPago: "", saldoDevedor: 0,
-                    logoPropaganda: false, obs: ""
-                };
-
-                try {
-                    await enviarParaNuvem(mesaEditandoAtual, bancoDeDados[mesaEditandoAtual]);
-                    fecharModal(); renderizarMapa();
-                } catch (error) {
-                    mostrarAlerta("Erro ao apagar da nuvem!");
-                } finally {
-                    btnLimpar.textContent = "🗑️ Limpar Dados"; btnLimpar.disabled = false;
-                }
+                const btnLimpar = document.getElementById('btnLimpar'); btnLimpar.textContent = "Apagando..."; btnLimpar.disabled = true;
+                bancoDeDados[mesaEditandoAtual] = { setor: bancoDeDados[mesaEditandoAtual].setor, status: "Livre", nome: "", telefone: "", email: "", cadeiras: 0, pagamento: "Nenhum", parcelas: "1x", detalhesParcelas: "[]", valorTotal: "", valorPago: "", saldoDevedor: 0, logoPropaganda: false, obs: "" };
+                try { await enviarParaNuvem(mesaEditandoAtual, bancoDeDados[mesaEditandoAtual]); fecharModal(); renderizarMapa();
+                } catch (error) { mostrarAlerta("Erro ao apagar da nuvem!");
+                } finally { btnLimpar.textContent = "🗑️ Limpar Dados"; btnLimpar.disabled = false; }
             }
         }
 
@@ -1416,27 +1381,16 @@
             if (!idDestino) { mostrarAlerta("Selecione uma mesa de destino primeiro!"); return; }
 
             if (confirm(`Cruzar os dados da mesa ${mesaEditandoAtual} com a mesa ${idDestino}?`)) {
-                const btnTransferir = document.getElementById('btnTransferir');
-                btnTransferir.textContent = "Transferindo..."; btnTransferir.disabled = true;
-
-                const dadosOrigem = JSON.parse(JSON.stringify(bancoDeDados[mesaEditandoAtual]));
-                const dadosDestino = JSON.parse(JSON.stringify(bancoDeDados[idDestino]));
-                const setorOrigem = bancoDeDados[mesaEditandoAtual].setor;
-                const setorDestino = bancoDeDados[idDestino].setor;
-
+                const btnTransferir = document.getElementById('btnTransferir'); btnTransferir.textContent = "Transferindo..."; btnTransferir.disabled = true;
+                const dadosOrigem = JSON.parse(JSON.stringify(bancoDeDados[mesaEditandoAtual])); const dadosDestino = JSON.parse(JSON.stringify(bancoDeDados[idDestino]));
+                const setorOrigem = bancoDeDados[mesaEditandoAtual].setor; const setorDestino = bancoDeDados[idDestino].setor;
                 bancoDeDados[mesaEditandoAtual] = dadosDestino; bancoDeDados[mesaEditandoAtual].setor = setorOrigem; 
                 bancoDeDados[idDestino] = dadosOrigem; bancoDeDados[idDestino].setor = setorDestino; 
 
-                try {
-                    await enviarParaNuvem(mesaEditandoAtual, bancoDeDados[mesaEditandoAtual]);
-                    await enviarParaNuvem(idDestino, bancoDeDados[idDestino]);
-                    mostrarAlerta("Transferência realizada com sucesso!");
-                    fecharModal(); renderizarMapa();
-                } catch (error) {
-                    mostrarAlerta("Erro ao transferir na nuvem!");
-                } finally {
-                    btnTransferir.textContent = "Confirmar Troca"; btnTransferir.disabled = false;
-                }
+                try { await enviarParaNuvem(mesaEditandoAtual, bancoDeDados[mesaEditandoAtual]); await enviarParaNuvem(idDestino, bancoDeDados[idDestino]);
+                    mostrarAlerta("Transferência realizada com sucesso!"); fecharModal(); renderizarMapa();
+                } catch (error) { mostrarAlerta("Erro ao transferir na nuvem!");
+                } finally { btnTransferir.textContent = "Confirmar Troca"; btnTransferir.disabled = false; }
             }
         }
 
