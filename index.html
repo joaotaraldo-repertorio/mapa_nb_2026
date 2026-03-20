@@ -10,7 +10,7 @@
     <style>
         :root {
             --azul-fundo: #0A192F; --azul-card: #112240; --ciano-destaque: #66FFFF;
-            --texto-claro: #e6f1ff; --cor-palco: #8A2BE2; --cor-reservada: #ffc107; --cor-vendida-texto: #ff4d4d;
+            --texto-claro: #e6f1ff; --cor-palco: #8A2BE2; --cor-reservada: #ffc107; --cor-vendida-texto: #ff4d4d; --cor-livre-texto: #4ade80;
         }
 
         body { background-color: var(--azul-fundo); color: var(--texto-claro); font-family: Arial, sans-serif; padding: 15px; margin: 0; display: flex; flex-direction: column; align-items: center; }
@@ -39,7 +39,7 @@
         .btn-sincronizar { background-color: #47D359; }
         .btn-sincronizar:hover { box-shadow: 0 0 10px #47D359; }
 
-        /* OCULTA BOTÕES SENSÍVEIS POR PADRÃO */
+        /* OCULTA BOTÕES SENSÍVEIS POR PADRÃO (SÓ O ADMIN VÊ) */
         #btnCofre, #btnImg, #btnPdf, #btnBuffet, #btnVisaoCliente { display: none; }
 
         #container-salao { width: 100%; padding: 0 70px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 15px; position: relative; margin-bottom: 15px;}
@@ -67,15 +67,29 @@
         .texto-acima { font-size: 11px; font-weight: bold; text-transform: uppercase; height: 14px; letter-spacing: 1px; }
         .texto-acima.vendida { color: var(--cor-vendida-texto); }
         .texto-acima.reservada { color: var(--cor-reservada); }
+        .texto-acima.livre { color: var(--cor-livre-texto); } /* O NOVO VERDE DO LIVRE */
+        
         .texto-abaixo { font-size: 14px; color: #ffffff; text-align: center; width: 100%; white-space: normal; word-wrap: break-word; line-height: 1.1; font-weight: bold; min-height: 15px; }
         
-        /* O MODO APRESENTAÇÃO ESCONDE TUDO CONFIDENCIAL */
-        body.modo-apresentacao .texto-abaixo { display: none; }
-        body.modo-apresentacao .badge-extra { display: none; }
-        body.modo-apresentacao .badge-divida { display: none; }
-        body.modo-apresentacao #btnLimpar { display: none; }
+        /* ====================================================================== */
+        /* CAMADAS DE SEGURANÇA E VISUALIZAÇÃO                                    */
+        /* ====================================================================== */
         
-        /* O MODO BUFFET */
+        /* 1. MODO VISITANTE (Padrão ao abrir o link) - Tudo escondido */
+        body.modo-visitante .texto-abaixo { display: none; }
+        body.modo-visitante .badge-extra { display: none; }
+        body.modo-visitante .badge-divida { display: none; }
+        body.modo-visitante #btnLimpar { display: none; }
+        
+        /* A MÁGICA DOS NOMES FORÇADOS (LINK DO CLIENTE) */
+        body.modo-visitante .mostrar-forcado .texto-abaixo { display: block !important; color: var(--ciano-destaque); text-shadow: 0 0 5px #000;}
+        body.modo-visitante .mostrar-forcado .badge-extra { display: flex !important; }
+
+        /* 2. MODO VENDAS (Senha 1) - Esconde dívidas, mas mostra nomes para o vendedor saber */
+        body.modo-vendas .badge-divida { display: none; }
+        body.modo-vendas #btnLimpar { display: none; }
+        
+        /* 3. MODO BUFFET (Para a equipe de montagem do Salão) */
         body.modo-buffet .texto-acima { display: none !important; } 
         body.modo-buffet .badge-divida { display: none !important; } 
         body.modo-buffet .mesa[data-status="Livre"] {
@@ -86,10 +100,11 @@
         }
         body.modo-buffet .wrapper-mesa:has(.mesa[data-status="Livre"]) .texto-abaixo { display: none; }
 
-        /* O MODO CLIENTE */
+        /* 4. MODO CLIENTE (A câmera limpa do painel admin) */
         body.modo-cliente .texto-abaixo { display: none !important; }
         body.modo-cliente .badge-extra { display: none !important; }
         body.modo-cliente .badge-divida { display: none !important; }
+
 
         .mesa { border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #000; cursor: pointer; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.4); transition: transform 0.2s; border: 2px solid rgba(0,0,0,0.1); }
         .mesa:hover { transform: scale(1.05); }
@@ -113,7 +128,7 @@
         .info-contato { text-align: center; font-size: 18px; font-weight: bold; color: #47D359; border-top: 1px dashed #233554; padding-top: 10px; width: 100%; }
         .info-contato span.realizacao { display: block; color: var(--texto-claro); font-size: 14px; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* ESTILOS DO COFRE FINANCEIRO */
+        /* ESTILOS DO COFRE FINANCEIRO E QUANTIDADE DE PESSOAS */
         #painel-cofre { display: none; width: 100%; max-width: 1300px; flex-direction: column; gap: 20px; padding: 20px; box-sizing: border-box; }
         .cofre-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--ciano-destaque); padding-bottom: 15px;}
         .cofre-header h2 { margin: 0; color: var(--ciano-destaque); font-size: 28px; display: flex; align-items: center; gap: 10px;}
@@ -157,12 +172,15 @@
         /* MODAIS PADRÃO */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); z-index: 1000; justify-content: center; align-items: center; }
         
-        /* NOVO MODAL DE SENHA VIP */
+        /* O MODAL DE SENHA CHIQUE COM O OLHINHO */
         #modalSenha { z-index: 4000; }
         .caixa-senha { background-color: var(--azul-card); border: 2px solid var(--ciano-destaque); border-radius: 8px; padding: 30px; width: 350px; text-align: center; box-shadow: 0 15px 40px rgba(0,0,0,0.9); }
         .caixa-senha h3 { color: var(--ciano-destaque); margin-top: 0; font-size: 22px; text-transform: uppercase; letter-spacing: 2px; }
-        .caixa-senha input { width: 80%; padding: 12px; margin: 20px 0; border-radius: 4px; border: 1px solid #4a5568; background-color: #0A192F; color: #fff; text-align: center; font-size: 24px; letter-spacing: 5px;}
+        .input-senha-container { position: relative; width: 85%; margin: 20px auto; }
+        .caixa-senha input { width: 100%; padding: 12px 40px 12px 12px; box-sizing: border-box; border-radius: 4px; border: 1px solid #4a5568; background-color: #0A192F; color: #fff; text-align: center; font-size: 20px; letter-spacing: 3px;}
         .caixa-senha input:focus { outline: none; border-color: var(--ciano-destaque); box-shadow: 0 0 8px var(--ciano-destaque);}
+        #toggleSenha { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 20px; user-select: none; opacity: 0.7;}
+        #toggleSenha:hover { opacity: 1; }
         .botoes-senha { display: flex; justify-content: space-around; margin-top: 10px; gap: 10px;}
         .botoes-senha button { flex: 1; }
 
@@ -197,6 +215,10 @@
         .btn-cancelar:hover { background-color: #233554; color: #fff; }
         .btn-excluir { background-color: transparent; color: #ff4d4d; border: 1px solid #ff4d4d; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .btn-excluir:hover { background-color: #ff4d4d; color: #fff; }
+        
+        /* O NOVO BOTÃO DE LINK MÁGICO */
+        #btnLinkMagico { background-color: #10b981; color: #fff; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; display: none; }
+        #btnLinkMagico:hover { box-shadow: 0 0 10px #10b981; }
 
         #telaCarregamento { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: var(--azul-fundo); z-index: 2000; display: flex; flex-direction: column; justify-content: center; align-items: center; }
         .spinner { border: 6px solid #112240; border-top: 6px solid var(--ciano-destaque); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 20px; }
@@ -210,7 +232,7 @@
 
     </style>
 </head>
-<body class="modo-apresentacao"> 
+<body class="modo-visitante"> 
 
     <div id="telaCarregamento">
         <div class="spinner"></div>
@@ -230,7 +252,10 @@
         <div class="caixa-senha">
             <h3>🔐 Acesso Restrito</h3>
             <p style="color: #8892b0; font-size: 14px; margin-bottom: 5px;">Digite a chave de segurança:</p>
-            <input type="password" id="inputSenha" placeholder="••••••••" onkeypress="if(event.key === 'Enter') checarSenha()">
+            <div class="input-senha-container">
+                <input type="password" id="inputSenha" placeholder="Senha..." onkeypress="if(event.key === 'Enter') checarSenha()">
+                <span id="toggleSenha" title="Segure para ver a senha">👁️</span>
+            </div>
             <div class="botoes-senha">
                 <button class="btn-cancelar" onclick="fecharModalSenha()">Cancelar</button>
                 <button class="botao-acao" onclick="checarSenha()" style="background-color: var(--ciano-destaque); color: #000;">Entrar</button>
@@ -241,7 +266,7 @@
     <div id="area-exportacao">
 
         <div class="painel-topo">
-            <div class="area-imagens-topo" id="logoSecreta" title="Área Restrita">
+            <div class="area-imagens-topo" id="logoSecreta" title="Área Restrita (Clique para Login)">
                 <img id="img-logo" src="" alt="Logo">
                 <img id="img-dupla" src="ImagemShow.png" alt="Show do Evento" style="box-shadow: 0 4px 8px rgba(0,0,0,0.5);">
             </div>
@@ -478,6 +503,7 @@
                 <button class="btn-excluir" id="btnLimpar" onclick="limparMesa()">🗑️ Limpar Dados</button>
                 <div class="grupo-direita">
                     <button class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+                    <button id="btnLinkMagico" onclick="gerarLinkCliente()" title="Gera um link para o cliente ver o nome dele no mapa limpo">🔗 Link Cliente</button>
                     <button class="botao-acao" id="btnSalvar" onclick="salvarMesa()">Salvar na Nuvem</button>
                 </div>
             </div>
@@ -493,8 +519,15 @@
         let valorCadeiraAvulsa = 800.00; 
         let arrayParcelasAtuais = []; 
 
-        // A CHAVE MESTRA ÚNICA
-        const SENHA_UNICA = "educandario1958";
+        // AS NOVAS TRANCAS DO SISTEMA
+        let nivelAcesso = 0; // 0=Visitante, 1=Vendas, 2=Admin
+        const SENHA_VENDAS = "vendas2026";
+        const SENHA_ADMIN = "educandario1958";
+
+        // VERIFICA SE EXISTE UM PARÂMETRO NA URL PARA MOSTRAR NOMES ESPECÍFICOS (O Link Mágico)
+        const urlParams = new URLSearchParams(window.location.search);
+        const parametroMostrar = urlParams.get('mostrar');
+        const mesasPermitidas = parametroMostrar ? parametroMostrar.split(',').map(s => s.trim().toUpperCase()) : [];
 
         const CONFIG_GERAL = { 
             edicao: "19ª", nomeEvento: "Noite Beneficente", ano: "2026", 
@@ -523,19 +556,30 @@
         }
 
         // ======================================================================
-        // A MÁGICA DA SENHA COM O NOVO MODAL
+        // A MÁGICA DA SENHA COM O NOVO MODAL E OLHINHO 👁️
         // ======================================================================
+        const inputSenha = document.getElementById('inputSenha');
+        const toggleSenha = document.getElementById('toggleSenha');
+
+        const showPass = () => { inputSenha.type = 'text'; };
+        const hidePass = () => { inputSenha.type = 'password'; };
+
+        toggleSenha.addEventListener('mousedown', showPass);
+        toggleSenha.addEventListener('touchstart', showPass);
+        toggleSenha.addEventListener('mouseup', hidePass);
+        toggleSenha.addEventListener('mouseleave', hidePass);
+        toggleSenha.addEventListener('touchend', hidePass);
+
         document.getElementById('logoSecreta').onclick = function() {
-            if (document.body.classList.contains('modo-apresentacao')) {
-                // Abre o modal customizado em vez do prompt feio do navegador
+            if (nivelAcesso === 0) {
+                // Abre o modal customizado para fazer Login
                 document.getElementById('inputSenha').value = '';
                 document.getElementById('modalSenha').style.display = 'flex';
                 document.getElementById('inputSenha').focus();
             } else {
-                // VOLTA AO MODO SEGURO (Mesa do Vendedor Externo / Padrão)
-                document.body.classList.add('modo-apresentacao');
-                document.body.classList.remove('modo-buffet');
-                document.body.classList.remove('modo-cliente');
+                // Fazer LOGOUT (Trancar o sistema)
+                nivelAcesso = 0;
+                document.body.className = 'modo-visitante';
                 
                 // Esconde os botões
                 document.getElementById('btnCofre').style.display = 'none'; 
@@ -543,45 +587,57 @@
                 document.getElementById('btnPdf').style.display = 'none';
                 document.getElementById('btnBuffet').style.display = 'none';
                 document.getElementById('btnVisaoCliente').style.display = 'none';
+                document.getElementById('btnLinkMagico').style.display = 'none';
                 
-                // Reseta cores dos botões
+                // Reseta botões
                 document.getElementById('btnBuffet').style.backgroundColor = '#8b5cf6';
                 document.getElementById('btnBuffet').textContent = "🪑 Modo Buffet";
                 document.getElementById('btnVisaoCliente').style.backgroundColor = '#3b82f6';
                 document.getElementById('btnVisaoCliente').textContent = "👁️ Visão Cliente";
+                
+                renderizarMapa(); // Reaplica as regras visuais
+                mostrarAlerta("Sistema trancado com sucesso. O mapa agora é apenas para visualização.", "🔒 Logout");
             }
         };
 
-        function fecharModalSenha() {
-            document.getElementById('modalSenha').style.display = 'none';
-        }
+        function fecharModalSenha() { document.getElementById('modalSenha').style.display = 'none'; }
 
         function checarSenha() {
             let senhaDigitada = document.getElementById('inputSenha').value;
             fecharModalSenha();
 
-            if (senhaDigitada === SENHA_UNICA) {
-                document.body.classList.remove('modo-apresentacao');
+            if (senhaDigitada === SENHA_ADMIN) {
+                nivelAcesso = 2; // DEUS
+                document.body.className = 'modo-admin';
                 
-                // Libera TODOS os botões
                 document.getElementById('btnImg').style.display = 'block';
                 document.getElementById('btnPdf').style.display = 'block';
                 document.getElementById('btnBuffet').style.display = 'block';
                 document.getElementById('btnVisaoCliente').style.display = 'block';
                 document.getElementById('btnCofre').style.display = 'block';
+                document.getElementById('btnLinkMagico').style.display = 'block';
                 
-                mostrarAlerta("Acesso Total Liberado! Ferramentas financeiras, edições e exportação de mapas disponíveis.\n\nClique novamente na foto para trancar o sistema.", "🔓 Acesso Concedido");
-            } else {
+                mostrarAlerta("Acesso Total (Admin) Liberado! Ferramentas financeiras e edições irrestritas disponíveis.\n\nClique na foto novamente para trancar o sistema.", "🔓 Acesso Mestre");
+            } 
+            else if (senhaDigitada === SENHA_VENDAS) {
+                nivelAcesso = 1; // VENDEDOR
+                document.body.className = 'modo-vendas';
+                
+                mostrarAlerta("Acesso de Vendas Liberado!\n\nVocê pode alterar apenas mesas LIVRES. As mesas já vendidas ou reservadas estão trancadas.", "🔓 Acesso de Vendas");
+            }
+            else {
                 mostrarAlerta("A senha digitada está incorreta.", "❌ Acesso Negado");
             }
+            renderizarMapa();
         }
 
-        // FUNÇÃO PARA EQUIPE DO BUFFET (Esconde status, mostra X nas livres)
+        // ======================================================================
+        // LENTES DA CÂMERA (BUFFET E CLIENTE)
+        // ======================================================================
         function toggleBuffet() {
             document.body.classList.toggle('modo-buffet');
             const btn = document.getElementById('btnBuffet');
             
-            // Se ligou o Buffet, desliga a Visão Cliente
             if(document.body.classList.contains('modo-cliente')) {
                 document.body.classList.remove('modo-cliente');
                 document.getElementById('btnVisaoCliente').style.backgroundColor = '#3b82f6';
@@ -597,12 +653,10 @@
             }
         }
 
-        // FUNÇÃO PARA MANDAR NO ZAP
         function toggleVisaoCliente() {
             document.body.classList.toggle('modo-cliente');
             const btn = document.getElementById('btnVisaoCliente');
             
-            // Se ligou o Cliente, desliga o Buffet
             if(document.body.classList.contains('modo-buffet')) {
                 document.body.classList.remove('modo-buffet');
                 document.getElementById('btnBuffet').style.backgroundColor = '#8b5cf6';
@@ -616,6 +670,19 @@
                 btn.style.backgroundColor = '#3b82f6'; 
                 btn.textContent = "👁️ Visão Cliente";
             }
+        }
+        
+        // A FUNÇÃO DO LINK MÁGICO
+        function gerarLinkCliente() {
+            let baseUrl = window.location.href.split('?')[0]; // Pega o link sem nada
+            let linkMagico = baseUrl + "?mostrar=" + mesaEditandoAtual;
+            
+            // Copia pro clipboard do Windows/Celular
+            navigator.clipboard.writeText(linkMagico).then(() => {
+                mostrarAlerta("Link copiado com sucesso:\n" + linkMagico + "\n\nEnvie este link para o cliente no WhatsApp. Quando ele abrir, o mapa estará 100% trancado, mas mostrará o nome dele nessa mesa específica!", "🔗 Link Copiado!");
+            }).catch(err => {
+                mostrarAlerta("Erro ao copiar o link. Mas o link é este:\n" + linkMagico, "❌ Erro");
+            });
         }
 
         function abrirCofre() {
@@ -1141,12 +1208,21 @@
                                 const wrapperMesa = document.createElement('div');
                                 wrapperMesa.className = 'wrapper-mesa';
 
+                                // SE A MESA FOR UMA DAS PERMITIDAS PELO LINK DO CLIENTE, APLICA A CLASSE MÁGICA
+                                if (nivelAcesso === 0 && mesasPermitidas.includes(idDaMesa)) {
+                                    wrapperMesa.classList.add('mostrar-forcado');
+                                }
+
                                 const textoAcima = document.createElement('div');
                                 textoAcima.className = 'texto-acima';
+                                textoAcima.textContent = dadosDestaMesa.status.toUpperCase(); // Escreve o Status
+                                
                                 if (dadosDestaMesa.status === "Vendida") {
-                                    textoAcima.textContent = "VENDIDA"; textoAcima.classList.add('vendida');
+                                    textoAcima.classList.add('vendida');
                                 } else if (dadosDestaMesa.status === "Reservada") {
-                                    textoAcima.textContent = "RESERVADA"; textoAcima.classList.add('reservada');
+                                    textoAcima.classList.add('reservada');
+                                } else {
+                                    textoAcima.classList.add('livre'); // O NOVO VERDE DA MESA LIVRE
                                 }
 
                                 const divMesa = document.createElement('div');
@@ -1155,10 +1231,11 @@
                                 
                                 divMesa.setAttribute('data-status', dadosDestaMesa.status);
                                 
-                                if (dadosDestaMesa.status === "Vendida") {
-                                    divMesa.style.backgroundColor = setorConfig.corVendida; divMesa.style.border = "2px dashed #666"; divMesa.style.opacity = "0.9";
-                                } else if (dadosDestaMesa.status === "Reservada") {
-                                    divMesa.style.backgroundColor = "var(--cor-reservada)";
+                                // AGORA RESERVADA E VENDIDA TEM A MESMA COR DE FUNDO
+                                if (dadosDestaMesa.status === "Vendida" || dadosDestaMesa.status === "Reservada") {
+                                    divMesa.style.backgroundColor = setorConfig.corVendida; 
+                                    divMesa.style.border = "2px dashed #666"; 
+                                    divMesa.style.opacity = "0.9";
                                 } else {
                                     divMesa.style.backgroundColor = setorConfig.corNormal;
                                 }
@@ -1196,8 +1273,14 @@
         function abrirModal(idMesa) {
             const dados = bancoDeDados[idMesa];
             
-            if (dados.status !== "Livre" && document.body.classList.contains('modo-apresentacao')) {
-                mostrarAlerta("🔒 Mesa Bloqueada!\n\nEsta mesa já foi Vendida ou Reservada. Para alterar os dados financeiros, por favor insira a senha de Acesso clicando na logo do Educandário.");
+            // SISTEMA DE SEGURANÇA (VERIFICA O NÍVEL DE ACESSO DO USUÁRIO)
+            if (nivelAcesso === 0) {
+                mostrarAlerta("🔒 Mapa bloqueado para edição.\n\nClique na foto do evento lá em cima para digitar a senha de acesso e liberar o sistema.", "Acesso Restrito");
+                return;
+            }
+
+            if (nivelAcesso === 1 && dados.status !== "Livre") {
+                mostrarAlerta("🔒 Mesa Bloqueada!\n\nEsta mesa já foi Vendida ou Reservada. Com a sua senha de Vendedor, você só pode alterar mesas que ainda estão Livres.", "Acesso Restrito");
                 return;
             }
 
