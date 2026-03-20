@@ -39,7 +39,6 @@
         .btn-sincronizar { background-color: #47D359; }
         .btn-sincronizar:hover { box-shadow: 0 0 10px #47D359; }
 
-        /* OCULTA BOTÕES SENSÍVEIS POR PADRÃO (SÓ O ADMIN VÊ) */
         #btnCofre, #btnImg, #btnPdf, #btnBuffet, #btnVisaoCliente { display: none; }
 
         #container-salao { width: 100%; padding: 0 70px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 15px; position: relative; margin-bottom: 15px;}
@@ -71,10 +70,7 @@
         
         .texto-abaixo { font-size: 14px; color: #ffffff; text-align: center; width: 100%; white-space: normal; word-wrap: break-word; line-height: 1.1; font-weight: bold; min-height: 15px; }
         
-        /* ====================================================================== */
-        /* CAMADAS DE SEGURANÇA E VISUALIZAÇÃO                                    */
-        /* ====================================================================== */
-        
+        /* CAMADAS DE SEGURANÇA */
         body.modo-visitante .texto-abaixo { display: none; }
         body.modo-visitante .badge-extra { display: none; }
         body.modo-visitante .badge-divida { display: none; }
@@ -99,7 +95,6 @@
         body.modo-cliente .texto-abaixo { display: none !important; }
         body.modo-cliente .badge-extra { display: none !important; }
         body.modo-cliente .badge-divida { display: none !important; }
-
 
         .mesa { border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #000; cursor: pointer; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.4); transition: transform 0.2s; border: 2px solid rgba(0,0,0,0.1); }
         .mesa:hover { transform: scale(1.05); }
@@ -151,8 +146,8 @@
         .btn-editar-custo { background-color: transparent; border: 1px solid var(--ciano-destaque); color: var(--ciano-destaque); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;}
         .btn-editar-custo:hover { background-color: var(--ciano-destaque); color: #000; }
         
-        .toggle-tabela-btn { cursor: pointer; user-select: none; display: flex; justify-content: space-between; align-items: center; }
-        .toggle-tabela-btn:hover { opacity: 0.8; }
+        #filtroCategoriaCustos { padding: 6px 12px; border-radius: 4px; background-color: #112240; color: #fff; border: 1px solid #ef4444; font-weight: bold; cursor: pointer; outline: none; font-size: 14px;}
+        #filtroCategoriaCustos:focus { box-shadow: 0 0 5px #ef4444; }
 
         .painel-simulador { background-color: #061020; border: 1px dashed #f59e0b; border-radius: 8px; padding: 25px; margin-top: 10px;}
         .painel-simulador h3 { margin: 0 0 5px 0; color: #f59e0b; font-size: 22px; display: flex; align-items: center; gap: 8px;}
@@ -338,11 +333,15 @@
             </div>
 
             <div class="area-tabela" style="margin-top: 10px;">
-                <h3 class="toggle-tabela-btn" style="color: #ef4444; border-bottom-color: #ef4444;" onclick="toggleTabelaCustos()">
-                    <span>💸 Detalhamento de Despesas (Saídas)</span>
-                    <span id="iconeToggleCustos" style="font-size: 16px; color: #8892b0;">▼ Mostrar</span>
-                </h3>
-                <div id="containerTabelaCustos" style="display: none; overflow-x: auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ef4444; padding-bottom: 10px;">
+                    <h3 style="margin: 0; color: #ef4444; border: none; padding: 0;">💸 Detalhamento de Despesas (Saídas)</h3>
+                    
+                    <select id="filtroCategoriaCustos" onchange="renderizarTabelaCustos()" title="Filtrar despesas por Categoria">
+                        <option value="TODAS">Todas as despesas</option>
+                    </select>
+                </div>
+                
+                <div id="containerTabelaCustos" style="overflow-x: auto; margin-top: 10px;">
                     <table class="tabela-financeira" style="border-bottom: 2px solid #ef4444; min-width: 900px;">
                         <thead>
                             <tr>
@@ -648,7 +647,7 @@
         }
 
         // ======================================================================
-        // A MÁGICA DA SENHA COM O OLHINHO 👁️
+        // A MÁGICA DA SENHA
         // ======================================================================
         const inputSenha = document.getElementById('inputSenha');
         const toggleSenha = document.getElementById('toggleSenha');
@@ -740,20 +739,8 @@
         }
 
         // ======================================================================
-        // A MÁGICA DA SANFONA DE CUSTOS E ORDENAÇÃO
+        // A MÁGICA DA SALA COFRE E TABELA DE CUSTOS FILTRADA
         // ======================================================================
-        function toggleTabelaCustos() {
-            const container = document.getElementById('containerTabelaCustos');
-            const icone = document.getElementById('iconeToggleCustos');
-            if (container.style.display === 'none') {
-                container.style.display = 'block';
-                icone.textContent = '▲ Ocultar';
-            } else {
-                container.style.display = 'none';
-                icone.textContent = '▼ Mostrar';
-            }
-        }
-
         function abrirCofre() {
             let totaisGlobais = { previsao: 0, fechado: 0, recebido: 0, pendente: 0, qtdVendidaGeral: 0, qtdTotalGeral: 0 };
             let totaisCadeiras = { qtd: 0, fechado: 0, recebido: 0 };
@@ -873,30 +860,76 @@
                 </tr>
             `;
             
-            // PROCESSAMENTO DOS CUSTOS EM ORDEM ALFABÉTICA
-            let htmlCustos = "";
-            let totalCustos = 0;
+            // CONTA GLOBAL DOS CUSTOS PARA O PLACAR (Não afeta o filtro da tabela)
+            let totalCustosGlobais = 0;
+            for (const id in bancoDeCustos) {
+                totalCustosGlobais += converterParaNumero(bancoDeCustos[id].valorTotal);
+            }
+            let lucroLiquidoReal = totaisGlobais.fechado - totalCustosGlobais;
+
+            document.getElementById('cofreFechado').textContent = `R$ ${converterParaMoeda(totaisGlobais.fechado)}`;
+            document.getElementById('cofreCustosTotais').textContent = `R$ ${converterParaMoeda(totalCustosGlobais)}`;
+            document.getElementById('cofreLucroLiquido').textContent = `R$ ${converterParaMoeda(lucroLiquidoReal)}`;
+            document.getElementById('cofreRecebido').textContent = `R$ ${converterParaMoeda(totaisGlobais.recebido)}`;
+            document.getElementById('cofrePendente').textContent = `R$ ${converterParaMoeda(totaisGlobais.pendente)}`;
+
+            document.getElementById('tbodyDetalhes').innerHTML = htmlDetalhes;
+            document.getElementById('tfootDetalhes').innerHTML = htmlRodapeTabela;
             
-            // 1. Converte o objeto de custos para um Array para podermos organizar
+            const containerSimulador = document.getElementById('containerSimuladorInputs');
+            containerSimulador.innerHTML = htmlSimulador;
+            containerSimulador.setAttribute('data-fechado-atual', totaisGlobais.fechado); 
+            
+            // GERA A TABELA DE CUSTOS COM O FILTRO ATUALIZADO
+            renderizarTabelaCustos();
+            calcularSimulacao();
+
+            document.getElementById('container-salao').style.display = 'none';
+            document.querySelector('.painel-rodape').style.display = 'none';
+            document.getElementById('painel-cofre').style.display = 'flex';
+        }
+
+        // A NOVA FUNÇÃO QUE DESENHA SÓ A TABELA DE CUSTOS COM FILTRO INTELIGENTE
+        function renderizarTabelaCustos() {
             let arrayCustos = Object.values(bancoDeCustos);
             
-            // 2. Ordena o Array Alfabeticamente (Categoria e Fornecedor)
-            arrayCustos.sort((a, b) => {
+            // 1. Atualiza o menu de filtro (caixa de seleção) dinamicamente
+            let selectFiltro = document.getElementById('filtroCategoriaCustos');
+            let categoriaSelecionada = selectFiltro.value || "TODAS";
+            
+            let categoriasUnicas = new Set();
+            arrayCustos.forEach(c => { if(c.categoria) categoriasUnicas.add(c.categoria); });
+            let categoriasArray = Array.from(categoriasUnicas).sort();
+            
+            let optionsHtml = `<option value="TODAS">Todas as despesas</option>`;
+            categoriasArray.forEach(cat => {
+                let selected = (cat === categoriaSelecionada) ? "selected" : "";
+                optionsHtml += `<option value="${cat}" ${selected}>${cat}</option>`;
+            });
+            selectFiltro.innerHTML = optionsHtml;
+            categoriaSelecionada = selectFiltro.value; // Pega o valor novamente por segurança
+
+            // 2. Filtra e Ordena o Array
+            let custosFiltrados = arrayCustos;
+            if (categoriaSelecionada !== "TODAS") {
+                custosFiltrados = arrayCustos.filter(c => c.categoria === categoriaSelecionada);
+            }
+            
+            custosFiltrados.sort((a, b) => {
                 let catA = (a.categoria || "").toLowerCase(); let catB = (b.categoria || "").toLowerCase();
-                if (catA < catB) return -1;
-                if (catA > catB) return 1;
-                
+                if (catA < catB) return -1; if (catA > catB) return 1;
                 let forA = (a.fornecedor || "").toLowerCase(); let forB = (b.fornecedor || "").toLowerCase();
-                if (forA < forB) return -1;
-                if (forA > forB) return 1;
-                
+                if (forA < forB) return -1; if (forA > forB) return 1;
                 return 0;
             });
             
-            // 3. Monta o HTML com os custos ordenados
-            for (const c of arrayCustos) {
+            // 3. Monta o HTML
+            let htmlCustos = "";
+            let somaFiltrada = 0;
+            
+            for (const c of custosFiltrados) {
                 let valTotal = converterParaNumero(c.valorTotal);
-                totalCustos += valTotal;
+                somaFiltrada += valTotal;
                 
                 htmlCustos += `
                     <tr>
@@ -913,121 +946,20 @@
                 `;
             }
             
-            if (arrayCustos.length === 0) {
-                htmlCustos = `<tr><td colspan="7" style="text-align: center; color: #8892b0; font-weight: normal;">Nenhuma despesa lançada até o momento.</td></tr>`;
+            if (custosFiltrados.length === 0) {
+                htmlCustos = `<tr><td colspan="7" style="text-align: center; color: #8892b0; font-weight: normal;">Nenhuma despesa encontrada para este filtro.</td></tr>`;
             }
             
-            let lucroLiquidoReal = totaisGlobais.fechado - totalCustos;
+            // A GRAÇA FINANCEIRA: Se estiver filtrado, mostra o Subtotal
+            if(categoriaSelecionada !== "TODAS" && custosFiltrados.length > 0) {
+                 htmlCustos += `
+                    <tr style="background-color: #112240; border-top: 2px solid #ef4444;">
+                        <td colspan="5" style="text-align: right; color: #ef4444;">SUBTOTAL (${categoriaSelecionada}):</td>
+                        <td colspan="2" style="color: #ef4444; text-align: left; font-size: 18px;">R$ ${converterParaMoeda(somaFiltrada)}</td>
+                    </tr>`;
+            }
 
-            document.getElementById('cofreFechado').textContent = `R$ ${converterParaMoeda(totaisGlobais.fechado)}`;
-            document.getElementById('cofreCustosTotais').textContent = `R$ ${converterParaMoeda(totalCustos)}`;
-            document.getElementById('cofreLucroLiquido').textContent = `R$ ${converterParaMoeda(lucroLiquidoReal)}`;
-            document.getElementById('cofreRecebido').textContent = `R$ ${converterParaMoeda(totaisGlobais.recebido)}`;
-            document.getElementById('cofrePendente').textContent = `R$ ${converterParaMoeda(totaisGlobais.pendente)}`;
-
-            document.getElementById('tbodyDetalhes').innerHTML = htmlDetalhes;
-            document.getElementById('tfootDetalhes').innerHTML = htmlRodapeTabela;
             document.getElementById('tbodyCustos').innerHTML = htmlCustos;
-            
-            const containerSimulador = document.getElementById('containerSimuladorInputs');
-            containerSimulador.innerHTML = htmlSimulador;
-            containerSimulador.setAttribute('data-fechado-atual', totaisGlobais.fechado); 
-            
-            calcularSimulacao();
-
-            document.getElementById('container-salao').style.display = 'none';
-            document.querySelector('.painel-rodape').style.display = 'none';
-            document.getElementById('painel-cofre').style.display = 'flex';
-        }
-
-        // ======================================================================
-        // FUNÇÕES DO MODAL DE CUSTOS
-        // ======================================================================
-        function abrirModalCusto(id = null) {
-            if (id && bancoDeCustos[id]) {
-                custoEditandoId = id;
-                const c = bancoDeCustos[id];
-                document.getElementById('tituloModalCusto').textContent = "Editar Despesa";
-                document.getElementById('custoCategoria').value = c.categoria;
-                document.getElementById('custoFornecedor').value = c.fornecedor;
-                document.getElementById('custoDescricao').value = c.descricao;
-                document.getElementById('custoQtd').value = c.quantidade;
-                document.getElementById('custoUnitario').value = converterParaMoeda(c.valorUnitario);
-                document.getElementById('custoTotal').value = converterParaMoeda(c.valorTotal);
-                document.getElementById('custoObs').value = c.obs;
-                document.getElementById('btnExcluirCusto').style.display = 'block';
-            } else {
-                custoEditandoId = "";
-                document.getElementById('tituloModalCusto').textContent = "Lançar Nova Despesa";
-                document.getElementById('custoCategoria').value = "";
-                document.getElementById('custoFornecedor').value = "";
-                document.getElementById('custoDescricao').value = "";
-                document.getElementById('custoQtd').value = 1;
-                document.getElementById('custoUnitario').value = "";
-                document.getElementById('custoTotal').value = "";
-                document.getElementById('custoObs').value = "";
-                document.getElementById('btnExcluirCusto').style.display = 'none';
-            }
-            document.getElementById('modalCusto').style.display = 'flex';
-        }
-
-        function fecharModalCusto() { document.getElementById('modalCusto').style.display = 'none'; }
-
-        function calcularCustoTotal() {
-            let qtd = parseInt(document.getElementById('custoQtd').value) || 1;
-            let unitario = converterParaNumero(document.getElementById('custoUnitario').value);
-            let total = qtd * unitario;
-            document.getElementById('custoTotal').value = converterParaMoeda(total);
-        }
-
-        async function salvarCusto() {
-            const btnSalvar = document.getElementById('btnSalvarCusto');
-            btnSalvar.textContent = "Salvando..."; btnSalvar.disabled = true;
-
-            let idCusto = custoEditandoId ? custoEditandoId : "CST-" + new Date().getTime();
-            
-            let dadosCusto = {
-                id: idCusto,
-                categoria: document.getElementById('custoCategoria').value || "Outros",
-                fornecedor: document.getElementById('custoFornecedor').value,
-                descricao: document.getElementById('custoDescricao').value,
-                quantidade: parseInt(document.getElementById('custoQtd').value) || 1,
-                valorUnitario: converterParaNumero(document.getElementById('custoUnitario').value),
-                valorTotal: converterParaNumero(document.getElementById('custoTotal').value),
-                obs: document.getElementById('custoObs').value
-            };
-
-            let payload = { tipo: "custo", acao: "salvar", dados: dadosCusto };
-
-            try {
-                await fetch(URL_GOOGLE_SCRIPT, { method: 'POST', body: JSON.stringify(payload) });
-                bancoDeCustos[idCusto] = dadosCusto; 
-                fecharModalCusto(); 
-                abrirCofre(); 
-            } catch (error) {
-                mostrarAlerta("Erro ao salvar despesa na nuvem!");
-            } finally {
-                btnSalvar.textContent = "Salvar Despesa"; btnSalvar.disabled = false;
-            }
-        }
-
-        async function excluirCusto() {
-            if (confirm("Tem certeza que deseja apagar esta despesa definitivamente?")) {
-                const btnExcluir = document.getElementById('btnExcluirCusto');
-                btnExcluir.textContent = "Apagando..."; btnExcluir.disabled = true;
-                
-                let payload = { tipo: "custo", acao: "excluir", dados: { id: custoEditandoId } };
-                try {
-                    await fetch(URL_GOOGLE_SCRIPT, { method: 'POST', body: JSON.stringify(payload) });
-                    delete bancoDeCustos[custoEditandoId];
-                    fecharModalCusto(); 
-                    abrirCofre(); 
-                } catch (error) {
-                    mostrarAlerta("Erro ao excluir despesa da nuvem!");
-                } finally {
-                    btnExcluir.textContent = "🗑️ Excluir Despesa"; btnExcluir.disabled = false;
-                }
-            }
         }
 
         function calcularSimulacao() {
@@ -1036,12 +968,9 @@
             let projecaoExtra = 0;
             const inputs = document.querySelectorAll('.input-simulador');
             inputs.forEach(inp => {
-                let qtd = parseInt(inp.value) || 0;
-                let max = parseInt(inp.getAttribute('max')) || 0;
-                if (qtd > max) { qtd = max; inp.value = max; }
-                if (qtd < 0) { qtd = 0; inp.value = 0; }
-                let valorBase = parseFloat(inp.getAttribute('data-valorbase')) || 0;
-                projecaoExtra += (qtd * valorBase);
+                let qtd = parseInt(inp.value) || 0; let max = parseInt(inp.getAttribute('max')) || 0;
+                if (qtd > max) { qtd = max; inp.value = max; } if (qtd < 0) { qtd = 0; inp.value = 0; }
+                let valorBase = parseFloat(inp.getAttribute('data-valorbase')) || 0; projecaoExtra += (qtd * valorBase);
             });
             document.getElementById('simAtual').textContent = `R$ ${converterParaMoeda(fechadoAtual)}`;
             document.getElementById('simExtra').textContent = `+ R$ ${converterParaMoeda(projecaoExtra)}`;
@@ -1426,6 +1355,100 @@
                     mostrarAlerta("Transferência realizada com sucesso!"); fecharModal(); renderizarMapa();
                 } catch (error) { mostrarAlerta("Erro ao transferir na nuvem!");
                 } finally { btnTransferir.textContent = "Confirmar Troca"; btnTransferir.disabled = false; }
+            }
+        }
+
+        // ======================================================================
+        // FUNÇÕES DO MODAL DE CUSTOS (CRIAR E EDITAR)
+        // ======================================================================
+        function abrirModalCusto(id = null) {
+            if (id && bancoDeCustos[id]) {
+                custoEditandoId = id;
+                const c = bancoDeCustos[id];
+                document.getElementById('tituloModalCusto').textContent = "Editar Despesa";
+                document.getElementById('custoCategoria').value = c.categoria;
+                document.getElementById('custoFornecedor').value = c.fornecedor;
+                document.getElementById('custoDescricao').value = c.descricao;
+                document.getElementById('custoQtd').value = c.quantidade;
+                document.getElementById('custoUnitario').value = converterParaMoeda(c.valorUnitario);
+                document.getElementById('custoTotal').value = converterParaMoeda(c.valorTotal);
+                document.getElementById('custoObs').value = c.obs;
+                document.getElementById('btnExcluirCusto').style.display = 'block';
+            } else {
+                custoEditandoId = "";
+                document.getElementById('tituloModalCusto').textContent = "Lançar Nova Despesa";
+                document.getElementById('custoCategoria').value = "";
+                document.getElementById('custoFornecedor').value = "";
+                document.getElementById('custoDescricao').value = "";
+                document.getElementById('custoQtd').value = 1;
+                document.getElementById('custoUnitario').value = "";
+                document.getElementById('custoTotal').value = "";
+                document.getElementById('custoObs').value = "";
+                document.getElementById('btnExcluirCusto').style.display = 'none';
+            }
+            document.getElementById('modalCusto').style.display = 'flex';
+        }
+
+        function fecharModalCusto() { document.getElementById('modalCusto').style.display = 'none'; }
+
+        function calcularCustoTotal() {
+            let qtd = parseInt(document.getElementById('custoQtd').value) || 1;
+            let unitario = converterParaNumero(document.getElementById('custoUnitario').value);
+            let total = qtd * unitario;
+            document.getElementById('custoTotal').value = converterParaMoeda(total);
+        }
+
+        async function salvarCusto() {
+            const btnSalvar = document.getElementById('btnSalvarCusto');
+            btnSalvar.textContent = "Salvando..."; btnSalvar.disabled = true;
+
+            let idCusto = custoEditandoId ? custoEditandoId : "CST-" + new Date().getTime();
+            
+            let dadosCusto = {
+                id: idCusto,
+                categoria: document.getElementById('custoCategoria').value || "Outros",
+                fornecedor: document.getElementById('custoFornecedor').value,
+                descricao: document.getElementById('custoDescricao').value,
+                quantidade: parseInt(document.getElementById('custoQtd').value) || 1,
+                valorUnitario: converterParaNumero(document.getElementById('custoUnitario').value),
+                valorTotal: converterParaNumero(document.getElementById('custoTotal').value),
+                obs: document.getElementById('custoObs').value
+            };
+
+            let payload = { tipo: "custo", acao: "salvar", dados: dadosCusto };
+
+            try {
+                await fetch(URL_GOOGLE_SCRIPT, { method: 'POST', body: JSON.stringify(payload) });
+                bancoDeCustos[idCusto] = dadosCusto; 
+                fecharModalCusto(); 
+                abrirCofre(); // O Cofre recalcula e chama o renderizarTabelaCustos sozinho!
+            } catch (error) {
+                mostrarAlerta("Erro ao salvar despesa na nuvem!");
+            } finally {
+                btnSalvar.textContent = "Salvar Despesa"; btnSalvar.disabled = false;
+            }
+        }
+
+        async function excluirCusto() {
+            if (confirm("Tem certeza que deseja apagar esta despesa definitivamente?")) {
+                const btnExcluir = document.getElementById('btnExcluirCusto');
+                btnExcluir.textContent = "Apagando..."; btnExcluir.disabled = true;
+                
+                let payload = { tipo: "custo", acao: "excluir", dados: { id: custoEditandoId } };
+                try {
+                    await fetch(URL_GOOGLE_SCRIPT, { method: 'POST', body: JSON.stringify(payload) });
+                    delete bancoDeCustos[custoEditandoId];
+                    
+                    // Se você apagou a última despesa de uma categoria, vamos voltar o filtro para "TODAS"
+                    document.getElementById('filtroCategoriaCustos').value = "TODAS";
+                    
+                    fecharModalCusto(); 
+                    abrirCofre(); 
+                } catch (error) {
+                    mostrarAlerta("Erro ao excluir despesa da nuvem!");
+                } finally {
+                    btnExcluir.textContent = "🗑️ Excluir Despesa"; btnExcluir.disabled = false;
+                }
             }
         }
 
