@@ -69,17 +69,13 @@
         .texto-acima.reservada { color: var(--cor-reservada); }
         .texto-abaixo { font-size: 14px; color: #ffffff; text-align: center; width: 100%; white-space: normal; word-wrap: break-word; line-height: 1.1; font-weight: bold; min-height: 15px; }
         
-        /* O MODO APRESENTAÇÃO ESCONDE TUDO CONFIDENCIAL (Mesa do Vendedor Externo antes da senha) */
+        /* O MODO APRESENTAÇÃO ESCONDE TUDO CONFIDENCIAL */
         body.modo-apresentacao .texto-abaixo { display: none; }
         body.modo-apresentacao .badge-extra { display: none; }
         body.modo-apresentacao .badge-divida { display: none; }
         body.modo-apresentacao #btnLimpar { display: none; }
         
-        /* ========================================= */
-        /* AS 3 LENTES FOTOGRÁFICAS DE EXPORTAÇÃO   */
-        /* ========================================= */
-        
-        /* 1. O MODO BUFFET (Para a equipe de montagem do Salão) */
+        /* O MODO BUFFET */
         body.modo-buffet .texto-acima { display: none !important; } 
         body.modo-buffet .badge-divida { display: none !important; } 
         body.modo-buffet .mesa[data-status="Livre"] {
@@ -90,11 +86,10 @@
         }
         body.modo-buffet .wrapper-mesa:has(.mesa[data-status="Livre"]) .texto-abaixo { display: none; }
 
-        /* 2. O MODO CLIENTE (Para mandar no Zap pro cliente ver o que tem livre) */
+        /* O MODO CLIENTE */
         body.modo-cliente .texto-abaixo { display: none !important; }
         body.modo-cliente .badge-extra { display: none !important; }
         body.modo-cliente .badge-divida { display: none !important; }
-
 
         .mesa { border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #000; cursor: pointer; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.4); transition: transform 0.2s; border: 2px solid rgba(0,0,0,0.1); }
         .mesa:hover { transform: scale(1.05); }
@@ -161,6 +156,16 @@
 
         /* MODAIS PADRÃO */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); z-index: 1000; justify-content: center; align-items: center; }
+        
+        /* NOVO MODAL DE SENHA VIP */
+        #modalSenha { z-index: 4000; }
+        .caixa-senha { background-color: var(--azul-card); border: 2px solid var(--ciano-destaque); border-radius: 8px; padding: 30px; width: 350px; text-align: center; box-shadow: 0 15px 40px rgba(0,0,0,0.9); }
+        .caixa-senha h3 { color: var(--ciano-destaque); margin-top: 0; font-size: 22px; text-transform: uppercase; letter-spacing: 2px; }
+        .caixa-senha input { width: 80%; padding: 12px; margin: 20px 0; border-radius: 4px; border: 1px solid #4a5568; background-color: #0A192F; color: #fff; text-align: center; font-size: 24px; letter-spacing: 5px;}
+        .caixa-senha input:focus { outline: none; border-color: var(--ciano-destaque); box-shadow: 0 0 8px var(--ciano-destaque);}
+        .botoes-senha { display: flex; justify-content: space-around; margin-top: 10px; gap: 10px;}
+        .botoes-senha button { flex: 1; }
+
         .modal-box { background-color: var(--azul-card); border: 1px solid var(--ciano-destaque); border-radius: 8px; padding: 25px; width: 650px; max-width: 95%; box-shadow: 0 10px 25px rgba(0,0,0,0.8); max-height: 90vh; overflow-y: auto; }
         .modal-box h2 { margin-top: 0; color: var(--ciano-destaque); border-bottom: 1px solid #233554; padding-bottom: 10px; font-size: 22px; display: flex; justify-content: space-between; }
         
@@ -221,12 +226,24 @@
         </div>
     </div>
 
+    <div id="modalSenha" class="modal-overlay">
+        <div class="caixa-senha">
+            <h3>🔐 Acesso Restrito</h3>
+            <p style="color: #8892b0; font-size: 14px; margin-bottom: 5px;">Digite a chave de segurança:</p>
+            <input type="password" id="inputSenha" placeholder="••••••••" onkeypress="if(event.key === 'Enter') checarSenha()">
+            <div class="botoes-senha">
+                <button class="btn-cancelar" onclick="fecharModalSenha()">Cancelar</button>
+                <button class="botao-acao" onclick="checarSenha()" style="background-color: var(--ciano-destaque); color: #000;">Entrar</button>
+            </div>
+        </div>
+    </div>
+
     <div id="area-exportacao">
 
         <div class="painel-topo">
             <div class="area-imagens-topo" id="logoSecreta" title="Área Restrita">
                 <img id="img-logo" src="" alt="Logo">
-                <img id="img-dupla" src="ImagemDupla.png" alt="Marcos e Belutti" style="box-shadow: 0 4px 8px rgba(0,0,0,0.5);">
+                <img id="img-dupla" src="ImagemShow.png" alt="Show do Evento" style="box-shadow: 0 4px 8px rgba(0,0,0,0.5);">
             </div>
             
             <h2 id="titulo-dinamico" class="titulo-evento">Carregando...</h2>
@@ -505,24 +522,15 @@
             document.getElementById('modalAlerta').style.display = 'none'; 
         }
 
-        // DESTRAVAMENTO DO SISTEMA COM A CHAVE MESTRA
+        // ======================================================================
+        // A MÁGICA DA SENHA COM O NOVO MODAL
+        // ======================================================================
         document.getElementById('logoSecreta').onclick = function() {
             if (document.body.classList.contains('modo-apresentacao')) {
-                let senhaDigitada = prompt("Área Restrita. Digite a senha de Acesso:");
-                if (senhaDigitada === SENHA_UNICA) {
-                    document.body.classList.remove('modo-apresentacao');
-                    
-                    // Libera TODOS os botões
-                    document.getElementById('btnImg').style.display = 'block';
-                    document.getElementById('btnPdf').style.display = 'block';
-                    document.getElementById('btnBuffet').style.display = 'block';
-                    document.getElementById('btnVisaoCliente').style.display = 'block';
-                    document.getElementById('btnCofre').style.display = 'block';
-                    
-                    mostrarAlerta("Acesso Total Liberado! Ferramentas financeiras, edições e exportação de mapas disponíveis.\n\nAtualize a página (F5) para trancar o sistema novamente.", "🔓 Acesso Concedido");
-                } else if (senhaDigitada !== null) {
-                    mostrarAlerta("Senha incorreta.", "❌ Erro");
-                }
+                // Abre o modal customizado em vez do prompt feio do navegador
+                document.getElementById('inputSenha').value = '';
+                document.getElementById('modalSenha').style.display = 'flex';
+                document.getElementById('inputSenha').focus();
             } else {
                 // VOLTA AO MODO SEGURO (Mesa do Vendedor Externo / Padrão)
                 document.body.classList.add('modo-apresentacao');
@@ -544,12 +552,36 @@
             }
         };
 
+        function fecharModalSenha() {
+            document.getElementById('modalSenha').style.display = 'none';
+        }
+
+        function checarSenha() {
+            let senhaDigitada = document.getElementById('inputSenha').value;
+            fecharModalSenha();
+
+            if (senhaDigitada === SENHA_UNICA) {
+                document.body.classList.remove('modo-apresentacao');
+                
+                // Libera TODOS os botões
+                document.getElementById('btnImg').style.display = 'block';
+                document.getElementById('btnPdf').style.display = 'block';
+                document.getElementById('btnBuffet').style.display = 'block';
+                document.getElementById('btnVisaoCliente').style.display = 'block';
+                document.getElementById('btnCofre').style.display = 'block';
+                
+                mostrarAlerta("Acesso Total Liberado! Ferramentas financeiras, edições e exportação de mapas disponíveis.\n\nClique novamente na foto para trancar o sistema.", "🔓 Acesso Concedido");
+            } else {
+                mostrarAlerta("A senha digitada está incorreta.", "❌ Acesso Negado");
+            }
+        }
+
         // FUNÇÃO PARA EQUIPE DO BUFFET (Esconde status, mostra X nas livres)
         function toggleBuffet() {
             document.body.classList.toggle('modo-buffet');
             const btn = document.getElementById('btnBuffet');
             
-            // Se ligou o Buffet, desliga a Visão Cliente para não dar conflito
+            // Se ligou o Buffet, desliga a Visão Cliente
             if(document.body.classList.contains('modo-cliente')) {
                 document.body.classList.remove('modo-cliente');
                 document.getElementById('btnVisaoCliente').style.backgroundColor = '#3b82f6';
@@ -557,20 +589,20 @@
             }
 
             if (document.body.classList.contains('modo-buffet')) {
-                btn.style.backgroundColor = '#10b981'; // Verde sucesso
+                btn.style.backgroundColor = '#10b981'; 
                 btn.textContent = "✅ Buffet: Mapa da Montagem";
             } else {
-                btn.style.backgroundColor = '#8b5cf6'; // Roxo normal
+                btn.style.backgroundColor = '#8b5cf6'; 
                 btn.textContent = "🪑 Modo Buffet";
             }
         }
 
-        // FUNÇÃO PARA MANDAR NO ZAP (Mapa limpo igual ao modo apresentação, mas com câmera liberada)
+        // FUNÇÃO PARA MANDAR NO ZAP
         function toggleVisaoCliente() {
             document.body.classList.toggle('modo-cliente');
             const btn = document.getElementById('btnVisaoCliente');
             
-            // Se ligou o Cliente, desliga o Buffet para não dar conflito
+            // Se ligou o Cliente, desliga o Buffet
             if(document.body.classList.contains('modo-buffet')) {
                 document.body.classList.remove('modo-buffet');
                 document.getElementById('btnBuffet').style.backgroundColor = '#8b5cf6';
@@ -578,17 +610,14 @@
             }
 
             if (document.body.classList.contains('modo-cliente')) {
-                btn.style.backgroundColor = '#10b981'; // Verde sucesso
+                btn.style.backgroundColor = '#10b981'; 
                 btn.textContent = "✅ Cliente: Mapa Limpo";
             } else {
-                btn.style.backgroundColor = '#3b82f6'; // Azul normal
+                btn.style.backgroundColor = '#3b82f6'; 
                 btn.textContent = "👁️ Visão Cliente";
             }
         }
 
-        // ======================================================================
-        // A INTELIGÊNCIA DA SALA COFRE
-        // ======================================================================
         function abrirCofre() {
             let totaisGlobais = { previsao: 0, fechado: 0, recebido: 0, pendente: 0, qtdVendidaGeral: 0, qtdTotalGeral: 0 };
             let totaisCadeiras = { qtd: 0, fechado: 0, recebido: 0 };
@@ -887,13 +916,11 @@
             valor = (parseInt(valor) / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             elemento.value = valor;
         }
-
         function converterParaNumero(str) {
             if (str === null || str === undefined || str === "") return 0;
             if (typeof str === 'number') return str;
             return parseFloat(String(str).replace(/\./g, '').replace(',', '.'));
         }
-
         function converterParaMoeda(numero) {
             let val = Number(numero);
             if (isNaN(val)) val = 0;
