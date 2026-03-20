@@ -18,9 +18,11 @@
         #area-exportacao { width: 100%; max-width: 1300px; display: flex; flex-direction: column; align-items: center; background-color: var(--azul-fundo); padding: 10px; border-radius: 8px; }
 
         .painel-topo { width: 100%; display: flex; justify-content: space-between; align-items: center; background-color: var(--azul-card); padding: 15px 30px; border-radius: 8px; margin-bottom: 15px; box-sizing: border-box; }
-        .area-logo { width: 150px; display: flex; justify-content: flex-start; cursor: pointer; transition: transform 0.2s; }
-        .area-logo:hover { transform: scale(1.05); }
-        .area-logo img { max-height: 100px; width: auto; }
+        
+        /* NOVA ÁREA DE LOGO E FOTO FLEXÍVEL */
+        .area-imagens-topo { display: flex; gap: 15px; align-items: center; width: auto; cursor: pointer; transition: transform 0.2s; }
+        .area-imagens-topo:hover { transform: scale(1.02); }
+        .area-imagens-topo img { max-height: 100px; width: auto; border-radius: 8px; }
         
         .titulo-evento { text-align: center; flex-grow: 1; color: var(--ciano-destaque); margin: 0 20px; font-size: 32px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; line-height: 1.2;}
         .subtitulo-evento { display: block; font-size: 16px; color: #fff; letter-spacing: 1px; font-weight: normal; margin-top: 5px; text-transform: none;}
@@ -90,7 +92,7 @@
         .info-contato { text-align: center; font-size: 18px; font-weight: bold; color: #47D359; border-top: 1px dashed #233554; padding-top: 10px; width: 100%; }
         .info-contato span.realizacao { display: block; color: var(--texto-claro); font-size: 14px; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* ESTILOS DO COFRE FINANCEIRO */
+        /* ESTILOS DO COFRE FINANCEIRO E QUANTIDADE DE PESSOAS */
         #painel-cofre { display: none; width: 100%; max-width: 1300px; flex-direction: column; gap: 20px; padding: 20px; box-sizing: border-box; }
         .cofre-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--ciano-destaque); padding-bottom: 15px;}
         .cofre-header h2 { margin: 0; color: var(--ciano-destaque); font-size: 28px; display: flex; align-items: center; gap: 10px;}
@@ -196,8 +198,9 @@
     <div id="area-exportacao">
 
         <div class="painel-topo">
-            <div class="area-logo" id="logoSecreta" title="Área Restrita">
+            <div class="area-imagens-topo" id="logoSecreta" title="Área Restrita">
                 <img id="img-logo" src="" alt="Logo">
+                <img id="img-dupla" src="ImagemDupla.png" alt="Marcos e Belutti" style="box-shadow: 0 4px 8px rgba(0,0,0,0.5);">
             </div>
             
             <h2 id="titulo-dinamico" class="titulo-evento">Carregando...</h2>
@@ -456,12 +459,13 @@
         document.getElementById('titulo-dinamico').innerHTML = `${CONFIG_GERAL.edicao} ${CONFIG_GERAL.nomeEvento} ${CONFIG_GERAL.ano}<br><span class="subtitulo-evento">${CONFIG_GERAL.data} • Show: <span>${CONFIG_GERAL.show}</span></span>`;
         document.getElementById('img-logo').src = CONFIG_GERAL.caminhoLogo;
 
+        // ADICIONEI A INFORMAÇÃO DA CAPACIDADE DE PESSOAS POR MESA ("capacidade")
         const CONFIG_MESAS = {
-            "Familia": { prefixo: "F", nome: "Cota Família", classeTamanho: "tamanho-g", corNormal: "#FFFF00", corVendida: "#FFFFD1", layout: [ [6], [6] ], valorBase: 25000, bgTranslucido: "rgba(255, 255, 0, 0.08)", bordaFina: "rgba(255, 255, 0, 0.3)" },
-            "Crianca": { prefixo: "C", nome: "Cota Criança", classeTamanho: "tamanho-m", corNormal: "#00FFFF", corVendida: "#66CCCC", layout: [ [7], [7], [7], [7] ], valorBase: 12000, bgTranslucido: "rgba(0, 255, 255, 0.08)", bordaFina: "rgba(0, 255, 255, 0.3)" },
-            "Premium": { prefixo: "P", nome: "Mesa Premium", classeTamanho: "tamanho-m", corNormal: "#47D359", corVendida: "#75D982", layout: [ [7], [7] ], valorBase: 8000, bgTranslucido: "rgba(71, 211, 89, 0.08)", bordaFina: "rgba(71, 211, 89, 0.3)" },
-            "Master": { prefixo: "M", nome: "Mesa Master", classeTamanho: "tamanho-p", corNormal: "#FF9900", corVendida: "#FFE2B7", layout: [ [3, "BIG_MIX", 3], [3, "GAP", 3], [7] ], valorBase: 5400, bgTranslucido: "rgba(255, 153, 0, 0.08)", bordaFina: "rgba(255, 153, 0, 0.3)" },
-            "Diamante": { prefixo: "D", nome: "Mesa Diamante", classeTamanho: "tamanho-p", corNormal: "#FF0000", corVendida: "#FFCDCD", layout: [ [7], [7], [7] ], valorBase: 4800, bgTranslucido: "rgba(255, 0, 0, 0.08)", bordaFina: "rgba(255, 0, 0, 0.3)" }
+            "Familia": { prefixo: "F", nome: "Cota Família", classeTamanho: "tamanho-g", corNormal: "#FFFF00", corVendida: "#FFFFD1", layout: [ [6], [6] ], valorBase: 25000, bgTranslucido: "rgba(255, 255, 0, 0.08)", bordaFina: "rgba(255, 255, 0, 0.3)", capacidade: 12 },
+            "Crianca": { prefixo: "C", nome: "Cota Criança", classeTamanho: "tamanho-m", corNormal: "#00FFFF", corVendida: "#66CCCC", layout: [ [7], [7], [7], [7] ], valorBase: 12000, bgTranslucido: "rgba(0, 255, 255, 0.08)", bordaFina: "rgba(0, 255, 255, 0.3)", capacidade: 8 },
+            "Premium": { prefixo: "P", nome: "Mesa Premium", classeTamanho: "tamanho-m", corNormal: "#47D359", corVendida: "#75D982", layout: [ [7], [7] ], valorBase: 8000, bgTranslucido: "rgba(71, 211, 89, 0.08)", bordaFina: "rgba(71, 211, 89, 0.3)", capacidade: 8 },
+            "Master": { prefixo: "M", nome: "Mesa Master", classeTamanho: "tamanho-p", corNormal: "#FF9900", corVendida: "#FFE2B7", layout: [ [3, "BIG_MIX", 3], [3, "GAP", 3], [7] ], valorBase: 5400, bgTranslucido: "rgba(255, 153, 0, 0.08)", bordaFina: "rgba(255, 153, 0, 0.3)", capacidade: 6 },
+            "Diamante": { prefixo: "D", nome: "Mesa Diamante", classeTamanho: "tamanho-p", corNormal: "#FF0000", corVendida: "#FFCDCD", layout: [ [7], [7], [7] ], valorBase: 4800, bgTranslucido: "rgba(255, 0, 0, 0.08)", bordaFina: "rgba(255, 0, 0, 0.3)", capacidade: 6 }
         };
 
         function mostrarAlerta(mensagem, titulo = "⚠️ Atenção") {
@@ -493,11 +497,12 @@
         };
 
         // ======================================================================
-        // A INTELIGÊNCIA DA SALA COFRE COM AS CADEIRAS DESMEMBRADAS
+        // A INTELIGÊNCIA DA SALA COFRE (AGORA COM O HEADCOUNT DE PESSOAS)
         // ======================================================================
         function abrirCofre() {
             let totaisGlobais = { previsao: 0, fechado: 0, recebido: 0, pendente: 0, qtdVendidaGeral: 0, qtdTotalGeral: 0 };
             let totaisCadeiras = { qtd: 0, fechado: 0, recebido: 0 };
+            let totalPessoasSalao = 0; // NOSSO NOVO CONTADOR
             
             let htmlDetalhes = '';
             let htmlSimulador = '';
@@ -525,29 +530,30 @@
                         if (mesa.status === "Vendida" || mesa.status === "Reservada") {
                             qtdVendidaSetor++;
                             
-                            // MATEMÁTICA DE SEPARAÇÃO DA CADEIRA
+                            // CONTAGEM DE PESSOAS DA MESA
+                            totalPessoasSalao += config.capacidade;
+                            
                             let qtdCadeirasExtra = parseInt(mesa.cadeiras) || 0;
+                            // CONTAGEM DAS CADEIRAS EXTRAS DESSA MESA
+                            totalPessoasSalao += qtdCadeirasExtra; 
+
                             let valorTotalCobrado = converterParaNumero(mesa.valorTotal);
                             let valorPago = converterParaNumero(mesa.valorPago);
                             
                             let valorDasCadeiras = qtdCadeirasExtra * valorCadeiraAvulsa;
                             let valorDaMesaSemCadeiras = valorTotalCobrado - valorDasCadeiras;
                             
-                            // Tratamento para caso de descontos gigantescos
                             if (valorDaMesaSemCadeiras < 0) {
                                 valorDaMesaSemCadeiras = valorTotalCobrado;
                                 valorDasCadeiras = 0;
                             }
                             
-                            // Rateio do dinheiro recebido (Paga a mesa primeiro, o que sobra paga a cadeira)
                             let pagoNaMesa = Math.min(valorPago, valorDaMesaSemCadeiras);
                             let pagoNaCadeira = Math.max(0, valorPago - pagoNaMesa);
                             
-                            // Aloca no Setor
                             fechadoSetor += valorDaMesaSemCadeiras;
                             recebidoSetor += pagoNaMesa;
                             
-                            // Aloca nas Cadeiras Globais
                             totaisCadeiras.qtd += qtdCadeirasExtra;
                             totaisCadeiras.fechado += valorDasCadeiras;
                             totaisCadeiras.recebido += pagoNaCadeira;
@@ -587,7 +593,6 @@
                 `;
             }
 
-            // INJETA A LINHA EXCLUSIVA DAS CADEIRAS NA TABELA
             let saldoCadeiras = totaisCadeiras.fechado - totaisCadeiras.recebido;
             htmlDetalhes += `
                 <tr style="background-color: rgba(255, 255, 255, 0.05);">
@@ -601,7 +606,15 @@
                 </tr>
             `;
 
-            // INJETA AS CADEIRAS NO SIMULADOR
+            // A NOVA LINHA DO HEADCOUNT DE PESSOAS AQUI!
+            htmlDetalhes += `
+                <tr style="background-color: rgba(102, 255, 255, 0.1); border-top: 1px dashed var(--ciano-destaque);">
+                    <td colspan="3" style="color: var(--ciano-destaque); text-align: right; font-size: 15px; text-transform: uppercase;">👥 Quantidade de Pessoas (No Salão):</td>
+                    <td style="color: #fff; font-size: 22px; font-weight: bold;">${totalPessoasSalao}</td>
+                    <td colspan="3" style="color: #8892b0; font-size: 12px; text-align: left; vertical-align: middle;">(Soma de todos os assentos das mesas vendidas + cadeiras extras)</td>
+                </tr>
+            `;
+
             htmlSimulador += `
                 <div class="sim-item" style="border-color: #fff;">
                     <label style="color:#fff">🪑 Cadeiras Avulsas</label>
@@ -613,7 +626,6 @@
                 </div>
             `;
 
-            // Soma as cadeiras no Caixa Geral do Educandário
             totaisGlobais.fechado += totaisCadeiras.fechado;
             totaisGlobais.recebido += totaisCadeiras.recebido;
             totaisGlobais.pendente += saldoCadeiras;
@@ -788,13 +800,11 @@
             valor = (parseInt(valor) / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             elemento.value = valor;
         }
-
         function converterParaNumero(str) {
             if (str === null || str === undefined || str === "") return 0;
             if (typeof str === 'number') return str;
             return parseFloat(String(str).replace(/\./g, '').replace(',', '.'));
         }
-
         function converterParaMoeda(numero) {
             let val = Number(numero);
             if (isNaN(val)) val = 0;
