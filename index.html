@@ -17,7 +17,6 @@
         
         #area-exportacao { width: 100%; max-width: 1300px; display: flex; flex-direction: column; align-items: center; background-color: var(--azul-fundo); padding: 10px; border-radius: 8px; }
 
-        /* CABEÇALHO REFEITO EM GRID PARA CENTRALIZAR O TÍTULO PERFEITAMENTE */
         .painel-topo { 
             width: 100%; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; 
             background-color: var(--azul-card); padding: 15px 30px; border-radius: 8px; margin-bottom: 15px; box-sizing: border-box; 
@@ -41,7 +40,7 @@
         .btn-sincronizar:hover { box-shadow: 0 0 10px #47D359; }
 
         /* OCULTA BOTÕES SENSÍVEIS POR PADRÃO */
-        #btnCofre, #btnImg, #btnPdf, #btnBuffet { display: none; }
+        #btnCofre, #btnImg, #btnPdf, #btnBuffet, #btnVisaoCliente { display: none; }
 
         #container-salao { width: 100%; padding: 0 70px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 15px; position: relative; margin-bottom: 15px;}
         
@@ -70,33 +69,32 @@
         .texto-acima.reservada { color: var(--cor-reservada); }
         .texto-abaixo { font-size: 14px; color: #ffffff; text-align: center; width: 100%; white-space: normal; word-wrap: break-word; line-height: 1.1; font-weight: bold; min-height: 15px; }
         
-        /* O MODO APRESENTAÇÃO ESCONDE TUDO CONFIDENCIAL (Mesa do Vendedor Externo) */
+        /* O MODO APRESENTAÇÃO ESCONDE TUDO CONFIDENCIAL (Mesa do Vendedor Externo antes da senha) */
         body.modo-apresentacao .texto-abaixo { display: none; }
         body.modo-apresentacao .badge-extra { display: none; }
         body.modo-apresentacao .badge-divida { display: none; }
         body.modo-apresentacao #btnLimpar { display: none; }
         
-        /* O MODO BUFFET (Para a equipe de montagem do Salão) */
-        body.modo-buffet .texto-acima { display: none !important; } /* Tira a legenda Vendida/Reservada */
-        body.modo-buffet .badge-divida { display: none !important; } /* Tira o ícone de dívida */
+        /* ========================================= */
+        /* AS 3 LENTES FOTOGRÁFICAS DE EXPORTAÇÃO   */
+        /* ========================================= */
         
-        /* A GRAÇA: MESAS VAZIAS NO MODO BUFFET */
+        /* 1. O MODO BUFFET (Para a equipe de montagem do Salão) */
+        body.modo-buffet .texto-acima { display: none !important; } 
+        body.modo-buffet .badge-divida { display: none !important; } 
         body.modo-buffet .mesa[data-status="Livre"] {
-            background-color: #112240 !important; 
-            border: 2px dashed #4a5568 !important;
-            color: rgba(255,255,255,0.1) !important;
-            box-shadow: none !important;
+            background-color: #112240 !important; border: 2px dashed #4a5568 !important; color: rgba(255,255,255,0.1) !important; box-shadow: none !important;
         }
         body.modo-buffet .mesa[data-status="Livre"]::after {
-            content: "❌ VAZIA";
-            position: absolute;
-            font-size: 16px;
-            color: #ff4d4d;
-            font-weight: bold;
-            text-shadow: 0 0 5px #000;
-            transform: rotate(-15deg);
+            content: "❌ VAZIA"; position: absolute; font-size: 16px; color: #ff4d4d; font-weight: bold; text-shadow: 0 0 5px #000; transform: rotate(-15deg);
         }
         body.modo-buffet .wrapper-mesa:has(.mesa[data-status="Livre"]) .texto-abaixo { display: none; }
+
+        /* 2. O MODO CLIENTE (Para mandar no Zap pro cliente ver o que tem livre) */
+        body.modo-cliente .texto-abaixo { display: none !important; }
+        body.modo-cliente .badge-extra { display: none !important; }
+        body.modo-cliente .badge-divida { display: none !important; }
+
 
         .mesa { border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #000; cursor: pointer; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.4); transition: transform 0.2s; border: 2px solid rgba(0,0,0,0.1); }
         .mesa:hover { transform: scale(1.05); }
@@ -120,7 +118,7 @@
         .info-contato { text-align: center; font-size: 18px; font-weight: bold; color: #47D359; border-top: 1px dashed #233554; padding-top: 10px; width: 100%; }
         .info-contato span.realizacao { display: block; color: var(--texto-claro); font-size: 14px; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* ESTILOS DO COFRE FINANCEIRO E QUANTIDADE DE PESSOAS */
+        /* ESTILOS DO COFRE FINANCEIRO */
         #painel-cofre { display: none; width: 100%; max-width: 1300px; flex-direction: column; gap: 20px; padding: 20px; box-sizing: border-box; }
         .cofre-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--ciano-destaque); padding-bottom: 15px;}
         .cofre-header h2 { margin: 0; color: var(--ciano-destaque); font-size: 28px; display: flex; align-items: center; gap: 10px;}
@@ -236,6 +234,7 @@
             <div class="area-botoes-topo">
                 <button class="botao-acao btn-sincronizar" id="btnSincronizar" onclick="carregarDadosDaNuvem()">🔄 Sincronizar</button>
                 
+                <button class="botao-acao" id="btnVisaoCliente" onclick="toggleVisaoCliente()" style="background-color: #3b82f6; color: #fff;">👁️ Visão Cliente</button>
                 <button class="botao-acao" id="btnBuffet" onclick="toggleBuffet()" style="background-color: #8b5cf6; color: #fff;">🪑 Modo Buffet</button>
                 <button class="botao-acao" id="btnImg" onclick="exportarMapa('img')" style="background-color: #f59e0b; color: #fff;">📷 Imagem</button>
                 <button class="botao-acao" id="btnPdf" onclick="exportarMapa('pdf')" style="background-color: #ec4899; color: #fff;">📄 PDF</button>
@@ -506,7 +505,7 @@
             document.getElementById('modalAlerta').style.display = 'none'; 
         }
 
-        // DESTRAVAMENTO DO SISTEMA
+        // DESTRAVAMENTO DO SISTEMA COM A CHAVE MESTRA
         document.getElementById('logoSecreta').onclick = function() {
             if (document.body.classList.contains('modo-apresentacao')) {
                 let senhaDigitada = prompt("Área Restrita. Digite a senha de Acesso:");
@@ -517,6 +516,7 @@
                     document.getElementById('btnImg').style.display = 'block';
                     document.getElementById('btnPdf').style.display = 'block';
                     document.getElementById('btnBuffet').style.display = 'block';
+                    document.getElementById('btnVisaoCliente').style.display = 'block';
                     document.getElementById('btnCofre').style.display = 'block';
                     
                     mostrarAlerta("Acesso Total Liberado! Ferramentas financeiras, edições e exportação de mapas disponíveis.\n\nAtualize a página (F5) para trancar o sistema novamente.", "🔓 Acesso Concedido");
@@ -524,33 +524,65 @@
                     mostrarAlerta("Senha incorreta.", "❌ Erro");
                 }
             } else {
-                // VOLTA AO MODO SEGURO (Mesa do Vendedor)
+                // VOLTA AO MODO SEGURO (Mesa do Vendedor Externo / Padrão)
                 document.body.classList.add('modo-apresentacao');
                 document.body.classList.remove('modo-buffet');
+                document.body.classList.remove('modo-cliente');
                 
                 // Esconde os botões
                 document.getElementById('btnCofre').style.display = 'none'; 
                 document.getElementById('btnImg').style.display = 'none';
                 document.getElementById('btnPdf').style.display = 'none';
                 document.getElementById('btnBuffet').style.display = 'none';
+                document.getElementById('btnVisaoCliente').style.display = 'none';
                 
-                const btnB = document.getElementById('btnBuffet');
-                btnB.style.backgroundColor = '#8b5cf6';
-                btnB.textContent = "🪑 Modo Buffet";
+                // Reseta cores dos botões
+                document.getElementById('btnBuffet').style.backgroundColor = '#8b5cf6';
+                document.getElementById('btnBuffet').textContent = "🪑 Modo Buffet";
+                document.getElementById('btnVisaoCliente').style.backgroundColor = '#3b82f6';
+                document.getElementById('btnVisaoCliente').textContent = "👁️ Visão Cliente";
             }
         };
 
-        // FUNÇÃO QUE LIGA/DESLIGA OS NOMES PARA A EQUIPE DO BUFFET
+        // FUNÇÃO PARA EQUIPE DO BUFFET (Esconde status, mostra X nas livres)
         function toggleBuffet() {
             document.body.classList.toggle('modo-buffet');
             const btn = document.getElementById('btnBuffet');
             
+            // Se ligou o Buffet, desliga a Visão Cliente para não dar conflito
+            if(document.body.classList.contains('modo-cliente')) {
+                document.body.classList.remove('modo-cliente');
+                document.getElementById('btnVisaoCliente').style.backgroundColor = '#3b82f6';
+                document.getElementById('btnVisaoCliente').textContent = "👁️ Visão Cliente";
+            }
+
             if (document.body.classList.contains('modo-buffet')) {
                 btn.style.backgroundColor = '#10b981'; // Verde sucesso
-                btn.textContent = "✅ Buffet: Mapa Limpo";
+                btn.textContent = "✅ Buffet: Mapa da Montagem";
             } else {
                 btn.style.backgroundColor = '#8b5cf6'; // Roxo normal
                 btn.textContent = "🪑 Modo Buffet";
+            }
+        }
+
+        // FUNÇÃO PARA MANDAR NO ZAP (Mapa limpo igual ao modo apresentação, mas com câmera liberada)
+        function toggleVisaoCliente() {
+            document.body.classList.toggle('modo-cliente');
+            const btn = document.getElementById('btnVisaoCliente');
+            
+            // Se ligou o Cliente, desliga o Buffet para não dar conflito
+            if(document.body.classList.contains('modo-buffet')) {
+                document.body.classList.remove('modo-buffet');
+                document.getElementById('btnBuffet').style.backgroundColor = '#8b5cf6';
+                document.getElementById('btnBuffet').textContent = "🪑 Modo Buffet";
+            }
+
+            if (document.body.classList.contains('modo-cliente')) {
+                btn.style.backgroundColor = '#10b981'; // Verde sucesso
+                btn.textContent = "✅ Cliente: Mapa Limpo";
+            } else {
+                btn.style.backgroundColor = '#3b82f6'; // Azul normal
+                btn.textContent = "👁️ Visão Cliente";
             }
         }
 
@@ -1094,7 +1126,6 @@
                                 divMesa.className = `mesa ${setorConfig.classeTamanho}`;
                                 divMesa.textContent = idDaMesa;
                                 
-                                // INJEÇÃO DO STATUS PARA O CSS DO MODO BUFFET
                                 divMesa.setAttribute('data-status', dadosDestaMesa.status);
                                 
                                 if (dadosDestaMesa.status === "Vendida") {
