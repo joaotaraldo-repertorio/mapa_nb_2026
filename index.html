@@ -150,6 +150,9 @@
 
         .btn-editar-custo { background-color: transparent; border: 1px solid var(--ciano-destaque); color: var(--ciano-destaque); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;}
         .btn-editar-custo:hover { background-color: var(--ciano-destaque); color: #000; }
+        
+        .toggle-tabela-btn { cursor: pointer; user-select: none; display: flex; justify-content: space-between; align-items: center; }
+        .toggle-tabela-btn:hover { opacity: 0.8; }
 
         .painel-simulador { background-color: #061020; border: 1px dashed #f59e0b; border-radius: 8px; padding: 25px; margin-top: 10px;}
         .painel-simulador h3 { margin: 0 0 5px 0; color: #f59e0b; font-size: 22px; display: flex; align-items: center; gap: 8px;}
@@ -185,10 +188,10 @@
         .modal-box { background-color: var(--azul-card); border: 1px solid var(--ciano-destaque); border-radius: 8px; padding: 25px; width: 650px; max-width: 95%; box-shadow: 0 10px 25px rgba(0,0,0,0.8); max-height: 90vh; overflow-y: auto; }
         .modal-box h2 { margin-top: 0; color: var(--ciano-destaque); border-bottom: 1px solid #233554; padding-bottom: 10px; font-size: 22px; display: flex; justify-content: space-between; align-items: center;}
         
-        .form-row { display: flex; gap: 15px; margin-bottom: 12px; }
-        .form-group { display: flex; flex-direction: column; flex: 1; }
+        .form-row { display: flex; gap: 15px; margin-bottom: 12px; box-sizing: border-box; width: 100%; }
+        .form-group { display: flex; flex-direction: column; flex: 1; box-sizing: border-box; }
         .form-group label { margin-bottom: 5px; font-size: 13px; color: #8892b0; font-weight: bold; }
-        .form-group input, .form-group select, .form-group textarea { padding: 8px 10px; border-radius: 4px; border: 1px solid #233554; background-color: #0A192F; color: var(--texto-claro); font-size: 14px; }
+        .form-group input, .form-group select, .form-group textarea { padding: 8px 10px; border-radius: 4px; border: 1px solid #233554; background-color: #0A192F; color: var(--texto-claro); font-size: 14px; box-sizing: border-box; width: 100%; }
         
         input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
         .form-group textarea { resize: vertical; min-height: 40px; }
@@ -335,22 +338,27 @@
             </div>
 
             <div class="area-tabela" style="margin-top: 10px;">
-                <h3 style="color: #ef4444; border-bottom-color: #ef4444;">💸 Detalhamento de Despesas (Saídas)</h3>
-                <table class="tabela-financeira" style="border-bottom: 2px solid #ef4444;">
-                    <thead>
-                        <tr>
-                            <th style="border-bottom-color: #ef4444;">Categoria</th>
-                            <th style="border-bottom-color: #ef4444;">Fornecedor / Profissional</th>
-                            <th style="border-bottom-color: #ef4444;">Descrição do Item</th>
-                            <th style="border-bottom-color: #ef4444;">Qtd</th>
-                            <th style="border-bottom-color: #ef4444;">Valor Unit.</th>
-                            <th style="border-bottom-color: #ef4444;">Valor Total</th>
-                            <th style="border-bottom-color: #ef4444; text-align: center;">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbodyCustos">
-                        </tbody>
-                </table>
+                <h3 class="toggle-tabela-btn" style="color: #ef4444; border-bottom-color: #ef4444;" onclick="toggleTabelaCustos()">
+                    <span>💸 Detalhamento de Despesas (Saídas)</span>
+                    <span id="iconeToggleCustos" style="font-size: 16px; color: #8892b0;">▼ Mostrar</span>
+                </h3>
+                <div id="containerTabelaCustos" style="display: none; overflow-x: auto;">
+                    <table class="tabela-financeira" style="border-bottom: 2px solid #ef4444; min-width: 900px;">
+                        <thead>
+                            <tr>
+                                <th style="border-bottom-color: #ef4444;">Categoria</th>
+                                <th style="border-bottom-color: #ef4444;">Fornecedor / Profissional</th>
+                                <th style="border-bottom-color: #ef4444;">Descrição do Item</th>
+                                <th style="border-bottom-color: #ef4444;">Qtd</th>
+                                <th style="border-bottom-color: #ef4444;">Valor Unit.</th>
+                                <th style="border-bottom-color: #ef4444;">Valor Total</th>
+                                <th style="border-bottom-color: #ef4444; text-align: center;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyCustos">
+                            </tbody>
+                    </table>
+                </div>
             </div>
 
             <div class="painel-simulador">
@@ -537,17 +545,18 @@
             
             <div class="form-row">
                 <div class="form-group" style="flex: 0.5;">
-                    <label>Categoria</label>
-                    <select id="custoCategoria">
-                        <option value="Atração Musical">Atração Musical</option>
-                        <option value="Estrutura e Som">Estrutura e Som</option>
-                        <option value="Buffet">Buffet</option>
-                        <option value="Bebidas">Bebidas</option>
-                        <option value="Decoração">Decoração</option>
-                        <option value="Publicidade">Publicidade</option>
-                        <option value="Taxas (Ecad, etc)">Taxas e Impostos</option>
-                        <option value="Outras Demandas">Outras Demandas</option>
-                    </select>
+                    <label>Categoria (Escolha ou Digite Nova)</label>
+                    <input list="listaCategorias" id="custoCategoria" placeholder="Ex: Atração Musical...">
+                    <datalist id="listaCategorias">
+                        <option value="Atração Musical">
+                        <option value="Estrutura e Som">
+                        <option value="Buffet">
+                        <option value="Bebidas">
+                        <option value="Decoração">
+                        <option value="Publicidade">
+                        <option value="Taxas e Impostos">
+                        <option value="Outras Demandas">
+                    </datalist>
                 </div>
                 <div class="form-group">
                     <label>Fornecedor / Profissional</label>
@@ -560,16 +569,16 @@
                 <input type="text" id="custoDescricao" placeholder="Ex: Cachê Principal, Cerveja Heineken, Arranjos de Mesa...">
             </div>
 
-            <div class="form-row" style="background-color: #061020; padding: 15px; border-radius: 8px; border: 1px dashed #ef4444;">
-                <div class="form-group" style="flex: 0.2;">
-                    <label>Quantidade</label>
-                    <input type="number" id="custoQtd" min="1" value="1" oninput="calcularCustoTotal()" onchange="calcularCustoTotal()">
+            <div class="form-row" style="background-color: #061020; padding: 15px; border-radius: 8px; border: 1px dashed #ef4444; box-sizing: border-box;">
+                <div class="form-group" style="flex: 0.15;">
+                    <label>Qtd</label>
+                    <input type="number" id="custoQtd" min="1" value="1" oninput="calcularCustoTotal()" onchange="calcularCustoTotal()" style="padding: 8px 5px; text-align: center;">
                 </div>
                 <div class="form-group" style="flex: 0.4;">
                     <label>Valor Unitário (R$)</label>
                     <input type="text" id="custoUnitario" oninput="formatarMoeda(this); calcularCustoTotal()" placeholder="0,00">
                 </div>
-                <div class="form-group" style="flex: 0.4;">
+                <div class="form-group" style="flex: 0.45;">
                     <label style="color: #ef4444;">Valor Total (R$)</label>
                     <input type="text" id="custoTotal" class="campo-bloqueado" style="color: #ef4444 !important;" readonly placeholder="0,00">
                 </div>
@@ -594,7 +603,7 @@
         const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbxCOJv1V8KMAyQ_ECyF7cdVkAiwRQcXQ6tQtNiI-SzGiMP0QeGJz-UsYQQezolsROzM/exec";
         
         const bancoDeDados = {}; 
-        let bancoDeCustos = {}; // O NOVO BANCO DE DADOS DE DESPESAS
+        let bancoDeCustos = {}; 
         
         let mesaEditandoAtual = ""; 
         let statusAoAbrirMesa = ""; 
@@ -692,7 +701,6 @@
             renderizarMapa();
         }
 
-        // LENTES DA CÂMERA
         function toggleBuffet() {
             document.body.classList.toggle('modo-buffet');
             const btn = document.getElementById('btnBuffet');
@@ -732,8 +740,20 @@
         }
 
         // ======================================================================
-        // A NOVA INTELIGÊNCIA DO DRE (SALA COFRE COM CUSTOS)
+        // A MÁGICA DA SANFONA DE CUSTOS E ORDENAÇÃO
         // ======================================================================
+        function toggleTabelaCustos() {
+            const container = document.getElementById('containerTabelaCustos');
+            const icone = document.getElementById('iconeToggleCustos');
+            if (container.style.display === 'none') {
+                container.style.display = 'block';
+                icone.textContent = '▲ Ocultar';
+            } else {
+                container.style.display = 'none';
+                icone.textContent = '▼ Mostrar';
+            }
+        }
+
         function abrirCofre() {
             let totaisGlobais = { previsao: 0, fechado: 0, recebido: 0, pendente: 0, qtdVendidaGeral: 0, qtdTotalGeral: 0 };
             let totaisCadeiras = { qtd: 0, fechado: 0, recebido: 0 };
@@ -853,12 +873,28 @@
                 </tr>
             `;
             
-            // PROCESSAMENTO DOS CUSTOS
+            // PROCESSAMENTO DOS CUSTOS EM ORDEM ALFABÉTICA
             let htmlCustos = "";
             let totalCustos = 0;
             
-            for (const id in bancoDeCustos) {
-                const c = bancoDeCustos[id];
+            // 1. Converte o objeto de custos para um Array para podermos organizar
+            let arrayCustos = Object.values(bancoDeCustos);
+            
+            // 2. Ordena o Array Alfabeticamente (Categoria e Fornecedor)
+            arrayCustos.sort((a, b) => {
+                let catA = (a.categoria || "").toLowerCase(); let catB = (b.categoria || "").toLowerCase();
+                if (catA < catB) return -1;
+                if (catA > catB) return 1;
+                
+                let forA = (a.fornecedor || "").toLowerCase(); let forB = (b.fornecedor || "").toLowerCase();
+                if (forA < forB) return -1;
+                if (forA > forB) return 1;
+                
+                return 0;
+            });
+            
+            // 3. Monta o HTML com os custos ordenados
+            for (const c of arrayCustos) {
                 let valTotal = converterParaNumero(c.valorTotal);
                 totalCustos += valTotal;
                 
@@ -871,13 +907,13 @@
                         <td style="color: #8892b0; font-weight: normal;">R$ ${converterParaMoeda(c.valorUnitario)}</td>
                         <td style="color: #ef4444;">R$ ${converterParaMoeda(valTotal)}</td>
                         <td style="text-align: center;">
-                            <button class="btn-editar-custo" onclick="abrirModalCusto('${id}')">✏️ Editar</button>
+                            <button class="btn-editar-custo" onclick="abrirModalCusto('${c.id}')">✏️ Editar</button>
                         </td>
                     </tr>
                 `;
             }
             
-            if (Object.keys(bancoDeCustos).length === 0) {
+            if (arrayCustos.length === 0) {
                 htmlCustos = `<tr><td colspan="7" style="text-align: center; color: #8892b0; font-weight: normal;">Nenhuma despesa lançada até o momento.</td></tr>`;
             }
             
@@ -905,7 +941,7 @@
         }
 
         // ======================================================================
-        // FUNÇÕES DO MODAL DE CUSTOS (A NOVA ENGENHARIA)
+        // FUNÇÕES DO MODAL DE CUSTOS
         // ======================================================================
         function abrirModalCusto(id = null) {
             if (id && bancoDeCustos[id]) {
@@ -923,7 +959,7 @@
             } else {
                 custoEditandoId = "";
                 document.getElementById('tituloModalCusto').textContent = "Lançar Nova Despesa";
-                document.getElementById('custoCategoria').value = "Atração Musical";
+                document.getElementById('custoCategoria').value = "";
                 document.getElementById('custoFornecedor').value = "";
                 document.getElementById('custoDescricao').value = "";
                 document.getElementById('custoQtd').value = 1;
@@ -952,7 +988,7 @@
             
             let dadosCusto = {
                 id: idCusto,
-                categoria: document.getElementById('custoCategoria').value,
+                categoria: document.getElementById('custoCategoria').value || "Outros",
                 fornecedor: document.getElementById('custoFornecedor').value,
                 descricao: document.getElementById('custoDescricao').value,
                 quantidade: parseInt(document.getElementById('custoQtd').value) || 1,
@@ -965,9 +1001,9 @@
 
             try {
                 await fetch(URL_GOOGLE_SCRIPT, { method: 'POST', body: JSON.stringify(payload) });
-                bancoDeCustos[idCusto] = dadosCusto; // Atualiza local pra ser rápido
+                bancoDeCustos[idCusto] = dadosCusto; 
                 fecharModalCusto(); 
-                abrirCofre(); // Recarrega o DRE
+                abrirCofre(); 
             } catch (error) {
                 mostrarAlerta("Erro ao salvar despesa na nuvem!");
             } finally {
@@ -1071,7 +1107,6 @@
             }
         }
 
-        // CARREGA VENDAS E CUSTOS SIMULTANEAMENTE DA NUVEM
         async function carregarDadosDaNuvemBackground() {
             try {
                 const response = await fetch(URL_GOOGLE_SCRIPT);
