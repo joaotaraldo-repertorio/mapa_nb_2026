@@ -17,16 +17,21 @@
         
         #area-exportacao { width: 100%; max-width: 1300px; display: flex; flex-direction: column; align-items: center; background-color: var(--azul-fundo); padding: 10px; border-radius: 8px; }
 
-        .painel-topo { width: 100%; display: flex; justify-content: space-between; align-items: center; background-color: var(--azul-card); padding: 15px 30px; border-radius: 8px; margin-bottom: 15px; box-sizing: border-box; }
-        .area-logo { width: 150px; display: flex; justify-content: flex-start; cursor: pointer; transition: transform 0.2s; }
-        .area-logo:hover { transform: scale(1.05); }
-        .area-logo img { max-height: 100px; width: auto; }
+        /* CABEÇALHO REFEITO EM GRID PARA CENTRALIZAR O TÍTULO PERFEITAMENTE */
+        .painel-topo { 
+            width: 100%; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; 
+            background-color: var(--azul-card); padding: 15px 30px; border-radius: 8px; margin-bottom: 15px; box-sizing: border-box; 
+        }
         
-        .titulo-evento { text-align: center; flex-grow: 1; color: var(--ciano-destaque); margin: 0 20px; font-size: 32px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; line-height: 1.2;}
+        .area-imagens-topo { display: flex; gap: 15px; align-items: center; cursor: pointer; transition: transform 0.2s; justify-self: flex-start; }
+        .area-imagens-topo:hover { transform: scale(1.02); }
+        .area-imagens-topo img { max-height: 100px; width: auto; border-radius: 8px; }
+        
+        .titulo-evento { text-align: center; color: var(--ciano-destaque); margin: 0; font-size: 32px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; line-height: 1.2; justify-self: center; }
         .subtitulo-evento { display: block; font-size: 16px; color: #fff; letter-spacing: 1px; font-weight: normal; margin-top: 5px; text-transform: none;}
         .subtitulo-evento span { color: #f59e0b; font-weight: bold; }
 
-        .area-botoes-topo { display: flex; gap: 10px; width: 450px; justify-content: flex-end; flex-wrap: wrap;}
+        .area-botoes-topo { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; justify-self: flex-end; }
         
         .botao-acao { background-color: var(--ciano-destaque); color: #000; border: none; padding: 10px 15px; font-weight: bold; font-size: 13px; border-radius: 4px; cursor: pointer; transition: 0.3s; white-space: nowrap; }
         .botao-acao:hover:not(:disabled) { box-shadow: 0 0 10px var(--ciano-destaque); }
@@ -65,14 +70,33 @@
         .texto-acima.reservada { color: var(--cor-reservada); }
         .texto-abaixo { font-size: 14px; color: #ffffff; text-align: center; width: 100%; white-space: normal; word-wrap: break-word; line-height: 1.1; font-weight: bold; min-height: 15px; }
         
-        /* O MODO APRESENTAÇÃO ESCONDE TUDO CONFIDENCIAL */
+        /* O MODO APRESENTAÇÃO ESCONDE TUDO CONFIDENCIAL (Mesa do Vendedor Externo) */
         body.modo-apresentacao .texto-abaixo { display: none; }
         body.modo-apresentacao .badge-extra { display: none; }
         body.modo-apresentacao .badge-divida { display: none; }
         body.modo-apresentacao #btnLimpar { display: none; }
         
-        /* O MODO BUFFET ESCONDE SÓ OS NOMES (Mantém as cadeiras extras) */
-        body.modo-buffet .texto-abaixo { display: none !important; }
+        /* O MODO BUFFET (Para a equipe de montagem do Salão) */
+        body.modo-buffet .texto-acima { display: none !important; } /* Tira a legenda Vendida/Reservada */
+        body.modo-buffet .badge-divida { display: none !important; } /* Tira o ícone de dívida */
+        
+        /* A GRAÇA: MESAS VAZIAS NO MODO BUFFET */
+        body.modo-buffet .mesa[data-status="Livre"] {
+            background-color: #112240 !important; 
+            border: 2px dashed #4a5568 !important;
+            color: rgba(255,255,255,0.1) !important;
+            box-shadow: none !important;
+        }
+        body.modo-buffet .mesa[data-status="Livre"]::after {
+            content: "❌ VAZIA";
+            position: absolute;
+            font-size: 16px;
+            color: #ff4d4d;
+            font-weight: bold;
+            text-shadow: 0 0 5px #000;
+            transform: rotate(-15deg);
+        }
+        body.modo-buffet .wrapper-mesa:has(.mesa[data-status="Livre"]) .texto-abaixo { display: none; }
 
         .mesa { border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #000; cursor: pointer; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.4); transition: transform 0.2s; border: 2px solid rgba(0,0,0,0.1); }
         .mesa:hover { transform: scale(1.05); }
@@ -96,7 +120,7 @@
         .info-contato { text-align: center; font-size: 18px; font-weight: bold; color: #47D359; border-top: 1px dashed #233554; padding-top: 10px; width: 100%; }
         .info-contato span.realizacao { display: block; color: var(--texto-claro); font-size: 14px; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* ESTILOS DO COFRE FINANCEIRO */
+        /* ESTILOS DO COFRE FINANCEIRO E QUANTIDADE DE PESSOAS */
         #painel-cofre { display: none; width: 100%; max-width: 1300px; flex-direction: column; gap: 20px; padding: 20px; box-sizing: border-box; }
         .cofre-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--ciano-destaque); padding-bottom: 15px;}
         .cofre-header h2 { margin: 0; color: var(--ciano-destaque); font-size: 28px; display: flex; align-items: center; gap: 10px;}
@@ -202,7 +226,7 @@
     <div id="area-exportacao">
 
         <div class="painel-topo">
-            <div class="area-logo" id="logoSecreta" title="Área Restrita">
+            <div class="area-imagens-topo" id="logoSecreta" title="Área Restrita">
                 <img id="img-logo" src="" alt="Logo">
                 <img id="img-dupla" src="ImagemDupla.png" alt="Marcos e Belutti" style="box-shadow: 0 4px 8px rgba(0,0,0,0.5);">
             </div>
@@ -453,8 +477,8 @@
         let valorCadeiraAvulsa = 800.00; 
         let arrayParcelasAtuais = []; 
 
-        const SENHA_DIRETORIA = "diretoria26";
-        const SENHA_FINANCEIRO = "financeiro26"; 
+        // A CHAVE MESTRA ÚNICA
+        const SENHA_UNICA = "educandario1958";
 
         const CONFIG_GERAL = { 
             edicao: "19ª", nomeEvento: "Noite Beneficente", ano: "2026", 
@@ -482,44 +506,34 @@
             document.getElementById('modalAlerta').style.display = 'none'; 
         }
 
-        // A MÁGICA DAS SENHAS E LIBERAÇÃO DOS BOTÕES
+        // DESTRAVAMENTO DO SISTEMA
         document.getElementById('logoSecreta').onclick = function() {
             if (document.body.classList.contains('modo-apresentacao')) {
                 let senhaDigitada = prompt("Área Restrita. Digite a senha de Acesso:");
-                if (senhaDigitada === SENHA_DIRETORIA) {
+                if (senhaDigitada === SENHA_UNICA) {
                     document.body.classList.remove('modo-apresentacao');
                     
-                    // Libera botões de exportação e buffet
+                    // Libera TODOS os botões
                     document.getElementById('btnImg').style.display = 'block';
                     document.getElementById('btnPdf').style.display = 'block';
                     document.getElementById('btnBuffet').style.display = 'block';
+                    document.getElementById('btnCofre').style.display = 'block';
                     
-                    mostrarAlerta("Acesso de Vendas Liberado! Nomes e ferramentas de exportação disponíveis.\n\nAtualize a página (F5) para voltar ao modo seguro.", "🔓 Acesso Concedido");
-                } else if (senhaDigitada === SENHA_FINANCEIRO) {
-                    document.body.classList.remove('modo-apresentacao');
-                    
-                    // Libera TUDO
-                    document.getElementById('btnCofre').style.display = 'block'; 
-                    document.getElementById('btnImg').style.display = 'block';
-                    document.getElementById('btnPdf').style.display = 'block';
-                    document.getElementById('btnBuffet').style.display = 'block';
-                    
-                    mostrarAlerta("Acesso Financeiro Liberado! O Painel do Cofre e as ferramentas de exportação estão disponíveis.", "💰 Cofre Destravado");
+                    mostrarAlerta("Acesso Total Liberado! Ferramentas financeiras, edições e exportação de mapas disponíveis.\n\nAtualize a página (F5) para trancar o sistema novamente.", "🔓 Acesso Concedido");
                 } else if (senhaDigitada !== null) {
                     mostrarAlerta("Senha incorreta.", "❌ Erro");
                 }
             } else {
-                // VOLTA AO MODO SEGURO (VENDAS BÁSICO)
+                // VOLTA AO MODO SEGURO (Mesa do Vendedor)
                 document.body.classList.add('modo-apresentacao');
-                document.body.classList.remove('modo-buffet'); // Desliga modo buffet se estiver ligado
+                document.body.classList.remove('modo-buffet');
                 
-                // Esconde botões sensíveis
+                // Esconde os botões
                 document.getElementById('btnCofre').style.display = 'none'; 
                 document.getElementById('btnImg').style.display = 'none';
                 document.getElementById('btnPdf').style.display = 'none';
                 document.getElementById('btnBuffet').style.display = 'none';
                 
-                // Reseta botão buffet
                 const btnB = document.getElementById('btnBuffet');
                 btnB.style.backgroundColor = '#8b5cf6';
                 btnB.textContent = "🪑 Modo Buffet";
@@ -533,7 +547,7 @@
             
             if (document.body.classList.contains('modo-buffet')) {
                 btn.style.backgroundColor = '#10b981'; // Verde sucesso
-                btn.textContent = "✅ Buffet: Sem Nomes";
+                btn.textContent = "✅ Buffet: Mapa Limpo";
             } else {
                 btn.style.backgroundColor = '#8b5cf6'; // Roxo normal
                 btn.textContent = "🪑 Modo Buffet";
@@ -841,11 +855,13 @@
             valor = (parseInt(valor) / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             elemento.value = valor;
         }
+
         function converterParaNumero(str) {
             if (str === null || str === undefined || str === "") return 0;
             if (typeof str === 'number') return str;
             return parseFloat(String(str).replace(/\./g, '').replace(',', '.'));
         }
+
         function converterParaMoeda(numero) {
             let val = Number(numero);
             if (isNaN(val)) val = 0;
@@ -1077,6 +1093,9 @@
                                 const divMesa = document.createElement('div');
                                 divMesa.className = `mesa ${setorConfig.classeTamanho}`;
                                 divMesa.textContent = idDaMesa;
+                                
+                                // INJEÇÃO DO STATUS PARA O CSS DO MODO BUFFET
+                                divMesa.setAttribute('data-status', dadosDestaMesa.status);
                                 
                                 if (dadosDestaMesa.status === "Vendida") {
                                     divMesa.style.backgroundColor = setorConfig.corVendida; divMesa.style.border = "2px dashed #666"; divMesa.style.opacity = "0.9";
