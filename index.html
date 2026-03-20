@@ -18,17 +18,15 @@
         #area-exportacao { width: 100%; max-width: 1300px; display: flex; flex-direction: column; align-items: center; background-color: var(--azul-fundo); padding: 10px; border-radius: 8px; }
 
         .painel-topo { width: 100%; display: flex; justify-content: space-between; align-items: center; background-color: var(--azul-card); padding: 15px 30px; border-radius: 8px; margin-bottom: 15px; box-sizing: border-box; }
-        
-        /* NOVA ÁREA DE LOGO E FOTO FLEXÍVEL */
-        .area-imagens-topo { display: flex; gap: 15px; align-items: center; width: auto; cursor: pointer; transition: transform 0.2s; }
-        .area-imagens-topo:hover { transform: scale(1.02); }
-        .area-imagens-topo img { max-height: 100px; width: auto; border-radius: 8px; }
+        .area-logo { width: 150px; display: flex; justify-content: flex-start; cursor: pointer; transition: transform 0.2s; }
+        .area-logo:hover { transform: scale(1.05); }
+        .area-logo img { max-height: 100px; width: auto; }
         
         .titulo-evento { text-align: center; flex-grow: 1; color: var(--ciano-destaque); margin: 0 20px; font-size: 32px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; line-height: 1.2;}
         .subtitulo-evento { display: block; font-size: 16px; color: #fff; letter-spacing: 1px; font-weight: normal; margin-top: 5px; text-transform: none;}
         .subtitulo-evento span { color: #f59e0b; font-weight: bold; }
 
-        .area-botoes-topo { display: flex; gap: 10px; width: 400px; justify-content: flex-end; }
+        .area-botoes-topo { display: flex; gap: 10px; width: 450px; justify-content: flex-end; flex-wrap: wrap;}
         
         .botao-acao { background-color: var(--ciano-destaque); color: #000; border: none; padding: 10px 15px; font-weight: bold; font-size: 13px; border-radius: 4px; cursor: pointer; transition: 0.3s; white-space: nowrap; }
         .botao-acao:hover:not(:disabled) { box-shadow: 0 0 10px var(--ciano-destaque); }
@@ -36,6 +34,9 @@
         
         .btn-sincronizar { background-color: #47D359; }
         .btn-sincronizar:hover { box-shadow: 0 0 10px #47D359; }
+
+        /* OCULTA BOTÕES SENSÍVEIS POR PADRÃO */
+        #btnCofre, #btnImg, #btnPdf, #btnBuffet { display: none; }
 
         #container-salao { width: 100%; padding: 0 70px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 15px; position: relative; margin-bottom: 15px;}
         
@@ -64,11 +65,14 @@
         .texto-acima.reservada { color: var(--cor-reservada); }
         .texto-abaixo { font-size: 14px; color: #ffffff; text-align: center; width: 100%; white-space: normal; word-wrap: break-word; line-height: 1.1; font-weight: bold; min-height: 15px; }
         
+        /* O MODO APRESENTAÇÃO ESCONDE TUDO CONFIDENCIAL */
         body.modo-apresentacao .texto-abaixo { display: none; }
         body.modo-apresentacao .badge-extra { display: none; }
         body.modo-apresentacao .badge-divida { display: none; }
         body.modo-apresentacao #btnLimpar { display: none; }
-        body.modo-apresentacao #btnCofre { display: none; }
+        
+        /* O MODO BUFFET ESCONDE SÓ OS NOMES (Mantém as cadeiras extras) */
+        body.modo-buffet .texto-abaixo { display: none !important; }
 
         .mesa { border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #000; cursor: pointer; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.4); transition: transform 0.2s; border: 2px solid rgba(0,0,0,0.1); }
         .mesa:hover { transform: scale(1.05); }
@@ -92,7 +96,7 @@
         .info-contato { text-align: center; font-size: 18px; font-weight: bold; color: #47D359; border-top: 1px dashed #233554; padding-top: 10px; width: 100%; }
         .info-contato span.realizacao { display: block; color: var(--texto-claro); font-size: 14px; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* ESTILOS DO COFRE FINANCEIRO E QUANTIDADE DE PESSOAS */
+        /* ESTILOS DO COFRE FINANCEIRO */
         #painel-cofre { display: none; width: 100%; max-width: 1300px; flex-direction: column; gap: 20px; padding: 20px; box-sizing: border-box; }
         .cofre-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--ciano-destaque); padding-bottom: 15px;}
         .cofre-header h2 { margin: 0; color: var(--ciano-destaque); font-size: 28px; display: flex; align-items: center; gap: 10px;}
@@ -198,7 +202,7 @@
     <div id="area-exportacao">
 
         <div class="painel-topo">
-            <div class="area-imagens-topo" id="logoSecreta" title="Área Restrita">
+            <div class="area-logo" id="logoSecreta" title="Área Restrita">
                 <img id="img-logo" src="" alt="Logo">
                 <img id="img-dupla" src="ImagemDupla.png" alt="Marcos e Belutti" style="box-shadow: 0 4px 8px rgba(0,0,0,0.5);">
             </div>
@@ -206,9 +210,11 @@
             <h2 id="titulo-dinamico" class="titulo-evento">Carregando...</h2>
             
             <div class="area-botoes-topo">
-                <button class="botao-acao" onclick="exportarMapa('img')" style="background-color: #f59e0b; color: #fff;">📷 Imagem</button>
-                <button class="botao-acao" onclick="exportarMapa('pdf')" style="background-color: #ec4899; color: #fff;">📄 PDF</button>
                 <button class="botao-acao btn-sincronizar" id="btnSincronizar" onclick="carregarDadosDaNuvem()">🔄 Sincronizar</button>
+                
+                <button class="botao-acao" id="btnBuffet" onclick="toggleBuffet()" style="background-color: #8b5cf6; color: #fff;">🪑 Modo Buffet</button>
+                <button class="botao-acao" id="btnImg" onclick="exportarMapa('img')" style="background-color: #f59e0b; color: #fff;">📷 Imagem</button>
+                <button class="botao-acao" id="btnPdf" onclick="exportarMapa('pdf')" style="background-color: #ec4899; color: #fff;">📄 PDF</button>
                 <button class="botao-acao" id="btnCofre" onclick="abrirCofre()" style="background-color: #ff9900; color: #000; border: 1px solid #fff;">📊 Cofre</button>
             </div>
         </div>
@@ -459,7 +465,6 @@
         document.getElementById('titulo-dinamico').innerHTML = `${CONFIG_GERAL.edicao} ${CONFIG_GERAL.nomeEvento} ${CONFIG_GERAL.ano}<br><span class="subtitulo-evento">${CONFIG_GERAL.data} • Show: <span>${CONFIG_GERAL.show}</span></span>`;
         document.getElementById('img-logo').src = CONFIG_GERAL.caminhoLogo;
 
-        // ADICIONEI A INFORMAÇÃO DA CAPACIDADE DE PESSOAS POR MESA ("capacidade")
         const CONFIG_MESAS = {
             "Familia": { prefixo: "F", nome: "Cota Família", classeTamanho: "tamanho-g", corNormal: "#FFFF00", corVendida: "#FFFFD1", layout: [ [6], [6] ], valorBase: 25000, bgTranslucido: "rgba(255, 255, 0, 0.08)", bordaFina: "rgba(255, 255, 0, 0.3)", capacidade: 12 },
             "Crianca": { prefixo: "C", nome: "Cota Criança", classeTamanho: "tamanho-m", corNormal: "#00FFFF", corVendida: "#66CCCC", layout: [ [7], [7], [7], [7] ], valorBase: 12000, bgTranslucido: "rgba(0, 255, 255, 0.08)", bordaFina: "rgba(0, 255, 255, 0.3)", capacidade: 8 },
@@ -477,32 +482,71 @@
             document.getElementById('modalAlerta').style.display = 'none'; 
         }
 
+        // A MÁGICA DAS SENHAS E LIBERAÇÃO DOS BOTÕES
         document.getElementById('logoSecreta').onclick = function() {
             if (document.body.classList.contains('modo-apresentacao')) {
                 let senhaDigitada = prompt("Área Restrita. Digite a senha de Acesso:");
                 if (senhaDigitada === SENHA_DIRETORIA) {
                     document.body.classList.remove('modo-apresentacao');
-                    mostrarAlerta("Acesso de Vendas Liberado! Nomes e edições disponíveis.\n\nAtualize a página (F5) para voltar ao modo seguro.", "🔓 Acesso Concedido");
+                    
+                    // Libera botões de exportação e buffet
+                    document.getElementById('btnImg').style.display = 'block';
+                    document.getElementById('btnPdf').style.display = 'block';
+                    document.getElementById('btnBuffet').style.display = 'block';
+                    
+                    mostrarAlerta("Acesso de Vendas Liberado! Nomes e ferramentas de exportação disponíveis.\n\nAtualize a página (F5) para voltar ao modo seguro.", "🔓 Acesso Concedido");
                 } else if (senhaDigitada === SENHA_FINANCEIRO) {
                     document.body.classList.remove('modo-apresentacao');
+                    
+                    // Libera TUDO
                     document.getElementById('btnCofre').style.display = 'block'; 
-                    mostrarAlerta("Acesso Financeiro Liberado! O Painel do Cofre está disponível no topo da tela.", "💰 Cofre Destravado");
+                    document.getElementById('btnImg').style.display = 'block';
+                    document.getElementById('btnPdf').style.display = 'block';
+                    document.getElementById('btnBuffet').style.display = 'block';
+                    
+                    mostrarAlerta("Acesso Financeiro Liberado! O Painel do Cofre e as ferramentas de exportação estão disponíveis.", "💰 Cofre Destravado");
                 } else if (senhaDigitada !== null) {
                     mostrarAlerta("Senha incorreta.", "❌ Erro");
                 }
             } else {
+                // VOLTA AO MODO SEGURO (VENDAS BÁSICO)
                 document.body.classList.add('modo-apresentacao');
+                document.body.classList.remove('modo-buffet'); // Desliga modo buffet se estiver ligado
+                
+                // Esconde botões sensíveis
                 document.getElementById('btnCofre').style.display = 'none'; 
+                document.getElementById('btnImg').style.display = 'none';
+                document.getElementById('btnPdf').style.display = 'none';
+                document.getElementById('btnBuffet').style.display = 'none';
+                
+                // Reseta botão buffet
+                const btnB = document.getElementById('btnBuffet');
+                btnB.style.backgroundColor = '#8b5cf6';
+                btnB.textContent = "🪑 Modo Buffet";
             }
         };
 
+        // FUNÇÃO QUE LIGA/DESLIGA OS NOMES PARA A EQUIPE DO BUFFET
+        function toggleBuffet() {
+            document.body.classList.toggle('modo-buffet');
+            const btn = document.getElementById('btnBuffet');
+            
+            if (document.body.classList.contains('modo-buffet')) {
+                btn.style.backgroundColor = '#10b981'; // Verde sucesso
+                btn.textContent = "✅ Buffet: Sem Nomes";
+            } else {
+                btn.style.backgroundColor = '#8b5cf6'; // Roxo normal
+                btn.textContent = "🪑 Modo Buffet";
+            }
+        }
+
         // ======================================================================
-        // A INTELIGÊNCIA DA SALA COFRE (AGORA COM O HEADCOUNT DE PESSOAS)
+        // A INTELIGÊNCIA DA SALA COFRE
         // ======================================================================
         function abrirCofre() {
             let totaisGlobais = { previsao: 0, fechado: 0, recebido: 0, pendente: 0, qtdVendidaGeral: 0, qtdTotalGeral: 0 };
             let totaisCadeiras = { qtd: 0, fechado: 0, recebido: 0 };
-            let totalPessoasSalao = 0; // NOSSO NOVO CONTADOR
+            let totalPessoasSalao = 0; 
             
             let htmlDetalhes = '';
             let htmlSimulador = '';
@@ -530,11 +574,9 @@
                         if (mesa.status === "Vendida" || mesa.status === "Reservada") {
                             qtdVendidaSetor++;
                             
-                            // CONTAGEM DE PESSOAS DA MESA
                             totalPessoasSalao += config.capacidade;
                             
                             let qtdCadeirasExtra = parseInt(mesa.cadeiras) || 0;
-                            // CONTAGEM DAS CADEIRAS EXTRAS DESSA MESA
                             totalPessoasSalao += qtdCadeirasExtra; 
 
                             let valorTotalCobrado = converterParaNumero(mesa.valorTotal);
@@ -606,7 +648,6 @@
                 </tr>
             `;
 
-            // A NOVA LINHA DO HEADCOUNT DE PESSOAS AQUI!
             htmlDetalhes += `
                 <tr style="background-color: rgba(102, 255, 255, 0.1); border-top: 1px dashed var(--ciano-destaque);">
                     <td colspan="3" style="color: var(--ciano-destaque); text-align: right; font-size: 15px; text-transform: uppercase;">👥 Quantidade de Pessoas (No Salão):</td>
