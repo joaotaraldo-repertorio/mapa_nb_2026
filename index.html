@@ -39,6 +39,7 @@
         .btn-sincronizar { background-color: #47D359; }
         .btn-sincronizar:hover { box-shadow: 0 0 10px #47D359; }
 
+        /* OCULTA BOTÕES SENSÍVEIS POR PADRÃO */
         #btnCofre, #btnImg, #btnPdf, #btnBuffet, #btnVisaoCliente { display: none; }
 
         #container-salao { width: 100%; padding: 0 70px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 15px; position: relative; margin-bottom: 15px;}
@@ -143,7 +144,12 @@
         .tabela-financeira tr:hover td { background-color: rgba(102, 255, 255, 0.05); }
         .tabela-financeira tfoot td { background-color: #112240; color: var(--ciano-destaque); font-size: 16px; border-top: 2px solid var(--ciano-destaque); border-bottom: none;}
 
-        .btn-editar-custo { background-color: transparent; border: 1px solid var(--ciano-destaque); color: var(--ciano-destaque); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px;}
+        /* CSS DA CAMADA DE GELATINA NAS CUSTOS TRAVADOS */
+        .linha-custo { transition: all 0.3s ease; }
+        .linha-custo.travada { background-color: rgba(16, 185, 129, 0.08) !important; }
+        .linha-custo.travada td:not(.td-acoes) { opacity: 0.35; filter: grayscale(50%); pointer-events: none; }
+
+        .btn-editar-custo { background-color: transparent; border: 1px solid var(--ciano-destaque); color: var(--ciano-destaque); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; transition: 0.2s;}
         .btn-editar-custo:hover { background-color: var(--ciano-destaque); color: #000; }
         
         #filtroCategoriaCustos { padding: 6px 12px; border-radius: 4px; background-color: #112240; color: #fff; border: 1px solid #ef4444; font-weight: bold; cursor: pointer; outline: none; font-size: 14px;}
@@ -326,9 +332,9 @@
                         </tr>
                     </thead>
                     <tbody id="tbodyDetalhes">
-                        </tbody>
+                    </tbody>
                     <tfoot id="tfootDetalhes">
-                        </tfoot>
+                    </tfoot>
                 </table>
             </div>
 
@@ -337,11 +343,11 @@
                     <h3 style="margin: 0; color: #ef4444; border: none; padding: 0;">💸 Detalhamento de Despesas (Saídas)</h3>
                     
                     <select id="filtroCategoriaCustos" onchange="renderizarTabelaCustos()" title="Filtrar despesas por Categoria">
-                        <option value="TODAS">Todas as despesas</option>
+                        <option value="OCULTAR">🚫 Ocultar Tabela</option>
                     </select>
                 </div>
                 
-                <div id="containerTabelaCustos" style="overflow-x: auto; margin-top: 10px;">
+                <div id="tabelaDespesasWrapper" style="display: none; overflow-x: auto; margin-top: 10px;">
                     <table class="tabela-financeira" style="border-bottom: 2px solid #ef4444; min-width: 900px;">
                         <thead>
                             <tr>
@@ -351,32 +357,40 @@
                                 <th style="border-bottom-color: #ef4444;">Qtd</th>
                                 <th style="border-bottom-color: #ef4444;">Valor Unit.</th>
                                 <th style="border-bottom-color: #ef4444;">Valor Total</th>
-                                <th style="border-bottom-color: #ef4444; text-align: center;">Ações</th>
+                                <th style="border-bottom-color: #ef4444; text-align: center;">Ações Financeiras</th>
                             </tr>
                         </thead>
                         <tbody id="tbodyCustos">
-                            </tbody>
+                        </tbody>
                     </table>
                 </div>
             </div>
 
             <div class="painel-simulador">
-                <h3>🔮 Simulador de Vendas</h3>
-                <p>O que acontece com a receita se vendermos mais algumas mesas ou cadeiras hoje? Preencha as quantidades abaixo:</p>
+                <h3>🔮 Simulador de Faturamento e Lucro</h3>
+                <p>O que acontece com o lucro se vendermos mais algumas mesas ou cadeiras hoje? Preencha as quantidades abaixo:</p>
                 <div class="sim-grid-inputs" id="containerSimuladorInputs">
                     </div>
                 <div class="sim-resultado-box">
                     <div class="res-col">
-                        <span>Faturamento Atual</span>
+                        <span>Receita Atual</span>
                         <strong id="simAtual">R$ 0,00</strong>
                     </div>
                     <div class="res-col adicional">
-                        <span>Faturamento da Simulação</span>
+                        <span>+ Simulação</span>
                         <strong id="simExtra">+ R$ 0,00</strong>
                     </div>
                     <div class="res-col projetado">
-                        <span>Novo Cenário Projetado</span>
+                        <span>Receita Projetada</span>
                         <strong id="simProjetado">R$ 0,00</strong>
+                    </div>
+                    <div class="res-col" style="border-left: 1px dashed #f59e0b; padding-left: 20px;">
+                        <span style="color: #ef4444;">- Despesas Reais</span>
+                        <strong id="simCustos" style="color: #ef4444;">R$ 0,00</strong>
+                    </div>
+                    <div class="res-col" style="background-color: rgba(16, 185, 129, 0.1); padding: 10px; border-radius: 8px;">
+                        <span style="color: #10b981;">= SALDO PROJETADO (Lucro)</span>
+                        <strong id="simSaldo" style="color: #10b981; font-size: 32px;">R$ 0,00</strong>
                     </div>
                 </div>
             </div>
@@ -647,7 +661,7 @@
         }
 
         // ======================================================================
-        // A MÁGICA DA SENHA
+        // A MÁGICA DA SENHA COM O OLHINHO 👁️
         // ======================================================================
         const inputSenha = document.getElementById('inputSenha');
         const toggleSenha = document.getElementById('toggleSenha');
@@ -739,7 +753,32 @@
         }
 
         // ======================================================================
-        // A MÁGICA DA SALA COFRE E TABELA DE CUSTOS FILTRADA
+        // A MÁGICA DA AUDITORIA (CUSTOS TRAVADOS / GELATINA)
+        // ======================================================================
+        // Funções para esconder a "trava" dentro do campo de observação
+        function isCustoLocked(obs) { return (obs || "").includes("[[LOCKED]]"); }
+        function getCustoObsLimpada(obs) { return (obs || "").replace("[[LOCKED]]", "").trim(); }
+        function setCustoLocked(obs, lock) {
+            let limpo = getCustoObsLimpada(obs);
+            return lock ? "[[LOCKED]] " + limpo : limpo;
+        }
+
+        async function toggleTravarCusto(id, isLocked) {
+            let c = bancoDeCustos[id];
+            c.obs = setCustoLocked(c.obs, isLocked);
+            renderizarTabelaCustos(); // Aplica a gelatina na hora visualmente
+            
+            // Manda salvar na nuvem sem avisar pra não atrapalhar
+            let payload = { tipo: "custo", acao: "salvar", dados: c };
+            try {
+                await fetch(URL_GOOGLE_SCRIPT, { method: 'POST', body: JSON.stringify(payload) });
+            } catch(e) {
+                mostrarAlerta("Erro ao sincronizar travamento com a nuvem.");
+            }
+        }
+
+        // ======================================================================
+        // A MÁGICA DA SALA COFRE E TABELA DE CUSTOS FILTRADA E OCULTA
         // ======================================================================
         function abrirCofre() {
             let totaisGlobais = { previsao: 0, fechado: 0, recebido: 0, pendente: 0, qtdVendidaGeral: 0, qtdTotalGeral: 0 };
@@ -879,6 +918,11 @@
             const containerSimulador = document.getElementById('containerSimuladorInputs');
             containerSimulador.innerHTML = htmlSimulador;
             containerSimulador.setAttribute('data-fechado-atual', totaisGlobais.fechado); 
+            // Salva os custos totais no container pra usar no cálculo do saldo projetado
+            containerSimulador.setAttribute('data-custos-totais', totalCustosGlobais); 
+            
+            // Sempre que abre o cofre, força o filtro a iniciar em "OCULTAR"
+            document.getElementById('filtroCategoriaCustos').value = "OCULTAR";
             
             // GERA A TABELA DE CUSTOS COM O FILTRO ATUALIZADO
             renderizarTabelaCustos();
@@ -889,25 +933,32 @@
             document.getElementById('painel-cofre').style.display = 'flex';
         }
 
-        // A NOVA FUNÇÃO QUE DESENHA SÓ A TABELA DE CUSTOS COM FILTRO INTELIGENTE
+        // A NOVA FUNÇÃO QUE DESENHA SÓ A TABELA DE CUSTOS COM FILTRO INTELIGENTE E GELATINA
         function renderizarTabelaCustos() {
             let arrayCustos = Object.values(bancoDeCustos);
-            
-            // 1. Atualiza o menu de filtro (caixa de seleção) dinamicamente
             let selectFiltro = document.getElementById('filtroCategoriaCustos');
-            let categoriaSelecionada = selectFiltro.value || "TODAS";
+            let categoriaSelecionada = selectFiltro.value || "OCULTAR"; 
             
             let categoriasUnicas = new Set();
             arrayCustos.forEach(c => { if(c.categoria) categoriasUnicas.add(c.categoria); });
             let categoriasArray = Array.from(categoriasUnicas).sort();
             
-            let optionsHtml = `<option value="TODAS">Todas as despesas</option>`;
+            let optionsHtml = `<option value="OCULTAR">🚫 Ocultar Tabela</option>`;
+            optionsHtml += `<option value="TODAS">🧾 Todas as despesas</option>`;
             categoriasArray.forEach(cat => {
                 let selected = (cat === categoriaSelecionada) ? "selected" : "";
                 optionsHtml += `<option value="${cat}" ${selected}>${cat}</option>`;
             });
             selectFiltro.innerHTML = optionsHtml;
-            categoriaSelecionada = selectFiltro.value; // Pega o valor novamente por segurança
+            selectFiltro.value = categoriaSelecionada; 
+
+            // Se for ocultar, some com a tabela inteira e encerra a função
+            if (categoriaSelecionada === "OCULTAR") {
+                document.getElementById('tabelaDespesasWrapper').style.display = 'none';
+                return;
+            } else {
+                document.getElementById('tabelaDespesasWrapper').style.display = 'block';
+            }
 
             // 2. Filtra e Ordena o Array
             let custosFiltrados = arrayCustos;
@@ -931,26 +982,34 @@
                 let valTotal = converterParaNumero(c.valorTotal);
                 somaFiltrada += valTotal;
                 
+                let isLocked = isCustoLocked(c.obs);
+                let classTravada = isLocked ? "travada" : "";
+                
                 htmlCustos += `
-                    <tr>
+                    <tr class="linha-custo ${classTravada}">
                         <td style="color: #ef4444;">${c.categoria}</td>
                         <td style="color: #fff;">${c.fornecedor}</td>
                         <td style="color: #8892b0; font-weight: normal;">${c.descricao}</td>
-                        <td style="color: #fff;">${c.quantidade}</td>
+                        <td style="color: #fff; text-align: center;">${c.quantidade}</td>
                         <td style="color: #8892b0; font-weight: normal;">R$ ${converterParaMoeda(c.valorUnitario)}</td>
                         <td style="color: #ef4444;">R$ ${converterParaMoeda(valTotal)}</td>
-                        <td style="text-align: center;">
-                            <button class="btn-editar-custo" onclick="abrirModalCusto('${c.id}')">✏️ Editar</button>
+                        <td class="td-acoes" style="text-align: center;">
+                            <div style="display: flex; flex-direction: column; gap: 5px; align-items: center;">
+                                <label style="cursor: pointer; font-size: 11px; color: ${isLocked ? '#10b981' : '#f59e0b'}; font-weight: bold; display: flex; align-items: center; gap: 5px;">
+                                    <input type="checkbox" ${isLocked ? 'checked' : ''} onchange="toggleTravarCusto('${c.id}', this.checked)" style="width:14px; height:14px; cursor:pointer;">
+                                    ${isLocked ? '✅ Confirmado' : '⏳ Pendente'}
+                                </label>
+                                <button class="btn-editar-custo" onclick="abrirModalCusto('${c.id}')" ${isLocked ? 'style="display:none;"' : ''}>✏️ Editar</button>
+                            </div>
                         </td>
                     </tr>
                 `;
             }
             
             if (custosFiltrados.length === 0) {
-                htmlCustos = `<tr><td colspan="7" style="text-align: center; color: #8892b0; font-weight: normal;">Nenhuma despesa encontrada para este filtro.</td></tr>`;
+                htmlCustos = `<tr><td colspan="7" style="text-align: center; color: #8892b0; font-weight: normal; padding: 20px;">Nenhuma despesa encontrada para este filtro.</td></tr>`;
             }
             
-            // A GRAÇA FINANCEIRA: Se estiver filtrado, mostra o Subtotal
             if(categoriaSelecionada !== "TODAS" && custosFiltrados.length > 0) {
                  htmlCustos += `
                     <tr style="background-color: #112240; border-top: 2px solid #ef4444;">
@@ -965,16 +1024,24 @@
         function calcularSimulacao() {
             const container = document.getElementById('containerSimuladorInputs');
             let fechadoAtual = parseFloat(container.getAttribute('data-fechado-atual')) || 0;
+            let custosTotais = parseFloat(container.getAttribute('data-custos-totais')) || 0;
             let projecaoExtra = 0;
+            
             const inputs = document.querySelectorAll('.input-simulador');
             inputs.forEach(inp => {
                 let qtd = parseInt(inp.value) || 0; let max = parseInt(inp.getAttribute('max')) || 0;
                 if (qtd > max) { qtd = max; inp.value = max; } if (qtd < 0) { qtd = 0; inp.value = 0; }
                 let valorBase = parseFloat(inp.getAttribute('data-valorbase')) || 0; projecaoExtra += (qtd * valorBase);
             });
+            
+            let receitaProjetada = fechadoAtual + projecaoExtra;
+            let saldoProjetado = receitaProjetada - custosTotais;
+
             document.getElementById('simAtual').textContent = `R$ ${converterParaMoeda(fechadoAtual)}`;
             document.getElementById('simExtra').textContent = `+ R$ ${converterParaMoeda(projecaoExtra)}`;
-            document.getElementById('simProjetado').textContent = `R$ ${converterParaMoeda(fechadoAtual + projecaoExtra)}`;
+            document.getElementById('simProjetado').textContent = `R$ ${converterParaMoeda(receitaProjetada)}`;
+            document.getElementById('simCustos').textContent = `R$ ${converterParaMoeda(custosTotais)}`;
+            document.getElementById('simSaldo').textContent = `R$ ${converterParaMoeda(saldoProjetado)}`;
         }
 
         function fecharCofre() {
@@ -1359,7 +1426,7 @@
         }
 
         // ======================================================================
-        // FUNÇÕES DO MODAL DE CUSTOS (CRIAR E EDITAR)
+        // FUNÇÕES DO MODAL DE CUSTOS E GELATINA
         // ======================================================================
         function abrirModalCusto(id = null) {
             if (id && bancoDeCustos[id]) {
@@ -1372,7 +1439,7 @@
                 document.getElementById('custoQtd').value = c.quantidade;
                 document.getElementById('custoUnitario').value = converterParaMoeda(c.valorUnitario);
                 document.getElementById('custoTotal').value = converterParaMoeda(c.valorTotal);
-                document.getElementById('custoObs').value = c.obs;
+                document.getElementById('custoObs').value = getCustoObsLimpada(c.obs); // Remove a tag secreta da tela
                 document.getElementById('btnExcluirCusto').style.display = 'block';
             } else {
                 custoEditandoId = "";
@@ -1404,6 +1471,12 @@
 
             let idCusto = custoEditandoId ? custoEditandoId : "CST-" + new Date().getTime();
             
+            // Mantém a trava de gelatina se ela já existia antes
+            let oldObs = custoEditandoId && bancoDeCustos[custoEditandoId] ? bancoDeCustos[custoEditandoId].obs : "";
+            let isLocked = isCustoLocked(oldObs);
+            let novaObs = document.getElementById('custoObs').value;
+            novaObs = setCustoLocked(novaObs, isLocked); 
+            
             let dadosCusto = {
                 id: idCusto,
                 categoria: document.getElementById('custoCategoria').value || "Outros",
@@ -1412,7 +1485,7 @@
                 quantidade: parseInt(document.getElementById('custoQtd').value) || 1,
                 valorUnitario: converterParaNumero(document.getElementById('custoUnitario').value),
                 valorTotal: converterParaNumero(document.getElementById('custoTotal').value),
-                obs: document.getElementById('custoObs').value
+                obs: novaObs
             };
 
             let payload = { tipo: "custo", acao: "salvar", dados: dadosCusto };
@@ -1421,7 +1494,7 @@
                 await fetch(URL_GOOGLE_SCRIPT, { method: 'POST', body: JSON.stringify(payload) });
                 bancoDeCustos[idCusto] = dadosCusto; 
                 fecharModalCusto(); 
-                abrirCofre(); // O Cofre recalcula e chama o renderizarTabelaCustos sozinho!
+                abrirCofre(); 
             } catch (error) {
                 mostrarAlerta("Erro ao salvar despesa na nuvem!");
             } finally {
@@ -1439,7 +1512,6 @@
                     await fetch(URL_GOOGLE_SCRIPT, { method: 'POST', body: JSON.stringify(payload) });
                     delete bancoDeCustos[custoEditandoId];
                     
-                    // Se você apagou a última despesa de uma categoria, vamos voltar o filtro para "TODAS"
                     document.getElementById('filtroCategoriaCustos').value = "TODAS";
                     
                     fecharModalCusto(); 
