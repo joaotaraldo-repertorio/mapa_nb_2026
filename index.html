@@ -119,7 +119,7 @@
         .info-contato { text-align: center; font-size: 18px; font-weight: bold; color: #47D359; border-top: 1px dashed #233554; padding-top: 10px; width: 100%; }
         .info-contato span.realizacao { display: block; color: var(--texto-claro); font-size: 14px; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* ESTILOS DO COFRE FINANCEIRO (DRE) */
+        /* ESTILOS DO COFRE FINANCEIRO E DRE */
         #painel-cofre { display: none; width: 100%; max-width: 1300px; flex-direction: column; gap: 20px; padding: 20px; box-sizing: border-box; }
         .cofre-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--ciano-destaque); padding-bottom: 15px;}
         .cofre-header h2 { margin: 0; color: var(--ciano-destaque); font-size: 28px; display: flex; align-items: center; gap: 10px;}
@@ -154,6 +154,7 @@
         #filtroCategoriaCustos { padding: 6px 12px; border-radius: 4px; background-color: #112240; color: #fff; border: 1px solid #ef4444; font-weight: bold; cursor: pointer; outline: none; font-size: 14px;}
         #filtroCategoriaCustos:focus { box-shadow: 0 0 5px #ef4444; }
 
+        /* ESTILOS DO SIMULADOR (NOVOS QUADROS DE PESSOAS) */
         .painel-simulador { background-color: #061020; border: 1px dashed #f59e0b; border-radius: 8px; padding: 25px; margin-top: 10px;}
         .painel-simulador h3 { margin: 0 0 5px 0; color: #f59e0b; font-size: 22px; display: flex; align-items: center; gap: 8px;}
         .painel-simulador > p { color: #8892b0; margin: 0 0 20px 0; font-size: 14px;}
@@ -164,7 +165,7 @@
         .sim-item input { background: #0A192F; border: 1px solid var(--ciano-destaque); color: #fff; padding: 8px; border-radius: 4px; font-size: 16px; width: 60px; text-align: center; font-weight: bold;}
         .sim-item span { color: #8892b0; font-size: 12px;}
         
-        .sim-resultado-box { display: flex; justify-content: space-around; background: #112240; padding: 20px; border-radius: 8px; border: 1px solid #f59e0b; flex-wrap: wrap; gap: 20px;}
+        .sim-resultado-box { display: flex; justify-content: space-around; background: #112240; padding: 20px; border-radius: 8px; border: 1px solid #233554; flex-wrap: wrap; gap: 20px;}
         .res-col { display: flex; flex-direction: column; align-items: center; text-align: center;}
         .res-col span { font-size: 13px; color: #8892b0; text-transform: uppercase; margin-bottom: 5px; font-weight: bold;}
         .res-col strong { font-size: 24px; color: var(--texto-claro);}
@@ -370,11 +371,13 @@
             </div>
 
             <div class="painel-simulador">
-                <h3>🔮 Simulador de Faturamento e Lucro</h3>
-                <p>O que acontece com o lucro se vendermos mais algumas mesas ou cadeiras hoje? Preencha as quantidades abaixo:</p>
+                <h3>🔮 Simulador de Faturamento e Lotação</h3>
+                <p>O que acontece com o caixa e com o salão se vendermos mais algumas mesas ou cadeiras hoje?</p>
                 <div class="sim-grid-inputs" id="containerSimuladorInputs">
-                </div>
-                <div class="sim-resultado-box">
+                    </div>
+                
+                <h4 style="color: var(--ciano-destaque); margin-top: 15px; margin-bottom: 10px; border-bottom: 1px dashed #233554; padding-bottom: 5px;">💰 Projeção Financeira</h4>
+                <div class="sim-resultado-box" style="margin-bottom: 20px;">
                     <div class="res-col">
                         <span>Receita Atual</span>
                         <strong id="simAtual">R$ 0,00</strong>
@@ -396,6 +399,23 @@
                         <strong id="simSaldo" style="color: #10b981; font-size: 32px;">R$ 0,00</strong>
                     </div>
                 </div>
+
+                <h4 style="color: #4ade80; margin-top: 15px; margin-bottom: 10px; border-bottom: 1px dashed #233554; padding-bottom: 5px;">👥 Projeção de Público no Salão</h4>
+                <div class="sim-resultado-box">
+                    <div class="res-col">
+                        <span>Público Real Atual</span>
+                        <strong id="simPessoasAtual">0</strong>
+                    </div>
+                    <div class="res-col adicional">
+                        <span style="color: #4ade80;">+ Simulação</span>
+                        <strong id="simPessoasExtra" style="color: #4ade80;">+ 0</strong>
+                    </div>
+                    <div class="res-col projetado">
+                        <span style="color: #f59e0b;">Nova Lotação Projetada</span>
+                        <strong id="simPessoasProjetado" style="color: #f59e0b; font-size: 32px;">0</strong>
+                    </div>
+                </div>
+
             </div>
 
         </div> <div id="container-salao">
@@ -591,7 +611,6 @@
         let pagadoresAtuais = []; 
         let custoEditandoId = "";
 
-        // AS TRANCAS DO SISTEMA
         let nivelAcesso = 0; 
         const SENHA_VENDAS = "vendas2026";
         const SENHA_ADMIN = "educandario1958";
@@ -839,20 +858,15 @@
                 container.appendChild(card);
             });
 
-            // A MÁGICA: O Total Fechado não cai se faltar fatia. Ele fica ancorado no valor da mesa!
             let configSetor = Object.values(CONFIG_MESAS).find(c => mesaEditandoAtual.startsWith(c.prefixo));
             let valorBaseTabela = configSetor ? configSetor.valorBase : 0;
             let valorEsperadoMesa = valorBaseTabela + (cadeirasGlob * valorCadeiraAvulsa);
-
-            // Se as fatias baterem o valor, ótimo. Se a soma das fatias for MENOR, o total fechado segura no valor da mesa.
             let totalFechadoAncorado = Math.max(valorEsperadoMesa, totalMesaGlob);
 
             document.getElementById('campoValorTotal').value = converterParaMoeda(totalFechadoAncorado);
             document.getElementById('campoValorPago').value = converterParaMoeda(totalPagoGlob);
-            // Saldo Devedor passa a ser o (Valor Total Ancorado da Mesa) - (Total já pago)
             document.getElementById('campoSaldo').value = converterParaMoeda(Math.max(0, totalFechadoAncorado - totalPagoGlob));
             
-            // O aviso dinâmico para o Financeiro
             if (totalMesaGlob < valorEsperadoMesa) {
                 let faltaDistribuir = valorEsperadoMesa - totalMesaGlob;
                 document.getElementById('textoValorPadrao').textContent = `(Atenção: Falta distribuir R$ ${converterParaMoeda(faltaDistribuir)} entre os pagadores)`;
@@ -866,9 +880,6 @@
             }
         }
 
-        // ======================================================================
-        // A MÁGICA DA AUDITORIA (CUSTOS TRAVADOS / GELATINA)
-        // ======================================================================
         function isCustoLocked(obs) { return (obs || "").includes("[[LOCKED]]"); }
         function getCustoObsLimpada(obs) { return (obs || "").replace("[[LOCKED]]", "").trim(); }
         function setCustoLocked(obs, lock) { let limpo = getCustoObsLimpada(obs); return lock ? "[[LOCKED]] " + limpo : limpo; }
@@ -879,9 +890,6 @@
             try { await fetch(URL_GOOGLE_SCRIPT, { method: 'POST', body: JSON.stringify(payload) }); } catch(e) { mostrarAlerta("Erro ao sincronizar travamento com a nuvem."); }
         }
 
-        // ======================================================================
-        // A MÁGICA DA SALA COFRE E TABELA DE CUSTOS FILTRADA E OCULTA
-        // ======================================================================
         function abrirCofre() {
             let totaisGlobais = { previsao: 0, fechado: 0, recebido: 0, pendente: 0, qtdVendidaGeral: 0, qtdTotalGeral: 0 };
             let totaisCadeiras = { qtd: 0, fechado: 0, recebido: 0 };
@@ -946,7 +954,7 @@
                     <div class="sim-item">
                         <label style="color:${config.corNormal}">${config.nome}</label>
                         <div class="sim-input-row">
-                            <input type="number" min="0" max="${disponiveis}" value="0" class="input-simulador" data-valorbase="${config.valorBase}" oninput="calcularSimulacao()">
+                            <input type="number" min="0" max="${disponiveis}" value="0" class="input-simulador" data-id="${chave}" data-valorbase="${config.valorBase}" data-capacidade="${config.capacidade}" oninput="calcularSimulacao()">
                             <span>x R$ ${converterParaMoeda(config.valorBase)}</span>
                         </div>
                         <span style="margin-top:2px;">(Máx disp: ${disponiveis})</span>
@@ -979,7 +987,7 @@
                 <div class="sim-item" style="border-color: #fff;">
                     <label style="color:#fff">🪑 Cadeiras Avulsas</label>
                     <div class="sim-input-row">
-                        <input type="number" min="0" max="999" value="0" class="input-simulador" data-valorbase="${valorCadeiraAvulsa}" oninput="calcularSimulacao()">
+                        <input type="number" min="0" max="999" value="0" class="input-simulador" data-id="CadeirasAvulsas" data-valorbase="${valorCadeiraAvulsa}" data-capacidade="1" oninput="calcularSimulacao()">
                         <span>x R$ ${converterParaMoeda(valorCadeiraAvulsa)}</span>
                     </div>
                     <span style="margin-top:2px;">(Venda Extra Opcional)</span>
@@ -1017,9 +1025,26 @@
             containerSimulador.innerHTML = htmlSimulador;
             containerSimulador.setAttribute('data-fechado-atual', totaisGlobais.fechado); 
             containerSimulador.setAttribute('data-custos-totais', totalCustosGlobais); 
+            containerSimulador.setAttribute('data-pessoas-reais', totalPessoasSalao); 
+            
+            // CARREGA O HISTÓRICO DA SIMULAÇÃO (Se existir no computador da pessoa)
+            try {
+                let savedSim = JSON.parse(localStorage.getItem('simulacao_educandario_2026')) || {};
+                const inputs = document.querySelectorAll('.input-simulador');
+                inputs.forEach(inp => {
+                    let id = inp.getAttribute('data-id');
+                    if (savedSim[id] !== undefined) {
+                        let max = parseInt(inp.getAttribute('max')) || 0;
+                        let val = parseInt(savedSim[id]);
+                        if (val > max && id !== 'CadeirasAvulsas') val = max; 
+                        inp.value = val;
+                    }
+                });
+            } catch(e) {}
             
             document.getElementById('filtroCategoriaCustos').value = "OCULTAR";
-            renderizarTabelaCustos(); calcularSimulacao();
+            renderizarTabelaCustos(); 
+            calcularSimulacao();
 
             document.getElementById('container-salao').style.display = 'none'; document.querySelector('.painel-rodape').style.display = 'none';
             document.getElementById('painel-cofre').style.display = 'flex';
@@ -1093,27 +1118,53 @@
             document.getElementById('tbodyCustos').innerHTML = htmlCustos;
         }
 
+        // O NOVO MOTOR DO SIMULADOR (COM HISTÓRICO E PESSOAS)
         function calcularSimulacao() {
             const container = document.getElementById('containerSimuladorInputs');
             let fechadoAtual = parseFloat(container.getAttribute('data-fechado-atual')) || 0;
             let custosTotais = parseFloat(container.getAttribute('data-custos-totais')) || 0;
+            let pessoasReais = parseInt(container.getAttribute('data-pessoas-reais')) || 0;
+            
             let projecaoExtra = 0;
+            let pessoasExtra = 0;
+            let simulacaoParaSalvar = {};
             
             const inputs = document.querySelectorAll('.input-simulador');
             inputs.forEach(inp => {
-                let qtd = parseInt(inp.value) || 0; let max = parseInt(inp.getAttribute('max')) || 0;
-                if (qtd > max) { qtd = max; inp.value = max; } if (qtd < 0) { qtd = 0; inp.value = 0; }
-                let valorBase = parseFloat(inp.getAttribute('data-valorbase')) || 0; projecaoExtra += (qtd * valorBase);
+                let qtd = parseInt(inp.value) || 0; 
+                let max = parseInt(inp.getAttribute('max')) || 0;
+                let id = inp.getAttribute('data-id');
+                
+                if (id !== 'CadeirasAvulsas' && qtd > max) { qtd = max; inp.value = max; } 
+                if (qtd < 0) { qtd = 0; inp.value = 0; }
+                
+                let valorBase = parseFloat(inp.getAttribute('data-valorbase')) || 0; 
+                let capacidade = parseInt(inp.getAttribute('data-capacidade')) || 0;
+                
+                projecaoExtra += (qtd * valorBase);
+                pessoasExtra += (qtd * capacidade);
+                
+                simulacaoParaSalvar[id] = qtd;
             });
+            
+            // SALVA A BRINCADEIRA NO NAVEGADOR
+            localStorage.setItem('simulacao_educandario_2026', JSON.stringify(simulacaoParaSalvar));
             
             let receitaProjetada = fechadoAtual + projecaoExtra;
             let saldoProjetado = receitaProjetada - custosTotais;
+            let pessoasProjetadas = pessoasReais + pessoasExtra;
 
+            // Atualiza Quadros Financeiros
             document.getElementById('simAtual').textContent = `R$ ${converterParaMoeda(fechadoAtual)}`;
             document.getElementById('simExtra').textContent = `+ R$ ${converterParaMoeda(projecaoExtra)}`;
             document.getElementById('simProjetado').textContent = `R$ ${converterParaMoeda(receitaProjetada)}`;
             document.getElementById('simCustos').textContent = `R$ ${converterParaMoeda(custosTotais)}`;
             document.getElementById('simSaldo').textContent = `R$ ${converterParaMoeda(saldoProjetado)}`;
+            
+            // Atualiza Quadros de Pessoas
+            document.getElementById('simPessoasAtual').textContent = pessoasReais;
+            document.getElementById('simPessoasExtra').textContent = `+ ${pessoasExtra}`;
+            document.getElementById('simPessoasProjetado').textContent = pessoasProjetadas;
         }
 
         function fecharCofre() { document.getElementById('painel-cofre').style.display = 'none'; document.getElementById('container-salao').style.display = 'flex'; document.querySelector('.painel-rodape').style.display = 'flex'; }
@@ -1350,12 +1401,9 @@
                 p.parcelas.forEach(parc => { if(parc.pago) totalPagoGlobal += converterParaNumero(parc.valor); });
             });
 
-            // A MÁGICA FINAL NO SALVAMENTO (ANCORANDO O VALOR)
             let configSetor = Object.values(CONFIG_MESAS).find(c => mesaEditandoAtual.startsWith(c.prefixo));
             let valorBaseTabela = configSetor ? configSetor.valorBase : 0;
             let valorEsperadoMesa = valorBaseTabela + (cadeirasGlobal * valorCadeiraAvulsa);
-            
-            // O Total que vai pro banco de dados não cai, mesmo se a soma das fatias for menor.
             let totalFechadoFinal = Math.max(valorEsperadoMesa, totalGeralMesa);
 
             bancoDeDados[mesaEditandoAtual] = {
@@ -1401,9 +1449,6 @@
             }
         }
 
-        // ======================================================================
-        // FUNÇÕES DO MODAL DE CUSTOS (CRIAR E EDITAR)
-        // ======================================================================
         function abrirModalCusto(id = null) {
             if (id && bancoDeCustos[id]) {
                 custoEditandoId = id; const c = bancoDeCustos[id];
