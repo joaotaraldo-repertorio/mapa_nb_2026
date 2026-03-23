@@ -479,7 +479,7 @@
                 <h4>💰 Resumo Financeiro Global <span id="textoValorPadrao" style="color: #8892b0; font-size: 12px;"></span></h4>
                 <div class="form-row" style="margin-bottom: 0;">
                     <div class="form-group">
-                        <label>Total Fechado (R$)</label>
+                        <label>Total Fechado (Ancorado) (R$)</label>
                         <input type="text" id="campoValorTotal" class="campo-bloqueado" readonly placeholder="0,00">
                     </div>
                     <div class="form-group">
@@ -487,7 +487,7 @@
                         <input type="text" id="campoValorPago" class="campo-bloqueado" readonly placeholder="0,00">
                     </div>
                     <div class="form-group">
-                        <label>Saldo Devedor (R$)</label>
+                        <label>Saldo Devedor Geral (R$)</label>
                         <input type="text" id="campoSaldo" class="campo-bloqueado-vermelho" readonly placeholder="0,00">
                     </div>
                 </div>
@@ -624,9 +624,6 @@
         }
         function fecharAlertaCustomizado() { document.getElementById('modalAlerta').style.display = 'none'; }
 
-        // ======================================================================
-        // FUNÇÕES GERAIS E MAPA
-        // ======================================================================
         const inputSenha = document.getElementById('inputSenha');
         const toggleSenha = document.getElementById('toggleSenha');
         const showPass = () => { inputSenha.type = 'text'; }; const hidePass = () => { inputSenha.type = 'password'; };
@@ -678,10 +675,6 @@
             }).catch(err => { mostrarAlerta("Erro ao copiar o link. Mas o link é este:\n" + linkMagico, "❌ Erro"); });
         }
 
-        // ======================================================================
-        // A NOVA ARQUITETURA DE MULTI-PAGADORES NA MESA E NOME EDITÁVEL
-        // ======================================================================
-        
         function adicionarPagador() {
             let configSetor = Object.values(CONFIG_MESAS).find(c => mesaEditandoAtual.startsWith(c.prefixo));
             let valorBase = configSetor ? configSetor.valorBase : 0;
@@ -699,7 +692,6 @@
         function removerPagador(index) {
             if(confirm("Deseja realmente remover este pagador e todas as suas parcelas?")) {
                 pagadoresAtuais.splice(index, 1); 
-                // Atualiza o nome lá em cima na hora da remoção
                 let nomes = pagadoresAtuais.map(pag => pag.nome.trim()).filter(n => n !== "");
                 document.getElementById('campoNome').value = nomes.join(" / ");
                 renderizarPagadores();
@@ -710,7 +702,6 @@
             let p = pagadoresAtuais[pIndex];
             if(campo === 'nome') {
                 p.nome = valor; 
-                // A MÁGICA: Preenche o campo de nome principal sozinho
                 let nomes = pagadoresAtuais.map(pag => pag.nome.trim()).filter(n => n !== "");
                 document.getElementById('campoNome').value = nomes.join(" / ");
             }
@@ -848,20 +839,30 @@
                 container.appendChild(card);
             });
 
-            document.getElementById('campoValorTotal').value = converterParaMoeda(totalMesaGlob);
-            document.getElementById('campoValorPago').value = converterParaMoeda(totalPagoGlob);
-            document.getElementById('campoSaldo').value = converterParaMoeda(Math.max(0, totalMesaGlob - totalPagoGlob));
-            
+            // A MÁGICA: O Total Fechado não cai se faltar fatia. Ele fica ancorado no valor da mesa!
             let configSetor = Object.values(CONFIG_MESAS).find(c => mesaEditandoAtual.startsWith(c.prefixo));
-            let valorBase = configSetor ? configSetor.valorBase : 0;
-            let valorEsperado = valorBase + (cadeirasGlob * valorCadeiraAvulsa);
+            let valorBaseTabela = configSetor ? configSetor.valorBase : 0;
+            let valorEsperadoMesa = valorBaseTabela + (cadeirasGlob * valorCadeiraAvulsa);
+
+            // Se as fatias baterem o valor, ótimo. Se a soma das fatias for MENOR, o total fechado segura no valor da mesa.
+            let totalFechadoAncorado = Math.max(valorEsperadoMesa, totalMesaGlob);
+
+            document.getElementById('campoValorTotal').value = converterParaMoeda(totalFechadoAncorado);
+            document.getElementById('campoValorPago').value = converterParaMoeda(totalPagoGlob);
+            // Saldo Devedor passa a ser o (Valor Total Ancorado da Mesa) - (Total já pago)
+            document.getElementById('campoSaldo').value = converterParaMoeda(Math.max(0, totalFechadoAncorado - totalPagoGlob));
             
-            if (totalMesaGlob !== valorEsperado && totalMesaGlob > 0) {
-                document.getElementById('textoValorPadrao').textContent = `(Atenção: A soma das fatias (R$ ${converterParaMoeda(totalMesaGlob)}) está diferente do valor de Tabela: R$ ${converterParaMoeda(valorEsperado)})`;
+            // O aviso dinâmico para o Financeiro
+            if (totalMesaGlob < valorEsperadoMesa) {
+                let faltaDistribuir = valorEsperadoMesa - totalMesaGlob;
+                document.getElementById('textoValorPadrao').textContent = `(Atenção: Falta distribuir R$ ${converterParaMoeda(faltaDistribuir)} entre os pagadores)`;
+                document.getElementById('textoValorPadrao').style.color = '#ff4d4d';
+            } else if (totalMesaGlob > valorEsperadoMesa) {
+                document.getElementById('textoValorPadrao').textContent = `(As fatias ultrapassaram o valor de Tabela em R$ ${converterParaMoeda(totalMesaGlob - valorEsperadoMesa)})`;
                 document.getElementById('textoValorPadrao').style.color = '#f59e0b';
             } else {
-                document.getElementById('textoValorPadrao').textContent = `(A soma das fatias bate com a Tabela: R$ ${converterParaMoeda(valorEsperado)})`;
-                document.getElementById('textoValorPadrao').style.color = '#8892b0';
+                document.getElementById('textoValorPadrao').textContent = `(A soma das fatias bate exatamente com a Tabela: R$ ${converterParaMoeda(valorEsperadoMesa)})`;
+                document.getElementById('textoValorPadrao').style.color = '#10b981';
             }
         }
 
@@ -1267,9 +1268,7 @@
             document.getElementById('campoStatus').value = dados.status || "Livre";
             document.getElementById('campoLogoPropaganda').checked = dados.logoPropaganda || false; 
             
-            // CARREGA O NOME EXIBIDO NO MAPA
             document.getElementById('campoNome').value = dados.nome || "";
-            // CARREGA AS OBSERVAÇÕES LÁ DEBAIXO
             document.getElementById('campoObs').value = dados.obs || "";
 
             try { 
@@ -1334,10 +1333,7 @@
             
             let statusFinal = document.getElementById('campoStatus').value;
             let pagadorLider = pagadoresAtuais[0];
-            
-            // O NOME GLOBAL É O QUE VOCÊ EDITOU NA CAIXA VIP LÁ EM CIMA
             let nomeGlobal = document.getElementById('campoNome').value.trim(); 
-            
             let pagamentoGlobal = ""; let parcelasGlobal = "";
             let telefoneGlobal = pagadorLider ? pagadorLider.telefone : "";
 
@@ -1354,11 +1350,21 @@
                 p.parcelas.forEach(parc => { if(parc.pago) totalPagoGlobal += converterParaNumero(parc.valor); });
             });
 
+            // A MÁGICA FINAL NO SALVAMENTO (ANCORANDO O VALOR)
+            let configSetor = Object.values(CONFIG_MESAS).find(c => mesaEditandoAtual.startsWith(c.prefixo));
+            let valorBaseTabela = configSetor ? configSetor.valorBase : 0;
+            let valorEsperadoMesa = valorBaseTabela + (cadeirasGlobal * valorCadeiraAvulsa);
+            
+            // O Total que vai pro banco de dados não cai, mesmo se a soma das fatias for menor.
+            let totalFechadoFinal = Math.max(valorEsperadoMesa, totalGeralMesa);
+
             bancoDeDados[mesaEditandoAtual] = {
                 setor: bancoDeDados[mesaEditandoAtual].setor, status: statusFinal, nome: nomeGlobal, telefone: telefoneGlobal,
                 cadeiras: cadeirasGlobal, pagamento: pagamentoGlobal, parcelas: parcelasGlobal,
-                valorTotal: converterParaMoeda(totalGeralMesa), valorPago: converterParaMoeda(totalPagoGlobal),
-                saldoDevedor: Math.max(0, totalGeralMesa - totalPagoGlobal), logoPropaganda: document.getElementById('campoLogoPropaganda').checked,
+                valorTotal: converterParaMoeda(totalFechadoFinal), 
+                valorPago: converterParaMoeda(totalPagoGlobal),
+                saldoDevedor: Math.max(0, totalFechadoFinal - totalPagoGlobal), 
+                logoPropaganda: document.getElementById('campoLogoPropaganda').checked,
                 obs: document.getElementById('campoObs').value, detalhesParcelas: JSON.stringify(pagadoresAtuais)
             };
 
