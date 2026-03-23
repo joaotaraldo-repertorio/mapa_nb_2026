@@ -461,9 +461,10 @@
                 </div>
             </div>
 
-            <div class="form-group" style="margin-bottom: 15px;">
-                <label>Observações Gerais da Mesa</label>
-                <input type="text" id="campoObs" placeholder="Anotações extras...">
+            <div class="form-group" style="margin-bottom: 15px; background: #112240; padding: 10px; border-radius: 6px; border: 1px dashed var(--ciano-destaque);">
+                <label style="color: var(--ciano-destaque);">Nome Exibido no Mapa (Editável)</label>
+                <input type="text" id="campoNome" placeholder="Ex: Família Silva, João / Maria..." style="font-size: 16px; font-weight: bold; background: #0A192F;">
+                <span style="font-size: 11px; color: #8892b0; margin-top: 4px;">(Este texto aparecerá na bolinha da mesa. Ele é preenchido sozinho com os nomes abaixo, mas você pode apagar e escrever o que quiser.)</span>
             </div>
 
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--ciano-destaque); padding-bottom: 10px; margin-bottom: 15px;">
@@ -490,6 +491,11 @@
                         <input type="text" id="campoSaldo" class="campo-bloqueado-vermelho" readonly placeholder="0,00">
                     </div>
                 </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 15px; margin-bottom: 15px;">
+                <label>📝 Observações Gerais da Mesa</label>
+                <textarea id="campoObs" placeholder="Anotações extras, restrições alimentares, detalhes do acordo com os clientes..." style="min-height: 80px; font-size: 14px; padding: 10px;"></textarea>
             </div>
 
             <div id="areaTransferencia" class="area-transferencia">
@@ -673,7 +679,7 @@
         }
 
         // ======================================================================
-        // A NOVA ARQUITETURA DE MULTI-PAGADORES NA MESA (COM 12 MARCHAS)
+        // A NOVA ARQUITETURA DE MULTI-PAGADORES NA MESA E NOME EDITÁVEL
         // ======================================================================
         
         function adicionarPagador() {
@@ -692,13 +698,22 @@
 
         function removerPagador(index) {
             if(confirm("Deseja realmente remover este pagador e todas as suas parcelas?")) {
-                pagadoresAtuais.splice(index, 1); renderizarPagadores();
+                pagadoresAtuais.splice(index, 1); 
+                // Atualiza o nome lá em cima na hora da remoção
+                let nomes = pagadoresAtuais.map(pag => pag.nome.trim()).filter(n => n !== "");
+                document.getElementById('campoNome').value = nomes.join(" / ");
+                renderizarPagadores();
             }
         }
 
         function atualizarPagador(pIndex, campo, valor) {
             let p = pagadoresAtuais[pIndex];
-            if(campo === 'nome') p.nome = valor;
+            if(campo === 'nome') {
+                p.nome = valor; 
+                // A MÁGICA: Preenche o campo de nome principal sozinho
+                let nomes = pagadoresAtuais.map(pag => pag.nome.trim()).filter(n => n !== "");
+                document.getElementById('campoNome').value = nomes.join(" / ");
+            }
             if(campo === 'telefone') p.telefone = valor;
             if(campo === 'pagamento') p.pagamento = valor;
             if(campo === 'valorCota') { p.valorCota = converterParaNumero(valor); recalcularParcelasPagador(pIndex, 'MUDOU_VALOR_TOTAL'); }
@@ -796,7 +811,6 @@
                 const card = document.createElement('div');
                 card.style.cssText = "background:#112240; border:1px solid #233554; border-radius:6px; padding:15px; margin-bottom:15px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);";
                 
-                // O CÂMBIO CORRIGIDO DE 1 ATÉ 12 MARCHAS
                 card.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px dashed #233554; padding-bottom:10px; margin-bottom:12px;">
                         <h4 style="margin:0; color:#4ade80; font-size: 15px;">👤 Pagador ${pIndex + 1} <span style="font-size:13px; color:#8892b0; margin-left: 10px;">(Total da pessoa: R$ ${converterParaMoeda(totalPessoa)})</span></h4>
@@ -1252,6 +1266,10 @@
             document.getElementById('tituloModal').innerHTML = `Gerenciar ${dados.setor} (${idMesa})`;
             document.getElementById('campoStatus').value = dados.status || "Livre";
             document.getElementById('campoLogoPropaganda').checked = dados.logoPropaganda || false; 
+            
+            // CARREGA O NOME EXIBIDO NO MAPA
+            document.getElementById('campoNome').value = dados.nome || "";
+            // CARREGA AS OBSERVAÇÕES LÁ DEBAIXO
             document.getElementById('campoObs').value = dados.obs || "";
 
             try { 
@@ -1316,14 +1334,17 @@
             
             let statusFinal = document.getElementById('campoStatus').value;
             let pagadorLider = pagadoresAtuais[0];
-            let nomeGlobal = ""; let pagamentoGlobal = ""; let parcelasGlobal = "";
+            
+            // O NOME GLOBAL É O QUE VOCÊ EDITOU NA CAIXA VIP LÁ EM CIMA
+            let nomeGlobal = document.getElementById('campoNome').value.trim(); 
+            
+            let pagamentoGlobal = ""; let parcelasGlobal = "";
             let telefoneGlobal = pagadorLider ? pagadorLider.telefone : "";
 
             if (pagadoresAtuais.length > 1) {
-                nomeGlobal = pagadorLider.nome ? pagadorLider.nome + " (+ " + (pagadoresAtuais.length - 1) + ")" : "Múltiplos Pagadores";
                 pagamentoGlobal = "Múltiplos"; parcelasGlobal = "Múltiplos";
             } else if (pagadorLider) {
-                nomeGlobal = pagadorLider.nome; pagamentoGlobal = pagadorLider.pagamento; parcelasGlobal = pagadorLider.qtdParcelas + "x";
+                pagamentoGlobal = pagadorLider.pagamento; parcelasGlobal = pagadorLider.qtdParcelas + "x";
             }
 
             let cadeirasGlobal = 0; let totalGeralMesa = 0; let totalPagoGlobal = 0;
@@ -1397,7 +1418,9 @@
         function calcularCustoTotal() { let qtd = parseInt(document.getElementById('custoQtd').value) || 1; let unitario = converterParaNumero(document.getElementById('custoUnitario').value); let total = qtd * unitario; document.getElementById('custoTotal').value = converterParaMoeda(total); }
 
         async function salvarCusto() {
-            const btnSalvar = document.getElementById('btnSalvarCusto'); btnSalvar.textContent = "Salvando..."; btnSalvar.disabled = true;
+            const btnSalvar = document.getElementById('btnSalvarCusto');
+            btnSalvar.textContent = "Salvando..."; btnSalvar.disabled = true;
+
             let idCusto = custoEditandoId ? custoEditandoId : "CST-" + new Date().getTime();
             let oldObs = custoEditandoId && bancoDeCustos[custoEditandoId] ? bancoDeCustos[custoEditandoId].obs : "";
             let isLocked = isCustoLocked(oldObs); let novaObs = document.getElementById('custoObs').value; novaObs = setCustoLocked(novaObs, isLocked); 
