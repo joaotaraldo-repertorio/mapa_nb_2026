@@ -71,7 +71,7 @@
         
         .texto-abaixo { font-size: 14px; color: #ffffff; text-align: center; width: 100%; white-space: normal; word-wrap: break-word; line-height: 1.1; font-weight: bold; min-height: 15px; }
         
-        /* CAMADAS DE SEGURANÇA */
+        /* CAMADAS DE SEGURANÇA E VISUALIZAÇÃO */
         body.modo-visitante .texto-abaixo { display: none; }
         body.modo-visitante .badge-extra { display: none; }
         body.modo-visitante .badge-divida { display: none; }
@@ -230,7 +230,6 @@
         .btn-alerta-ok { background-color: #ff4d4d; color: #fff; border: none; padding: 10px 30px; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.2s;}
         .btn-alerta-ok:hover { background-color: #ff3333; transform: scale(1.05);}
         
-        /* SCROLL BAR PERSONALIZADA PARA OS PAGADORES */
         #containerPagadores::-webkit-scrollbar { width: 8px; }
         #containerPagadores::-webkit-scrollbar-track { background: #0A192F; border-radius: 4px; }
         #containerPagadores::-webkit-scrollbar-thumb { background: #233554; border-radius: 4px; }
@@ -583,7 +582,7 @@
         let mesaEditandoAtual = ""; 
         let statusAoAbrirMesa = ""; 
         let valorCadeiraAvulsa = 800.00; 
-        let pagadoresAtuais = []; // A NOVA ARQUITETURA MULTI-PAGADORES
+        let pagadoresAtuais = []; 
         let custoEditandoId = "";
 
         // AS TRANCAS DO SISTEMA
@@ -674,24 +673,18 @@
         }
 
         // ======================================================================
-        // A NOVA ARQUITETURA DE MULTI-PAGADORES NA MESA
+        // A NOVA ARQUITETURA DE MULTI-PAGADORES NA MESA (COM 12 MARCHAS)
         // ======================================================================
         
         function adicionarPagador() {
             let configSetor = Object.values(CONFIG_MESAS).find(c => mesaEditandoAtual.startsWith(c.prefixo));
             let valorBase = configSetor ? configSetor.valorBase : 0;
-            
-            // Se já tem gente, a cota sugerida pro próximo nasce zerada pra ele preencher
             let cotaSugerida = pagadoresAtuais.length === 0 ? valorBase : 0;
 
             pagadoresAtuais.push({
                 id: 'pag_' + new Date().getTime(),
-                nome: "",
-                telefone: "",
-                valorCota: cotaSugerida,
-                cadeiras: 0,
-                pagamento: "Dinheiro",
-                qtdParcelas: 1,
+                nome: "", telefone: "", valorCota: cotaSugerida, cadeiras: 0,
+                pagamento: "Dinheiro", qtdParcelas: 1,
                 parcelas: [{ numero: 1, valor: cotaSugerida, pago: false, vencimento: "" }]
             });
             renderizarPagadores();
@@ -699,8 +692,7 @@
 
         function removerPagador(index) {
             if(confirm("Deseja realmente remover este pagador e todas as suas parcelas?")) {
-                pagadoresAtuais.splice(index, 1);
-                renderizarPagadores();
+                pagadoresAtuais.splice(index, 1); renderizarPagadores();
             }
         }
 
@@ -803,6 +795,8 @@
 
                 const card = document.createElement('div');
                 card.style.cssText = "background:#112240; border:1px solid #233554; border-radius:6px; padding:15px; margin-bottom:15px; box-shadow: 0 4px 6px rgba(0,0,0,0.3);";
+                
+                // O CÂMBIO CORRIGIDO DE 1 ATÉ 12 MARCHAS
                 card.innerHTML = `
                     <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px dashed #233554; padding-bottom:10px; margin-bottom:12px;">
                         <h4 style="margin:0; color:#4ade80; font-size: 15px;">👤 Pagador ${pIndex + 1} <span style="font-size:13px; color:#8892b0; margin-left: 10px;">(Total da pessoa: R$ ${converterParaMoeda(totalPessoa)})</span></h4>
@@ -828,7 +822,7 @@
                         </div>
                         <div class="form-group" style="flex:0.2;"><label>Parcelas</label>
                             <select onchange="atualizarPagador(${pIndex}, 'qtdParcelas', this.value)">
-                                ${[1,2,3,4,5,6,10,12].map(n => `<option value="${n}" ${p.qtdParcelas==n?'selected':''}>${n}x</option>`).join('')}
+                                ${[1,2,3,4,5,6,7,8,9,10,11,12].map(n => `<option value="${n}" ${p.qtdParcelas==n?'selected':''}>${n}x</option>`).join('')}
                             </select>
                         </div>
                     </div>
@@ -840,7 +834,6 @@
                 container.appendChild(card);
             });
 
-            // ATUALIZA OS TOTAIS GLOBAIS DA MESA PARA O FINANCEIRO VER
             document.getElementById('campoValorTotal').value = converterParaMoeda(totalMesaGlob);
             document.getElementById('campoValorPago').value = converterParaMoeda(totalPagoGlob);
             document.getElementById('campoSaldo').value = converterParaMoeda(Math.max(0, totalMesaGlob - totalPagoGlob));
@@ -1250,9 +1243,6 @@
             }
         }
 
-        // ======================================================================
-        // A MÁGICA DO MODAL (ADAPTAÇÃO RETROATIVA)
-        // ======================================================================
         function abrirModal(idMesa) {
             const dados = bancoDeDados[idMesa];
             if (nivelAcesso === 0) { return; } 
@@ -1264,11 +1254,9 @@
             document.getElementById('campoLogoPropaganda').checked = dados.logoPropaganda || false; 
             document.getElementById('campoObs').value = dados.obs || "";
 
-            // O CÉREBRO DA MIGRAÇÃO (Lê o JSON antigo e converte pro novo formato de Múltiplos Pagadores)
             try { 
                 let parsed = JSON.parse(dados.detalhesParcelas || "[]"); 
                 if (parsed.length > 0 && parsed[0].numero !== undefined) {
-                    // É o formato Antigo (Sem Pagadores, só Parcelas). Vamos converter!
                     let valTotalMesaStr = converterParaNumero(dados.valorTotal);
                     let valCadeirasMesa = (parseInt(dados.cadeiras)||0) * valorCadeiraAvulsa;
                     let cotaPrincipal = valTotalMesaStr - valCadeirasMesa;
@@ -1276,23 +1264,16 @@
 
                     pagadoresAtuais = [{
                         id: 'pag_' + new Date().getTime(),
-                        nome: dados.nome || "",
-                        telefone: dados.telefone || "",
-                        valorCota: cotaPrincipal,
-                        cadeiras: parseInt(dados.cadeiras) || 0,
-                        pagamento: dados.pagamento || "Nenhum",
-                        qtdParcelas: parsed.length,
+                        nome: dados.nome || "", telefone: dados.telefone || "",
+                        valorCota: cotaPrincipal, cadeiras: parseInt(dados.cadeiras) || 0,
+                        pagamento: dados.pagamento || "Nenhum", qtdParcelas: parsed.length,
                         parcelas: parsed
                     }];
                 } else if (parsed.length > 0 && parsed[0].id) {
-                    // Já é o Formato Novo
                     pagadoresAtuais = parsed;
-                } else {
-                    pagadoresAtuais = [];
-                }
+                } else { pagadoresAtuais = []; }
             } catch (e) { pagadoresAtuais = []; }
 
-            // Se for mesa Vazia/Nova, cria o Pagador 1 com o valor da Tabela
             if(pagadoresAtuais.length === 0) {
                 let configSetor = Object.values(CONFIG_MESAS).find(c => mesaEditandoAtual.startsWith(c.prefixo));
                 let valorBase = configSetor ? configSetor.valorBase : 0;
@@ -1333,7 +1314,6 @@
 
             btnSalvar.textContent = "Salvando nas nuvens...";
             
-            // CONSTRUINDO O PACOTE DE DADOS GLOBAL PARA O MAPA E FINANCEIRO
             let statusFinal = document.getElementById('campoStatus').value;
             let pagadorLider = pagadoresAtuais[0];
             let nomeGlobal = ""; let pagamentoGlobal = ""; let parcelasGlobal = "";
@@ -1341,12 +1321,9 @@
 
             if (pagadoresAtuais.length > 1) {
                 nomeGlobal = pagadorLider.nome ? pagadorLider.nome + " (+ " + (pagadoresAtuais.length - 1) + ")" : "Múltiplos Pagadores";
-                pagamentoGlobal = "Múltiplos";
-                parcelasGlobal = "Múltiplos";
+                pagamentoGlobal = "Múltiplos"; parcelasGlobal = "Múltiplos";
             } else if (pagadorLider) {
-                nomeGlobal = pagadorLider.nome;
-                pagamentoGlobal = pagadorLider.pagamento;
-                parcelasGlobal = pagadorLider.qtdParcelas + "x";
+                nomeGlobal = pagadorLider.nome; pagamentoGlobal = pagadorLider.pagamento; parcelasGlobal = pagadorLider.qtdParcelas + "x";
             }
 
             let cadeirasGlobal = 0; let totalGeralMesa = 0; let totalPagoGlobal = 0;
@@ -1357,19 +1334,11 @@
             });
 
             bancoDeDados[mesaEditandoAtual] = {
-                setor: bancoDeDados[mesaEditandoAtual].setor,
-                status: statusFinal,
-                nome: nomeGlobal,
-                telefone: telefoneGlobal,
-                cadeiras: cadeirasGlobal,
-                pagamento: pagamentoGlobal,
-                parcelas: parcelasGlobal,
-                valorTotal: converterParaMoeda(totalGeralMesa),
-                valorPago: converterParaMoeda(totalPagoGlobal),
-                saldoDevedor: Math.max(0, totalGeralMesa - totalPagoGlobal),
-                logoPropaganda: document.getElementById('campoLogoPropaganda').checked,
-                obs: document.getElementById('campoObs').value,
-                detalhesParcelas: JSON.stringify(pagadoresAtuais)
+                setor: bancoDeDados[mesaEditandoAtual].setor, status: statusFinal, nome: nomeGlobal, telefone: telefoneGlobal,
+                cadeiras: cadeirasGlobal, pagamento: pagamentoGlobal, parcelas: parcelasGlobal,
+                valorTotal: converterParaMoeda(totalGeralMesa), valorPago: converterParaMoeda(totalPagoGlobal),
+                saldoDevedor: Math.max(0, totalGeralMesa - totalPagoGlobal), logoPropaganda: document.getElementById('campoLogoPropaganda').checked,
+                obs: document.getElementById('campoObs').value, detalhesParcelas: JSON.stringify(pagadoresAtuais)
             };
 
             try { await enviarParaNuvem(mesaEditandoAtual, bancoDeDados[mesaEditandoAtual]); fecharModal(); renderizarMapa(); 
