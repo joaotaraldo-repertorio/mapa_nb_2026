@@ -61,7 +61,6 @@
         .setor { padding: 12px 20px; border-radius: 8px; width: 100%; box-sizing: border-box; z-index: 2;}
         .setor h3 { margin-top: 0; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; text-align: center; font-size: 22px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
         
-        /* AUMENTO DO ESPAÇAMENTO VERTICAL (Margem ajustada de 10px para 30px) */
         .fileira-mesas { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; width: 100%; }
         .wrapper-mesa { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 140px; position: relative; }
 
@@ -78,34 +77,35 @@
         body.modo-visitante .badge-divida { display: none; }
         body.modo-visitante #btnLimpar { display: none; }
         
-        /* === A NOVA MÁGICA DA VITRINE VIP (COM ALVO DE IMPRESSÃO) === */
-        /* Retiramos a dependência do "modo-visitante" para que o admin possa imprimir o destaque */
-        .mostrar-forcado {
-            transform: scale(1.25) !important; /* Zoom forte */
+        /* === A NOVA MÁGICA DA VITRINE VIP BLINDADA === */
+        body #container-salao .wrapper-mesa.mostrar-forcado {
+            transform: scale(1.25) !important; 
             z-index: 10; 
         }
         
-        .mostrar-forcado .mesa {
-            border: 4px solid var(--ciano-destaque) !important; /* Borda Ciano super grossa */
-            /* Efeito "Alvo": Linha invisível azul escura + Linha grossa ciano em volta */
+        body #container-salao .wrapper-mesa.mostrar-forcado .mesa {
+            border: 4px solid var(--ciano-destaque) !important; 
             box-shadow: 0 0 0 5px var(--azul-fundo), 0 0 0 10px var(--ciano-destaque) !important;
         }
         
-        .mostrar-forcado .texto-abaixo { 
+        /* Esse seletor gigante garante que a etiqueta VIP não suma nem na foto */
+        body #container-salao .wrapper-mesa.mostrar-forcado .texto-abaixo { 
             display: block !important; 
-            color: #000 !important; /* Letra preta para destacar */
-            background-color: var(--ciano-destaque); /* Fundo Ciano na etiqueta do nome */
-            border: 2px solid #fff;
-            padding: 4px 8px;
-            border-radius: 6px;
+            color: #000 !important; 
+            background-color: var(--ciano-destaque) !important; 
+            border: 2px solid #fff !important;
+            padding: 4px 8px !important;
+            border-radius: 6px !important;
             text-shadow: none !important; 
             font-size: 15px !important; 
             font-weight: 900 !important; 
-            margin-top: 15px !important; /* Espaço para afastar da borda gigante */
-            box-shadow: 0 4px 8px rgba(0,0,0,0.6);
+            margin-top: 15px !important; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.6) !important;
+            opacity: 1 !important;
+            visibility: visible !important;
         }
         
-        .mostrar-forcado .badge-extra { display: flex !important; }
+        body #container-salao .wrapper-mesa.mostrar-forcado .badge-extra { display: flex !important; }
         /* ============================================================== */
 
         body.modo-vendas .badge-divida { display: none; }
@@ -121,6 +121,7 @@
         }
         body.modo-buffet .wrapper-mesa:has(.mesa[data-status="Livre"]) .texto-abaixo { display: none; }
 
+        /* MODO CLIENTE NORMAL (Esconde nomes gerais, mas perde para o VIP acima) */
         body.modo-cliente .texto-abaixo { display: none !important; }
         body.modo-cliente .badge-extra { display: none !important; }
         body.modo-cliente .badge-divida { display: none !important; }
@@ -1185,25 +1186,41 @@
 
         function fecharCofre() { document.getElementById('painel-cofre').style.display = 'none'; document.getElementById('container-salao').style.display = 'flex'; document.querySelector('.painel-rodape').style.display = 'flex'; }
 
+        // === A CÂMERA INTELIGENTE PARA A IMPRESSÃO DA PRESIDENTE ===
         async function exportarMapa(tipo) {
             const areaExportacao = document.getElementById('area-exportacao'); const botoesTopo = document.querySelector('.area-botoes-topo');
-            botoesTopo.style.display = 'none'; mostrarAlerta("Preparando sua imagem, aguarde um instante... 📸", "⏳ Gerando Arquivo");
+            botoesTopo.style.display = 'none'; 
+            
+            // SE FOR LINK VIP, VESTE OS ÓCULOS DE MODO CLIENTE SOZINHO PRA FOTO
+            let forcarLimpeza = false;
+            if (parametroMostrar && !document.body.classList.contains('modo-cliente')) {
+                document.body.classList.add('modo-cliente');
+                forcarLimpeza = true;
+            }
+            
+            mostrarAlerta("Preparando sua imagem com o mapa limpo, aguarde... 📸", "⏳ Gerando Arquivo VIP");
 
             try {
                 const canvas = await html2canvas(areaExportacao, { backgroundColor: '#0A192F', scale: 2, useCORS: true, allowTaint: true });
                 const imgData = canvas.toDataURL('image/jpeg', 0.9);
 
                 if (tipo === 'img') {
-                    const link = document.createElement('a'); link.download = 'Mapa_Educandario_2026.jpg'; link.href = imgData; link.click();
+                    const link = document.createElement('a'); link.download = 'Mapa_VIP_Educandario.jpg'; link.href = imgData; link.click();
                 } else if (tipo === 'pdf') {
                     const { jsPDF } = window.jspdf; const orientation = canvas.width >= canvas.height ? 'l' : 'p';
                     const pdf = new jsPDF({ orientation: orientation, unit: 'px', format: [canvas.width, canvas.height] });
-                    pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height); pdf.save('Mapa_Educandario_2026.pdf');
+                    pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height); pdf.save('Mapa_VIP_Educandario.pdf');
                 }
                 fecharAlertaCustomizado();
             } catch (erro) {
                 fecharAlertaCustomizado(); console.error(erro); mostrarAlerta("O navegador bloqueou a foto. No GitHub vai funcionar perfeitamente! 🚀", "❌ Bloqueio Local");
-            } finally { botoesTopo.style.display = 'flex'; }
+            } finally { 
+                botoesTopo.style.display = 'flex'; 
+                // DEVOLVE A TELA PRA MODO ADMIN
+                if (forcarLimpeza) {
+                    document.body.classList.remove('modo-cliente');
+                }
+            }
         }
 
         function inicializarBancoDeDados() {
@@ -1296,7 +1313,6 @@
                                 const idDaMesa = `${setorConfig.prefixo}-${num}`; const dadosDestaMesa = bancoDeDados[idDaMesa];
                                 const wrapperMesa = document.createElement('div'); wrapperMesa.className = 'wrapper-mesa';
 
-                                // A MÁGICA: Independente de ser visitante ou não, o destaque VIP aparece
                                 if (mesasPermitidas.includes(idDaMesa)) { wrapperMesa.classList.add('mostrar-forcado'); }
 
                                 const textoAcima = document.createElement('div'); textoAcima.className = 'texto-acima'; textoAcima.textContent = dadosDestaMesa.status.toUpperCase(); 
