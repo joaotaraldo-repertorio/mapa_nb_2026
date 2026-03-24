@@ -71,14 +71,39 @@
         
         .texto-abaixo { font-size: 14px; color: #ffffff; text-align: center; width: 100%; white-space: normal; word-wrap: break-word; line-height: 1.1; font-weight: bold; min-height: 15px; }
         
-        /* CAMADAS DE SEGURANÇA E VISUALIZAÇÃO */
+        /* ====================================================================== */
+        /* CAMADAS DE SEGURANÇA E VISUALIZAÇÃO                                    */
+        /* ====================================================================== */
+        
         body.modo-visitante .texto-abaixo { display: none; }
         body.modo-visitante .badge-extra { display: none; }
         body.modo-visitante .badge-divida { display: none; }
         body.modo-visitante #btnLimpar { display: none; }
         
-        body.modo-visitante .mostrar-forcado .texto-abaixo { display: block !important; color: var(--ciano-destaque); text-shadow: 0 0 5px #000;}
+        /* === A NOVA MÁGICA DA VITRINE VIP === */
+        body.modo-visitante .mostrar-forcado {
+            transform: scale(1.15); /* Efeito Zoom: Deixa a mesa 15% maior */
+            z-index: 10; /* Garante que ela fique por cima das vizinhas */
+            animation: holofoteMesa 1.5s infinite alternate; /* Efeito do brilho piscando */
+        }
+        
+        body.modo-visitante .mostrar-forcado .texto-abaixo { 
+            display: block !important; 
+            color: var(--ciano-destaque); 
+            text-shadow: 0px 2px 6px #000; /* Sombra mais forte para leitura */
+            font-size: 17px; /* Letra maior */
+            font-weight: 900; /* Letra mais gordinha */
+            margin-top: 5px;
+        }
+        
         body.modo-visitante .mostrar-forcado .badge-extra { display: flex !important; }
+
+        /* O Motor do Brilho Pulsante */
+        @keyframes holofoteMesa {
+            0% { filter: drop-shadow(0 0 2px var(--ciano-destaque)); }
+            100% { filter: drop-shadow(0 0 15px var(--ciano-destaque)); }
+        }
+        /* ==================================== */
 
         body.modo-vendas .badge-divida { display: none; }
         body.modo-vendas #btnLimpar { display: none; }
@@ -119,7 +144,7 @@
         .info-contato { text-align: center; font-size: 18px; font-weight: bold; color: #47D359; border-top: 1px dashed #233554; padding-top: 10px; width: 100%; }
         .info-contato span.realizacao { display: block; color: var(--texto-claro); font-size: 14px; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* ESTILOS DO COFRE FINANCEIRO E DRE */
+        /* ESTILOS DO COFRE FINANCEIRO (DRE) */
         #painel-cofre { display: none; width: 100%; max-width: 1300px; flex-direction: column; gap: 20px; padding: 20px; box-sizing: border-box; }
         .cofre-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--ciano-destaque); padding-bottom: 15px;}
         .cofre-header h2 { margin: 0; color: var(--ciano-destaque); font-size: 28px; display: flex; align-items: center; gap: 10px;}
@@ -154,7 +179,6 @@
         #filtroCategoriaCustos { padding: 6px 12px; border-radius: 4px; background-color: #112240; color: #fff; border: 1px solid #ef4444; font-weight: bold; cursor: pointer; outline: none; font-size: 14px;}
         #filtroCategoriaCustos:focus { box-shadow: 0 0 5px #ef4444; }
 
-        /* ESTILOS DO SIMULADOR (NOVOS QUADROS DE PESSOAS) */
         .painel-simulador { background-color: #061020; border: 1px dashed #f59e0b; border-radius: 8px; padding: 25px; margin-top: 10px;}
         .painel-simulador h3 { margin: 0 0 5px 0; color: #f59e0b; font-size: 22px; display: flex; align-items: center; gap: 8px;}
         .painel-simulador > p { color: #8892b0; margin: 0 0 20px 0; font-size: 14px;}
@@ -374,7 +398,7 @@
                 <h3>🔮 Simulador de Faturamento e Lotação</h3>
                 <p>O que acontece com o caixa e com o salão se vendermos mais algumas mesas ou cadeiras hoje?</p>
                 <div class="sim-grid-inputs" id="containerSimuladorInputs">
-                    </div>
+                </div>
                 
                 <h4 style="color: var(--ciano-destaque); margin-top: 15px; margin-bottom: 10px; border-bottom: 1px dashed #233554; padding-bottom: 5px;">💰 Projeção Financeira</h4>
                 <div class="sim-resultado-box" style="margin-bottom: 20px;">
@@ -1027,7 +1051,6 @@
             containerSimulador.setAttribute('data-custos-totais', totalCustosGlobais); 
             containerSimulador.setAttribute('data-pessoas-reais', totalPessoasSalao); 
             
-            // CARREGA O HISTÓRICO DA SIMULAÇÃO (Se existir no computador da pessoa)
             try {
                 let savedSim = JSON.parse(localStorage.getItem('simulacao_educandario_2026')) || {};
                 const inputs = document.querySelectorAll('.input-simulador');
@@ -1043,8 +1066,7 @@
             } catch(e) {}
             
             document.getElementById('filtroCategoriaCustos').value = "OCULTAR";
-            renderizarTabelaCustos(); 
-            calcularSimulacao();
+            renderizarTabelaCustos(); calcularSimulacao();
 
             document.getElementById('container-salao').style.display = 'none'; document.querySelector('.painel-rodape').style.display = 'none';
             document.getElementById('painel-cofre').style.display = 'flex';
@@ -1118,21 +1140,17 @@
             document.getElementById('tbodyCustos').innerHTML = htmlCustos;
         }
 
-        // O NOVO MOTOR DO SIMULADOR (COM HISTÓRICO E PESSOAS)
         function calcularSimulacao() {
             const container = document.getElementById('containerSimuladorInputs');
             let fechadoAtual = parseFloat(container.getAttribute('data-fechado-atual')) || 0;
             let custosTotais = parseFloat(container.getAttribute('data-custos-totais')) || 0;
             let pessoasReais = parseInt(container.getAttribute('data-pessoas-reais')) || 0;
             
-            let projecaoExtra = 0;
-            let pessoasExtra = 0;
-            let simulacaoParaSalvar = {};
+            let projecaoExtra = 0; let pessoasExtra = 0; let simulacaoParaSalvar = {};
             
             const inputs = document.querySelectorAll('.input-simulador');
             inputs.forEach(inp => {
-                let qtd = parseInt(inp.value) || 0; 
-                let max = parseInt(inp.getAttribute('max')) || 0;
+                let qtd = parseInt(inp.value) || 0; let max = parseInt(inp.getAttribute('max')) || 0;
                 let id = inp.getAttribute('data-id');
                 
                 if (id !== 'CadeirasAvulsas' && qtd > max) { qtd = max; inp.value = max; } 
@@ -1141,27 +1159,22 @@
                 let valorBase = parseFloat(inp.getAttribute('data-valorbase')) || 0; 
                 let capacidade = parseInt(inp.getAttribute('data-capacidade')) || 0;
                 
-                projecaoExtra += (qtd * valorBase);
-                pessoasExtra += (qtd * capacidade);
-                
+                projecaoExtra += (qtd * valorBase); pessoasExtra += (qtd * capacidade);
                 simulacaoParaSalvar[id] = qtd;
             });
             
-            // SALVA A BRINCADEIRA NO NAVEGADOR
             localStorage.setItem('simulacao_educandario_2026', JSON.stringify(simulacaoParaSalvar));
             
             let receitaProjetada = fechadoAtual + projecaoExtra;
             let saldoProjetado = receitaProjetada - custosTotais;
             let pessoasProjetadas = pessoasReais + pessoasExtra;
 
-            // Atualiza Quadros Financeiros
             document.getElementById('simAtual').textContent = `R$ ${converterParaMoeda(fechadoAtual)}`;
             document.getElementById('simExtra').textContent = `+ R$ ${converterParaMoeda(projecaoExtra)}`;
             document.getElementById('simProjetado').textContent = `R$ ${converterParaMoeda(receitaProjetada)}`;
             document.getElementById('simCustos').textContent = `R$ ${converterParaMoeda(custosTotais)}`;
             document.getElementById('simSaldo').textContent = `R$ ${converterParaMoeda(saldoProjetado)}`;
             
-            // Atualiza Quadros de Pessoas
             document.getElementById('simPessoasAtual').textContent = pessoasReais;
             document.getElementById('simPessoasExtra').textContent = `+ ${pessoasExtra}`;
             document.getElementById('simPessoasProjetado').textContent = pessoasProjetadas;
