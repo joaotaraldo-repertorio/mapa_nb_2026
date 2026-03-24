@@ -39,6 +39,7 @@
         .btn-sincronizar { background-color: #47D359; }
         .btn-sincronizar:hover { box-shadow: 0 0 10px #47D359; }
 
+        /* OCULTA BOTÕES SENSÍVEIS POR PADRÃO (SÓ O ADMIN VÊ) */
         #btnCofre, #btnImg, #btnPdf, #btnBuffet, #btnVisaoCliente { display: none; }
 
         #container-salao { width: 100%; padding: 0 70px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 15px; position: relative; margin-bottom: 15px;}
@@ -60,54 +61,23 @@
         .setor { padding: 12px 20px; border-radius: 8px; width: 100%; box-sizing: border-box; z-index: 2;}
         .setor h3 { margin-top: 0; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; text-align: center; font-size: 22px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
         
-        /* AUMENTO DO ESPAÇAMENTO VERTICAL (de 25px para 45px) */
-        .fileira-mesas { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 45px; width: 100%; }
-        .wrapper-mesa { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 140px; position: relative; }
+        .fileira-mesas { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; width: 100%; }
+        .wrapper-mesa { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 140px; position: relative; }
 
-        .texto-acima { 
-            font-size: 11px; 
-            font-weight: bold; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-            text-align: center; 
-            width: 100%; 
-            white-space: normal; 
-            word-wrap: break-word; 
-            line-height: 1.1; 
-            min-height: 14px; 
-        }
+        .texto-acima { font-size: 11px; font-weight: bold; text-transform: uppercase; height: 14px; letter-spacing: 1px; }
         .texto-acima.vendida { color: var(--cor-vendida-texto); }
         .texto-acima.reservada { color: var(--cor-reservada); }
         .texto-acima.livre { color: var(--cor-livre-texto); } 
         
-        /* === DESTAQUE VIP (LINK DO CLIENTE) === */
-        body #container-salao .wrapper-mesa.mostrar-forcado {
-            z-index: 10; 
-            margin: 0 10px; /* Protege a câmera criando espaço nas laterais */
-        }
+        .texto-abaixo { font-size: 14px; color: #ffffff; text-align: center; width: 100%; white-space: normal; word-wrap: break-word; line-height: 1.1; font-weight: bold; min-height: 15px; }
         
-        body #container-salao .wrapper-mesa.mostrar-forcado .mesa {
-            transform: scale(1.25) !important; /* Zoom só na mesa! */
-            /* A borda e o brilho são injetados pelo JS com a cor da Cota */
-        }
-
-        body #container-salao .wrapper-mesa.mostrar-forcado .texto-acima {
-            font-size: 14px !important;
-            font-weight: 900 !important;
-            color: #fff !important;
-            /* Contorno preto ultra forte no texto do VIP */
-            text-shadow: 
-                -1px -1px 0 #000,  
-                 1px -1px 0 #000,
-                -1px  1px 0 #000,
-                 1px  1px 0 #000,
-                 0px  4px 6px rgba(0,0,0,0.8) !important;
-        }
-        /* ======================================= */
-
+        /* CAMADAS DE SEGURANÇA E VISUALIZAÇÃO */
+        body.modo-visitante .texto-abaixo { display: none; }
         body.modo-visitante .badge-extra { display: none; }
         body.modo-visitante .badge-divida { display: none; }
         body.modo-visitante #btnLimpar { display: none; }
+        
+        body.modo-visitante .mostrar-forcado .texto-abaixo { display: block !important; color: var(--ciano-destaque); text-shadow: 0 0 5px #000;}
         body.modo-visitante .mostrar-forcado .badge-extra { display: flex !important; }
 
         body.modo-vendas .badge-divida { display: none; }
@@ -121,7 +91,9 @@
         body.modo-buffet .mesa[data-status="Livre"]::after {
             content: "❌ VAZIA"; position: absolute; font-size: 16px; color: #ff4d4d; font-weight: bold; text-shadow: 0 0 5px #000; transform: rotate(-15deg);
         }
+        body.modo-buffet .wrapper-mesa:has(.mesa[data-status="Livre"]) .texto-abaixo { display: none; }
 
+        body.modo-cliente .texto-abaixo { display: none !important; }
         body.modo-cliente .badge-extra { display: none !important; }
         body.modo-cliente .badge-divida { display: none !important; }
 
@@ -147,7 +119,7 @@
         .info-contato { text-align: center; font-size: 18px; font-weight: bold; color: #47D359; border-top: 1px dashed #233554; padding-top: 10px; width: 100%; }
         .info-contato span.realizacao { display: block; color: var(--texto-claro); font-size: 14px; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* ESTILOS DO COFRE FINANCEIRO (DRE) */
+        /* ESTILOS DO COFRE FINANCEIRO E DRE */
         #painel-cofre { display: none; width: 100%; max-width: 1300px; flex-direction: column; gap: 20px; padding: 20px; box-sizing: border-box; }
         .cofre-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--ciano-destaque); padding-bottom: 15px;}
         .cofre-header h2 { margin: 0; color: var(--ciano-destaque); font-size: 28px; display: flex; align-items: center; gap: 10px;}
@@ -182,6 +154,7 @@
         #filtroCategoriaCustos { padding: 6px 12px; border-radius: 4px; background-color: #112240; color: #fff; border: 1px solid #ef4444; font-weight: bold; cursor: pointer; outline: none; font-size: 14px;}
         #filtroCategoriaCustos:focus { box-shadow: 0 0 5px #ef4444; }
 
+        /* ESTILOS DO SIMULADOR (NOVOS QUADROS DE PESSOAS) */
         .painel-simulador { background-color: #061020; border: 1px dashed #f59e0b; border-radius: 8px; padding: 25px; margin-top: 10px;}
         .painel-simulador h3 { margin: 0 0 5px 0; color: #f59e0b; font-size: 22px; display: flex; align-items: center; gap: 8px;}
         .painel-simulador > p { color: #8892b0; margin: 0 0 20px 0; font-size: 14px;}
@@ -401,7 +374,7 @@
                 <h3>🔮 Simulador de Faturamento e Lotação</h3>
                 <p>O que acontece com o caixa e com o salão se vendermos mais algumas mesas ou cadeiras hoje?</p>
                 <div class="sim-grid-inputs" id="containerSimuladorInputs">
-                </div>
+                    </div>
                 
                 <h4 style="color: var(--ciano-destaque); margin-top: 15px; margin-bottom: 10px; border-bottom: 1px dashed #233554; padding-bottom: 5px;">💰 Projeção Financeira</h4>
                 <div class="sim-resultado-box" style="margin-bottom: 20px;">
@@ -445,9 +418,7 @@
 
             </div>
 
-        </div>
-
-        <div id="container-salao">
+        </div> <div id="container-salao">
             <div class="tarja-lateral tarja-wc-masc"><span class="tarja-icone">🚹</span><span class="tarja-texto">WC Masc</span></div>
             <div class="tarja-lateral tarja-wc-fem"><span class="tarja-icone">🚺♿</span><span class="tarja-texto">WC Fem</span></div>
             <div class="tarja-lateral tarja-aparador-esq"><span class="tarja-texto">Aparador</span></div>
@@ -489,9 +460,7 @@
             </div>
         </div>
 
-    </div>
-
-    <div id="meuModal" class="modal-overlay">
+    </div> <div id="meuModal" class="modal-overlay">
         <div class="modal-box" style="width: 750px;">
             <h2 id="tituloModal"><span>Gerenciar Mesa</span> <span id="statusBadge">Livre</span></h2> 
             
@@ -524,7 +493,7 @@
             </div>
 
             <div id="containerPagadores" style="max-height: 450px; overflow-y: auto; padding-right: 10px;">
-            </div>
+                </div>
 
             <div class="painel-financeiro" style="margin-top: 15px;">
                 <h4>💰 Resumo Financeiro Global <span id="textoValorPadrao" style="color: #8892b0; font-size: 12px;"></span></h4>
@@ -1058,6 +1027,7 @@
             containerSimulador.setAttribute('data-custos-totais', totalCustosGlobais); 
             containerSimulador.setAttribute('data-pessoas-reais', totalPessoasSalao); 
             
+            // CARREGA O HISTÓRICO DA SIMULAÇÃO (Se existir no computador da pessoa)
             try {
                 let savedSim = JSON.parse(localStorage.getItem('simulacao_educandario_2026')) || {};
                 const inputs = document.querySelectorAll('.input-simulador');
@@ -1073,7 +1043,8 @@
             } catch(e) {}
             
             document.getElementById('filtroCategoriaCustos').value = "OCULTAR";
-            renderizarTabelaCustos(); calcularSimulacao();
+            renderizarTabelaCustos(); 
+            calcularSimulacao();
 
             document.getElementById('container-salao').style.display = 'none'; document.querySelector('.painel-rodape').style.display = 'none';
             document.getElementById('painel-cofre').style.display = 'flex';
@@ -1147,17 +1118,21 @@
             document.getElementById('tbodyCustos').innerHTML = htmlCustos;
         }
 
+        // O NOVO MOTOR DO SIMULADOR (COM HISTÓRICO E PESSOAS)
         function calcularSimulacao() {
             const container = document.getElementById('containerSimuladorInputs');
             let fechadoAtual = parseFloat(container.getAttribute('data-fechado-atual')) || 0;
             let custosTotais = parseFloat(container.getAttribute('data-custos-totais')) || 0;
             let pessoasReais = parseInt(container.getAttribute('data-pessoas-reais')) || 0;
             
-            let projecaoExtra = 0; let pessoasExtra = 0; let simulacaoParaSalvar = {};
+            let projecaoExtra = 0;
+            let pessoasExtra = 0;
+            let simulacaoParaSalvar = {};
             
             const inputs = document.querySelectorAll('.input-simulador');
             inputs.forEach(inp => {
-                let qtd = parseInt(inp.value) || 0; let max = parseInt(inp.getAttribute('max')) || 0;
+                let qtd = parseInt(inp.value) || 0; 
+                let max = parseInt(inp.getAttribute('max')) || 0;
                 let id = inp.getAttribute('data-id');
                 
                 if (id !== 'CadeirasAvulsas' && qtd > max) { qtd = max; inp.value = max; } 
@@ -1166,22 +1141,27 @@
                 let valorBase = parseFloat(inp.getAttribute('data-valorbase')) || 0; 
                 let capacidade = parseInt(inp.getAttribute('data-capacidade')) || 0;
                 
-                projecaoExtra += (qtd * valorBase); pessoasExtra += (qtd * capacidade);
+                projecaoExtra += (qtd * valorBase);
+                pessoasExtra += (qtd * capacidade);
+                
                 simulacaoParaSalvar[id] = qtd;
             });
             
+            // SALVA A BRINCADEIRA NO NAVEGADOR
             localStorage.setItem('simulacao_educandario_2026', JSON.stringify(simulacaoParaSalvar));
             
             let receitaProjetada = fechadoAtual + projecaoExtra;
             let saldoProjetado = receitaProjetada - custosTotais;
             let pessoasProjetadas = pessoasReais + pessoasExtra;
 
+            // Atualiza Quadros Financeiros
             document.getElementById('simAtual').textContent = `R$ ${converterParaMoeda(fechadoAtual)}`;
             document.getElementById('simExtra').textContent = `+ R$ ${converterParaMoeda(projecaoExtra)}`;
             document.getElementById('simProjetado').textContent = `R$ ${converterParaMoeda(receitaProjetada)}`;
             document.getElementById('simCustos').textContent = `R$ ${converterParaMoeda(custosTotais)}`;
             document.getElementById('simSaldo').textContent = `R$ ${converterParaMoeda(saldoProjetado)}`;
             
+            // Atualiza Quadros de Pessoas
             document.getElementById('simPessoasAtual').textContent = pessoasReais;
             document.getElementById('simPessoasExtra').textContent = `+ ${pessoasExtra}`;
             document.getElementById('simPessoasProjetado').textContent = pessoasProjetadas;
@@ -1208,6 +1188,265 @@
             } catch (erro) {
                 fecharAlertaCustomizado(); console.error(erro); mostrarAlerta("O navegador bloqueou a foto. No GitHub vai funcionar perfeitamente! 🚀", "❌ Bloqueio Local");
             } finally { botoesTopo.style.display = 'flex'; }
+        }
+
+        function inicializarBancoDeDados() {
+            for (const chave in CONFIG_MESAS) {
+                const config = CONFIG_MESAS[chave]; let contador = 1;
+                config.layout.forEach(fileira => {
+                    fileira.forEach(item => {
+                        if (item !== "BIG_MIX" && item !== "GAP") {
+                            for (let i = 0; i < item; i++) {
+                                const num = contador < 10 ? '0' + contador : contador;
+                                const id = `${config.prefixo}-${num}`;
+                                bancoDeDados[id] = { setor: config.nome, status: "Livre", nome: "", telefone: "", email: "", cadeiras: 0, pagamento: "Nenhum", parcelas: "1x", valorTotal: "", valorPago: "", saldoDevedor: 0, logoPropaganda: false, obs: "", detalhesParcelas: "[]" };
+                                contador++;
+                            }
+                        }
+                    });
+                });
+            }
+        }
+
+        async function carregarDadosDaNuvemBackground() {
+            try {
+                const response = await fetch(URL_GOOGLE_SCRIPT); const dadosNuvem = await response.json();
+                for (const idMesa in dadosNuvem) { if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); } }
+                const responseCustos = await fetch(URL_GOOGLE_SCRIPT + "?tipo=custos"); const dadosCustos = await responseCustos.json();
+                bancoDeCustos = {}; dadosCustos.forEach(c => bancoDeCustos[c.id] = c);
+                renderizarMapa();
+            } catch (error) {}
+        }
+        setInterval(carregarDadosDaNuvemBackground, 15000);
+
+        async function carregarDadosDaNuvem() {
+            const btnSinc = document.getElementById('btnSincronizar'); btnSinc.textContent = "⌛ Baixando...";
+            try {
+                const response = await fetch(URL_GOOGLE_SCRIPT); const dadosNuvem = await response.json();
+                for (const idMesa in dadosNuvem) { if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); } }
+                const responseCustos = await fetch(URL_GOOGLE_SCRIPT + "?tipo=custos"); const dadosCustos = await responseCustos.json();
+                bancoDeCustos = {}; dadosCustos.forEach(c => bancoDeCustos[c.id] = c);
+                renderizarMapa(); document.getElementById('telaCarregamento').style.display = 'none';
+            } catch (error) { mostrarAlerta("Falha ao conectar. O mapa carregará offline."); document.getElementById('telaCarregamento').style.display = 'none'; renderizarMapa();
+            } finally { btnSinc.textContent = "🔄 Sincronizar"; }
+        }
+
+        async function enviarParaNuvem(idMesa, dados) {
+            try { await fetch(URL_GOOGLE_SCRIPT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ idMesa: idMesa, dados: dados }) });
+            } catch (error) { throw new Error("Erro de conexão"); }
+        }
+
+        function formatarMoeda(elemento) {
+            let valor = String(elemento.value).replace(/\D/g, ''); if (valor === '') { elemento.value = ''; return; }
+            valor = (parseInt(valor) / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); elemento.value = valor;
+        }
+
+        function converterParaNumero(str) {
+            if (str === null || str === undefined || str === "") return 0; if (typeof str === 'number') return str;
+            return parseFloat(String(str).replace(/\./g, '').replace(',', '.'));
+        }
+
+        function converterParaMoeda(numero) {
+            let val = Number(numero); if (isNaN(val)) val = 0;
+            return val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function renderizarMapa() {
+            const containerSalao = document.getElementById('container-salao');
+            Array.from(containerSalao.children).forEach(child => { if (!child.classList.contains('palco') && !child.classList.contains('tarja-lateral')) { containerSalao.removeChild(child); } });
+            
+            const palco = document.querySelector('.palco'); let elementoDeReferencia = palco.nextSibling;
+            
+            for (const chave in CONFIG_MESAS) {
+                const setorConfig = CONFIG_MESAS[chave]; let contadorMesa = 1; 
+
+                const divSetor = document.createElement('div'); divSetor.className = 'setor';
+                divSetor.style.backgroundColor = setorConfig.bgTranslucido; divSetor.style.border = `1px solid ${setorConfig.bordaFina}`; divSetor.style.boxShadow = `0 0 15px ${setorConfig.bgTranslucido}`;
+                
+                const tituloSetor = document.createElement('h3'); tituloSetor.textContent = setorConfig.nome; tituloSetor.style.color = setorConfig.corNormal; divSetor.appendChild(tituloSetor);
+
+                setorConfig.layout.forEach(fileira => {
+                    const divFileira = document.createElement('div'); divFileira.className = 'fileira-mesas';
+
+                    fileira.forEach(item => {
+                        if (item === "BIG_MIX") {
+                            const divMixContainer = document.createElement('div'); divMixContainer.style.position = "relative"; divMixContainer.style.width = "180px"; divMixContainer.style.display = "flex"; divMixContainer.style.justifyContent = "center";
+                            divMixContainer.innerHTML = `<div class="grande-house-mix"><span class="icone">🎛️</span> House Mix</div>`; divFileira.appendChild(divMixContainer);
+                        } else if (item === "GAP") {
+                            const divGap = document.createElement('div'); divGap.style.width = "180px"; divFileira.appendChild(divGap);
+                        } else {
+                            for (let i = 0; i < item; i++) {
+                                const num = contadorMesa < 10 ? '0' + contadorMesa : contadorMesa;
+                                const idDaMesa = `${setorConfig.prefixo}-${num}`; const dadosDestaMesa = bancoDeDados[idDaMesa];
+                                const wrapperMesa = document.createElement('div'); wrapperMesa.className = 'wrapper-mesa';
+
+                                if (nivelAcesso === 0 && mesasPermitidas.includes(idDaMesa)) { wrapperMesa.classList.add('mostrar-forcado'); }
+
+                                const textoAcima = document.createElement('div'); textoAcima.className = 'texto-acima'; textoAcima.textContent = dadosDestaMesa.status.toUpperCase(); 
+                                if (dadosDestaMesa.status === "Vendida") { textoAcima.classList.add('vendida'); } else if (dadosDestaMesa.status === "Reservada") { textoAcima.classList.add('reservada'); } else { textoAcima.classList.add('livre'); }
+
+                                const divMesa = document.createElement('div'); divMesa.className = `mesa ${setorConfig.classeTamanho}`; divMesa.textContent = idDaMesa; divMesa.setAttribute('data-status', dadosDestaMesa.status);
+                                
+                                if (dadosDestaMesa.status === "Vendida" || dadosDestaMesa.status === "Reservada") {
+                                    divMesa.style.backgroundColor = setorConfig.corVendida; divMesa.style.border = "2px dashed #666"; divMesa.style.opacity = "0.9";
+                                } else { divMesa.style.backgroundColor = setorConfig.corNormal; }
+
+                                if (dadosDestaMesa.cadeiras > 0) { const badge = document.createElement('div'); badge.className = 'badge-extra'; badge.textContent = `+${dadosDestaMesa.cadeiras}`; divMesa.appendChild(badge); }
+                                if (dadosDestaMesa.status !== "Livre" && dadosDestaMesa.saldoDevedor > 0) { const badgeDivida = document.createElement('div'); badgeDivida.className = 'badge-divida'; badgeDivida.textContent = '💲'; badgeDivida.title = `Saldo pendente: R$ ${converterParaMoeda(dadosDestaMesa.saldoDevedor)}`; wrapperMesa.appendChild(badgeDivida); }
+
+                                divMesa.onclick = function() { abrirModal(idDaMesa); };
+
+                                const textoAbaixo = document.createElement('div'); textoAbaixo.className = 'texto-abaixo'; 
+                                textoAbaixo.textContent = dadosDestaMesa.status !== "Livre" ? dadosDestaMesa.nome : "";
+
+                                wrapperMesa.appendChild(textoAcima); wrapperMesa.appendChild(divMesa); wrapperMesa.appendChild(textoAbaixo); divFileira.appendChild(wrapperMesa); contadorMesa++; 
+                            }
+                        }
+                    });
+                    divSetor.appendChild(divFileira);
+                });
+                containerSalao.insertBefore(divSetor, elementoDeReferencia);
+            }
+        }
+
+        function abrirModal(idMesa) {
+            const dados = bancoDeDados[idMesa];
+            if (nivelAcesso === 0) { return; } 
+            if (nivelAcesso === 1 && dados.status !== "Livre") { mostrarAlerta("🔒 Mesa Bloqueada!\n\nEsta mesa já foi Vendida ou Reservada. Com a sua senha de Vendedor, você só pode alterar mesas que ainda estão Livres.", "Acesso Restrito"); return; }
+
+            mesaEditandoAtual = idMesa; statusAoAbrirMesa = dados.status; 
+            document.getElementById('tituloModal').innerHTML = `Gerenciar ${dados.setor} (${idMesa})`;
+            document.getElementById('campoStatus').value = dados.status || "Livre";
+            document.getElementById('campoLogoPropaganda').checked = dados.logoPropaganda || false; 
+            
+            document.getElementById('campoNome').value = dados.nome || "";
+            document.getElementById('campoObs').value = dados.obs || "";
+
+            try { 
+                let parsed = JSON.parse(dados.detalhesParcelas || "[]"); 
+                if (parsed.length > 0 && parsed[0].numero !== undefined) {
+                    let valTotalMesaStr = converterParaNumero(dados.valorTotal);
+                    let valCadeirasMesa = (parseInt(dados.cadeiras)||0) * valorCadeiraAvulsa;
+                    let cotaPrincipal = valTotalMesaStr - valCadeirasMesa;
+                    if(cotaPrincipal < 0) cotaPrincipal = valTotalMesaStr;
+
+                    pagadoresAtuais = [{
+                        id: 'pag_' + new Date().getTime(),
+                        nome: dados.nome || "", telefone: dados.telefone || "",
+                        valorCota: cotaPrincipal, cadeiras: parseInt(dados.cadeiras) || 0,
+                        pagamento: dados.pagamento || "Nenhum", qtdParcelas: parsed.length,
+                        parcelas: parsed
+                    }];
+                } else if (parsed.length > 0 && parsed[0].id) {
+                    pagadoresAtuais = parsed;
+                } else { pagadoresAtuais = []; }
+            } catch (e) { pagadoresAtuais = []; }
+
+            if(pagadoresAtuais.length === 0) {
+                let configSetor = Object.values(CONFIG_MESAS).find(c => mesaEditandoAtual.startsWith(c.prefixo));
+                let valorBase = configSetor ? configSetor.valorBase : 0;
+                pagadoresAtuais.push({
+                    id: 'pag_' + new Date().getTime(),
+                    nome: "", telefone: "", valorCota: valorBase, cadeiras: 0,
+                    pagamento: "Dinheiro", qtdParcelas: 1,
+                    parcelas: [{ numero: 1, valor: valorBase, pago: false, vencimento: "" }]
+                });
+            }
+
+            renderizarPagadores();
+
+            const areaTransf = document.getElementById('areaTransferencia');
+            if (dados.status !== "Livre") { areaTransf.style.display = 'block'; carregarListaDeDestino(idMesa); } else { areaTransf.style.display = 'none'; }
+            document.getElementById('meuModal').style.display = 'flex';
+        }
+
+        function carregarListaDeDestino(mesaOrigem) {
+            const select = document.getElementById('selectDestino'); select.innerHTML = '<option value="">-- Selecione a mesa de destino --</option>';
+            for (const id in bancoDeDados) {
+                if (id !== mesaOrigem) { const info = bancoDeDados[id]; select.innerHTML += `<option value="${id}">${id} - ${info.status} ${info.nome ? '('+info.nome+')' : ''}</option>`; }
+            }
+        }
+
+        function fecharModal() { document.getElementById('meuModal').style.display = 'none'; }
+
+        async function salvarMesa() {
+            const btnSalvar = document.getElementById('btnSalvar'); btnSalvar.textContent = "Verificando..."; btnSalvar.disabled = true; 
+            try {
+                const response = await fetch(URL_GOOGLE_SCRIPT); const dbNuvem = await response.json();
+                if (statusAoAbrirMesa === "Livre" && dbNuvem[mesaEditandoAtual].status !== "Livre") {
+                    mostrarAlerta(`A mesa ${mesaEditandoAtual} já foi reservada/vendida! O mapa será atualizado para você escolher outra mesa.`);
+                    Object.assign(bancoDeDados[mesaEditandoAtual], dbNuvem[mesaEditandoAtual]); 
+                    fecharModal(); renderizarMapa(); btnSalvar.textContent = "Salvar na Nuvem"; btnSalvar.disabled = false; return; 
+                }
+            } catch (error) {}
+
+            btnSalvar.textContent = "Salvando nas nuvens...";
+            
+            let statusFinal = document.getElementById('campoStatus').value;
+            let pagadorLider = pagadoresAtuais[0];
+            let nomeGlobal = document.getElementById('campoNome').value.trim(); 
+            let pagamentoGlobal = ""; let parcelasGlobal = "";
+            let telefoneGlobal = pagadorLider ? pagadorLider.telefone : "";
+
+            if (pagadoresAtuais.length > 1) {
+                pagamentoGlobal = "Múltiplos"; parcelasGlobal = "Múltiplos";
+            } else if (pagadorLider) {
+                pagamentoGlobal = pagadorLider.pagamento; parcelasGlobal = pagadorLider.qtdParcelas + "x";
+            }
+
+            let cadeirasGlobal = 0; let totalGeralMesa = 0; let totalPagoGlobal = 0;
+            pagadoresAtuais.forEach(p => {
+                cadeirasGlobal += parseInt(p.cadeiras) || 0;
+                totalGeralMesa += (converterParaNumero(p.valorCota) + (parseInt(p.cadeiras||0) * valorCadeiraAvulsa));
+                p.parcelas.forEach(parc => { if(parc.pago) totalPagoGlobal += converterParaNumero(parc.valor); });
+            });
+
+            let configSetor = Object.values(CONFIG_MESAS).find(c => mesaEditandoAtual.startsWith(c.prefixo));
+            let valorBaseTabela = configSetor ? configSetor.valorBase : 0;
+            let valorEsperadoMesa = valorBaseTabela + (cadeirasGlobal * valorCadeiraAvulsa);
+            let totalFechadoFinal = Math.max(valorEsperadoMesa, totalGeralMesa);
+
+            bancoDeDados[mesaEditandoAtual] = {
+                setor: bancoDeDados[mesaEditandoAtual].setor, status: statusFinal, nome: nomeGlobal, telefone: telefoneGlobal,
+                cadeiras: cadeirasGlobal, pagamento: pagamentoGlobal, parcelas: parcelasGlobal,
+                valorTotal: converterParaMoeda(totalFechadoFinal), 
+                valorPago: converterParaMoeda(totalPagoGlobal),
+                saldoDevedor: Math.max(0, totalFechadoFinal - totalPagoGlobal), 
+                logoPropaganda: document.getElementById('campoLogoPropaganda').checked,
+                obs: document.getElementById('campoObs').value, detalhesParcelas: JSON.stringify(pagadoresAtuais)
+            };
+
+            try { await enviarParaNuvem(mesaEditandoAtual, bancoDeDados[mesaEditandoAtual]); fecharModal(); renderizarMapa(); 
+            } catch (error) { mostrarAlerta("Erro ao salvar na nuvem! Verifique a internet e tente novamente.");
+            } finally { btnSalvar.textContent = "Salvar na Nuvem"; btnSalvar.disabled = false; }
+        }
+
+        async function limparMesa() {
+            if (confirm(`ATENÇÃO: Deseja apagar TODOS os dados da mesa ${mesaEditandoAtual} da nuvem?`)) {
+                const btnLimpar = document.getElementById('btnLimpar'); btnLimpar.textContent = "Apagando..."; btnLimpar.disabled = true;
+                bancoDeDados[mesaEditandoAtual] = { setor: bancoDeDados[mesaEditandoAtual].setor, status: "Livre", nome: "", telefone: "", email: "", cadeiras: 0, pagamento: "Nenhum", parcelas: "1x", detalhesParcelas: "[]", valorTotal: "", valorPago: "", saldoDevedor: 0, logoPropaganda: false, obs: "" };
+                try { await enviarParaNuvem(mesaEditandoAtual, bancoDeDados[mesaEditandoAtual]); fecharModal(); renderizarMapa();
+                } catch (error) { mostrarAlerta("Erro ao apagar da nuvem!");
+                } finally { btnLimpar.textContent = "🗑️ Limpar Dados"; btnLimpar.disabled = false; }
+            }
+        }
+
+        async function executarTransferencia() {
+            const idDestino = document.getElementById('selectDestino').value;
+            if (!idDestino) { mostrarAlerta("Selecione uma mesa de destino primeiro!"); return; }
+
+            if (confirm(`Cruzar os dados da mesa ${mesaEditandoAtual} com a mesa ${idDestino}?`)) {
+                const btnTransferir = document.getElementById('btnTransferir'); btnTransferir.textContent = "Transferindo..."; btnTransferir.disabled = true;
+                const dadosOrigem = JSON.parse(JSON.stringify(bancoDeDados[mesaEditandoAtual])); const dadosDestino = JSON.parse(JSON.stringify(bancoDeDados[idDestino]));
+                const setorOrigem = bancoDeDados[mesaEditandoAtual].setor; const setorDestino = bancoDeDados[idDestino].setor;
+                bancoDeDados[mesaEditandoAtual] = dadosDestino; bancoDeDados[mesaEditandoAtual].setor = setorOrigem; 
+                bancoDeDados[idDestino] = dadosOrigem; bancoDeDados[idDestino].setor = setorDestino; 
+
+                try { await enviarParaNuvem(mesaEditandoAtual, bancoDeDados[mesaEditandoAtual]); await enviarParaNuvem(idDestino, bancoDeDados[idDestino]);
+                    mostrarAlerta("Transferência realizada com sucesso!"); fecharModal(); renderizarMapa();
+                } catch (error) { mostrarAlerta("Erro ao transferir na nuvem!");
+                } finally { btnTransferir.textContent = "Confirmar Troca"; btnTransferir.disabled = false; }
+            }
         }
 
         function abrirModalCusto(id = null) {
@@ -1253,94 +1492,7 @@
             }
         }
 
-        function renderizarMapa() {
-            const containerSalao = document.getElementById('container-salao');
-            Array.from(containerSalao.children).forEach(child => { if (!child.classList.contains('palco') && !child.classList.contains('tarja-lateral')) { containerSalao.removeChild(child); } });
-            
-            const palco = document.querySelector('.palco'); let elementoDeReferencia = palco.nextSibling;
-            
-            for (const chave in CONFIG_MESAS) {
-                const setorConfig = CONFIG_MESAS[chave]; let contadorMesa = 1; 
-
-                const divSetor = document.createElement('div'); divSetor.className = 'setor';
-                divSetor.style.backgroundColor = setorConfig.bgTranslucido; divSetor.style.border = `1px solid ${setorConfig.bordaFina}`; divSetor.style.boxShadow = `0 0 15px ${setorConfig.bgTranslucido}`;
-                
-                const tituloSetor = document.createElement('h3'); tituloSetor.textContent = setorConfig.nome; tituloSetor.style.color = setorConfig.corNormal; divSetor.appendChild(tituloSetor);
-
-                setorConfig.layout.forEach(fileira => {
-                    const divFileira = document.createElement('div'); divFileira.className = 'fileira-mesas';
-
-                    fileira.forEach(item => {
-                        if (item === "BIG_MIX") {
-                            const divMixContainer = document.createElement('div'); divMixContainer.style.position = "relative"; divMixContainer.style.width = "180px"; divMixContainer.style.display = "flex"; divMixContainer.style.justifyContent = "center";
-                            divMixContainer.innerHTML = `<div class="grande-house-mix"><span class="icone">🎛️</span> House Mix</div>`; divFileira.appendChild(divMixContainer);
-                        } else if (item === "GAP") {
-                            const divGap = document.createElement('div'); divGap.style.width = "180px"; divFileira.appendChild(divGap);
-                        } else {
-                            for (let i = 0; i < item; i++) {
-                                const num = contadorMesa < 10 ? '0' + contadorMesa : contadorMesa;
-                                const idDaMesa = `${setorConfig.prefixo}-${num}`; const dadosDestaMesa = bancoDeDados[idDaMesa];
-                                const wrapperMesa = document.createElement('div'); wrapperMesa.className = 'wrapper-mesa';
-
-                                const ehVIP = mesasPermitidas.includes(idDaMesa);
-                                if (ehVIP) { wrapperMesa.classList.add('mostrar-forcado'); }
-
-                                // MÁGICA 1: O PAINEL DE CIMA
-                                const textoAcima = document.createElement('div'); textoAcima.className = 'texto-acima'; 
-                                let infoTexto = dadosDestaMesa.status.toUpperCase(); 
-
-                                if (dadosDestaMesa.status === "Vendida") { textoAcima.classList.add('vendida'); } 
-                                else if (dadosDestaMesa.status === "Reservada") { textoAcima.classList.add('reservada'); } 
-                                else { textoAcima.classList.add('livre'); }
-
-                                // Se for Admin, mostra o nome em cima
-                                if (nivelAcesso === 2 && dadosDestaMesa.status !== "Livre" && dadosDestaMesa.nome) {
-                                    infoTexto = dadosDestaMesa.nome;
-                                }
-                                textoAcima.textContent = infoTexto;
-
-                                const divMesa = document.createElement('div'); divMesa.className = `mesa ${setorConfig.classeTamanho}`; divMesa.setAttribute('data-status', dadosDestaMesa.status);
-                                
-                                if (dadosDestaMesa.status === "Vendida" || dadosDestaMesa.status === "Reservada") {
-                                    divMesa.style.backgroundColor = setorConfig.corVendida; divMesa.style.border = "2px dashed #666"; divMesa.style.opacity = "0.9";
-                                } else { divMesa.style.backgroundColor = setorConfig.corNormal; }
-
-                                // MÁGICA 2: O DESTAQUE VIP DENTRO DA BOLINHA
-                                if (ehVIP && dadosDestaMesa.nome && dadosDestaMesa.status !== "Livre") {
-                                    textoAcima.textContent = ""; // Apaga o texto de cima pro VIP
-                                    divMesa.innerHTML = `<span style="line-height: 1;">${idDaMesa}</span><span style="font-size: 17px; display: block; margin-top: 4px; line-height: 1.1; max-width: 95%; text-align: center; text-shadow: none; background-color: var(--ciano-destaque); color: #000; padding: 2px 6px; border-radius: 4px; border: 1px solid #fff; font-weight: 900;">${dadosDestaMesa.nome}</span>`;
-                                    divMesa.style.flexDirection = 'column';
-                                    divMesa.style.border = `4px solid ${setorConfig.corNormal}`;
-                                    divMesa.style.opacity = "1";
-                                    divMesa.style.boxShadow = `0 0 15px ${setorConfig.corNormal}`;
-                                } else {
-                                    divMesa.textContent = idDaMesa;
-                                }
-
-                                if (dadosDestaMesa.cadeiras > 0) { const badge = document.createElement('div'); badge.className = 'badge-extra'; badge.textContent = `+${dadosDestaMesa.cadeiras}`; divMesa.appendChild(badge); }
-                                
-                                if (nivelAcesso === 2 && dadosDestaMesa.status !== "Livre" && dadosDestaMesa.saldoDevedor > 0) { 
-                                    const badgeDivida = document.createElement('div'); badgeDivida.className = 'badge-divida'; badgeDivida.textContent = '💲'; badgeDivida.title = `Saldo pendente: R$ ${converterParaMoeda(dadosDestaMesa.saldoDevedor)}`; wrapperMesa.appendChild(badgeDivida); 
-                                }
-
-                                divMesa.onclick = function() { abrirModal(idDaMesa); };
-
-                                wrapperMesa.appendChild(textoAcima); 
-                                wrapperMesa.appendChild(divMesa); 
-                                divFileira.appendChild(wrapperMesa); 
-                                contadorMesa++; 
-                            }
-                        }
-                    });
-                    divSetor.appendChild(divFileira);
-                });
-                containerSalao.insertBefore(divSetor, elementoDeReferencia);
-            }
-        }
-
-        inicializarBancoDeDados(); 
-        renderizarMapa(); 
-        carregarDadosDaNuvem();
+        inicializarBancoDeDados(); renderizarMapa(); carregarDadosDaNuvem();
     </script>
 </body>
 </html>
