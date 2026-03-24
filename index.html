@@ -39,7 +39,7 @@
         .btn-sincronizar { background-color: #47D359; }
         .btn-sincronizar:hover { box-shadow: 0 0 10px #47D359; }
 
-        /* OCULTA BOTÕES SENSÍVEIS POR PADRÃO (SÓ O ADMIN VÊ) */
+        /* OCULTA BOTÕES SENSÍVEIS POR PADRÃO */
         #btnCofre, #btnImg, #btnPdf, #btnBuffet, #btnVisaoCliente { display: none; }
 
         #container-salao { width: 100%; padding: 0 70px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 15px; position: relative; margin-bottom: 15px;}
@@ -77,7 +77,7 @@
         body.modo-visitante .badge-divida { display: none; }
         body.modo-visitante #btnLimpar { display: none; }
         
-        /* === A NOVA MÁGICA DA VITRINE VIP BLINDADA === */
+        /* === A MÁGICA DA VITRINE VIP BLINDADA (CORRIGIDO PARA FOTO) === */
         body #container-salao .wrapper-mesa.mostrar-forcado {
             transform: scale(1.25) !important; 
             z-index: 10; 
@@ -88,7 +88,6 @@
             box-shadow: 0 0 0 5px var(--azul-fundo), 0 0 0 10px var(--ciano-destaque) !important;
         }
         
-        /* Esse seletor gigante garante que a etiqueta VIP não suma nem na foto */
         body #container-salao .wrapper-mesa.mostrar-forcado .texto-abaixo { 
             display: block !important; 
             color: #000 !important; 
@@ -99,7 +98,10 @@
             text-shadow: none !important; 
             font-size: 15px !important; 
             font-weight: 900 !important; 
-            margin-top: 15px !important; 
+            /* Troca de margin para position relative para o html2canvas não bugar */
+            position: relative !important;
+            top: 12px !important; 
+            margin-top: 0 !important; 
             box-shadow: 0 4px 8px rgba(0,0,0,0.6) !important;
             opacity: 1 !important;
             visibility: visible !important;
@@ -121,7 +123,7 @@
         }
         body.modo-buffet .wrapper-mesa:has(.mesa[data-status="Livre"]) .texto-abaixo { display: none; }
 
-        /* MODO CLIENTE NORMAL (Esconde nomes gerais, mas perde para o VIP acima) */
+        /* MODO CLIENTE NORMAL */
         body.modo-cliente .texto-abaixo { display: none !important; }
         body.modo-cliente .badge-extra { display: none !important; }
         body.modo-cliente .badge-divida { display: none !important; }
@@ -263,6 +265,32 @@
         #containerPagadores::-webkit-scrollbar-track { background: #0A192F; border-radius: 4px; }
         #containerPagadores::-webkit-scrollbar-thumb { background: #233554; border-radius: 4px; }
         #containerPagadores::-webkit-scrollbar-thumb:hover { background: var(--ciano-destaque); }
+
+        /* ====================================================================== */
+        /* O MOTOR DE IMPRESSÃO A4 (PDF PERFEITO)                                 */
+        /* ====================================================================== */
+        @media print {
+            @page {
+                size: A4;
+                margin: 1.5cm 0.5cm 0.5cm 0.5cm; /* Superior 1.5, Inferior e Laterais 0.5 */
+            }
+            body { 
+                background: #0A192F !important; 
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important; 
+            }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            
+            /* Oculta interface desnecessária na impressão */
+            .painel-topo .area-botoes-topo, #modalSenha, #meuModal, #modalCusto, #telaCarregamento { 
+                display: none !important; 
+            }
+            
+            /* A MÁGICA: Impede que as fileiras e setores cortem no meio da página */
+            .setor { page-break-inside: avoid; break-inside: avoid; margin-bottom: 20px; }
+            .fileira-mesas { page-break-inside: avoid; break-inside: avoid; }
+        }
+        /* ====================================================================== */
 
     </style>
 </head>
@@ -638,6 +666,7 @@
         let valorCadeiraAvulsa = 800.00; 
         let pagadoresAtuais = []; 
         let custoEditandoId = "";
+        let cacheDadosNuvem = ""; // O NOVO CACHE DE MEMÓRIA
 
         let nivelAcesso = 0; 
         const SENHA_VENDAS = "vendas2026";
@@ -1186,40 +1215,44 @@
 
         function fecharCofre() { document.getElementById('painel-cofre').style.display = 'none'; document.getElementById('container-salao').style.display = 'flex'; document.querySelector('.painel-rodape').style.display = 'flex'; }
 
-        // === A CÂMERA INTELIGENTE PARA A IMPRESSÃO DA PRESIDENTE ===
+        // === O NOVO MOTOR DE EXPORTAÇÃO E PDF ===
         async function exportarMapa(tipo) {
             const areaExportacao = document.getElementById('area-exportacao'); const botoesTopo = document.querySelector('.area-botoes-topo');
-            botoesTopo.style.display = 'none'; 
             
-            // SE FOR LINK VIP, VESTE OS ÓCULOS DE MODO CLIENTE SOZINHO PRA FOTO
+            // SE FOR PDF, USA O MOTOR NATIVO DO NAVEGADOR
+            if (tipo === 'pdf') {
+                let forcarLimpeza = false;
+                if (parametroMostrar && !document.body.classList.contains('modo-cliente')) {
+                    document.body.classList.add('modo-cliente');
+                    forcarLimpeza = true;
+                }
+                
+                window.print(); // O navegador assume o controle com quebra de página perfeita
+                
+                if (forcarLimpeza) { document.body.classList.remove('modo-cliente'); }
+                return;
+            }
+
+            // SE FOR IMAGEM, CONTINUA USANDO O HTML2CANVAS
+            botoesTopo.style.display = 'none'; 
             let forcarLimpeza = false;
             if (parametroMostrar && !document.body.classList.contains('modo-cliente')) {
                 document.body.classList.add('modo-cliente');
                 forcarLimpeza = true;
             }
             
-            mostrarAlerta("Preparando sua imagem com o mapa limpo, aguarde... 📸", "⏳ Gerando Arquivo VIP");
+            mostrarAlerta("Preparando sua imagem VIP, aguarde... 📸", "⏳ Gerando Arquivo");
 
             try {
                 const canvas = await html2canvas(areaExportacao, { backgroundColor: '#0A192F', scale: 2, useCORS: true, allowTaint: true });
                 const imgData = canvas.toDataURL('image/jpeg', 0.9);
-
-                if (tipo === 'img') {
-                    const link = document.createElement('a'); link.download = 'Mapa_VIP_Educandario.jpg'; link.href = imgData; link.click();
-                } else if (tipo === 'pdf') {
-                    const { jsPDF } = window.jspdf; const orientation = canvas.width >= canvas.height ? 'l' : 'p';
-                    const pdf = new jsPDF({ orientation: orientation, unit: 'px', format: [canvas.width, canvas.height] });
-                    pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height); pdf.save('Mapa_VIP_Educandario.pdf');
-                }
+                const link = document.createElement('a'); link.download = 'Mapa_Educandario.jpg'; link.href = imgData; link.click();
                 fecharAlertaCustomizado();
             } catch (erro) {
                 fecharAlertaCustomizado(); console.error(erro); mostrarAlerta("O navegador bloqueou a foto. No GitHub vai funcionar perfeitamente! 🚀", "❌ Bloqueio Local");
             } finally { 
                 botoesTopo.style.display = 'flex'; 
-                // DEVOLVE A TELA PRA MODO ADMIN
-                if (forcarLimpeza) {
-                    document.body.classList.remove('modo-cliente');
-                }
+                if (forcarLimpeza) document.body.classList.remove('modo-cliente');
             }
         }
 
@@ -1241,11 +1274,19 @@
             }
         }
 
+        // A MÁGICA DO CACHE (Para não travar o PC)
+        let cacheDadosNuvem = "";
+
         async function carregarDadosDaNuvemBackground() {
             try {
                 const response = await fetch(URL_GOOGLE_SCRIPT); const dadosNuvem = await response.json();
-                for (const idMesa in dadosNuvem) { if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); } }
                 const responseCustos = await fetch(URL_GOOGLE_SCRIPT + "?tipo=custos"); const dadosCustos = await responseCustos.json();
+                
+                let hashAtual = JSON.stringify(dadosNuvem) + JSON.stringify(dadosCustos);
+                if (hashAtual === cacheDadosNuvem) return; // SE NINGUÉM MEXEU, NÃO FAZ NADA!
+                cacheDadosNuvem = hashAtual;
+
+                for (const idMesa in dadosNuvem) { if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); } }
                 bancoDeCustos = {}; dadosCustos.forEach(c => bancoDeCustos[c.id] = c);
                 renderizarMapa();
             } catch (error) {}
@@ -1256,8 +1297,12 @@
             const btnSinc = document.getElementById('btnSincronizar'); btnSinc.textContent = "⌛ Baixando...";
             try {
                 const response = await fetch(URL_GOOGLE_SCRIPT); const dadosNuvem = await response.json();
-                for (const idMesa in dadosNuvem) { if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); } }
                 const responseCustos = await fetch(URL_GOOGLE_SCRIPT + "?tipo=custos"); const dadosCustos = await responseCustos.json();
+                
+                let hashAtual = JSON.stringify(dadosNuvem) + JSON.stringify(dadosCustos);
+                cacheDadosNuvem = hashAtual;
+
+                for (const idMesa in dadosNuvem) { if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); } }
                 bancoDeCustos = {}; dadosCustos.forEach(c => bancoDeCustos[c.id] = c);
                 renderizarMapa(); document.getElementById('telaCarregamento').style.display = 'none';
             } catch (error) { mostrarAlerta("Falha ao conectar. O mapa carregará offline."); document.getElementById('telaCarregamento').style.display = 'none'; renderizarMapa();
