@@ -40,7 +40,7 @@
         .btn-sincronizar:hover { box-shadow: 0 0 10px #47D359; }
 
         /* OCULTA BOTÕES SENSÍVEIS POR PADRÃO (SÓ O ADMIN VÊ) */
-        #btnCofre, #btnImg, #btnPdf, #btnBuffet, #btnVisaoCliente { display: none; }
+        #btnImg, #btnPdf, #btnBuffet, #btnVisaoCliente { display: none; }
 
         #container-salao { width: 100%; padding: 0 70px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 15px; position: relative; margin-bottom: 15px;}
         
@@ -119,59 +119,6 @@
         .info-contato { text-align: center; font-size: 18px; font-weight: bold; color: #47D359; border-top: 1px dashed #233554; padding-top: 10px; width: 100%; }
         .info-contato span.realizacao { display: block; color: var(--texto-claro); font-size: 14px; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* ESTILOS DO COFRE FINANCEIRO E DRE */
-        #painel-cofre { display: none; width: 100%; max-width: 1300px; flex-direction: column; gap: 20px; padding: 20px; box-sizing: border-box; }
-        .cofre-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--ciano-destaque); padding-bottom: 15px;}
-        .cofre-header h2 { margin: 0; color: var(--ciano-destaque); font-size: 28px; display: flex; align-items: center; gap: 10px;}
-        
-        .cofre-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px;}
-        .cofre-card { background-color: var(--azul-card); border-radius: 8px; padding: 20px; border: 1px solid #233554; text-align: center; box-shadow: 0 10px 20px rgba(0,0,0,0.5); position: relative; overflow: hidden;}
-        .cofre-card h4 { margin: 0 0 10px 0; color: #8892b0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;}
-        .cofre-card .valor { font-size: 28px; font-weight: bold; margin: 0;}
-        .cofre-fechado { border-top: 4px solid var(--ciano-destaque); } .cofre-fechado .valor { color: var(--ciano-destaque); }
-        .cofre-custos { border-top: 4px solid #ef4444; } .cofre-custos .valor { color: #ef4444; }
-        .cofre-lucro { border-top: 4px solid #10b981; } .cofre-lucro .valor { color: #10b981; font-size: 34px; }
-        .cofre-recebido { border-top: 4px solid #f59e0b; } .cofre-recebido .valor { color: #f59e0b; }
-        .cofre-pendente { border-top: 4px solid #ff4d4d; } .cofre-pendente .valor { color: #ff4d4d; }
-
-        .area-tabela { overflow-x: auto; background-color: var(--azul-card); border-radius: 8px; border: 1px solid #233554; padding: 15px;}
-        .area-tabela h3 { margin-top: 0; color: var(--ciano-destaque); font-size: 20px; border-bottom: 1px solid #233554; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center;}
-        .tabela-financeira { width: 100%; border-collapse: collapse; min-width: 800px;}
-        .tabela-financeira th { background-color: #1d2d50; color: #fff; padding: 12px; text-align: right; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 2px solid var(--ciano-destaque);}
-        .tabela-financeira th:first-child { text-align: left; }
-        .tabela-financeira td { padding: 12px; border-bottom: 1px solid #233554; font-size: 15px; font-weight: bold; text-align: right;}
-        .tabela-financeira td:first-child { text-align: left; font-size: 16px;}
-        .tabela-financeira tr:hover td { background-color: rgba(102, 255, 255, 0.05); }
-        .tabela-financeira tfoot td { background-color: #112240; color: var(--ciano-destaque); font-size: 16px; border-top: 2px solid var(--ciano-destaque); border-bottom: none;}
-
-        .linha-custo { transition: all 0.3s ease; }
-        .linha-custo.travada { background-color: rgba(16, 185, 129, 0.08) !important; }
-        .linha-custo.travada td:not(.td-acoes) { opacity: 0.35; filter: grayscale(50%); pointer-events: none; }
-
-        .btn-editar-custo { background-color: transparent; border: 1px solid var(--ciano-destaque); color: var(--ciano-destaque); padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; transition: 0.2s;}
-        .btn-editar-custo:hover { background-color: var(--ciano-destaque); color: #000; }
-        
-        #filtroCategoriaCustos { padding: 6px 12px; border-radius: 4px; background-color: #112240; color: #fff; border: 1px solid #ef4444; font-weight: bold; cursor: pointer; outline: none; font-size: 14px;}
-        #filtroCategoriaCustos:focus { box-shadow: 0 0 5px #ef4444; }
-
-        /* ESTILOS DO SIMULADOR (NOVOS QUADROS DE PESSOAS) */
-        .painel-simulador { background-color: #061020; border: 1px dashed #f59e0b; border-radius: 8px; padding: 25px; margin-top: 10px;}
-        .painel-simulador h3 { margin: 0 0 5px 0; color: #f59e0b; font-size: 22px; display: flex; align-items: center; gap: 8px;}
-        .painel-simulador > p { color: #8892b0; margin: 0 0 20px 0; font-size: 14px;}
-        .sim-grid-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 25px;}
-        .sim-item { display: flex; flex-direction: column; background: var(--azul-card); padding: 15px; border-radius: 6px; border: 1px solid #233554; gap: 8px;}
-        .sim-item label { font-size: 14px; font-weight: bold;}
-        .sim-input-row { display: flex; align-items: center; gap: 10px;}
-        .sim-item input { background: #0A192F; border: 1px solid var(--ciano-destaque); color: #fff; padding: 8px; border-radius: 4px; font-size: 16px; width: 60px; text-align: center; font-weight: bold;}
-        .sim-item span { color: #8892b0; font-size: 12px;}
-        
-        .sim-resultado-box { display: flex; justify-content: space-around; background: #112240; padding: 20px; border-radius: 8px; border: 1px solid #233554; flex-wrap: wrap; gap: 20px;}
-        .res-col { display: flex; flex-direction: column; align-items: center; text-align: center;}
-        .res-col span { font-size: 13px; color: #8892b0; text-transform: uppercase; margin-bottom: 5px; font-weight: bold;}
-        .res-col strong { font-size: 24px; color: var(--texto-claro);}
-        .res-col.adicional strong { color: #47D359; }
-        .res-col.projetado strong { color: #f59e0b; font-size: 32px;}
-
         /* MODAIS PADRÃO */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.85); z-index: 1000; justify-content: center; align-items: center; }
         
@@ -243,7 +190,7 @@
     <div id="telaCarregamento">
         <div class="spinner"></div>
         <h2 style="color: var(--ciano-destaque);">Conectando à Nuvem...</h2>
-        <p style="color: #8892b0;">Carregando o salão e os dados financeiros.</p>
+        <p style="color: #8892b0;">Carregando o salão...</p>
     </div>
 
     <div id="modalAlerta" class="modal-overlay" style="z-index: 3000;">
@@ -286,139 +233,10 @@
                 <button class="botao-acao" id="btnBuffet" onclick="toggleBuffet()" style="background-color: #8b5cf6; color: #fff;">🪑 Modo Buffet</button>
                 <button class="botao-acao" id="btnImg" onclick="exportarMapa('img')" style="background-color: #f59e0b; color: #fff;">📷 Imagem</button>
                 <button class="botao-acao" id="btnPdf" onclick="exportarMapa('pdf')" style="background-color: #ec4899; color: #fff;">📄 PDF</button>
-                <button class="botao-acao" id="btnCofre" onclick="abrirCofre()" style="background-color: #ff9900; color: #000; border: 1px solid #fff;">📊 Cofre</button>
             </div>
         </div>
 
-        <div id="painel-cofre">
-            <div class="cofre-header">
-                <h2><span>📊</span> Painel Financeiro e DRE</h2>
-                <div style="display: flex; gap: 10px;">
-                    <button class="botao-acao" onclick="abrirModalCusto()" style="background-color: #ef4444; color: #fff; font-size: 15px;">➕ Lançar Despesa</button>
-                    <button class="botao-acao" onclick="fecharCofre()" style="background-color: #233554; color: #fff; font-size: 15px;">❌ Voltar ao Mapa</button>
-                </div>
-            </div>
-            
-            <div class="cofre-grid">
-                <div class="cofre-card cofre-fechado">
-                    <h4>📈 Receita Total (Vendas)</h4>
-                    <p class="valor" id="cofreFechado">R$ 0,00</p>
-                </div>
-                <div class="cofre-card cofre-custos">
-                    <h4>📉 Custos e Despesas</h4>
-                    <p class="valor" id="cofreCustosTotais">R$ 0,00</p>
-                </div>
-                <div class="cofre-card cofre-lucro">
-                    <h4>🏆 Lucro Líquido Projetado</h4>
-                    <p class="valor" id="cofreLucroLiquido">R$ 0,00</p>
-                </div>
-                <div class="cofre-card cofre-recebido">
-                    <h4>💰 Em Caixa (Já Recebido)</h4>
-                    <p class="valor" id="cofreRecebido">R$ 0,00</p>
-                </div>
-                <div class="cofre-card cofre-pendente">
-                    <h4>⏳ Saldo a Receber das Vendas</h4>
-                    <p class="valor" id="cofrePendente">R$ 0,00</p>
-                </div>
-            </div>
-
-            <div class="area-tabela">
-                <h3>📋 Detalhamento de Receitas (Entradas)</h3>
-                <table class="tabela-financeira">
-                    <thead>
-                        <tr>
-                            <th>Modalidade</th>
-                            <th>Mesas<br>(Total)</th>
-                            <th>Prev. Máxima<br>(R$)</th>
-                            <th>Mesas/Itens<br>(Vendidos)</th>
-                            <th>Total Fechado<br>(R$)</th>
-                            <th>Já Recebido<br>(R$)</th>
-                            <th>Saldo a Receber<br>(R$)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbodyDetalhes">
-                    </tbody>
-                    <tfoot id="tfootDetalhes">
-                    </tfoot>
-                </table>
-            </div>
-
-            <div class="area-tabela" style="margin-top: 10px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ef4444; padding-bottom: 10px;">
-                    <h3 style="margin: 0; color: #ef4444; border: none; padding: 0;">💸 Detalhamento de Despesas (Saídas)</h3>
-                    <select id="filtroCategoriaCustos" onchange="renderizarTabelaCustos()" title="Filtrar despesas por Categoria">
-                        <option value="OCULTAR">🚫 Ocultar Tabela</option>
-                    </select>
-                </div>
-                
-                <div id="tabelaDespesasWrapper" style="display: none; overflow-x: auto; margin-top: 10px;">
-                    <table class="tabela-financeira" style="border-bottom: 2px solid #ef4444; min-width: 900px;">
-                        <thead>
-                            <tr>
-                                <th style="border-bottom-color: #ef4444;">Categoria</th>
-                                <th style="border-bottom-color: #ef4444;">Fornecedor / Profissional</th>
-                                <th style="border-bottom-color: #ef4444;">Descrição do Item</th>
-                                <th style="border-bottom-color: #ef4444;">Qtd</th>
-                                <th style="border-bottom-color: #ef4444;">Valor Unit.</th>
-                                <th style="border-bottom-color: #ef4444;">Valor Total</th>
-                                <th style="border-bottom-color: #ef4444; text-align: center;">Ações Financeiras</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbodyCustos">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="painel-simulador">
-                <h3>🔮 Simulador de Faturamento e Lotação</h3>
-                <p>O que acontece com o caixa e com o salão se vendermos mais algumas mesas ou cadeiras hoje?</p>
-                <div class="sim-grid-inputs" id="containerSimuladorInputs">
-                    </div>
-                
-                <h4 style="color: var(--ciano-destaque); margin-top: 15px; margin-bottom: 10px; border-bottom: 1px dashed #233554; padding-bottom: 5px;">💰 Projeção Financeira</h4>
-                <div class="sim-resultado-box" style="margin-bottom: 20px;">
-                    <div class="res-col">
-                        <span>Receita Atual</span>
-                        <strong id="simAtual">R$ 0,00</strong>
-                    </div>
-                    <div class="res-col adicional">
-                        <span>+ Simulação</span>
-                        <strong id="simExtra">+ R$ 0,00</strong>
-                    </div>
-                    <div class="res-col projetado">
-                        <span>Receita Projetada</span>
-                        <strong id="simProjetado">R$ 0,00</strong>
-                    </div>
-                    <div class="res-col" style="border-left: 1px dashed #f59e0b; padding-left: 20px;">
-                        <span style="color: #ef4444;">- Despesas Reais</span>
-                        <strong id="simCustos" style="color: #ef4444;">R$ 0,00</strong>
-                    </div>
-                    <div class="res-col" style="background-color: rgba(16, 185, 129, 0.1); padding: 10px; border-radius: 8px;">
-                        <span style="color: #10b981;">= SALDO PROJETADO (Lucro)</span>
-                        <strong id="simSaldo" style="color: #10b981; font-size: 32px;">R$ 0,00</strong>
-                    </div>
-                </div>
-
-                <h4 style="color: #4ade80; margin-top: 15px; margin-bottom: 10px; border-bottom: 1px dashed #233554; padding-bottom: 5px;">👥 Projeção de Público no Salão</h4>
-                <div class="sim-resultado-box">
-                    <div class="res-col">
-                        <span>Público Real Atual</span>
-                        <strong id="simPessoasAtual">0</strong>
-                    </div>
-                    <div class="res-col adicional">
-                        <span style="color: #4ade80;">+ Simulação</span>
-                        <strong id="simPessoasExtra" style="color: #4ade80;">+ 0</strong>
-                    </div>
-                    <div class="res-col projetado">
-                        <span style="color: #f59e0b;">Nova Lotação Projetada</span>
-                        <strong id="simPessoasProjetado" style="color: #f59e0b; font-size: 32px;">0</strong>
-                    </div>
-                </div>
-
-            </div>
-
-        </div> <div id="container-salao">
+        <div id="container-salao">
             <div class="tarja-lateral tarja-wc-masc"><span class="tarja-icone">🚹</span><span class="tarja-texto">WC Masc</span></div>
             <div class="tarja-lateral tarja-wc-fem"><span class="tarja-icone">🚺♿</span><span class="tarja-texto">WC Fem</span></div>
             <div class="tarja-lateral tarja-aparador-esq"><span class="tarja-texto">Aparador</span></div>
@@ -460,7 +278,9 @@
             </div>
         </div>
 
-    </div> <div id="meuModal" class="modal-overlay">
+    </div> 
+    
+    <div id="meuModal" class="modal-overlay">
         <div class="modal-box" style="width: 750px;">
             <h2 id="tituloModal"><span>Gerenciar Mesa</span> <span id="statusBadge">Livre</span></h2> 
             
@@ -493,7 +313,7 @@
             </div>
 
             <div id="containerPagadores" style="max-height: 450px; overflow-y: auto; padding-right: 10px;">
-                </div>
+            </div>
 
             <div class="painel-financeiro" style="margin-top: 15px;">
                 <h4>💰 Resumo Financeiro Global <span id="textoValorPadrao" style="color: #8892b0; font-size: 12px;"></span></h4>
@@ -539,77 +359,15 @@
         </div>
     </div>
 
-    <div id="modalCusto" class="modal-overlay" style="z-index: 3500;">
-        <div class="modal-box" style="width: 550px;">
-            <h2 style="color: #ef4444; border-bottom-color: #ef4444;"><span id="tituloModalCusto">Lançar Nova Despesa</span></h2> 
-            
-            <div class="form-row">
-                <div class="form-group" style="flex: 0.5;">
-                    <label>Categoria (Escolha ou Digite Nova)</label>
-                    <input list="listaCategorias" id="custoCategoria" placeholder="Ex: Atração Musical...">
-                    <datalist id="listaCategorias">
-                        <option value="Atração Musical">
-                        <option value="Estrutura e Som">
-                        <option value="Buffet">
-                        <option value="Bebidas">
-                        <option value="Decoração">
-                        <option value="Publicidade">
-                        <option value="Taxas e Impostos">
-                        <option value="Outras Demandas">
-                    </datalist>
-                </div>
-                <div class="form-group">
-                    <label>Fornecedor / Profissional</label>
-                    <input type="text" id="custoFornecedor" placeholder="Ex: Banda X, Distribuidora Y">
-                </div>
-            </div>
-
-            <div class="form-group" style="margin-bottom: 12px;">
-                <label>Descrição do Item / Serviço</label>
-                <input type="text" id="custoDescricao" placeholder="Ex: Cachê Principal, Cerveja Heineken, Arranjos de Mesa...">
-            </div>
-
-            <div class="form-row" style="background-color: #061020; padding: 15px; border-radius: 8px; border: 1px dashed #ef4444; box-sizing: border-box;">
-                <div class="form-group" style="flex: 0.15;">
-                    <label>Qtd</label>
-                    <input type="number" id="custoQtd" min="1" value="1" oninput="calcularCustoTotal()" onchange="calcularCustoTotal()" style="padding: 8px 5px; text-align: center;">
-                </div>
-                <div class="form-group" style="flex: 0.4;">
-                    <label>Valor Unitário (R$)</label>
-                    <input type="text" id="custoUnitario" oninput="formatarMoeda(this); calcularCustoTotal()" placeholder="0,00">
-                </div>
-                <div class="form-group" style="flex: 0.45;">
-                    <label style="color: #ef4444;">Valor Total (R$)</label>
-                    <input type="text" id="custoTotal" class="campo-bloqueado" style="color: #ef4444 !important;" readonly placeholder="0,00">
-                </div>
-            </div>
-
-            <div class="form-group" style="margin-top: 12px;">
-                <label>Observações / Detalhes do Contrato</label>
-                <textarea id="custoObs" placeholder="Condições de pagamento, detalhes do pedido..."></textarea>
-            </div>
-
-            <div class="modal-botoes">
-                <button class="btn-excluir" id="btnExcluirCusto" onclick="excluirCusto()" style="display: none;">🗑️ Excluir Despesa</button>
-                <div class="grupo-direita">
-                    <button class="btn-cancelar" onclick="fecharModalCusto()">Cancelar</button>
-                    <button class="botao-acao" id="btnSalvarCusto" onclick="salvarCusto()" style="background-color: #ef4444; color: #fff;">Salvar Despesa</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script>
         const URL_GOOGLE_SCRIPT = "https://script.google.com/macros/s/AKfycbxCOJv1V8KMAyQ_ECyF7cdVkAiwRQcXQ6tQtNiI-SzGiMP0QeGJz-UsYQQezolsROzM/exec";
         
         const bancoDeDados = {}; 
-        let bancoDeCustos = {}; 
         
         let mesaEditandoAtual = ""; 
         let statusAoAbrirMesa = ""; 
         let valorCadeiraAvulsa = 800.00; 
         let pagadoresAtuais = []; 
-        let custoEditandoId = "";
 
         let nivelAcesso = 0; 
         const SENHA_VENDAS = "vendas2026";
@@ -654,7 +412,7 @@
                 document.getElementById('inputSenha').value = ''; document.getElementById('modalSenha').style.display = 'flex'; document.getElementById('inputSenha').focus();
             } else {
                 nivelAcesso = 0; document.body.className = 'modo-visitante';
-                document.getElementById('btnCofre').style.display = 'none'; document.getElementById('btnImg').style.display = 'none'; document.getElementById('btnPdf').style.display = 'none'; document.getElementById('btnBuffet').style.display = 'none'; document.getElementById('btnVisaoCliente').style.display = 'none'; document.getElementById('btnLinkMagico').style.display = 'none';
+                document.getElementById('btnImg').style.display = 'none'; document.getElementById('btnPdf').style.display = 'none'; document.getElementById('btnBuffet').style.display = 'none'; document.getElementById('btnVisaoCliente').style.display = 'none'; document.getElementById('btnLinkMagico').style.display = 'none';
                 document.getElementById('btnBuffet').style.backgroundColor = '#8b5cf6'; document.getElementById('btnBuffet').textContent = "🪑 Modo Buffet"; document.getElementById('btnVisaoCliente').style.backgroundColor = '#3b82f6'; document.getElementById('btnVisaoCliente').textContent = "👁️ Visão Cliente";
                 renderizarMapa(); mostrarAlerta("Sistema trancado com sucesso. O mapa agora é apenas para visualização.", "🔒 Logout");
             }
@@ -666,8 +424,8 @@
             let senhaDigitada = document.getElementById('inputSenha').value; fecharModalSenha();
             if (senhaDigitada === SENHA_ADMIN) {
                 nivelAcesso = 2; document.body.className = 'modo-admin';
-                document.getElementById('btnImg').style.display = 'block'; document.getElementById('btnPdf').style.display = 'block'; document.getElementById('btnBuffet').style.display = 'block'; document.getElementById('btnVisaoCliente').style.display = 'block'; document.getElementById('btnCofre').style.display = 'block'; document.getElementById('btnLinkMagico').style.display = 'block';
-                mostrarAlerta("Acesso Total (Admin) Liberado! Ferramentas financeiras e edições irrestritas disponíveis.\n\nClique na foto novamente para trancar o sistema.", "🔓 Acesso Mestre");
+                document.getElementById('btnImg').style.display = 'block'; document.getElementById('btnPdf').style.display = 'block'; document.getElementById('btnBuffet').style.display = 'block'; document.getElementById('btnVisaoCliente').style.display = 'block'; document.getElementById('btnLinkMagico').style.display = 'block';
+                mostrarAlerta("Acesso Total (Admin) Liberado! Ferramentas de edição de mapas liberadas.\n\nClique na foto novamente para trancar o sistema.", "🔓 Acesso Mestre");
             } 
             else if (senhaDigitada === SENHA_VENDAS) {
                 nivelAcesso = 1; document.body.className = 'modo-vendas';
@@ -880,435 +638,6 @@
             }
         }
 
-        function isCustoLocked(obs) { return (obs || "").includes("[[LOCKED]]"); }
-        function getCustoObsLimpada(obs) { return (obs || "").replace("[[LOCKED]]", "").trim(); }
-        function setCustoLocked(obs, lock) { let limpo = getCustoObsLimpada(obs); return lock ? "[[LOCKED]] " + limpo : limpo; }
-
-        async function toggleTravarCusto(id, isLocked) {
-            let c = bancoDeCustos[id]; c.obs = setCustoLocked(c.obs, isLocked); renderizarTabelaCustos(); 
-            let payload = { tipo: "custo", acao: "salvar", dados: c };
-            try { await fetch(URL_GOOGLE_SCRIPT, { method: 'POST', body: JSON.stringify(payload) }); } catch(e) { mostrarAlerta("Erro ao sincronizar travamento com a nuvem."); }
-        }
-
-        function abrirCofre() {
-            let totaisGlobais = { previsao: 0, fechado: 0, recebido: 0, pendente: 0, qtdVendidaGeral: 0, qtdTotalGeral: 0 };
-            let totaisCadeiras = { qtd: 0, fechado: 0, recebido: 0 };
-            let totalPessoasSalao = 0; 
-            
-            let htmlDetalhes = ''; let htmlSimulador = '';
-
-            for (const chave in CONFIG_MESAS) {
-                const config = CONFIG_MESAS[chave];
-                let qtdTotalSetor = 0;
-                config.layout.forEach(fileira => { fileira.forEach(item => { if (typeof item === 'number') qtdTotalSetor += item; }); });
-                
-                let previsaoSetor = qtdTotalSetor * config.valorBase;
-                totaisGlobais.qtdTotalGeral += qtdTotalSetor; totaisGlobais.previsao += previsaoSetor;
-
-                let qtdVendidaSetor = 0; let fechadoSetor = 0; let recebidoSetor = 0;
-
-                for (const id in bancoDeDados) {
-                    if (id.startsWith(config.prefixo)) {
-                        const mesa = bancoDeDados[id];
-                        if (mesa.status === "Vendida" || mesa.status === "Reservada") {
-                            qtdVendidaSetor++; totalPessoasSalao += config.capacidade;
-                            
-                            let qtdCadeirasExtra = parseInt(mesa.cadeiras) || 0;
-                            totalPessoasSalao += qtdCadeirasExtra; 
-
-                            let valorTotalCobrado = converterParaNumero(mesa.valorTotal);
-                            let valorPago = converterParaNumero(mesa.valorPago);
-                            
-                            let valorDasCadeiras = qtdCadeirasExtra * valorCadeiraAvulsa;
-                            let valorDaMesaSemCadeiras = valorTotalCobrado - valorDasCadeiras;
-                            
-                            if (valorDaMesaSemCadeiras < 0) { valorDaMesaSemCadeiras = valorTotalCobrado; valorDasCadeiras = 0; }
-                            
-                            let pagoNaMesa = Math.min(valorPago, valorDaMesaSemCadeiras);
-                            let pagoNaCadeira = Math.max(0, valorPago - pagoNaMesa);
-                            
-                            fechadoSetor += valorDaMesaSemCadeiras; recebidoSetor += pagoNaMesa;
-                            totaisCadeiras.qtd += qtdCadeirasExtra; totaisCadeiras.fechado += valorDasCadeiras; totaisCadeiras.recebido += pagoNaCadeira;
-                        }
-                    }
-                }
-
-                let saldoSetor = fechadoSetor - recebidoSetor;
-                totaisGlobais.qtdVendidaGeral += qtdVendidaSetor; totaisGlobais.fechado += fechadoSetor;
-                totaisGlobais.recebido += recebidoSetor; totaisGlobais.pendente += saldoSetor;
-
-                htmlDetalhes += `
-                    <tr>
-                        <td style="color:${config.corNormal};">${config.nome}</td>
-                        <td>${qtdTotalSetor}</td>
-                        <td>R$ ${converterParaMoeda(previsaoSetor)}</td>
-                        <td style="color: ${qtdVendidaSetor > 0 ? '#fff' : '#4a5568'}">${qtdVendidaSetor}</td>
-                        <td style="color: var(--ciano-destaque);">R$ ${converterParaMoeda(fechadoSetor)}</td>
-                        <td style="color: #47D359;">R$ ${converterParaMoeda(recebidoSetor)}</td>
-                        <td style="color: #ff4d4d;">R$ ${converterParaMoeda(saldoSetor)}</td>
-                    </tr>
-                `;
-
-                let disponiveis = qtdTotalSetor - qtdVendidaSetor;
-                htmlSimulador += `
-                    <div class="sim-item">
-                        <label style="color:${config.corNormal}">${config.nome}</label>
-                        <div class="sim-input-row">
-                            <input type="number" min="0" max="${disponiveis}" value="0" class="input-simulador" data-id="${chave}" data-valorbase="${config.valorBase}" data-capacidade="${config.capacidade}" oninput="calcularSimulacao()">
-                            <span>x R$ ${converterParaMoeda(config.valorBase)}</span>
-                        </div>
-                        <span style="margin-top:2px;">(Máx disp: ${disponiveis})</span>
-                    </div>
-                `;
-            }
-
-            let saldoCadeiras = totaisCadeiras.fechado - totaisCadeiras.recebido;
-            htmlDetalhes += `
-                <tr style="background-color: rgba(255, 255, 255, 0.05);">
-                    <td style="color:#fff;">🪑 Cadeiras Avulsas</td>
-                    <td style="color:#8892b0;">-</td>
-                    <td style="color:#8892b0;">-</td>
-                    <td style="color: ${totaisCadeiras.qtd > 0 ? '#fff' : '#4a5568'}">${totaisCadeiras.qtd}</td>
-                    <td style="color: var(--ciano-destaque);">R$ ${converterParaMoeda(totaisCadeiras.fechado)}</td>
-                    <td style="color: #47D359;">R$ ${converterParaMoeda(totaisCadeiras.recebido)}</td>
-                    <td style="color: #ff4d4d;">R$ ${converterParaMoeda(saldoCadeiras)}</td>
-                </tr>
-            `;
-
-            htmlDetalhes += `
-                <tr style="background-color: rgba(102, 255, 255, 0.1); border-top: 1px dashed var(--ciano-destaque);">
-                    <td colspan="3" style="color: var(--ciano-destaque); text-align: right; font-size: 15px; text-transform: uppercase;">👥 Quantidade de Pessoas (No Salão):</td>
-                    <td style="color: #fff; font-size: 22px; font-weight: bold;">${totalPessoasSalao}</td>
-                    <td colspan="3" style="color: #8892b0; font-size: 12px; text-align: left; vertical-align: middle;">(Soma de assentos + cadeiras extras)</td>
-                </tr>
-            `;
-
-            htmlSimulador += `
-                <div class="sim-item" style="border-color: #fff;">
-                    <label style="color:#fff">🪑 Cadeiras Avulsas</label>
-                    <div class="sim-input-row">
-                        <input type="number" min="0" max="999" value="0" class="input-simulador" data-id="CadeirasAvulsas" data-valorbase="${valorCadeiraAvulsa}" data-capacidade="1" oninput="calcularSimulacao()">
-                        <span>x R$ ${converterParaMoeda(valorCadeiraAvulsa)}</span>
-                    </div>
-                    <span style="margin-top:2px;">(Venda Extra Opcional)</span>
-                </div>
-            `;
-
-            totaisGlobais.fechado += totaisCadeiras.fechado; totaisGlobais.recebido += totaisCadeiras.recebido; totaisGlobais.pendente += saldoCadeiras;
-
-            let htmlRodapeTabela = `
-                <tr>
-                    <td>TOTAIS GERAIS</td>
-                    <td>${totaisGlobais.qtdTotalGeral}</td>
-                    <td>R$ ${converterParaMoeda(totaisGlobais.previsao)}</td>
-                    <td>${totaisGlobais.qtdVendidaGeral}</td>
-                    <td>R$ ${converterParaMoeda(totaisGlobais.fechado)}</td>
-                    <td>R$ ${converterParaMoeda(totaisGlobais.recebido)}</td>
-                    <td>R$ ${converterParaMoeda(totaisGlobais.pendente)}</td>
-                </tr>
-            `;
-            
-            let totalCustosGlobais = 0;
-            for (const id in bancoDeCustos) { totalCustosGlobais += converterParaNumero(bancoDeCustos[id].valorTotal); }
-            let lucroLiquidoReal = totaisGlobais.fechado - totalCustosGlobais;
-
-            document.getElementById('cofreFechado').textContent = `R$ ${converterParaMoeda(totaisGlobais.fechado)}`;
-            document.getElementById('cofreCustosTotais').textContent = `R$ ${converterParaMoeda(totalCustosGlobais)}`;
-            document.getElementById('cofreLucroLiquido').textContent = `R$ ${converterParaMoeda(lucroLiquidoReal)}`;
-            document.getElementById('cofreRecebido').textContent = `R$ ${converterParaMoeda(totaisGlobais.recebido)}`;
-            document.getElementById('cofrePendente').textContent = `R$ ${converterParaMoeda(totaisGlobais.pendente)}`;
-
-            document.getElementById('tbodyDetalhes').innerHTML = htmlDetalhes;
-            document.getElementById('tfootDetalhes').innerHTML = htmlRodapeTabela;
-            
-            const containerSimulador = document.getElementById('containerSimuladorInputs');
-            containerSimulador.innerHTML = htmlSimulador;
-            containerSimulador.setAttribute('data-fechado-atual', totaisGlobais.fechado); 
-            containerSimulador.setAttribute('data-custos-totais', totalCustosGlobais); 
-            containerSimulador.setAttribute('data-pessoas-reais', totalPessoasSalao); 
-            
-            // CARREGA O HISTÓRICO DA SIMULAÇÃO (Se existir no computador da pessoa)
-            try {
-                let savedSim = JSON.parse(localStorage.getItem('simulacao_educandario_2026')) || {};
-                const inputs = document.querySelectorAll('.input-simulador');
-                inputs.forEach(inp => {
-                    let id = inp.getAttribute('data-id');
-                    if (savedSim[id] !== undefined) {
-                        let max = parseInt(inp.getAttribute('max')) || 0;
-                        let val = parseInt(savedSim[id]);
-                        if (val > max && id !== 'CadeirasAvulsas') val = max; 
-                        inp.value = val;
-                    }
-                });
-            } catch(e) {}
-            
-            document.getElementById('filtroCategoriaCustos').value = "OCULTAR";
-            renderizarTabelaCustos(); 
-            calcularSimulacao();
-
-            document.getElementById('container-salao').style.display = 'none'; document.querySelector('.painel-rodape').style.display = 'none';
-            document.getElementById('painel-cofre').style.display = 'flex';
-        }
-
-        function renderizarTabelaCustos() {
-            let arrayCustos = Object.values(bancoDeCustos);
-            let selectFiltro = document.getElementById('filtroCategoriaCustos');
-            let categoriaSelecionada = selectFiltro.value || "OCULTAR"; 
-            
-            let categoriasUnicas = new Set(); arrayCustos.forEach(c => { if(c.categoria) categoriasUnicas.add(c.categoria); });
-            let categoriasArray = Array.from(categoriasUnicas).sort();
-            
-            let optionsHtml = `<option value="OCULTAR">🚫 Ocultar Tabela</option>`;
-            optionsHtml += `<option value="TODAS">🧾 Todas as despesas</option>`;
-            categoriasArray.forEach(cat => {
-                let selected = (cat === categoriaSelecionada) ? "selected" : "";
-                optionsHtml += `<option value="${cat}" ${selected}>${cat}</option>`;
-            });
-            selectFiltro.innerHTML = optionsHtml; selectFiltro.value = categoriaSelecionada; 
-
-            if (categoriaSelecionada === "OCULTAR") { document.getElementById('tabelaDespesasWrapper').style.display = 'none'; return; } 
-            else { document.getElementById('tabelaDespesasWrapper').style.display = 'block'; }
-
-            let custosFiltrados = arrayCustos;
-            if (categoriaSelecionada !== "TODAS") { custosFiltrados = arrayCustos.filter(c => c.categoria === categoriaSelecionada); }
-            
-            custosFiltrados.sort((a, b) => {
-                let catA = (a.categoria || "").toLowerCase(); let catB = (b.categoria || "").toLowerCase();
-                if (catA < catB) return -1; if (catA > catB) return 1;
-                let forA = (a.fornecedor || "").toLowerCase(); let forB = (b.fornecedor || "").toLowerCase();
-                if (forA < forB) return -1; if (forA > forB) return 1; return 0;
-            });
-            
-            let htmlCustos = ""; let somaFiltrada = 0;
-            
-            for (const c of custosFiltrados) {
-                let valTotal = converterParaNumero(c.valorTotal); somaFiltrada += valTotal;
-                let isLocked = isCustoLocked(c.obs); let classTravada = isLocked ? "travada" : "";
-                
-                htmlCustos += `
-                    <tr class="linha-custo ${classTravada}">
-                        <td style="color: #ef4444;">${c.categoria}</td>
-                        <td style="color: #fff;">${c.fornecedor}</td>
-                        <td style="color: #8892b0; font-weight: normal;">${c.descricao}</td>
-                        <td style="color: #fff; text-align: center;">${c.quantidade}</td>
-                        <td style="color: #8892b0; font-weight: normal;">R$ ${converterParaMoeda(c.valorUnitario)}</td>
-                        <td style="color: #ef4444;">R$ ${converterParaMoeda(valTotal)}</td>
-                        <td class="td-acoes" style="text-align: center;">
-                            <div style="display: flex; flex-direction: column; gap: 5px; align-items: center;">
-                                <label style="cursor: pointer; font-size: 11px; color: ${isLocked ? '#10b981' : '#f59e0b'}; font-weight: bold; display: flex; align-items: center; gap: 5px;">
-                                    <input type="checkbox" ${isLocked ? 'checked' : ''} onchange="toggleTravarCusto('${c.id}', this.checked)" style="width:14px; height:14px; cursor:pointer;">
-                                    ${isLocked ? '✅ Confirmado' : '⏳ Pendente'}
-                                </label>
-                                <button class="btn-editar-custo" onclick="abrirModalCusto('${c.id}')" ${isLocked ? 'style="display:none;"' : ''}>✏️ Editar</button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }
-            
-            if (custosFiltrados.length === 0) { htmlCustos = `<tr><td colspan="7" style="text-align: center; color: #8892b0; font-weight: normal; padding: 20px;">Nenhuma despesa encontrada para este filtro.</td></tr>`; }
-            
-            if(categoriaSelecionada !== "TODAS" && custosFiltrados.length > 0) {
-                 htmlCustos += `
-                    <tr style="background-color: #112240; border-top: 2px solid #ef4444;">
-                        <td colspan="5" style="text-align: right; color: #ef4444;">SUBTOTAL (${categoriaSelecionada}):</td>
-                        <td colspan="2" style="color: #ef4444; text-align: left; font-size: 18px;">R$ ${converterParaMoeda(somaFiltrada)}</td>
-                    </tr>`;
-            }
-            document.getElementById('tbodyCustos').innerHTML = htmlCustos;
-        }
-
-        // O NOVO MOTOR DO SIMULADOR (COM HISTÓRICO E PESSOAS)
-        function calcularSimulacao() {
-            const container = document.getElementById('containerSimuladorInputs');
-            let fechadoAtual = parseFloat(container.getAttribute('data-fechado-atual')) || 0;
-            let custosTotais = parseFloat(container.getAttribute('data-custos-totais')) || 0;
-            let pessoasReais = parseInt(container.getAttribute('data-pessoas-reais')) || 0;
-            
-            let projecaoExtra = 0;
-            let pessoasExtra = 0;
-            let simulacaoParaSalvar = {};
-            
-            const inputs = document.querySelectorAll('.input-simulador');
-            inputs.forEach(inp => {
-                let qtd = parseInt(inp.value) || 0; 
-                let max = parseInt(inp.getAttribute('max')) || 0;
-                let id = inp.getAttribute('data-id');
-                
-                if (id !== 'CadeirasAvulsas' && qtd > max) { qtd = max; inp.value = max; } 
-                if (qtd < 0) { qtd = 0; inp.value = 0; }
-                
-                let valorBase = parseFloat(inp.getAttribute('data-valorbase')) || 0; 
-                let capacidade = parseInt(inp.getAttribute('data-capacidade')) || 0;
-                
-                projecaoExtra += (qtd * valorBase);
-                pessoasExtra += (qtd * capacidade);
-                
-                simulacaoParaSalvar[id] = qtd;
-            });
-            
-            // SALVA A BRINCADEIRA NO NAVEGADOR
-            localStorage.setItem('simulacao_educandario_2026', JSON.stringify(simulacaoParaSalvar));
-            
-            let receitaProjetada = fechadoAtual + projecaoExtra;
-            let saldoProjetado = receitaProjetada - custosTotais;
-            let pessoasProjetadas = pessoasReais + pessoasExtra;
-
-            // Atualiza Quadros Financeiros
-            document.getElementById('simAtual').textContent = `R$ ${converterParaMoeda(fechadoAtual)}`;
-            document.getElementById('simExtra').textContent = `+ R$ ${converterParaMoeda(projecaoExtra)}`;
-            document.getElementById('simProjetado').textContent = `R$ ${converterParaMoeda(receitaProjetada)}`;
-            document.getElementById('simCustos').textContent = `R$ ${converterParaMoeda(custosTotais)}`;
-            document.getElementById('simSaldo').textContent = `R$ ${converterParaMoeda(saldoProjetado)}`;
-            
-            // Atualiza Quadros de Pessoas
-            document.getElementById('simPessoasAtual').textContent = pessoasReais;
-            document.getElementById('simPessoasExtra').textContent = `+ ${pessoasExtra}`;
-            document.getElementById('simPessoasProjetado').textContent = pessoasProjetadas;
-        }
-
-        function fecharCofre() { document.getElementById('painel-cofre').style.display = 'none'; document.getElementById('container-salao').style.display = 'flex'; document.querySelector('.painel-rodape').style.display = 'flex'; }
-
-        async function exportarMapa(tipo) {
-            const areaExportacao = document.getElementById('area-exportacao'); const botoesTopo = document.querySelector('.area-botoes-topo');
-            botoesTopo.style.display = 'none'; mostrarAlerta("Preparando sua imagem, aguarde um instante... 📸", "⏳ Gerando Arquivo");
-
-            try {
-                const canvas = await html2canvas(areaExportacao, { backgroundColor: '#0A192F', scale: 2, useCORS: true, allowTaint: true });
-                const imgData = canvas.toDataURL('image/jpeg', 0.9);
-
-                if (tipo === 'img') {
-                    const link = document.createElement('a'); link.download = 'Mapa_Educandario_2026.jpg'; link.href = imgData; link.click();
-                } else if (tipo === 'pdf') {
-                    const { jsPDF } = window.jspdf; const orientation = canvas.width >= canvas.height ? 'l' : 'p';
-                    const pdf = new jsPDF({ orientation: orientation, unit: 'px', format: [canvas.width, canvas.height] });
-                    pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height); pdf.save('Mapa_Educandario_2026.pdf');
-                }
-                fecharAlertaCustomizado();
-            } catch (erro) {
-                fecharAlertaCustomizado(); console.error(erro); mostrarAlerta("O navegador bloqueou a foto. No GitHub vai funcionar perfeitamente! 🚀", "❌ Bloqueio Local");
-            } finally { botoesTopo.style.display = 'flex'; }
-        }
-
-        function inicializarBancoDeDados() {
-            for (const chave in CONFIG_MESAS) {
-                const config = CONFIG_MESAS[chave]; let contador = 1;
-                config.layout.forEach(fileira => {
-                    fileira.forEach(item => {
-                        if (item !== "BIG_MIX" && item !== "GAP") {
-                            for (let i = 0; i < item; i++) {
-                                const num = contador < 10 ? '0' + contador : contador;
-                                const id = `${config.prefixo}-${num}`;
-                                bancoDeDados[id] = { setor: config.nome, status: "Livre", nome: "", telefone: "", email: "", cadeiras: 0, pagamento: "Nenhum", parcelas: "1x", valorTotal: "", valorPago: "", saldoDevedor: 0, logoPropaganda: false, obs: "", detalhesParcelas: "[]" };
-                                contador++;
-                            }
-                        }
-                    });
-                });
-            }
-        }
-
-        async function carregarDadosDaNuvemBackground() {
-            try {
-                const response = await fetch(URL_GOOGLE_SCRIPT); const dadosNuvem = await response.json();
-                for (const idMesa in dadosNuvem) { if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); } }
-                const responseCustos = await fetch(URL_GOOGLE_SCRIPT + "?tipo=custos"); const dadosCustos = await responseCustos.json();
-                bancoDeCustos = {}; dadosCustos.forEach(c => bancoDeCustos[c.id] = c);
-                renderizarMapa();
-            } catch (error) {}
-        }
-        setInterval(carregarDadosDaNuvemBackground, 15000);
-
-        async function carregarDadosDaNuvem() {
-            const btnSinc = document.getElementById('btnSincronizar'); btnSinc.textContent = "⌛ Baixando...";
-            try {
-                const response = await fetch(URL_GOOGLE_SCRIPT); const dadosNuvem = await response.json();
-                for (const idMesa in dadosNuvem) { if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); } }
-                const responseCustos = await fetch(URL_GOOGLE_SCRIPT + "?tipo=custos"); const dadosCustos = await responseCustos.json();
-                bancoDeCustos = {}; dadosCustos.forEach(c => bancoDeCustos[c.id] = c);
-                renderizarMapa(); document.getElementById('telaCarregamento').style.display = 'none';
-            } catch (error) { mostrarAlerta("Falha ao conectar. O mapa carregará offline."); document.getElementById('telaCarregamento').style.display = 'none'; renderizarMapa();
-            } finally { btnSinc.textContent = "🔄 Sincronizar"; }
-        }
-
-        async function enviarParaNuvem(idMesa, dados) {
-            try { await fetch(URL_GOOGLE_SCRIPT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ idMesa: idMesa, dados: dados }) });
-            } catch (error) { throw new Error("Erro de conexão"); }
-        }
-
-        function formatarMoeda(elemento) {
-            let valor = String(elemento.value).replace(/\D/g, ''); if (valor === '') { elemento.value = ''; return; }
-            valor = (parseInt(valor) / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); elemento.value = valor;
-        }
-
-        function converterParaNumero(str) {
-            if (str === null || str === undefined || str === "") return 0; if (typeof str === 'number') return str;
-            return parseFloat(String(str).replace(/\./g, '').replace(',', '.'));
-        }
-
-        function converterParaMoeda(numero) {
-            let val = Number(numero); if (isNaN(val)) val = 0;
-            return val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        }
-
-        function renderizarMapa() {
-            const containerSalao = document.getElementById('container-salao');
-            Array.from(containerSalao.children).forEach(child => { if (!child.classList.contains('palco') && !child.classList.contains('tarja-lateral')) { containerSalao.removeChild(child); } });
-            
-            const palco = document.querySelector('.palco'); let elementoDeReferencia = palco.nextSibling;
-            
-            for (const chave in CONFIG_MESAS) {
-                const setorConfig = CONFIG_MESAS[chave]; let contadorMesa = 1; 
-
-                const divSetor = document.createElement('div'); divSetor.className = 'setor';
-                divSetor.style.backgroundColor = setorConfig.bgTranslucido; divSetor.style.border = `1px solid ${setorConfig.bordaFina}`; divSetor.style.boxShadow = `0 0 15px ${setorConfig.bgTranslucido}`;
-                
-                const tituloSetor = document.createElement('h3'); tituloSetor.textContent = setorConfig.nome; tituloSetor.style.color = setorConfig.corNormal; divSetor.appendChild(tituloSetor);
-
-                setorConfig.layout.forEach(fileira => {
-                    const divFileira = document.createElement('div'); divFileira.className = 'fileira-mesas';
-
-                    fileira.forEach(item => {
-                        if (item === "BIG_MIX") {
-                            const divMixContainer = document.createElement('div'); divMixContainer.style.position = "relative"; divMixContainer.style.width = "180px"; divMixContainer.style.display = "flex"; divMixContainer.style.justifyContent = "center";
-                            divMixContainer.innerHTML = `<div class="grande-house-mix"><span class="icone">🎛️</span> House Mix</div>`; divFileira.appendChild(divMixContainer);
-                        } else if (item === "GAP") {
-                            const divGap = document.createElement('div'); divGap.style.width = "180px"; divFileira.appendChild(divGap);
-                        } else {
-                            for (let i = 0; i < item; i++) {
-                                const num = contadorMesa < 10 ? '0' + contadorMesa : contadorMesa;
-                                const idDaMesa = `${setorConfig.prefixo}-${num}`; const dadosDestaMesa = bancoDeDados[idDaMesa];
-                                const wrapperMesa = document.createElement('div'); wrapperMesa.className = 'wrapper-mesa';
-
-                                if (nivelAcesso === 0 && mesasPermitidas.includes(idDaMesa)) { wrapperMesa.classList.add('mostrar-forcado'); }
-
-                                const textoAcima = document.createElement('div'); textoAcima.className = 'texto-acima'; textoAcima.textContent = dadosDestaMesa.status.toUpperCase(); 
-                                if (dadosDestaMesa.status === "Vendida") { textoAcima.classList.add('vendida'); } else if (dadosDestaMesa.status === "Reservada") { textoAcima.classList.add('reservada'); } else { textoAcima.classList.add('livre'); }
-
-                                const divMesa = document.createElement('div'); divMesa.className = `mesa ${setorConfig.classeTamanho}`; divMesa.textContent = idDaMesa; divMesa.setAttribute('data-status', dadosDestaMesa.status);
-                                
-                                if (dadosDestaMesa.status === "Vendida" || dadosDestaMesa.status === "Reservada") {
-                                    divMesa.style.backgroundColor = setorConfig.corVendida; divMesa.style.border = "2px dashed #666"; divMesa.style.opacity = "0.9";
-                                } else { divMesa.style.backgroundColor = setorConfig.corNormal; }
-
-                                if (dadosDestaMesa.cadeiras > 0) { const badge = document.createElement('div'); badge.className = 'badge-extra'; badge.textContent = `+${dadosDestaMesa.cadeiras}`; divMesa.appendChild(badge); }
-                                if (dadosDestaMesa.status !== "Livre" && dadosDestaMesa.saldoDevedor > 0) { const badgeDivida = document.createElement('div'); badgeDivida.className = 'badge-divida'; badgeDivida.textContent = '💲'; badgeDivida.title = `Saldo pendente: R$ ${converterParaMoeda(dadosDestaMesa.saldoDevedor)}`; wrapperMesa.appendChild(badgeDivida); }
-
-                                divMesa.onclick = function() { abrirModal(idDaMesa); };
-
-                                const textoAbaixo = document.createElement('div'); textoAbaixo.className = 'texto-abaixo'; 
-                                textoAbaixo.textContent = dadosDestaMesa.status !== "Livre" ? dadosDestaMesa.nome : "";
-
-                                wrapperMesa.appendChild(textoAcima); wrapperMesa.appendChild(divMesa); wrapperMesa.appendChild(textoAbaixo); divFileira.appendChild(wrapperMesa); contadorMesa++; 
-                            }
-                        }
-                    });
-                    divSetor.appendChild(divFileira);
-                });
-                containerSalao.insertBefore(divSetor, elementoDeReferencia);
-            }
-        }
-
         function abrirModal(idMesa) {
             const dados = bancoDeDados[idMesa];
             if (nivelAcesso === 0) { return; } 
@@ -1449,50 +778,128 @@
             }
         }
 
-        function abrirModalCusto(id = null) {
-            if (id && bancoDeCustos[id]) {
-                custoEditandoId = id; const c = bancoDeCustos[id];
-                document.getElementById('tituloModalCusto').textContent = "Editar Despesa"; document.getElementById('custoCategoria').value = c.categoria;
-                document.getElementById('custoFornecedor').value = c.fornecedor; document.getElementById('custoDescricao').value = c.descricao; document.getElementById('custoQtd').value = c.quantidade;
-                document.getElementById('custoUnitario').value = converterParaMoeda(c.valorUnitario); document.getElementById('custoTotal').value = converterParaMoeda(c.valorTotal);
-                document.getElementById('custoObs').value = getCustoObsLimpada(c.obs); document.getElementById('btnExcluirCusto').style.display = 'block';
-            } else {
-                custoEditandoId = ""; document.getElementById('tituloModalCusto').textContent = "Lançar Nova Despesa"; document.getElementById('custoCategoria').value = "";
-                document.getElementById('custoFornecedor').value = ""; document.getElementById('custoDescricao').value = ""; document.getElementById('custoQtd').value = 1;
-                document.getElementById('custoUnitario').value = ""; document.getElementById('custoTotal').value = ""; document.getElementById('custoObs').value = "";
-                document.getElementById('btnExcluirCusto').style.display = 'none';
-            }
-            document.getElementById('modalCusto').style.display = 'flex';
+        async function carregarDadosDaNuvemBackground() {
+            try {
+                const response = await fetch(URL_GOOGLE_SCRIPT); const dadosNuvem = await response.json();
+                for (const idMesa in dadosNuvem) { if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); } }
+                renderizarMapa();
+            } catch (error) {}
         }
 
-        function fecharModalCusto() { document.getElementById('modalCusto').style.display = 'none'; }
-        function calcularCustoTotal() { let qtd = parseInt(document.getElementById('custoQtd').value) || 1; let unitario = converterParaNumero(document.getElementById('custoUnitario').value); let total = qtd * unitario; document.getElementById('custoTotal').value = converterParaMoeda(total); }
+        async function carregarDadosDaNuvem() {
+            const btnSinc = document.getElementById('btnSincronizar'); btnSinc.textContent = "⌛ Baixando...";
+            try {
+                const response = await fetch(URL_GOOGLE_SCRIPT); const dadosNuvem = await response.json();
+                for (const idMesa in dadosNuvem) { if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); } }
+                renderizarMapa(); document.getElementById('telaCarregamento').style.display = 'none';
+            } catch (error) { mostrarAlerta("Falha ao conectar. O mapa carregará offline."); document.getElementById('telaCarregamento').style.display = 'none'; renderizarMapa();
+            } finally { btnSinc.textContent = "🔄 Sincronizar"; }
+        }
 
-        async function salvarCusto() {
-            const btnSalvar = document.getElementById('btnSalvarCusto');
-            btnSalvar.textContent = "Salvando..."; btnSalvar.disabled = true;
+        async function enviarParaNuvem(idMesa, dados) {
+            try { await fetch(URL_GOOGLE_SCRIPT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ idMesa: idMesa, dados: dados }) });
+            } catch (error) { throw new Error("Erro de conexão"); }
+        }
 
-            let idCusto = custoEditandoId ? custoEditandoId : "CST-" + new Date().getTime();
-            let oldObs = custoEditandoId && bancoDeCustos[custoEditandoId] ? bancoDeCustos[custoEditandoId].obs : "";
-            let isLocked = isCustoLocked(oldObs); let novaObs = document.getElementById('custoObs').value; novaObs = setCustoLocked(novaObs, isLocked); 
+        function formatarMoeda(elemento) {
+            let valor = String(elemento.value).replace(/\D/g, ''); if (valor === '') { elemento.value = ''; return; }
+            valor = (parseInt(valor) / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); elemento.value = valor;
+        }
+
+        function converterParaNumero(str) {
+            if (str === null || str === undefined || str === "") return 0; if (typeof str === 'number') return str;
+            return parseFloat(String(str).replace(/\./g, '').replace(',', '.'));
+        }
+
+        function converterParaMoeda(numero) {
+            let val = Number(numero); if (isNaN(val)) val = 0;
+            return val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        async function exportarMapa(tipo) {
+            const areaExportacao = document.getElementById('area-exportacao'); const botoesTopo = document.querySelector('.area-botoes-topo');
+            botoesTopo.style.display = 'none'; mostrarAlerta("Preparando sua imagem, aguarde um instante... 📸", "⏳ Gerando Arquivo");
+
+            try {
+                const canvas = await html2canvas(areaExportacao, { backgroundColor: '#0A192F', scale: 2, useCORS: true, allowTaint: true });
+                const imgData = canvas.toDataURL('image/jpeg', 0.9);
+
+                if (tipo === 'img') {
+                    const link = document.createElement('a'); link.download = 'Mapa_Educandario_Vendas.jpg'; link.href = imgData; link.click();
+                } else if (tipo === 'pdf') {
+                    const { jsPDF } = window.jspdf; const orientation = canvas.width >= canvas.height ? 'l' : 'p';
+                    const pdf = new jsPDF({ orientation: orientation, unit: 'px', format: [canvas.width, canvas.height] });
+                    pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height); pdf.save('Mapa_Educandario_Vendas.pdf');
+                }
+                fecharAlertaCustomizado();
+            } catch (erro) {
+                fecharAlertaCustomizado(); console.error(erro); mostrarAlerta("O navegador bloqueou a foto. No GitHub vai funcionar perfeitamente! 🚀", "❌ Bloqueio Local");
+            } finally { botoesTopo.style.display = 'flex'; }
+        }
+
+        function renderizarMapa() {
+            const containerSalao = document.getElementById('container-salao');
+            Array.from(containerSalao.children).forEach(child => { if (!child.classList.contains('palco') && !child.classList.contains('tarja-lateral')) { containerSalao.removeChild(child); } });
             
-            let dadosCusto = { id: idCusto, categoria: document.getElementById('custoCategoria').value || "Outros", fornecedor: document.getElementById('custoFornecedor').value, descricao: document.getElementById('custoDescricao').value, quantidade: parseInt(document.getElementById('custoQtd').value) || 1, valorUnitario: converterParaNumero(document.getElementById('custoUnitario').value), valorTotal: converterParaNumero(document.getElementById('custoTotal').value), obs: novaObs };
-            let payload = { tipo: "custo", acao: "salvar", dados: dadosCusto };
+            const palco = document.querySelector('.palco'); let elementoDeReferencia = palco.nextSibling;
+            
+            for (const chave in CONFIG_MESAS) {
+                const setorConfig = CONFIG_MESAS[chave]; let contadorMesa = 1; 
 
-            try { await fetch(URL_GOOGLE_SCRIPT, { method: 'POST', body: JSON.stringify(payload) }); bancoDeCustos[idCusto] = dadosCusto; fecharModalCusto(); abrirCofre(); 
-            } catch (error) { mostrarAlerta("Erro ao salvar despesa na nuvem!"); } finally { btnSalvar.textContent = "Salvar Despesa"; btnSalvar.disabled = false; }
-        }
+                const divSetor = document.createElement('div'); divSetor.className = 'setor';
+                divSetor.style.backgroundColor = setorConfig.bgTranslucido; divSetor.style.border = `1px solid ${setorConfig.bordaFina}`; divSetor.style.boxShadow = `0 0 15px ${setorConfig.bgTranslucido}`;
+                
+                const tituloSetor = document.createElement('h3'); tituloSetor.textContent = setorConfig.nome; tituloSetor.style.color = setorConfig.corNormal; divSetor.appendChild(tituloSetor);
 
-        async function excluirCusto() {
-            if (confirm("Tem certeza que deseja apagar esta despesa definitivamente?")) {
-                const btnExcluir = document.getElementById('btnExcluirCusto'); btnExcluir.textContent = "Apagando..."; btnExcluir.disabled = true;
-                let payload = { tipo: "custo", acao: "excluir", dados: { id: custoEditandoId } };
-                try { await fetch(URL_GOOGLE_SCRIPT, { method: 'POST', body: JSON.stringify(payload) }); delete bancoDeCustos[custoEditandoId]; document.getElementById('filtroCategoriaCustos').value = "TODAS"; fecharModalCusto(); abrirCofre(); 
-                } catch (error) { mostrarAlerta("Erro ao excluir despesa da nuvem!"); } finally { btnExcluir.textContent = "🗑️ Excluir Despesa"; btnExcluir.disabled = false; }
+                setorConfig.layout.forEach(fileira => {
+                    const divFileira = document.createElement('div'); divFileira.className = 'fileira-mesas';
+
+                    fileira.forEach(item => {
+                        if (item === "BIG_MIX") {
+                            const divMixContainer = document.createElement('div'); divMixContainer.style.position = "relative"; divMixContainer.style.width = "180px"; divMixContainer.style.display = "flex"; divMixContainer.style.justifyContent = "center";
+                            divMixContainer.innerHTML = `<div class="grande-house-mix"><span class="icone">🎛️</span> House Mix</div>`; divFileira.appendChild(divMixContainer);
+                        } else if (item === "GAP") {
+                            const divGap = document.createElement('div'); divGap.style.width = "180px"; divFileira.appendChild(divGap);
+                        } else {
+                            for (let i = 0; i < item; i++) {
+                                const num = contadorMesa < 10 ? '0' + contadorMesa : contadorMesa;
+                                const idDaMesa = `${setorConfig.prefixo}-${num}`; const dadosDestaMesa = bancoDeDados[idDaMesa];
+                                const wrapperMesa = document.createElement('div'); wrapperMesa.className = 'wrapper-mesa';
+
+                                if (nivelAcesso === 0 && mesasPermitidas.includes(idDaMesa)) { wrapperMesa.classList.add('mostrar-forcado'); }
+
+                                const textoAcima = document.createElement('div'); textoAcima.className = 'texto-acima'; textoAcima.textContent = dadosDestaMesa.status.toUpperCase(); 
+                                if (dadosDestaMesa.status === "Vendida") { textoAcima.classList.add('vendida'); } else if (dadosDestaMesa.status === "Reservada") { textoAcima.classList.add('reservada'); } else { textoAcima.classList.add('livre'); }
+
+                                const divMesa = document.createElement('div'); divMesa.className = `mesa ${setorConfig.classeTamanho}`; divMesa.textContent = idDaMesa; divMesa.setAttribute('data-status', dadosDestaMesa.status);
+                                
+                                if (dadosDestaMesa.status === "Vendida" || dadosDestaMesa.status === "Reservada") {
+                                    divMesa.style.backgroundColor = setorConfig.corVendida; divMesa.style.border = "2px dashed #666"; divMesa.style.opacity = "0.9";
+                                } else { divMesa.style.backgroundColor = setorConfig.corNormal; }
+
+                                if (dadosDestaMesa.cadeiras > 0) { const badge = document.createElement('div'); badge.className = 'badge-extra'; badge.textContent = `+${dadosDestaMesa.cadeiras}`; divMesa.appendChild(badge); }
+                                if (dadosDestaMesa.status !== "Livre" && dadosDestaMesa.saldoDevedor > 0) { const badgeDivida = document.createElement('div'); badgeDivida.className = 'badge-divida'; badgeDivida.textContent = '💲'; badgeDivida.title = `Saldo pendente: R$ ${converterParaMoeda(dadosDestaMesa.saldoDevedor)}`; wrapperMesa.appendChild(badgeDivida); }
+
+                                divMesa.onclick = function() { abrirModal(idDaMesa); };
+
+                                const textoAbaixo = document.createElement('div'); textoAbaixo.className = 'texto-abaixo'; 
+                                textoAbaixo.textContent = dadosDestaMesa.status !== "Livre" ? dadosDestaMesa.nome : "";
+
+                                wrapperMesa.appendChild(textoAcima); wrapperMesa.appendChild(divMesa); wrapperMesa.appendChild(textoAbaixo); divFileira.appendChild(wrapperMesa); contadorMesa++; 
+                            }
+                        }
+                    });
+                    divSetor.appendChild(divFileira);
+                });
+                containerSalao.insertBefore(divSetor, elementoDeReferencia);
             }
         }
 
-        inicializarBancoDeDados(); renderizarMapa(); carregarDadosDaNuvem();
+        inicializarBancoDeDados(); 
+        renderizarMapa(); 
+        carregarDadosDaNuvem();
+        setInterval(carregarDadosDaNuvemBackground, 15000);
+
     </script>
 </body>
 </html>
