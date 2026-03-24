@@ -39,7 +39,6 @@
         .btn-sincronizar { background-color: #47D359; }
         .btn-sincronizar:hover { box-shadow: 0 0 10px #47D359; }
 
-        /* OCULTA BOTÕES SENSÍVEIS POR PADRÃO (SÓ O ADMIN VÊ) */
         #btnCofre, #btnImg, #btnPdf, #btnBuffet, #btnVisaoCliente { display: none; }
 
         #container-salao { width: 100%; padding: 0 70px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 15px; position: relative; margin-bottom: 15px;}
@@ -61,37 +60,23 @@
         .setor { padding: 12px 20px; border-radius: 8px; width: 100%; box-sizing: border-box; z-index: 2;}
         .setor h3 { margin-top: 0; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; text-align: center; font-size: 22px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
         
-        /* NOVO ESPAÇAMENTO COM RESPIRO VERTICAL */
-        .fileira-mesas { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; width: 100%; }
-        .wrapper-mesa { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 140px; position: relative; }
+        .fileira-mesas { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; width: 100%; }
+        .wrapper-mesa { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 140px; position: relative; }
 
-        /* O PAINEL DE TEXTO NO TOPO DA MESA (Nomes e Status) */
-        .texto-acima { 
-            font-size: 11px; font-weight: bold; text-transform: uppercase; 
-            letter-spacing: 1px; text-align: center; width: 100%; 
-            white-space: normal; word-wrap: break-word; line-height: 1.1; 
-            min-height: 14px; margin-bottom: 2px;
-        }
+        .texto-acima { font-size: 11px; font-weight: bold; text-transform: uppercase; height: 14px; letter-spacing: 1px; }
         .texto-acima.vendida { color: var(--cor-vendida-texto); }
         .texto-acima.reservada { color: var(--cor-reservada); }
         .texto-acima.livre { color: var(--cor-livre-texto); } 
         
+        .texto-abaixo { font-size: 14px; color: #ffffff; text-align: center; width: 100%; white-space: normal; word-wrap: break-word; line-height: 1.1; font-weight: bold; min-height: 15px; }
+        
         /* CAMADAS DE SEGURANÇA E VISUALIZAÇÃO */
+        body.modo-visitante .texto-abaixo { display: none; }
         body.modo-visitante .badge-extra { display: none; }
         body.modo-visitante .badge-divida { display: none; }
         body.modo-visitante #btnLimpar { display: none; }
         
-        /* A MÁGICA DA VITRINE VIP COM O NOME DENTRO DA BOLINHA */
-        body #container-salao .wrapper-mesa.mostrar-forcado {
-            z-index: 10; margin: 0 10px;
-        }
-        
-        body #container-salao .wrapper-mesa.mostrar-forcado .mesa {
-            transform: scale(1.30) !important; /* Mesa explode de tamanho */
-            border-style: solid !important;
-            border-width: 3px !important;
-        }
-
+        body.modo-visitante .mostrar-forcado .texto-abaixo { display: block !important; color: var(--ciano-destaque); text-shadow: 0 0 5px #000;}
         body.modo-visitante .mostrar-forcado .badge-extra { display: flex !important; }
 
         body.modo-vendas .badge-divida { display: none; }
@@ -105,7 +90,9 @@
         body.modo-buffet .mesa[data-status="Livre"]::after {
             content: "❌ VAZIA"; position: absolute; font-size: 16px; color: #ff4d4d; font-weight: bold; text-shadow: 0 0 5px #000; transform: rotate(-15deg);
         }
+        body.modo-buffet .wrapper-mesa:has(.mesa[data-status="Livre"]) .texto-abaixo { display: none; }
 
+        body.modo-cliente .texto-abaixo { display: none !important; }
         body.modo-cliente .badge-extra { display: none !important; }
         body.modo-cliente .badge-divida { display: none !important; }
 
@@ -131,7 +118,7 @@
         .info-contato { text-align: center; font-size: 18px; font-weight: bold; color: #47D359; border-top: 1px dashed #233554; padding-top: 10px; width: 100%; }
         .info-contato span.realizacao { display: block; color: var(--texto-claro); font-size: 14px; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* ESTILOS DO COFRE FINANCEIRO E DRE */
+        /* ESTILOS DO COFRE FINANCEIRO (DRE) */
         #painel-cofre { display: none; width: 100%; max-width: 1300px; flex-direction: column; gap: 20px; padding: 20px; box-sizing: border-box; }
         .cofre-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--ciano-destaque); padding-bottom: 15px;}
         .cofre-header h2 { margin: 0; color: var(--ciano-destaque); font-size: 28px; display: flex; align-items: center; gap: 10px;}
@@ -166,7 +153,6 @@
         #filtroCategoriaCustos { padding: 6px 12px; border-radius: 4px; background-color: #112240; color: #fff; border: 1px solid #ef4444; font-weight: bold; cursor: pointer; outline: none; font-size: 14px;}
         #filtroCategoriaCustos:focus { box-shadow: 0 0 5px #ef4444; }
 
-        /* ESTILOS DO SIMULADOR */
         .painel-simulador { background-color: #061020; border: 1px dashed #f59e0b; border-radius: 8px; padding: 25px; margin-top: 10px;}
         .painel-simulador h3 { margin: 0 0 5px 0; color: #f59e0b; font-size: 22px; display: flex; align-items: center; gap: 8px;}
         .painel-simulador > p { color: #8892b0; margin: 0 0 20px 0; font-size: 14px;}
@@ -247,32 +233,6 @@
         #containerPagadores::-webkit-scrollbar-track { background: #0A192F; border-radius: 4px; }
         #containerPagadores::-webkit-scrollbar-thumb { background: #233554; border-radius: 4px; }
         #containerPagadores::-webkit-scrollbar-thumb:hover { background: var(--ciano-destaque); }
-
-        /* ====================================================================== */
-        /* O MOTOR DE IMPRESSÃO A4 (PDF PERFEITO)                                 */
-        /* ====================================================================== */
-        @media print {
-            @page {
-                size: A4;
-                margin: 1.5cm 0.5cm 0.5cm 0.5cm; /* Superior 1.5, Inferior e Laterais 0.5 */
-            }
-            body { 
-                background: #0A192F !important; 
-                -webkit-print-color-adjust: exact !important; 
-                print-color-adjust: exact !important; 
-            }
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            
-            /* Oculta interface desnecessária na impressão */
-            .painel-topo .area-botoes-topo, #modalSenha, #meuModal, #modalCusto, #telaCarregamento { 
-                display: none !important; 
-            }
-            
-            /* Impede que as fileiras e setores cortem no meio da página */
-            .setor { page-break-inside: avoid; break-inside: avoid; margin-bottom: 20px; }
-            .fileira-mesas { page-break-inside: avoid; break-inside: avoid; }
-        }
-        /* ====================================================================== */
 
     </style>
 </head>
@@ -652,7 +612,6 @@
         let valorCadeiraAvulsa = 800.00; 
         let pagadoresAtuais = []; 
         let custoEditandoId = "";
-        let cacheDadosNuvem = ""; 
 
         let nivelAcesso = 0; 
         const SENHA_VENDAS = "vendas2026";
@@ -685,21 +644,6 @@
             document.getElementById('modalAlerta').style.display = 'flex';
         }
         function fecharAlertaCustomizado() { document.getElementById('modalAlerta').style.display = 'none'; }
-        
-        function formatarMoeda(elemento) {
-            let valor = String(elemento.value).replace(/\D/g, ''); if (valor === '') { elemento.value = ''; return; }
-            valor = (parseInt(valor) / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); elemento.value = valor;
-        }
-
-        function converterParaNumero(str) {
-            if (str === null || str === undefined || str === "") return 0; if (typeof str === 'number') return str;
-            return parseFloat(String(str).replace(/\./g, '').replace(',', '.'));
-        }
-
-        function converterParaMoeda(numero) {
-            let val = Number(numero); if (isNaN(val)) val = 0;
-            return val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        }
 
         const inputSenha = document.getElementById('inputSenha');
         const toggleSenha = document.getElementById('toggleSenha');
@@ -1259,6 +1203,52 @@
             }
         }
 
+        // MOTOR DE EXPORTAÇÃO BLINDADO CONTRA CORTES NO PDF E IMAGENS COM DADOS CONFIDENCIAIS
+        async function exportarMapa(tipo) {
+            const areaExportacao = document.getElementById('area-exportacao'); const botoesTopo = document.querySelector('.area-botoes-topo');
+            
+            if (tipo === 'pdf') {
+                let nivelAnterior = nivelAcesso;
+                // Se for link do cliente VIP, obriga o PDF a não revelar os cifrões
+                if (parametroMostrar) { nivelAcesso = 0; renderizarMapa(); }
+                
+                botoesTopo.style.display = 'none';
+                window.print(); 
+                botoesTopo.style.display = 'flex';
+                
+                if (parametroMostrar) { nivelAcesso = nivelAnterior; renderizarMapa(); }
+                return;
+            }
+
+            botoesTopo.style.display = 'none'; 
+            let nivelAnterior = nivelAcesso;
+            if (parametroMostrar) {
+                nivelAcesso = 0; // Veste os óculos de Visitante pra tirar a foto!
+                renderizarMapa();
+                await new Promise(r => setTimeout(r, 200)); // Tempo pra tela redesenhar
+            }
+            
+            mostrarAlerta("Preparando sua imagem VIP, aguarde... 📸", "⏳ Gerando Arquivo");
+
+            try {
+                const canvas = await html2canvas(areaExportacao, { backgroundColor: '#0A192F', scale: 2, useCORS: true, allowTaint: true });
+                const imgData = canvas.toDataURL('image/jpeg', 0.9);
+                const link = document.createElement('a'); link.download = 'Mapa_Educandario_VIP.jpg'; link.href = imgData; link.click();
+                fecharAlertaCustomizado();
+            } catch (erro) {
+                fecharAlertaCustomizado(); console.error(erro); mostrarAlerta("O navegador bloqueou a foto. No GitHub vai funcionar perfeitamente! 🚀", "❌ Bloqueio Local");
+            } finally { 
+                botoesTopo.style.display = 'flex'; 
+                if (parametroMostrar) {
+                    nivelAcesso = nivelAnterior; // Devolve a tela pro modo Admin!
+                    renderizarMapa();
+                }
+            }
+        }
+
+        // CACHE DE MEMÓRIA PARA NÃO TRAVAR O COMPUTADOR COM REQUISIÇÕES
+        let cacheDadosNuvem = "";
+
         async function carregarDadosDaNuvemBackground() {
             try {
                 const response = await fetch(URL_GOOGLE_SCRIPT); const dadosNuvem = await response.json();
@@ -1285,144 +1275,14 @@
 
                 for (const idMesa in dadosNuvem) { if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); } }
                 bancoDeCustos = {}; dadosCustos.forEach(c => bancoDeCustos[c.id] = c);
-                renderizarMapa(); 
-            } catch (error) { 
-                mostrarAlerta("Falha ao conectar. O mapa carregará offline."); 
-                renderizarMapa();
-            } finally { 
-                document.getElementById('telaCarregamento').style.display = 'none';
-                btnSinc.textContent = "🔄 Sincronizar"; 
-            }
+                renderizarMapa(); document.getElementById('telaCarregamento').style.display = 'none';
+            } catch (error) { mostrarAlerta("Falha ao conectar. O mapa carregará offline."); document.getElementById('telaCarregamento').style.display = 'none'; renderizarMapa();
+            } finally { btnSinc.textContent = "🔄 Sincronizar"; }
         }
 
         async function enviarParaNuvem(idMesa, dados) {
             try { await fetch(URL_GOOGLE_SCRIPT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ idMesa: idMesa, dados: dados }) });
             } catch (error) { throw new Error("Erro de conexão"); }
-        }
-        
-        async function exportarMapa(tipo) {
-            const areaExportacao = document.getElementById('area-exportacao'); const botoesTopo = document.querySelector('.area-botoes-topo');
-            
-            if (tipo === 'pdf') {
-                let forcarLimpeza = false;
-                if (parametroMostrar && !document.body.classList.contains('modo-cliente')) {
-                    document.body.classList.add('modo-cliente');
-                    forcarLimpeza = true;
-                }
-                botoesTopo.style.display = 'none';
-                window.print(); 
-                botoesTopo.style.display = 'flex';
-                if (forcarLimpeza) { document.body.classList.remove('modo-cliente'); }
-                return;
-            }
-
-            botoesTopo.style.display = 'none'; 
-            let forcarLimpeza = false;
-            if (parametroMostrar && !document.body.classList.contains('modo-cliente')) {
-                document.body.classList.add('modo-cliente');
-                forcarLimpeza = true;
-            }
-            
-            mostrarAlerta("Preparando sua imagem VIP, aguarde... 📸", "⏳ Gerando Arquivo");
-
-            try {
-                const canvas = await html2canvas(areaExportacao, { backgroundColor: '#0A192F', scale: 2, useCORS: true, allowTaint: true });
-                const imgData = canvas.toDataURL('image/jpeg', 0.9);
-                const link = document.createElement('a'); link.download = 'Mapa_Educandario.jpg'; link.href = imgData; link.click();
-                fecharAlertaCustomizado();
-            } catch (erro) {
-                fecharAlertaCustomizado(); console.error(erro); mostrarAlerta("O navegador bloqueou a foto. No GitHub vai funcionar perfeitamente! 🚀", "❌ Bloqueio Local");
-            } finally { 
-                botoesTopo.style.display = 'flex'; 
-                if (forcarLimpeza) document.body.classList.remove('modo-cliente');
-            }
-        }
-
-        function renderizarMapa() {
-            const containerSalao = document.getElementById('container-salao');
-            Array.from(containerSalao.children).forEach(child => { if (!child.classList.contains('palco') && !child.classList.contains('tarja-lateral')) { containerSalao.removeChild(child); } });
-            
-            const palco = document.querySelector('.palco'); let elementoDeReferencia = palco.nextSibling;
-            
-            for (const chave in CONFIG_MESAS) {
-                const setorConfig = CONFIG_MESAS[chave]; let contadorMesa = 1; 
-
-                const divSetor = document.createElement('div'); divSetor.className = 'setor';
-                divSetor.style.backgroundColor = setorConfig.bgTranslucido; divSetor.style.border = `1px solid ${setorConfig.bordaFina}`; divSetor.style.boxShadow = `0 0 15px ${setorConfig.bgTranslucido}`;
-                
-                const tituloSetor = document.createElement('h3'); tituloSetor.textContent = setorConfig.nome; tituloSetor.style.color = setorConfig.corNormal; divSetor.appendChild(tituloSetor);
-
-                setorConfig.layout.forEach(fileira => {
-                    const divFileira = document.createElement('div'); divFileira.className = 'fileira-mesas';
-
-                    fileira.forEach(item => {
-                        if (item === "BIG_MIX") {
-                            const divMixContainer = document.createElement('div'); divMixContainer.style.position = "relative"; divMixContainer.style.width = "180px"; divMixContainer.style.display = "flex"; divMixContainer.style.justifyContent = "center";
-                            divMixContainer.innerHTML = `<div class="grande-house-mix"><span class="icone">🎛️</span> House Mix</div>`; divFileira.appendChild(divMixContainer);
-                        } else if (item === "GAP") {
-                            const divGap = document.createElement('div'); divGap.style.width = "180px"; divFileira.appendChild(divGap);
-                        } else {
-                            for (let i = 0; i < item; i++) {
-                                const num = contadorMesa < 10 ? '0' + contadorMesa : contadorMesa;
-                                const idDaMesa = `${setorConfig.prefixo}-${num}`; const dadosDestaMesa = bancoDeDados[idDaMesa];
-                                const wrapperMesa = document.createElement('div'); wrapperMesa.className = 'wrapper-mesa';
-
-                                const ehVIP = mesasPermitidas.includes(idDaMesa);
-                                if (ehVIP) { wrapperMesa.classList.add('mostrar-forcado'); }
-
-                                const textoAcima = document.createElement('div'); textoAcima.className = 'texto-acima'; 
-                                let infoTexto = dadosDestaMesa.status.toUpperCase(); 
-
-                                if (dadosDestaMesa.status === "Vendida") { textoAcima.classList.add('vendida'); } 
-                                else if (dadosDestaMesa.status === "Reservada") { textoAcima.classList.add('reservada'); } 
-                                else { textoAcima.classList.add('livre'); }
-
-                                // MÁGICA DOS NOMES (Se for admin e tiver nome, o nome sobrepõe o Status)
-                                if (nivelAcesso === 2 && dadosDestaMesa.status !== "Livre" && dadosDestaMesa.nome) {
-                                    infoTexto = dadosDestaMesa.nome;
-                                }
-                                textoAcima.textContent = infoTexto;
-
-                                const divMesa = document.createElement('div'); divMesa.className = `mesa ${setorConfig.classeTamanho}`; divMesa.setAttribute('data-status', dadosDestaMesa.status);
-                                
-                                if (dadosDestaMesa.status === "Vendida" || dadosDestaMesa.status === "Reservada") {
-                                    divMesa.style.backgroundColor = setorConfig.corVendida; divMesa.style.border = "2px dashed #666"; divMesa.style.opacity = "0.9";
-                                } else { divMesa.style.backgroundColor = setorConfig.corNormal; }
-
-                                // APLICA O ANEL COLORIDO SE FOR VIP
-                                if (ehVIP) {
-                                    divMesa.style.border = `4px solid ${setorConfig.corNormal}`;
-                                    divMesa.style.opacity = "1";
-                                    divMesa.style.boxShadow = `0 0 15px ${setorConfig.corNormal}`;
-                                }
-
-                                // MÁGICA: NOME DENTRO DA BOLINHA SE FOR VIP
-                                if (ehVIP && dadosDestaMesa.nome && dadosDestaMesa.status !== "Livre") {
-                                    divMesa.innerHTML = `<span style="line-height: 1;">${idDaMesa}</span><span style="font-size: 0.45em; display: block; margin-top: 4px; line-height: 1.1; max-width: 95%; text-align: center; text-shadow: none;">${dadosDestaMesa.nome}</span>`;
-                                    divMesa.style.flexDirection = 'column';
-                                } else {
-                                    divMesa.textContent = idDaMesa;
-                                }
-
-                                if (dadosDestaMesa.cadeiras > 0) { const badge = document.createElement('div'); badge.className = 'badge-extra'; badge.textContent = `+${dadosDestaMesa.cadeiras}`; divMesa.appendChild(badge); }
-                                
-                                if (nivelAcesso === 2 && dadosDestaMesa.status !== "Livre" && dadosDestaMesa.saldoDevedor > 0) { 
-                                    const badgeDivida = document.createElement('div'); badgeDivida.className = 'badge-divida'; badgeDivida.textContent = '💲'; badgeDivida.title = `Saldo pendente: R$ ${converterParaMoeda(dadosDestaMesa.saldoDevedor)}`; wrapperMesa.appendChild(badgeDivida); 
-                                }
-
-                                divMesa.onclick = function() { abrirModal(idDaMesa); };
-
-                                wrapperMesa.appendChild(textoAcima); 
-                                wrapperMesa.appendChild(divMesa); 
-                                divFileira.appendChild(wrapperMesa); 
-                                contadorMesa++; 
-                            }
-                        }
-                    });
-                    divSetor.appendChild(divFileira);
-                });
-                containerSalao.insertBefore(divSetor, elementoDeReferencia);
-            }
         }
 
         inicializarBancoDeDados(); 
