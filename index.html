@@ -39,7 +39,6 @@
         .btn-sincronizar { background-color: #47D359; }
         .btn-sincronizar:hover { box-shadow: 0 0 10px #47D359; }
 
-        /* OCULTA BOTÕES SENSÍVEIS POR PADRÃO (SÓ O ADMIN VÊ) */
         #btnCofre, #btnImg, #btnPdf, #btnBuffet, #btnVisaoCliente { display: none; }
 
         #container-salao { width: 100%; padding: 0 70px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 15px; position: relative; margin-bottom: 15px;}
@@ -61,23 +60,55 @@
         .setor { padding: 12px 20px; border-radius: 8px; width: 100%; box-sizing: border-box; z-index: 2;}
         .setor h3 { margin-top: 0; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; text-align: center; font-size: 22px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
         
-        .fileira-mesas { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; width: 100%; }
-        .wrapper-mesa { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 140px; position: relative; }
+        /* O NOVO ESPAÇAMENTO ENTRE AS MESAS */
+        .fileira-mesas { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; width: 100%; }
+        .wrapper-mesa { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 140px; position: relative; }
 
-        .texto-acima { font-size: 11px; font-weight: bold; text-transform: uppercase; height: 14px; letter-spacing: 1px; }
+        /* O TEXTO DE TOPO (AGORA MOSTRA NOME OU STATUS) */
+        .texto-acima { 
+            font-size: 11px; 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            text-align: center; 
+            width: 100%; 
+            white-space: normal; 
+            word-wrap: break-word; 
+            line-height: 1.1; 
+            min-height: 14px; 
+        }
         .texto-acima.vendida { color: var(--cor-vendida-texto); }
         .texto-acima.reservada { color: var(--cor-reservada); }
         .texto-acima.livre { color: var(--cor-livre-texto); } 
         
-        .texto-abaixo { font-size: 14px; color: #ffffff; text-align: center; width: 100%; white-space: normal; word-wrap: break-word; line-height: 1.1; font-weight: bold; min-height: 15px; }
+        /* === DESTAQUE VIP (LINK DO CLIENTE) === */
+        body #container-salao .wrapper-mesa.mostrar-forcado {
+            z-index: 10; 
+            margin: 0 10px; /* Protege a câmera criando espaço nas laterais */
+        }
         
-        /* CAMADAS DE SEGURANÇA E VISUALIZAÇÃO */
-        body.modo-visitante .texto-abaixo { display: none; }
+        body #container-salao .wrapper-mesa.mostrar-forcado .mesa {
+            transform: scale(1.25) !important; /* Zoom só na mesa! */
+            /* A borda e o brilho são injetados pelo JS com a cor da Cota */
+        }
+
+        body #container-salao .wrapper-mesa.mostrar-forcado .texto-acima {
+            font-size: 14px !important;
+            font-weight: 900 !important;
+            color: #fff !important;
+            /* Contorno preto ultra forte no texto do VIP */
+            text-shadow: 
+                -1px -1px 0 #000,  
+                 1px -1px 0 #000,
+                -1px  1px 0 #000,
+                 1px  1px 0 #000,
+                 0px  4px 6px rgba(0,0,0,0.8) !important;
+        }
+        /* ======================================= */
+
         body.modo-visitante .badge-extra { display: none; }
         body.modo-visitante .badge-divida { display: none; }
         body.modo-visitante #btnLimpar { display: none; }
-        
-        body.modo-visitante .mostrar-forcado .texto-abaixo { display: block !important; color: var(--ciano-destaque); text-shadow: 0 0 5px #000;}
         body.modo-visitante .mostrar-forcado .badge-extra { display: flex !important; }
 
         body.modo-vendas .badge-divida { display: none; }
@@ -91,9 +122,7 @@
         body.modo-buffet .mesa[data-status="Livre"]::after {
             content: "❌ VAZIA"; position: absolute; font-size: 16px; color: #ff4d4d; font-weight: bold; text-shadow: 0 0 5px #000; transform: rotate(-15deg);
         }
-        body.modo-buffet .wrapper-mesa:has(.mesa[data-status="Livre"]) .texto-abaixo { display: none; }
 
-        body.modo-cliente .texto-abaixo { display: none !important; }
         body.modo-cliente .badge-extra { display: none !important; }
         body.modo-cliente .badge-divida { display: none !important; }
 
@@ -119,7 +148,7 @@
         .info-contato { text-align: center; font-size: 18px; font-weight: bold; color: #47D359; border-top: 1px dashed #233554; padding-top: 10px; width: 100%; }
         .info-contato span.realizacao { display: block; color: var(--texto-claro); font-size: 14px; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* ESTILOS DO COFRE FINANCEIRO E DRE */
+        /* ESTILOS DO COFRE FINANCEIRO (DRE) */
         #painel-cofre { display: none; width: 100%; max-width: 1300px; flex-direction: column; gap: 20px; padding: 20px; box-sizing: border-box; }
         .cofre-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--ciano-destaque); padding-bottom: 15px;}
         .cofre-header h2 { margin: 0; color: var(--ciano-destaque); font-size: 28px; display: flex; align-items: center; gap: 10px;}
@@ -154,7 +183,6 @@
         #filtroCategoriaCustos { padding: 6px 12px; border-radius: 4px; background-color: #112240; color: #fff; border: 1px solid #ef4444; font-weight: bold; cursor: pointer; outline: none; font-size: 14px;}
         #filtroCategoriaCustos:focus { box-shadow: 0 0 5px #ef4444; }
 
-        /* ESTILOS DO SIMULADOR (NOVOS QUADROS DE PESSOAS) */
         .painel-simulador { background-color: #061020; border: 1px dashed #f59e0b; border-radius: 8px; padding: 25px; margin-top: 10px;}
         .painel-simulador h3 { margin: 0 0 5px 0; color: #f59e0b; font-size: 22px; display: flex; align-items: center; gap: 8px;}
         .painel-simulador > p { color: #8892b0; margin: 0 0 20px 0; font-size: 14px;}
@@ -374,7 +402,7 @@
                 <h3>🔮 Simulador de Faturamento e Lotação</h3>
                 <p>O que acontece com o caixa e com o salão se vendermos mais algumas mesas ou cadeiras hoje?</p>
                 <div class="sim-grid-inputs" id="containerSimuladorInputs">
-                    </div>
+                </div>
                 
                 <h4 style="color: var(--ciano-destaque); margin-top: 15px; margin-bottom: 10px; border-bottom: 1px dashed #233554; padding-bottom: 5px;">💰 Projeção Financeira</h4>
                 <div class="sim-resultado-box" style="margin-bottom: 20px;">
@@ -418,7 +446,9 @@
 
             </div>
 
-        </div> <div id="container-salao">
+        </div>
+
+        <div id="container-salao">
             <div class="tarja-lateral tarja-wc-masc"><span class="tarja-icone">🚹</span><span class="tarja-texto">WC Masc</span></div>
             <div class="tarja-lateral tarja-wc-fem"><span class="tarja-icone">🚺♿</span><span class="tarja-texto">WC Fem</span></div>
             <div class="tarja-lateral tarja-aparador-esq"><span class="tarja-texto">Aparador</span></div>
@@ -460,7 +490,9 @@
             </div>
         </div>
 
-    </div> <div id="meuModal" class="modal-overlay">
+    </div>
+
+    <div id="meuModal" class="modal-overlay">
         <div class="modal-box" style="width: 750px;">
             <h2 id="tituloModal"><span>Gerenciar Mesa</span> <span id="statusBadge">Livre</span></h2> 
             
@@ -493,7 +525,7 @@
             </div>
 
             <div id="containerPagadores" style="max-height: 450px; overflow-y: auto; padding-right: 10px;">
-                </div>
+            </div>
 
             <div class="painel-financeiro" style="margin-top: 15px;">
                 <h4>💰 Resumo Financeiro Global <span id="textoValorPadrao" style="color: #8892b0; font-size: 12px;"></span></h4>
@@ -1027,7 +1059,6 @@
             containerSimulador.setAttribute('data-custos-totais', totalCustosGlobais); 
             containerSimulador.setAttribute('data-pessoas-reais', totalPessoasSalao); 
             
-            // CARREGA O HISTÓRICO DA SIMULAÇÃO (Se existir no computador da pessoa)
             try {
                 let savedSim = JSON.parse(localStorage.getItem('simulacao_educandario_2026')) || {};
                 const inputs = document.querySelectorAll('.input-simulador');
@@ -1043,8 +1074,7 @@
             } catch(e) {}
             
             document.getElementById('filtroCategoriaCustos').value = "OCULTAR";
-            renderizarTabelaCustos(); 
-            calcularSimulacao();
+            renderizarTabelaCustos(); calcularSimulacao();
 
             document.getElementById('container-salao').style.display = 'none'; document.querySelector('.painel-rodape').style.display = 'none';
             document.getElementById('painel-cofre').style.display = 'flex';
@@ -1118,21 +1148,17 @@
             document.getElementById('tbodyCustos').innerHTML = htmlCustos;
         }
 
-        // O NOVO MOTOR DO SIMULADOR (COM HISTÓRICO E PESSOAS)
         function calcularSimulacao() {
             const container = document.getElementById('containerSimuladorInputs');
             let fechadoAtual = parseFloat(container.getAttribute('data-fechado-atual')) || 0;
             let custosTotais = parseFloat(container.getAttribute('data-custos-totais')) || 0;
             let pessoasReais = parseInt(container.getAttribute('data-pessoas-reais')) || 0;
             
-            let projecaoExtra = 0;
-            let pessoasExtra = 0;
-            let simulacaoParaSalvar = {};
+            let projecaoExtra = 0; let pessoasExtra = 0; let simulacaoParaSalvar = {};
             
             const inputs = document.querySelectorAll('.input-simulador');
             inputs.forEach(inp => {
-                let qtd = parseInt(inp.value) || 0; 
-                let max = parseInt(inp.getAttribute('max')) || 0;
+                let qtd = parseInt(inp.value) || 0; let max = parseInt(inp.getAttribute('max')) || 0;
                 let id = inp.getAttribute('data-id');
                 
                 if (id !== 'CadeirasAvulsas' && qtd > max) { qtd = max; inp.value = max; } 
@@ -1141,27 +1167,22 @@
                 let valorBase = parseFloat(inp.getAttribute('data-valorbase')) || 0; 
                 let capacidade = parseInt(inp.getAttribute('data-capacidade')) || 0;
                 
-                projecaoExtra += (qtd * valorBase);
-                pessoasExtra += (qtd * capacidade);
-                
+                projecaoExtra += (qtd * valorBase); pessoasExtra += (qtd * capacidade);
                 simulacaoParaSalvar[id] = qtd;
             });
             
-            // SALVA A BRINCADEIRA NO NAVEGADOR
             localStorage.setItem('simulacao_educandario_2026', JSON.stringify(simulacaoParaSalvar));
             
             let receitaProjetada = fechadoAtual + projecaoExtra;
             let saldoProjetado = receitaProjetada - custosTotais;
             let pessoasProjetadas = pessoasReais + pessoasExtra;
 
-            // Atualiza Quadros Financeiros
             document.getElementById('simAtual').textContent = `R$ ${converterParaMoeda(fechadoAtual)}`;
             document.getElementById('simExtra').textContent = `+ R$ ${converterParaMoeda(projecaoExtra)}`;
             document.getElementById('simProjetado').textContent = `R$ ${converterParaMoeda(receitaProjetada)}`;
             document.getElementById('simCustos').textContent = `R$ ${converterParaMoeda(custosTotais)}`;
             document.getElementById('simSaldo').textContent = `R$ ${converterParaMoeda(saldoProjetado)}`;
             
-            // Atualiza Quadros de Pessoas
             document.getElementById('simPessoasAtual').textContent = pessoasReais;
             document.getElementById('simPessoasExtra').textContent = `+ ${pessoasExtra}`;
             document.getElementById('simPessoasProjetado').textContent = pessoasProjetadas;
@@ -1169,25 +1190,44 @@
 
         function fecharCofre() { document.getElementById('painel-cofre').style.display = 'none'; document.getElementById('container-salao').style.display = 'flex'; document.querySelector('.painel-rodape').style.display = 'flex'; }
 
+        // === CÂMERA INTELIGENTE ATUALIZADA ===
         async function exportarMapa(tipo) {
-            const areaExportacao = document.getElementById('area-exportacao'); const botoesTopo = document.querySelector('.area-botoes-topo');
-            botoesTopo.style.display = 'none'; mostrarAlerta("Preparando sua imagem, aguarde um instante... 📸", "⏳ Gerando Arquivo");
+            const areaExportacao = document.getElementById('area-exportacao'); 
+            const botoesTopo = document.querySelector('.area-botoes-topo');
+            botoesTopo.style.display = 'none'; 
+            
+            let nivelAnterior = nivelAcesso;
+            // Se estivermos gerando o mapa para o cliente (VIP), forçamos o nível zero pra censurar os dados das outras mesas!
+            if (parametroMostrar) {
+                nivelAcesso = 0;
+                renderizarMapa(); 
+                await new Promise(r => setTimeout(r, 200)); // Pequeno fôlego pra tela se ajustar e não travar a foto
+            }
+
+            mostrarAlerta("Preparando sua imagem VIP, aguarde... 📸", "⏳ Gerando Arquivo");
 
             try {
                 const canvas = await html2canvas(areaExportacao, { backgroundColor: '#0A192F', scale: 2, useCORS: true, allowTaint: true });
                 const imgData = canvas.toDataURL('image/jpeg', 0.9);
 
                 if (tipo === 'img') {
-                    const link = document.createElement('a'); link.download = 'Mapa_Educandario_2026.jpg'; link.href = imgData; link.click();
+                    const link = document.createElement('a'); link.download = 'Mapa_VIP_Educandario.jpg'; link.href = imgData; link.click();
                 } else if (tipo === 'pdf') {
                     const { jsPDF } = window.jspdf; const orientation = canvas.width >= canvas.height ? 'l' : 'p';
                     const pdf = new jsPDF({ orientation: orientation, unit: 'px', format: [canvas.width, canvas.height] });
-                    pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height); pdf.save('Mapa_Educandario_2026.pdf');
+                    pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height); pdf.save('Mapa_VIP_Educandario.pdf');
                 }
                 fecharAlertaCustomizado();
             } catch (erro) {
                 fecharAlertaCustomizado(); console.error(erro); mostrarAlerta("O navegador bloqueou a foto. No GitHub vai funcionar perfeitamente! 🚀", "❌ Bloqueio Local");
-            } finally { botoesTopo.style.display = 'flex'; }
+            } finally { 
+                botoesTopo.style.display = 'flex'; 
+                // DEVOLVE A TELA PRA MODO ADMIN SE ESTIVESSE
+                if (parametroMostrar) {
+                    nivelAcesso = nivelAnterior;
+                    renderizarMapa();
+                }
+            }
         }
 
         function inicializarBancoDeDados() {
@@ -1211,8 +1251,13 @@
         async function carregarDadosDaNuvemBackground() {
             try {
                 const response = await fetch(URL_GOOGLE_SCRIPT); const dadosNuvem = await response.json();
-                for (const idMesa in dadosNuvem) { if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); } }
                 const responseCustos = await fetch(URL_GOOGLE_SCRIPT + "?tipo=custos"); const dadosCustos = await responseCustos.json();
+                
+                let hashAtual = JSON.stringify(dadosNuvem) + JSON.stringify(dadosCustos);
+                if (hashAtual === cacheDadosNuvem) return; 
+                cacheDadosNuvem = hashAtual;
+
+                for (const idMesa in dadosNuvem) { if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); } }
                 bancoDeCustos = {}; dadosCustos.forEach(c => bancoDeCustos[c.id] = c);
                 renderizarMapa();
             } catch (error) {}
@@ -1223,8 +1268,12 @@
             const btnSinc = document.getElementById('btnSincronizar'); btnSinc.textContent = "⌛ Baixando...";
             try {
                 const response = await fetch(URL_GOOGLE_SCRIPT); const dadosNuvem = await response.json();
-                for (const idMesa in dadosNuvem) { if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); } }
                 const responseCustos = await fetch(URL_GOOGLE_SCRIPT + "?tipo=custos"); const dadosCustos = await responseCustos.json();
+                
+                let hashAtual = JSON.stringify(dadosNuvem) + JSON.stringify(dadosCustos);
+                cacheDadosNuvem = hashAtual;
+
+                for (const idMesa in dadosNuvem) { if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); } }
                 bancoDeCustos = {}; dadosCustos.forEach(c => bancoDeCustos[c.id] = c);
                 renderizarMapa(); document.getElementById('telaCarregamento').style.display = 'none';
             } catch (error) { mostrarAlerta("Falha ao conectar. O mapa carregará offline."); document.getElementById('telaCarregamento').style.display = 'none'; renderizarMapa();
@@ -1280,10 +1329,21 @@
                                 const idDaMesa = `${setorConfig.prefixo}-${num}`; const dadosDestaMesa = bancoDeDados[idDaMesa];
                                 const wrapperMesa = document.createElement('div'); wrapperMesa.className = 'wrapper-mesa';
 
-                                if (nivelAcesso === 0 && mesasPermitidas.includes(idDaMesa)) { wrapperMesa.classList.add('mostrar-forcado'); }
+                                const ehVIP = mesasPermitidas.includes(idDaMesa);
+                                if (ehVIP) { wrapperMesa.classList.add('mostrar-forcado'); }
 
-                                const textoAcima = document.createElement('div'); textoAcima.className = 'texto-acima'; textoAcima.textContent = dadosDestaMesa.status.toUpperCase(); 
-                                if (dadosDestaMesa.status === "Vendida") { textoAcima.classList.add('vendida'); } else if (dadosDestaMesa.status === "Reservada") { textoAcima.classList.add('reservada'); } else { textoAcima.classList.add('livre'); }
+                                const textoAcima = document.createElement('div'); textoAcima.className = 'texto-acima'; 
+                                let infoTexto = dadosDestaMesa.status.toUpperCase(); 
+
+                                if (dadosDestaMesa.status === "Vendida") { textoAcima.classList.add('vendida'); } 
+                                else if (dadosDestaMesa.status === "Reservada") { textoAcima.classList.add('reservada'); } 
+                                else { textoAcima.classList.add('livre'); }
+
+                                // MÁGICA DOS NOMES (Se for admin ou VIP, o nome sobrepõe o Status)
+                                if (ehVIP || (nivelAcesso === 2 && dadosDestaMesa.status !== "Livre" && dadosDestaMesa.nome)) {
+                                    infoTexto = dadosDestaMesa.nome || infoTexto;
+                                }
+                                textoAcima.textContent = infoTexto;
 
                                 const divMesa = document.createElement('div'); divMesa.className = `mesa ${setorConfig.classeTamanho}`; divMesa.textContent = idDaMesa; divMesa.setAttribute('data-status', dadosDestaMesa.status);
                                 
@@ -1291,15 +1351,26 @@
                                     divMesa.style.backgroundColor = setorConfig.corVendida; divMesa.style.border = "2px dashed #666"; divMesa.style.opacity = "0.9";
                                 } else { divMesa.style.backgroundColor = setorConfig.corNormal; }
 
+                                // APLICA O ANEL COLORIDO SE FOR VIP
+                                if (ehVIP) {
+                                    divMesa.style.border = `4px solid ${setorConfig.corNormal}`;
+                                    divMesa.style.opacity = "1";
+                                    divMesa.style.boxShadow = `0 0 15px ${setorConfig.corNormal}`;
+                                }
+
                                 if (dadosDestaMesa.cadeiras > 0) { const badge = document.createElement('div'); badge.className = 'badge-extra'; badge.textContent = `+${dadosDestaMesa.cadeiras}`; divMesa.appendChild(badge); }
-                                if (dadosDestaMesa.status !== "Livre" && dadosDestaMesa.saldoDevedor > 0) { const badgeDivida = document.createElement('div'); badgeDivida.className = 'badge-divida'; badgeDivida.textContent = '💲'; badgeDivida.title = `Saldo pendente: R$ ${converterParaMoeda(dadosDestaMesa.saldoDevedor)}`; wrapperMesa.appendChild(badgeDivida); }
+                                
+                                // CIFRÃO DA DÍVIDA SÓ APARECE SE VOCÊ FOR O ADMIN
+                                if (nivelAcesso === 2 && dadosDestaMesa.status !== "Livre" && dadosDestaMesa.saldoDevedor > 0) { 
+                                    const badgeDivida = document.createElement('div'); badgeDivida.className = 'badge-divida'; badgeDivida.textContent = '💲'; badgeDivida.title = `Saldo pendente: R$ ${converterParaMoeda(dadosDestaMesa.saldoDevedor)}`; wrapperMesa.appendChild(badgeDivida); 
+                                }
 
                                 divMesa.onclick = function() { abrirModal(idDaMesa); };
 
-                                const textoAbaixo = document.createElement('div'); textoAbaixo.className = 'texto-abaixo'; 
-                                textoAbaixo.textContent = dadosDestaMesa.status !== "Livre" ? dadosDestaMesa.nome : "";
-
-                                wrapperMesa.appendChild(textoAcima); wrapperMesa.appendChild(divMesa); wrapperMesa.appendChild(textoAbaixo); divFileira.appendChild(wrapperMesa); contadorMesa++; 
+                                wrapperMesa.appendChild(textoAcima); 
+                                wrapperMesa.appendChild(divMesa); 
+                                divFileira.appendChild(wrapperMesa); 
+                                contadorMesa++; 
                             }
                         }
                     });
