@@ -39,6 +39,7 @@
         .btn-sincronizar { background-color: #47D359; }
         .btn-sincronizar:hover { box-shadow: 0 0 10px #47D359; }
 
+        /* OCULTA BOTÕES SENSÍVEIS POR PADRÃO (SÓ O ADMIN VÊ) */
         #btnCofre, #btnImg, #btnPdf, #btnBuffet, #btnVisaoCliente { display: none; }
 
         #container-salao { width: 100%; padding: 0 70px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 15px; position: relative; margin-bottom: 15px;}
@@ -84,28 +85,35 @@
         /* === DESTAQUE VIP (LINK DO CLIENTE) === */
         body #container-salao .wrapper-mesa.mostrar-forcado {
             z-index: 10; 
-            margin: 0 10px; /* Protege a câmera criando espaço nas laterais */
         }
         
+        /* A bolinha VIP NÃO tem mais zoom. Apenas borda colorida e sombra */
         body #container-salao .wrapper-mesa.mostrar-forcado .mesa {
-            transform: scale(1.25) !important; /* Zoom só na mesa! */
-            /* A borda e o brilho são injetados pelo JS com a cor da Cota */
+            border-style: solid !important;
+            border-width: 4px !important;
+            /* A cor da borda e o brilho são injetados pelo JS com a cor da Cota */
         }
 
+        /* O nome do VIP fica no lugar normal, mas com o super destaque */
         body #container-salao .wrapper-mesa.mostrar-forcado .texto-acima {
             font-size: 14px !important;
             font-weight: 900 !important;
             color: #fff !important;
-            /* Contorno preto ultra forte no texto do VIP */
+            padding: 4px 8px !important;
+            border-radius: 6px !important;
+            border: 2px solid #fff !important;
+            /* A cor de fundo é injetada via JS */
             text-shadow: 
                 -1px -1px 0 #000,  
                  1px -1px 0 #000,
                 -1px  1px 0 #000,
                  1px  1px 0 #000,
                  0px  4px 6px rgba(0,0,0,0.8) !important;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.6) !important;
         }
         /* ======================================= */
 
+        /* CAMADAS DE SEGURANÇA E VISUALIZAÇÃO */
         body.modo-visitante .badge-extra { display: none; }
         body.modo-visitante .badge-divida { display: none; }
         body.modo-visitante #btnLimpar { display: none; }
@@ -1190,44 +1198,25 @@
 
         function fecharCofre() { document.getElementById('painel-cofre').style.display = 'none'; document.getElementById('container-salao').style.display = 'flex'; document.querySelector('.painel-rodape').style.display = 'flex'; }
 
-        // === CÂMERA INTELIGENTE ATUALIZADA ===
         async function exportarMapa(tipo) {
-            const areaExportacao = document.getElementById('area-exportacao'); 
-            const botoesTopo = document.querySelector('.area-botoes-topo');
-            botoesTopo.style.display = 'none'; 
-            
-            let nivelAnterior = nivelAcesso;
-            // Se estivermos gerando o mapa para o cliente (VIP), forçamos o nível zero pra censurar os dados das outras mesas!
-            if (parametroMostrar) {
-                nivelAcesso = 0;
-                renderizarMapa(); 
-                await new Promise(r => setTimeout(r, 200)); // Pequeno fôlego pra tela se ajustar e não travar a foto
-            }
-
-            mostrarAlerta("Preparando sua imagem VIP, aguarde... 📸", "⏳ Gerando Arquivo");
+            const areaExportacao = document.getElementById('area-exportacao'); const botoesTopo = document.querySelector('.area-botoes-topo');
+            botoesTopo.style.display = 'none'; mostrarAlerta("Preparando sua imagem, aguarde um instante... 📸", "⏳ Gerando Arquivo");
 
             try {
                 const canvas = await html2canvas(areaExportacao, { backgroundColor: '#0A192F', scale: 2, useCORS: true, allowTaint: true });
                 const imgData = canvas.toDataURL('image/jpeg', 0.9);
 
                 if (tipo === 'img') {
-                    const link = document.createElement('a'); link.download = 'Mapa_VIP_Educandario.jpg'; link.href = imgData; link.click();
+                    const link = document.createElement('a'); link.download = 'Mapa_Educandario_2026.jpg'; link.href = imgData; link.click();
                 } else if (tipo === 'pdf') {
                     const { jsPDF } = window.jspdf; const orientation = canvas.width >= canvas.height ? 'l' : 'p';
                     const pdf = new jsPDF({ orientation: orientation, unit: 'px', format: [canvas.width, canvas.height] });
-                    pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height); pdf.save('Mapa_VIP_Educandario.pdf');
+                    pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height); pdf.save('Mapa_Educandario_2026.pdf');
                 }
                 fecharAlertaCustomizado();
             } catch (erro) {
                 fecharAlertaCustomizado(); console.error(erro); mostrarAlerta("O navegador bloqueou a foto. No GitHub vai funcionar perfeitamente! 🚀", "❌ Bloqueio Local");
-            } finally { 
-                botoesTopo.style.display = 'flex'; 
-                // DEVOLVE A TELA PRA MODO ADMIN SE ESTIVESSE
-                if (parametroMostrar) {
-                    nivelAcesso = nivelAnterior;
-                    renderizarMapa();
-                }
-            }
+            } finally { botoesTopo.style.display = 'flex'; }
         }
 
         function inicializarBancoDeDados() {
@@ -1251,13 +1240,8 @@
         async function carregarDadosDaNuvemBackground() {
             try {
                 const response = await fetch(URL_GOOGLE_SCRIPT); const dadosNuvem = await response.json();
-                const responseCustos = await fetch(URL_GOOGLE_SCRIPT + "?tipo=custos"); const dadosCustos = await responseCustos.json();
-                
-                let hashAtual = JSON.stringify(dadosNuvem) + JSON.stringify(dadosCustos);
-                if (hashAtual === cacheDadosNuvem) return; 
-                cacheDadosNuvem = hashAtual;
-
                 for (const idMesa in dadosNuvem) { if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); } }
+                const responseCustos = await fetch(URL_GOOGLE_SCRIPT + "?tipo=custos"); const dadosCustos = await responseCustos.json();
                 bancoDeCustos = {}; dadosCustos.forEach(c => bancoDeCustos[c.id] = c);
                 renderizarMapa();
             } catch (error) {}
@@ -1268,12 +1252,8 @@
             const btnSinc = document.getElementById('btnSincronizar'); btnSinc.textContent = "⌛ Baixando...";
             try {
                 const response = await fetch(URL_GOOGLE_SCRIPT); const dadosNuvem = await response.json();
-                const responseCustos = await fetch(URL_GOOGLE_SCRIPT + "?tipo=custos"); const dadosCustos = await responseCustos.json();
-                
-                let hashAtual = JSON.stringify(dadosNuvem) + JSON.stringify(dadosCustos);
-                cacheDadosNuvem = hashAtual;
-
                 for (const idMesa in dadosNuvem) { if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); } }
+                const responseCustos = await fetch(URL_GOOGLE_SCRIPT + "?tipo=custos"); const dadosCustos = await responseCustos.json();
                 bancoDeCustos = {}; dadosCustos.forEach(c => bancoDeCustos[c.id] = c);
                 renderizarMapa(); document.getElementById('telaCarregamento').style.display = 'none';
             } catch (error) { mostrarAlerta("Falha ao conectar. O mapa carregará offline."); document.getElementById('telaCarregamento').style.display = 'none'; renderizarMapa();
@@ -1339,28 +1319,31 @@
                                 else if (dadosDestaMesa.status === "Reservada") { textoAcima.classList.add('reservada'); } 
                                 else { textoAcima.classList.add('livre'); }
 
-                                // MÁGICA DOS NOMES (Se for admin ou VIP, o nome sobrepõe o Status)
+                                // MÁGICA DOS NOMES
                                 if (ehVIP || (nivelAcesso === 2 && dadosDestaMesa.status !== "Livre" && dadosDestaMesa.nome)) {
                                     infoTexto = dadosDestaMesa.nome || infoTexto;
                                 }
                                 textoAcima.textContent = infoTexto;
 
-                                const divMesa = document.createElement('div'); divMesa.className = `mesa ${setorConfig.classeTamanho}`; divMesa.textContent = idDaMesa; divMesa.setAttribute('data-status', dadosDestaMesa.status);
+                                const divMesa = document.createElement('div'); divMesa.className = `mesa ${setorConfig.classeTamanho}`; divMesa.setAttribute('data-status', dadosDestaMesa.status);
                                 
                                 if (dadosDestaMesa.status === "Vendida" || dadosDestaMesa.status === "Reservada") {
                                     divMesa.style.backgroundColor = setorConfig.corVendida; divMesa.style.border = "2px dashed #666"; divMesa.style.opacity = "0.9";
                                 } else { divMesa.style.backgroundColor = setorConfig.corNormal; }
 
-                                // APLICA O ANEL COLORIDO SE FOR VIP
-                                if (ehVIP) {
+                                // MÁGICA: NOME DENTRO DA BOLINHA SE FOR VIP
+                                if (ehVIP && dadosDestaMesa.nome && dadosDestaMesa.status !== "Livre") {
+                                    divMesa.innerHTML = `<span style="line-height: 1;">${idDaMesa}</span><span style="font-size: 0.45em; display: block; margin-top: 4px; line-height: 1.1; max-width: 95%; text-align: center; text-shadow: none;">${dadosDestaMesa.nome}</span>`;
+                                    divMesa.style.flexDirection = 'column';
                                     divMesa.style.border = `4px solid ${setorConfig.corNormal}`;
                                     divMesa.style.opacity = "1";
                                     divMesa.style.boxShadow = `0 0 15px ${setorConfig.corNormal}`;
+                                } else {
+                                    divMesa.textContent = idDaMesa;
                                 }
 
                                 if (dadosDestaMesa.cadeiras > 0) { const badge = document.createElement('div'); badge.className = 'badge-extra'; badge.textContent = `+${dadosDestaMesa.cadeiras}`; divMesa.appendChild(badge); }
                                 
-                                // CIFRÃO DA DÍVIDA SÓ APARECE SE VOCÊ FOR O ADMIN
                                 if (nivelAcesso === 2 && dadosDestaMesa.status !== "Livre" && dadosDestaMesa.saldoDevedor > 0) { 
                                     const badgeDivida = document.createElement('div'); badgeDivida.className = 'badge-divida'; badgeDivida.textContent = '💲'; badgeDivida.title = `Saldo pendente: R$ ${converterParaMoeda(dadosDestaMesa.saldoDevedor)}`; wrapperMesa.appendChild(badgeDivida); 
                                 }
