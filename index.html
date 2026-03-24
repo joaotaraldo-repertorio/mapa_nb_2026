@@ -61,8 +61,9 @@
         .setor { padding: 12px 20px; border-radius: 8px; width: 100%; box-sizing: border-box; z-index: 2;}
         .setor h3 { margin-top: 0; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; text-align: center; font-size: 22px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
         
-        .fileira-mesas { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; width: 100%; }
-        .wrapper-mesa { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 140px; position: relative; }
+        /* AUMENTO DO ESPAÇAMENTO VERTICAL (Margem ajustada de 10px para 30px) */
+        .fileira-mesas { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; width: 100%; }
+        .wrapper-mesa { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 140px; position: relative; }
 
         .texto-acima { font-size: 11px; font-weight: bold; text-transform: uppercase; height: 14px; letter-spacing: 1px; }
         .texto-acima.vendida { color: var(--cor-vendida-texto); }
@@ -71,39 +72,41 @@
         
         .texto-abaixo { font-size: 14px; color: #ffffff; text-align: center; width: 100%; white-space: normal; word-wrap: break-word; line-height: 1.1; font-weight: bold; min-height: 15px; }
         
-        /* ====================================================================== */
-        /* CAMADAS DE SEGURANÇA E VISUALIZAÇÃO                                    */
-        /* ====================================================================== */
-        
+        /* CAMADAS DE SEGURANÇA E VISUALIZAÇÃO */
         body.modo-visitante .texto-abaixo { display: none; }
         body.modo-visitante .badge-extra { display: none; }
         body.modo-visitante .badge-divida { display: none; }
         body.modo-visitante #btnLimpar { display: none; }
         
-        /* === A NOVA MÁGICA DA VITRINE VIP === */
-        body.modo-visitante .mostrar-forcado {
-            transform: scale(1.15); /* Efeito Zoom: Deixa a mesa 15% maior */
-            z-index: 10; /* Garante que ela fique por cima das vizinhas */
-            animation: holofoteMesa 1.5s infinite alternate; /* Efeito do brilho piscando */
+        /* === A NOVA MÁGICA DA VITRINE VIP (COM ALVO DE IMPRESSÃO) === */
+        /* Retiramos a dependência do "modo-visitante" para que o admin possa imprimir o destaque */
+        .mostrar-forcado {
+            transform: scale(1.25) !important; /* Zoom forte */
+            z-index: 10; 
         }
         
-        body.modo-visitante .mostrar-forcado .texto-abaixo { 
+        .mostrar-forcado .mesa {
+            border: 4px solid var(--ciano-destaque) !important; /* Borda Ciano super grossa */
+            /* Efeito "Alvo": Linha invisível azul escura + Linha grossa ciano em volta */
+            box-shadow: 0 0 0 5px var(--azul-fundo), 0 0 0 10px var(--ciano-destaque) !important;
+        }
+        
+        .mostrar-forcado .texto-abaixo { 
             display: block !important; 
-            color: var(--ciano-destaque); 
-            text-shadow: 0px 2px 6px #000; /* Sombra mais forte para leitura */
-            font-size: 17px; /* Letra maior */
-            font-weight: 900; /* Letra mais gordinha */
-            margin-top: 5px;
+            color: #000 !important; /* Letra preta para destacar */
+            background-color: var(--ciano-destaque); /* Fundo Ciano na etiqueta do nome */
+            border: 2px solid #fff;
+            padding: 4px 8px;
+            border-radius: 6px;
+            text-shadow: none !important; 
+            font-size: 15px !important; 
+            font-weight: 900 !important; 
+            margin-top: 15px !important; /* Espaço para afastar da borda gigante */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.6);
         }
         
-        body.modo-visitante .mostrar-forcado .badge-extra { display: flex !important; }
-
-        /* O Motor do Brilho Pulsante */
-        @keyframes holofoteMesa {
-            0% { filter: drop-shadow(0 0 2px var(--ciano-destaque)); }
-            100% { filter: drop-shadow(0 0 15px var(--ciano-destaque)); }
-        }
-        /* ==================================== */
+        .mostrar-forcado .badge-extra { display: flex !important; }
+        /* ============================================================== */
 
         body.modo-vendas .badge-divida { display: none; }
         body.modo-vendas #btnLimpar { display: none; }
@@ -1293,7 +1296,8 @@
                                 const idDaMesa = `${setorConfig.prefixo}-${num}`; const dadosDestaMesa = bancoDeDados[idDaMesa];
                                 const wrapperMesa = document.createElement('div'); wrapperMesa.className = 'wrapper-mesa';
 
-                                if (nivelAcesso === 0 && mesasPermitidas.includes(idDaMesa)) { wrapperMesa.classList.add('mostrar-forcado'); }
+                                // A MÁGICA: Independente de ser visitante ou não, o destaque VIP aparece
+                                if (mesasPermitidas.includes(idDaMesa)) { wrapperMesa.classList.add('mostrar-forcado'); }
 
                                 const textoAcima = document.createElement('div'); textoAcima.className = 'texto-acima'; textoAcima.textContent = dadosDestaMesa.status.toUpperCase(); 
                                 if (dadosDestaMesa.status === "Vendida") { textoAcima.classList.add('vendida'); } else if (dadosDestaMesa.status === "Reservada") { textoAcima.classList.add('reservada'); } else { textoAcima.classList.add('livre'); }
