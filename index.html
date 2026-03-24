@@ -61,7 +61,6 @@
         .setor { padding: 12px 20px; border-radius: 8px; width: 100%; box-sizing: border-box; z-index: 2;}
         .setor h3 { margin-top: 0; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; text-align: center; font-size: 22px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
         
-        /* AUMENTO DO ESPAÇAMENTO VERTICAL ENTRE MESAS PARA FOTOS */
         .fileira-mesas { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 30px; width: 100%; }
         .wrapper-mesa { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 140px; position: relative; }
 
@@ -78,7 +77,7 @@
         body.modo-visitante .badge-divida { display: none; }
         body.modo-visitante #btnLimpar { display: none; }
         
-        /* === VITRINE VIP BLINDADA COM ALVO === */
+        /* === A NOVA MÁGICA DA VITRINE VIP BLINDADA === */
         body #container-salao .wrapper-mesa.mostrar-forcado {
             transform: scale(1.25) !important; 
             z-index: 10; 
@@ -89,6 +88,7 @@
             box-shadow: 0 0 0 5px var(--azul-fundo), 0 0 0 10px var(--ciano-destaque) !important;
         }
         
+        /* Esse seletor gigante garante que a etiqueta VIP não suma nem na foto */
         body #container-salao .wrapper-mesa.mostrar-forcado .texto-abaixo { 
             display: block !important; 
             color: #000 !important; 
@@ -99,15 +99,14 @@
             text-shadow: none !important; 
             font-size: 15px !important; 
             font-weight: 900 !important; 
-            position: relative !important;
-            top: 12px !important; 
-            margin-top: 0 !important; 
+            margin-top: 15px !important; 
             box-shadow: 0 4px 8px rgba(0,0,0,0.6) !important;
             opacity: 1 !important;
             visibility: visible !important;
         }
         
         body #container-salao .wrapper-mesa.mostrar-forcado .badge-extra { display: flex !important; }
+        /* ============================================================== */
 
         body.modo-vendas .badge-divida { display: none; }
         body.modo-vendas #btnLimpar { display: none; }
@@ -122,6 +121,7 @@
         }
         body.modo-buffet .wrapper-mesa:has(.mesa[data-status="Livre"]) .texto-abaixo { display: none; }
 
+        /* MODO CLIENTE NORMAL (Esconde nomes gerais, mas perde para o VIP acima) */
         body.modo-cliente .texto-abaixo { display: none !important; }
         body.modo-cliente .badge-extra { display: none !important; }
         body.modo-cliente .badge-divida { display: none !important; }
@@ -263,32 +263,6 @@
         #containerPagadores::-webkit-scrollbar-track { background: #0A192F; border-radius: 4px; }
         #containerPagadores::-webkit-scrollbar-thumb { background: #233554; border-radius: 4px; }
         #containerPagadores::-webkit-scrollbar-thumb:hover { background: var(--ciano-destaque); }
-
-        /* ====================================================================== */
-        /* O MOTOR DE IMPRESSÃO A4 (PDF PERFEITO)                                 */
-        /* ====================================================================== */
-        @media print {
-            @page {
-                size: A4;
-                margin: 1.5cm 0.5cm 0.5cm 0.5cm; /* Superior 1.5, Inferior e Laterais 0.5 */
-            }
-            body { 
-                background: #0A192F !important; 
-                -webkit-print-color-adjust: exact !important; 
-                print-color-adjust: exact !important; 
-            }
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            
-            /* Oculta interface desnecessária na impressão */
-            .painel-topo .area-botoes-topo, #modalSenha, #meuModal, #modalCusto, #telaCarregamento { 
-                display: none !important; 
-            }
-            
-            /* A MÁGICA: Impede que as fileiras e setores cortem no meio da página */
-            .setor { page-break-inside: avoid; break-inside: avoid; margin-bottom: 20px; }
-            .fileira-mesas { page-break-inside: avoid; break-inside: avoid; }
-        }
-        /* ====================================================================== */
 
     </style>
 </head>
@@ -472,9 +446,7 @@
 
             </div>
 
-        </div>
-
-        <div id="container-salao">
+        </div> <div id="container-salao">
             <div class="tarja-lateral tarja-wc-masc"><span class="tarja-icone">🚹</span><span class="tarja-texto">WC Masc</span></div>
             <div class="tarja-lateral tarja-wc-fem"><span class="tarja-icone">🚺♿</span><span class="tarja-texto">WC Fem</span></div>
             <div class="tarja-lateral tarja-aparador-esq"><span class="tarja-texto">Aparador</span></div>
@@ -516,9 +488,7 @@
             </div>
         </div>
 
-    </div>
-
-    <div id="meuModal" class="modal-overlay">
+    </div> <div id="meuModal" class="modal-overlay">
         <div class="modal-box" style="width: 750px;">
             <h2 id="tituloModal"><span>Gerenciar Mesa</span> <span id="statusBadge">Livre</span></h2> 
             
@@ -551,7 +521,7 @@
             </div>
 
             <div id="containerPagadores" style="max-height: 450px; overflow-y: auto; padding-right: 10px;">
-            </div>
+                </div>
 
             <div class="painel-financeiro" style="margin-top: 15px;">
                 <h4>💰 Resumo Financeiro Global <span id="textoValorPadrao" style="color: #8892b0; font-size: 12px;"></span></h4>
@@ -662,12 +632,12 @@
         
         const bancoDeDados = {}; 
         let bancoDeCustos = {}; 
+        
         let mesaEditandoAtual = ""; 
         let statusAoAbrirMesa = ""; 
         let valorCadeiraAvulsa = 800.00; 
         let pagadoresAtuais = []; 
         let custoEditandoId = "";
-        let cacheDadosNuvem = ""; 
 
         let nivelAcesso = 0; 
         const SENHA_VENDAS = "vendas2026";
@@ -700,21 +670,6 @@
             document.getElementById('modalAlerta').style.display = 'flex';
         }
         function fecharAlertaCustomizado() { document.getElementById('modalAlerta').style.display = 'none'; }
-        
-        function formatarMoeda(elemento) {
-            let valor = String(elemento.value).replace(/\D/g, ''); if (valor === '') { elemento.value = ''; return; }
-            valor = (parseInt(valor) / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); elemento.value = valor;
-        }
-
-        function converterParaNumero(str) {
-            if (str === null || str === undefined || str === "") return 0; if (typeof str === 'number') return str;
-            return parseFloat(String(str).replace(/\./g, '').replace(',', '.'));
-        }
-
-        function converterParaMoeda(numero) {
-            let val = Number(numero); if (isNaN(val)) val = 0;
-            return val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        }
 
         const inputSenha = document.getElementById('inputSenha');
         const toggleSenha = document.getElementById('toggleSenha');
@@ -1231,124 +1186,102 @@
 
         function fecharCofre() { document.getElementById('painel-cofre').style.display = 'none'; document.getElementById('container-salao').style.display = 'flex'; document.querySelector('.painel-rodape').style.display = 'flex'; }
 
-        function abrirModalCusto(id = null) {
-            if (id && bancoDeCustos[id]) {
-                custoEditandoId = id; const c = bancoDeCustos[id];
-                document.getElementById('tituloModalCusto').textContent = "Editar Despesa"; document.getElementById('custoCategoria').value = c.categoria;
-                document.getElementById('custoFornecedor').value = c.fornecedor; document.getElementById('custoDescricao').value = c.descricao; document.getElementById('custoQtd').value = c.quantidade;
-                document.getElementById('custoUnitario').value = converterParaMoeda(c.valorUnitario); document.getElementById('custoTotal').value = converterParaMoeda(c.valorTotal);
-                document.getElementById('custoObs').value = getCustoObsLimpada(c.obs); document.getElementById('btnExcluirCusto').style.display = 'block';
-            } else {
-                custoEditandoId = ""; document.getElementById('tituloModalCusto').textContent = "Lançar Nova Despesa"; document.getElementById('custoCategoria').value = "";
-                document.getElementById('custoFornecedor').value = ""; document.getElementById('custoDescricao').value = ""; document.getElementById('custoQtd').value = 1;
-                document.getElementById('custoUnitario').value = ""; document.getElementById('custoTotal').value = ""; document.getElementById('custoObs').value = "";
-                document.getElementById('btnExcluirCusto').style.display = 'none';
-            }
-            document.getElementById('modalCusto').style.display = 'flex';
-        }
-
-        function fecharModalCusto() { document.getElementById('modalCusto').style.display = 'none'; }
-        function calcularCustoTotal() { let qtd = parseInt(document.getElementById('custoQtd').value) || 1; let unitario = converterParaNumero(document.getElementById('custoUnitario').value); let total = qtd * unitario; document.getElementById('custoTotal').value = converterParaMoeda(total); }
-
-        async function salvarCusto() {
-            const btnSalvar = document.getElementById('btnSalvarCusto');
-            btnSalvar.textContent = "Salvando..."; btnSalvar.disabled = true;
-
-            let idCusto = custoEditandoId ? custoEditandoId : "CST-" + new Date().getTime();
-            let oldObs = custoEditandoId && bancoDeCustos[custoEditandoId] ? bancoDeCustos[custoEditandoId].obs : "";
-            let isLocked = isCustoLocked(oldObs); let novaObs = document.getElementById('custoObs').value; novaObs = setCustoLocked(novaObs, isLocked); 
-            
-            let dadosCusto = { id: idCusto, categoria: document.getElementById('custoCategoria').value || "Outros", fornecedor: document.getElementById('custoFornecedor').value, descricao: document.getElementById('custoDescricao').value, quantidade: parseInt(document.getElementById('custoQtd').value) || 1, valorUnitario: converterParaNumero(document.getElementById('custoUnitario').value), valorTotal: converterParaNumero(document.getElementById('custoTotal').value), obs: novaObs };
-            let payload = { tipo: "custo", acao: "salvar", dados: dadosCusto };
-
-            try { await fetch(URL_GOOGLE_SCRIPT, { method: 'POST', body: JSON.stringify(payload) }); bancoDeCustos[idCusto] = dadosCusto; fecharModalCusto(); abrirCofre(); 
-            } catch (error) { mostrarAlerta("Erro ao salvar despesa na nuvem!"); } finally { btnSalvar.textContent = "Salvar Despesa"; btnSalvar.disabled = false; }
-        }
-
-        async function excluirCusto() {
-            if (confirm("Tem certeza que deseja apagar esta despesa definitivamente?")) {
-                const btnExcluir = document.getElementById('btnExcluirCusto'); btnExcluir.textContent = "Apagando..."; btnExcluir.disabled = true;
-                let payload = { tipo: "custo", acao: "excluir", dados: { id: custoEditandoId } };
-                try { await fetch(URL_GOOGLE_SCRIPT, { method: 'POST', body: JSON.stringify(payload) }); delete bancoDeCustos[custoEditandoId]; document.getElementById('filtroCategoriaCustos').value = "TODAS"; fecharModalCusto(); abrirCofre(); 
-                } catch (error) { mostrarAlerta("Erro ao excluir despesa da nuvem!"); } finally { btnExcluir.textContent = "🗑️ Excluir Despesa"; btnExcluir.disabled = false; }
-            }
-        }
-
-        async function carregarDadosDaNuvemBackground() {
-            try {
-                const response = await fetch(URL_GOOGLE_SCRIPT); const dadosNuvem = await response.json();
-                const responseCustos = await fetch(URL_GOOGLE_SCRIPT + "?tipo=custos"); const dadosCustos = await responseCustos.json();
-                
-                let hashAtual = JSON.stringify(dadosNuvem) + JSON.stringify(dadosCustos);
-                if (hashAtual === cacheDadosNuvem) return; 
-                cacheDadosNuvem = hashAtual;
-
-                for (const idMesa in dadosNuvem) { if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); } }
-                bancoDeCustos = {}; dadosCustos.forEach(c => bancoDeCustos[c.id] = c);
-                renderizarMapa();
-            } catch (error) {}
-        }
-
-        async function carregarDadosDaNuvem() {
-            const btnSinc = document.getElementById('btnSincronizar'); btnSinc.textContent = "⌛ Baixando...";
-            try {
-                const response = await fetch(URL_GOOGLE_SCRIPT); const dadosNuvem = await response.json();
-                const responseCustos = await fetch(URL_GOOGLE_SCRIPT + "?tipo=custos"); const dadosCustos = await responseCustos.json();
-                
-                let hashAtual = JSON.stringify(dadosNuvem) + JSON.stringify(dadosCustos);
-                cacheDadosNuvem = hashAtual;
-
-                for (const idMesa in dadosNuvem) { if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); } }
-                bancoDeCustos = {}; dadosCustos.forEach(c => bancoDeCustos[c.id] = c);
-                renderizarMapa(); 
-            } catch (error) { 
-                mostrarAlerta("Falha ao conectar. O mapa carregará offline."); 
-                renderizarMapa();
-            } finally { 
-                document.getElementById('telaCarregamento').style.display = 'none';
-                btnSinc.textContent = "🔄 Sincronizar"; 
-            }
-        }
-
-        async function enviarParaNuvem(idMesa, dados) {
-            try { await fetch(URL_GOOGLE_SCRIPT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ idMesa: idMesa, dados: dados }) });
-            } catch (error) { throw new Error("Erro de conexão"); }
-        }
-        
+        // === A CÂMERA INTELIGENTE PARA A IMPRESSÃO DA PRESIDENTE ===
         async function exportarMapa(tipo) {
             const areaExportacao = document.getElementById('area-exportacao'); const botoesTopo = document.querySelector('.area-botoes-topo');
-            
-            if (tipo === 'pdf') {
-                let forcarLimpeza = false;
-                if (parametroMostrar && !document.body.classList.contains('modo-cliente')) {
-                    document.body.classList.add('modo-cliente');
-                    forcarLimpeza = true;
-                }
-                window.print(); 
-                if (forcarLimpeza) { document.body.classList.remove('modo-cliente'); }
-                return;
-            }
-
             botoesTopo.style.display = 'none'; 
+            
+            // SE FOR LINK VIP, VESTE OS ÓCULOS DE MODO CLIENTE SOZINHO PRA FOTO
             let forcarLimpeza = false;
             if (parametroMostrar && !document.body.classList.contains('modo-cliente')) {
                 document.body.classList.add('modo-cliente');
                 forcarLimpeza = true;
             }
             
-            mostrarAlerta("Preparando sua imagem VIP, aguarde... 📸", "⏳ Gerando Arquivo");
+            mostrarAlerta("Preparando sua imagem com o mapa limpo, aguarde... 📸", "⏳ Gerando Arquivo VIP");
 
             try {
                 const canvas = await html2canvas(areaExportacao, { backgroundColor: '#0A192F', scale: 2, useCORS: true, allowTaint: true });
                 const imgData = canvas.toDataURL('image/jpeg', 0.9);
-                const link = document.createElement('a'); link.download = 'Mapa_Educandario.jpg'; link.href = imgData; link.click();
+
+                if (tipo === 'img') {
+                    const link = document.createElement('a'); link.download = 'Mapa_VIP_Educandario.jpg'; link.href = imgData; link.click();
+                } else if (tipo === 'pdf') {
+                    const { jsPDF } = window.jspdf; const orientation = canvas.width >= canvas.height ? 'l' : 'p';
+                    const pdf = new jsPDF({ orientation: orientation, unit: 'px', format: [canvas.width, canvas.height] });
+                    pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height); pdf.save('Mapa_VIP_Educandario.pdf');
+                }
                 fecharAlertaCustomizado();
             } catch (erro) {
                 fecharAlertaCustomizado(); console.error(erro); mostrarAlerta("O navegador bloqueou a foto. No GitHub vai funcionar perfeitamente! 🚀", "❌ Bloqueio Local");
             } finally { 
                 botoesTopo.style.display = 'flex'; 
-                if (forcarLimpeza) document.body.classList.remove('modo-cliente');
+                // DEVOLVE A TELA PRA MODO ADMIN
+                if (forcarLimpeza) {
+                    document.body.classList.remove('modo-cliente');
+                }
             }
+        }
+
+        function inicializarBancoDeDados() {
+            for (const chave in CONFIG_MESAS) {
+                const config = CONFIG_MESAS[chave]; let contador = 1;
+                config.layout.forEach(fileira => {
+                    fileira.forEach(item => {
+                        if (item !== "BIG_MIX" && item !== "GAP") {
+                            for (let i = 0; i < item; i++) {
+                                const num = contador < 10 ? '0' + contador : contador;
+                                const id = `${config.prefixo}-${num}`;
+                                bancoDeDados[id] = { setor: config.nome, status: "Livre", nome: "", telefone: "", email: "", cadeiras: 0, pagamento: "Nenhum", parcelas: "1x", valorTotal: "", valorPago: "", saldoDevedor: 0, logoPropaganda: false, obs: "", detalhesParcelas: "[]" };
+                                contador++;
+                            }
+                        }
+                    });
+                });
+            }
+        }
+
+        async function carregarDadosDaNuvemBackground() {
+            try {
+                const response = await fetch(URL_GOOGLE_SCRIPT); const dadosNuvem = await response.json();
+                for (const idMesa in dadosNuvem) { if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); } }
+                const responseCustos = await fetch(URL_GOOGLE_SCRIPT + "?tipo=custos"); const dadosCustos = await responseCustos.json();
+                bancoDeCustos = {}; dadosCustos.forEach(c => bancoDeCustos[c.id] = c);
+                renderizarMapa();
+            } catch (error) {}
+        }
+        setInterval(carregarDadosDaNuvemBackground, 15000);
+
+        async function carregarDadosDaNuvem() {
+            const btnSinc = document.getElementById('btnSincronizar'); btnSinc.textContent = "⌛ Baixando...";
+            try {
+                const response = await fetch(URL_GOOGLE_SCRIPT); const dadosNuvem = await response.json();
+                for (const idMesa in dadosNuvem) { if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); } }
+                const responseCustos = await fetch(URL_GOOGLE_SCRIPT + "?tipo=custos"); const dadosCustos = await responseCustos.json();
+                bancoDeCustos = {}; dadosCustos.forEach(c => bancoDeCustos[c.id] = c);
+                renderizarMapa(); document.getElementById('telaCarregamento').style.display = 'none';
+            } catch (error) { mostrarAlerta("Falha ao conectar. O mapa carregará offline."); document.getElementById('telaCarregamento').style.display = 'none'; renderizarMapa();
+            } finally { btnSinc.textContent = "🔄 Sincronizar"; }
+        }
+
+        async function enviarParaNuvem(idMesa, dados) {
+            try { await fetch(URL_GOOGLE_SCRIPT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ idMesa: idMesa, dados: dados }) });
+            } catch (error) { throw new Error("Erro de conexão"); }
+        }
+
+        function formatarMoeda(elemento) {
+            let valor = String(elemento.value).replace(/\D/g, ''); if (valor === '') { elemento.value = ''; return; }
+            valor = (parseInt(valor) / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); elemento.value = valor;
+        }
+
+        function converterParaNumero(str) {
+            if (str === null || str === undefined || str === "") return 0; if (typeof str === 'number') return str;
+            return parseFloat(String(str).replace(/\./g, '').replace(',', '.'));
+        }
+
+        function converterParaMoeda(numero) {
+            let val = Number(numero); if (isNaN(val)) val = 0;
+            return val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
 
         function renderizarMapa() {
@@ -1409,11 +1342,190 @@
             }
         }
 
-        inicializarBancoDeDados(); 
-        renderizarMapa(); 
-        carregarDadosDaNuvem();
-        setInterval(carregarDadosDaNuvemBackground, 15000);
+        function abrirModal(idMesa) {
+            const dados = bancoDeDados[idMesa];
+            if (nivelAcesso === 0) { return; } 
+            if (nivelAcesso === 1 && dados.status !== "Livre") { mostrarAlerta("🔒 Mesa Bloqueada!\n\nEsta mesa já foi Vendida ou Reservada. Com a sua senha de Vendedor, você só pode alterar mesas que ainda estão Livres.", "Acesso Restrito"); return; }
 
+            mesaEditandoAtual = idMesa; statusAoAbrirMesa = dados.status; 
+            document.getElementById('tituloModal').innerHTML = `Gerenciar ${dados.setor} (${idMesa})`;
+            document.getElementById('campoStatus').value = dados.status || "Livre";
+            document.getElementById('campoLogoPropaganda').checked = dados.logoPropaganda || false; 
+            
+            document.getElementById('campoNome').value = dados.nome || "";
+            document.getElementById('campoObs').value = dados.obs || "";
+
+            try { 
+                let parsed = JSON.parse(dados.detalhesParcelas || "[]"); 
+                if (parsed.length > 0 && parsed[0].numero !== undefined) {
+                    let valTotalMesaStr = converterParaNumero(dados.valorTotal);
+                    let valCadeirasMesa = (parseInt(dados.cadeiras)||0) * valorCadeiraAvulsa;
+                    let cotaPrincipal = valTotalMesaStr - valCadeirasMesa;
+                    if(cotaPrincipal < 0) cotaPrincipal = valTotalMesaStr;
+
+                    pagadoresAtuais = [{
+                        id: 'pag_' + new Date().getTime(),
+                        nome: dados.nome || "", telefone: dados.telefone || "",
+                        valorCota: cotaPrincipal, cadeiras: parseInt(dados.cadeiras) || 0,
+                        pagamento: dados.pagamento || "Nenhum", qtdParcelas: parsed.length,
+                        parcelas: parsed
+                    }];
+                } else if (parsed.length > 0 && parsed[0].id) {
+                    pagadoresAtuais = parsed;
+                } else { pagadoresAtuais = []; }
+            } catch (e) { pagadoresAtuais = []; }
+
+            if(pagadoresAtuais.length === 0) {
+                let configSetor = Object.values(CONFIG_MESAS).find(c => mesaEditandoAtual.startsWith(c.prefixo));
+                let valorBase = configSetor ? configSetor.valorBase : 0;
+                pagadoresAtuais.push({
+                    id: 'pag_' + new Date().getTime(),
+                    nome: "", telefone: "", valorCota: valorBase, cadeiras: 0,
+                    pagamento: "Dinheiro", qtdParcelas: 1,
+                    parcelas: [{ numero: 1, valor: valorBase, pago: false, vencimento: "" }]
+                });
+            }
+
+            renderizarPagadores();
+
+            const areaTransf = document.getElementById('areaTransferencia');
+            if (dados.status !== "Livre") { areaTransf.style.display = 'block'; carregarListaDeDestino(idMesa); } else { areaTransf.style.display = 'none'; }
+            document.getElementById('meuModal').style.display = 'flex';
+        }
+
+        function carregarListaDeDestino(mesaOrigem) {
+            const select = document.getElementById('selectDestino'); select.innerHTML = '<option value="">-- Selecione a mesa de destino --</option>';
+            for (const id in bancoDeDados) {
+                if (id !== mesaOrigem) { const info = bancoDeDados[id]; select.innerHTML += `<option value="${id}">${id} - ${info.status} ${info.nome ? '('+info.nome+')' : ''}</option>`; }
+            }
+        }
+
+        function fecharModal() { document.getElementById('meuModal').style.display = 'none'; }
+
+        async function salvarMesa() {
+            const btnSalvar = document.getElementById('btnSalvar'); btnSalvar.textContent = "Verificando..."; btnSalvar.disabled = true; 
+            try {
+                const response = await fetch(URL_GOOGLE_SCRIPT); const dbNuvem = await response.json();
+                if (statusAoAbrirMesa === "Livre" && dbNuvem[mesaEditandoAtual].status !== "Livre") {
+                    mostrarAlerta(`A mesa ${mesaEditandoAtual} já foi reservada/vendida! O mapa será atualizado para você escolher outra mesa.`);
+                    Object.assign(bancoDeDados[mesaEditandoAtual], dbNuvem[mesaEditandoAtual]); 
+                    fecharModal(); renderizarMapa(); btnSalvar.textContent = "Salvar na Nuvem"; btnSalvar.disabled = false; return; 
+                }
+            } catch (error) {}
+
+            btnSalvar.textContent = "Salvando nas nuvens...";
+            
+            let statusFinal = document.getElementById('campoStatus').value;
+            let pagadorLider = pagadoresAtuais[0];
+            let nomeGlobal = document.getElementById('campoNome').value.trim(); 
+            let pagamentoGlobal = ""; let parcelasGlobal = "";
+            let telefoneGlobal = pagadorLider ? pagadorLider.telefone : "";
+
+            if (pagadoresAtuais.length > 1) {
+                pagamentoGlobal = "Múltiplos"; parcelasGlobal = "Múltiplos";
+            } else if (pagadorLider) {
+                pagamentoGlobal = pagadorLider.pagamento; parcelasGlobal = pagadorLider.qtdParcelas + "x";
+            }
+
+            let cadeirasGlobal = 0; let totalGeralMesa = 0; let totalPagoGlobal = 0;
+            pagadoresAtuais.forEach(p => {
+                cadeirasGlobal += parseInt(p.cadeiras) || 0;
+                totalGeralMesa += (converterParaNumero(p.valorCota) + (parseInt(p.cadeiras||0) * valorCadeiraAvulsa));
+                p.parcelas.forEach(parc => { if(parc.pago) totalPagoGlobal += converterParaNumero(parc.valor); });
+            });
+
+            let configSetor = Object.values(CONFIG_MESAS).find(c => mesaEditandoAtual.startsWith(c.prefixo));
+            let valorBaseTabela = configSetor ? configSetor.valorBase : 0;
+            let valorEsperadoMesa = valorBaseTabela + (cadeirasGlobal * valorCadeiraAvulsa);
+            let totalFechadoFinal = Math.max(valorEsperadoMesa, totalGeralMesa);
+
+            bancoDeDados[mesaEditandoAtual] = {
+                setor: bancoDeDados[mesaEditandoAtual].setor, status: statusFinal, nome: nomeGlobal, telefone: telefoneGlobal,
+                cadeiras: cadeirasGlobal, pagamento: pagamentoGlobal, parcelas: parcelasGlobal,
+                valorTotal: converterParaMoeda(totalFechadoFinal), 
+                valorPago: converterParaMoeda(totalPagoGlobal),
+                saldoDevedor: Math.max(0, totalFechadoFinal - totalPagoGlobal), 
+                logoPropaganda: document.getElementById('campoLogoPropaganda').checked,
+                obs: document.getElementById('campoObs').value, detalhesParcelas: JSON.stringify(pagadoresAtuais)
+            };
+
+            try { await enviarParaNuvem(mesaEditandoAtual, bancoDeDados[mesaEditandoAtual]); fecharModal(); renderizarMapa(); 
+            } catch (error) { mostrarAlerta("Erro ao salvar na nuvem! Verifique a internet e tente novamente.");
+            } finally { btnSalvar.textContent = "Salvar na Nuvem"; btnSalvar.disabled = false; }
+        }
+
+        async function limparMesa() {
+            if (confirm(`ATENÇÃO: Deseja apagar TODOS os dados da mesa ${mesaEditandoAtual} da nuvem?`)) {
+                const btnLimpar = document.getElementById('btnLimpar'); btnLimpar.textContent = "Apagando..."; btnLimpar.disabled = true;
+                bancoDeDados[mesaEditandoAtual] = { setor: bancoDeDados[mesaEditandoAtual].setor, status: "Livre", nome: "", telefone: "", email: "", cadeiras: 0, pagamento: "Nenhum", parcelas: "1x", detalhesParcelas: "[]", valorTotal: "", valorPago: "", saldoDevedor: 0, logoPropaganda: false, obs: "" };
+                try { await enviarParaNuvem(mesaEditandoAtual, bancoDeDados[mesaEditandoAtual]); fecharModal(); renderizarMapa();
+                } catch (error) { mostrarAlerta("Erro ao apagar da nuvem!");
+                } finally { btnLimpar.textContent = "🗑️ Limpar Dados"; btnLimpar.disabled = false; }
+            }
+        }
+
+        async function executarTransferencia() {
+            const idDestino = document.getElementById('selectDestino').value;
+            if (!idDestino) { mostrarAlerta("Selecione uma mesa de destino primeiro!"); return; }
+
+            if (confirm(`Cruzar os dados da mesa ${mesaEditandoAtual} com a mesa ${idDestino}?`)) {
+                const btnTransferir = document.getElementById('btnTransferir'); btnTransferir.textContent = "Transferindo..."; btnTransferir.disabled = true;
+                const dadosOrigem = JSON.parse(JSON.stringify(bancoDeDados[mesaEditandoAtual])); const dadosDestino = JSON.parse(JSON.stringify(bancoDeDados[idDestino]));
+                const setorOrigem = bancoDeDados[mesaEditandoAtual].setor; const setorDestino = bancoDeDados[idDestino].setor;
+                bancoDeDados[mesaEditandoAtual] = dadosDestino; bancoDeDados[mesaEditandoAtual].setor = setorOrigem; 
+                bancoDeDados[idDestino] = dadosOrigem; bancoDeDados[idDestino].setor = setorDestino; 
+
+                try { await enviarParaNuvem(mesaEditandoAtual, bancoDeDados[mesaEditandoAtual]); await enviarParaNuvem(idDestino, bancoDeDados[idDestino]);
+                    mostrarAlerta("Transferência realizada com sucesso!"); fecharModal(); renderizarMapa();
+                } catch (error) { mostrarAlerta("Erro ao transferir na nuvem!");
+                } finally { btnTransferir.textContent = "Confirmar Troca"; btnTransferir.disabled = false; }
+            }
+        }
+
+        function abrirModalCusto(id = null) {
+            if (id && bancoDeCustos[id]) {
+                custoEditandoId = id; const c = bancoDeCustos[id];
+                document.getElementById('tituloModalCusto').textContent = "Editar Despesa"; document.getElementById('custoCategoria').value = c.categoria;
+                document.getElementById('custoFornecedor').value = c.fornecedor; document.getElementById('custoDescricao').value = c.descricao; document.getElementById('custoQtd').value = c.quantidade;
+                document.getElementById('custoUnitario').value = converterParaMoeda(c.valorUnitario); document.getElementById('custoTotal').value = converterParaMoeda(c.valorTotal);
+                document.getElementById('custoObs').value = getCustoObsLimpada(c.obs); document.getElementById('btnExcluirCusto').style.display = 'block';
+            } else {
+                custoEditandoId = ""; document.getElementById('tituloModalCusto').textContent = "Lançar Nova Despesa"; document.getElementById('custoCategoria').value = "";
+                document.getElementById('custoFornecedor').value = ""; document.getElementById('custoDescricao').value = ""; document.getElementById('custoQtd').value = 1;
+                document.getElementById('custoUnitario').value = ""; document.getElementById('custoTotal').value = ""; document.getElementById('custoObs').value = "";
+                document.getElementById('btnExcluirCusto').style.display = 'none';
+            }
+            document.getElementById('modalCusto').style.display = 'flex';
+        }
+
+        function fecharModalCusto() { document.getElementById('modalCusto').style.display = 'none'; }
+        function calcularCustoTotal() { let qtd = parseInt(document.getElementById('custoQtd').value) || 1; let unitario = converterParaNumero(document.getElementById('custoUnitario').value); let total = qtd * unitario; document.getElementById('custoTotal').value = converterParaMoeda(total); }
+
+        async function salvarCusto() {
+            const btnSalvar = document.getElementById('btnSalvarCusto');
+            btnSalvar.textContent = "Salvando..."; btnSalvar.disabled = true;
+
+            let idCusto = custoEditandoId ? custoEditandoId : "CST-" + new Date().getTime();
+            let oldObs = custoEditandoId && bancoDeCustos[custoEditandoId] ? bancoDeCustos[custoEditandoId].obs : "";
+            let isLocked = isCustoLocked(oldObs); let novaObs = document.getElementById('custoObs').value; novaObs = setCustoLocked(novaObs, isLocked); 
+            
+            let dadosCusto = { id: idCusto, categoria: document.getElementById('custoCategoria').value || "Outros", fornecedor: document.getElementById('custoFornecedor').value, descricao: document.getElementById('custoDescricao').value, quantidade: parseInt(document.getElementById('custoQtd').value) || 1, valorUnitario: converterParaNumero(document.getElementById('custoUnitario').value), valorTotal: converterParaNumero(document.getElementById('custoTotal').value), obs: novaObs };
+            let payload = { tipo: "custo", acao: "salvar", dados: dadosCusto };
+
+            try { await fetch(URL_GOOGLE_SCRIPT, { method: 'POST', body: JSON.stringify(payload) }); bancoDeCustos[idCusto] = dadosCusto; fecharModalCusto(); abrirCofre(); 
+            } catch (error) { mostrarAlerta("Erro ao salvar despesa na nuvem!"); } finally { btnSalvar.textContent = "Salvar Despesa"; btnSalvar.disabled = false; }
+        }
+
+        async function excluirCusto() {
+            if (confirm("Tem certeza que deseja apagar esta despesa definitivamente?")) {
+                const btnExcluir = document.getElementById('btnExcluirCusto'); btnExcluir.textContent = "Apagando..."; btnExcluir.disabled = true;
+                let payload = { tipo: "custo", acao: "excluir", dados: { id: custoEditandoId } };
+                try { await fetch(URL_GOOGLE_SCRIPT, { method: 'POST', body: JSON.stringify(payload) }); delete bancoDeCustos[custoEditandoId]; document.getElementById('filtroCategoriaCustos').value = "TODAS"; fecharModalCusto(); abrirCofre(); 
+                } catch (error) { mostrarAlerta("Erro ao excluir despesa da nuvem!"); } finally { btnExcluir.textContent = "🗑️ Excluir Despesa"; btnExcluir.disabled = false; }
+            }
+        }
+
+        inicializarBancoDeDados(); renderizarMapa(); carregarDadosDaNuvem();
     </script>
 </body>
 </html>
