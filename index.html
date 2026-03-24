@@ -61,8 +61,9 @@
         .setor { padding: 12px 20px; border-radius: 8px; width: 100%; box-sizing: border-box; z-index: 2;}
         .setor h3 { margin-top: 0; margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; text-align: center; font-size: 22px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
         
-        .fileira-mesas { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; width: 100%; }
-        .wrapper-mesa { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 140px; position: relative; }
+        /* O ESPAÇAMENTO VERTICAL APROVADO NA EDUC02 */
+        .fileira-mesas { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 45px; width: 100%; }
+        .wrapper-mesa { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 140px; position: relative; }
 
         .texto-acima { font-size: 11px; font-weight: bold; text-transform: uppercase; height: 14px; letter-spacing: 1px; }
         .texto-acima.vendida { color: var(--cor-vendida-texto); }
@@ -77,7 +78,34 @@
         body.modo-visitante .badge-divida { display: none; }
         body.modo-visitante #btnLimpar { display: none; }
         
-        body.modo-visitante .mostrar-forcado .texto-abaixo { display: block !important; color: var(--ciano-destaque); text-shadow: 0 0 5px #000;}
+        /* === DESTAQUE VIP (LINK DO CLIENTE - EDUC02) === */
+        body #container-salao .wrapper-mesa.mostrar-forcado {
+            z-index: 10; 
+            margin: 0 10px; 
+        }
+        
+        body #container-salao .wrapper-mesa.mostrar-forcado .mesa {
+            /* SEM ZOOM NA BOLINHA COMO SOLICITADO NA EDUC02 */
+            border-style: solid !important;
+            border-width: 4px !important;
+        }
+
+        body #container-salao .wrapper-mesa.mostrar-forcado .texto-abaixo {
+            display: block !important; 
+            color: #fff !important; 
+            background-color: var(--ciano-destaque) !important; 
+            border: 2px solid #fff !important;
+            padding: 4px 8px !important;
+            border-radius: 6px !important;
+            font-size: 17px !important; 
+            font-weight: 900 !important; 
+            margin-top: 5px !important; 
+            text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0px 4px 6px rgba(0,0,0,0.8) !important;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.6) !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+        
         body.modo-visitante .mostrar-forcado .badge-extra { display: flex !important; }
 
         body.modo-vendas .badge-divida { display: none; }
@@ -368,6 +396,7 @@
         let statusAoAbrirMesa = ""; 
         let valorCadeiraAvulsa = 800.00; 
         let pagadoresAtuais = []; 
+        let cacheDadosNuvem = "";
 
         let nivelAcesso = 0; 
         const SENHA_VENDAS = "vendas2026";
@@ -438,12 +467,14 @@
             document.body.classList.toggle('modo-buffet'); const btn = document.getElementById('btnBuffet');
             if(document.body.classList.contains('modo-cliente')) { document.body.classList.remove('modo-cliente'); document.getElementById('btnVisaoCliente').style.backgroundColor = '#3b82f6'; document.getElementById('btnVisaoCliente').textContent = "👁️ Visão Cliente"; }
             if (document.body.classList.contains('modo-buffet')) { btn.style.backgroundColor = '#10b981'; btn.textContent = "✅ Buffet: Mapa da Montagem"; } else { btn.style.backgroundColor = '#8b5cf6'; btn.textContent = "🪑 Modo Buffet"; }
+            renderizarMapa();
         }
 
         function toggleVisaoCliente() {
             document.body.classList.toggle('modo-cliente'); const btn = document.getElementById('btnVisaoCliente');
             if(document.body.classList.contains('modo-buffet')) { document.body.classList.remove('modo-buffet'); document.getElementById('btnBuffet').style.backgroundColor = '#8b5cf6'; document.getElementById('btnBuffet').textContent = "🪑 Modo Buffet"; }
             if (document.body.classList.contains('modo-cliente')) { btn.style.backgroundColor = '#10b981'; btn.textContent = "✅ Cliente: Mapa Limpo"; } else { btn.style.backgroundColor = '#3b82f6'; btn.textContent = "👁️ Visão Cliente"; }
+            renderizarMapa();
         }
         
         function gerarLinkCliente() {
@@ -781,6 +812,11 @@
         async function carregarDadosDaNuvemBackground() {
             try {
                 const response = await fetch(URL_GOOGLE_SCRIPT); const dadosNuvem = await response.json();
+                
+                let hashAtual = JSON.stringify(dadosNuvem);
+                if (hashAtual === cacheDadosNuvem) return; 
+                cacheDadosNuvem = hashAtual;
+
                 for (const idMesa in dadosNuvem) { if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); } }
                 renderizarMapa();
             } catch (error) {}
@@ -790,6 +826,10 @@
             const btnSinc = document.getElementById('btnSincronizar'); btnSinc.textContent = "⌛ Baixando...";
             try {
                 const response = await fetch(URL_GOOGLE_SCRIPT); const dadosNuvem = await response.json();
+                
+                let hashAtual = JSON.stringify(dadosNuvem);
+                cacheDadosNuvem = hashAtual;
+
                 for (const idMesa in dadosNuvem) { if (bancoDeDados[idMesa]) { Object.assign(bancoDeDados[idMesa], dadosNuvem[idMesa]); } }
                 renderizarMapa(); document.getElementById('telaCarregamento').style.display = 'none';
             } catch (error) { mostrarAlerta("Falha ao conectar. O mapa carregará offline."); document.getElementById('telaCarregamento').style.display = 'none'; renderizarMapa();
@@ -799,42 +839,6 @@
         async function enviarParaNuvem(idMesa, dados) {
             try { await fetch(URL_GOOGLE_SCRIPT, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ idMesa: idMesa, dados: dados }) });
             } catch (error) { throw new Error("Erro de conexão"); }
-        }
-
-        function formatarMoeda(elemento) {
-            let valor = String(elemento.value).replace(/\D/g, ''); if (valor === '') { elemento.value = ''; return; }
-            valor = (parseInt(valor) / 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); elemento.value = valor;
-        }
-
-        function converterParaNumero(str) {
-            if (str === null || str === undefined || str === "") return 0; if (typeof str === 'number') return str;
-            return parseFloat(String(str).replace(/\./g, '').replace(',', '.'));
-        }
-
-        function converterParaMoeda(numero) {
-            let val = Number(numero); if (isNaN(val)) val = 0;
-            return val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        }
-
-        async function exportarMapa(tipo) {
-            const areaExportacao = document.getElementById('area-exportacao'); const botoesTopo = document.querySelector('.area-botoes-topo');
-            botoesTopo.style.display = 'none'; mostrarAlerta("Preparando sua imagem, aguarde um instante... 📸", "⏳ Gerando Arquivo");
-
-            try {
-                const canvas = await html2canvas(areaExportacao, { backgroundColor: '#0A192F', scale: 2, useCORS: true, allowTaint: true });
-                const imgData = canvas.toDataURL('image/jpeg', 0.9);
-
-                if (tipo === 'img') {
-                    const link = document.createElement('a'); link.download = 'Mapa_Educandario_Vendas.jpg'; link.href = imgData; link.click();
-                } else if (tipo === 'pdf') {
-                    const { jsPDF } = window.jspdf; const orientation = canvas.width >= canvas.height ? 'l' : 'p';
-                    const pdf = new jsPDF({ orientation: orientation, unit: 'px', format: [canvas.width, canvas.height] });
-                    pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height); pdf.save('Mapa_Educandario_Vendas.pdf');
-                }
-                fecharAlertaCustomizado();
-            } catch (erro) {
-                fecharAlertaCustomizado(); console.error(erro); mostrarAlerta("O navegador bloqueou a foto. No GitHub vai funcionar perfeitamente! 🚀", "❌ Bloqueio Local");
-            } finally { botoesTopo.style.display = 'flex'; }
         }
 
         function renderizarMapa() {
@@ -866,7 +870,8 @@
                                 const idDaMesa = `${setorConfig.prefixo}-${num}`; const dadosDestaMesa = bancoDeDados[idDaMesa];
                                 const wrapperMesa = document.createElement('div'); wrapperMesa.className = 'wrapper-mesa';
 
-                                if (nivelAcesso === 0 && mesasPermitidas.includes(idDaMesa)) { wrapperMesa.classList.add('mostrar-forcado'); }
+                                const ehVIP = mesasPermitidas.includes(idDaMesa);
+                                if (ehVIP) { wrapperMesa.classList.add('mostrar-forcado'); }
 
                                 const textoAcima = document.createElement('div'); textoAcima.className = 'texto-acima'; textoAcima.textContent = dadosDestaMesa.status.toUpperCase(); 
                                 if (dadosDestaMesa.status === "Vendida") { textoAcima.classList.add('vendida'); } else if (dadosDestaMesa.status === "Reservada") { textoAcima.classList.add('reservada'); } else { textoAcima.classList.add('livre'); }
@@ -877,13 +882,26 @@
                                     divMesa.style.backgroundColor = setorConfig.corVendida; divMesa.style.border = "2px dashed #666"; divMesa.style.opacity = "0.9";
                                 } else { divMesa.style.backgroundColor = setorConfig.corNormal; }
 
+                                if (ehVIP) {
+                                    divMesa.style.border = `4px solid ${setorConfig.corNormal}`;
+                                    divMesa.style.opacity = "1";
+                                    divMesa.style.boxShadow = `0 0 15px ${setorConfig.corNormal}`;
+                                }
+
                                 if (dadosDestaMesa.cadeiras > 0) { const badge = document.createElement('div'); badge.className = 'badge-extra'; badge.textContent = `+${dadosDestaMesa.cadeiras}`; divMesa.appendChild(badge); }
-                                if (dadosDestaMesa.status !== "Livre" && dadosDestaMesa.saldoDevedor > 0) { const badgeDivida = document.createElement('div'); badgeDivida.className = 'badge-divida'; badgeDivida.textContent = '💲'; badgeDivida.title = `Saldo pendente: R$ ${converterParaMoeda(dadosDestaMesa.saldoDevedor)}`; wrapperMesa.appendChild(badgeDivida); }
+                                
+                                if (nivelAcesso === 2 && dadosDestaMesa.status !== "Livre" && dadosDestaMesa.saldoDevedor > 0) { 
+                                    const badgeDivida = document.createElement('div'); badgeDivida.className = 'badge-divida'; badgeDivida.textContent = '💲'; badgeDivida.title = `Saldo pendente: R$ ${converterParaMoeda(dadosDestaMesa.saldoDevedor)}`; wrapperMesa.appendChild(badgeDivida); 
+                                }
 
                                 divMesa.onclick = function() { abrirModal(idDaMesa); };
 
                                 const textoAbaixo = document.createElement('div'); textoAbaixo.className = 'texto-abaixo'; 
                                 textoAbaixo.textContent = dadosDestaMesa.status !== "Livre" ? dadosDestaMesa.nome : "";
+                                
+                                if (ehVIP) {
+                                    textoAbaixo.style.backgroundColor = setorConfig.corNormal;
+                                }
 
                                 wrapperMesa.appendChild(textoAcima); wrapperMesa.appendChild(divMesa); wrapperMesa.appendChild(textoAbaixo); divFileira.appendChild(wrapperMesa); contadorMesa++; 
                             }
@@ -892,6 +910,47 @@
                     divSetor.appendChild(divFileira);
                 });
                 containerSalao.insertBefore(divSetor, elementoDeReferencia);
+            }
+        }
+
+        async function exportarMapa(tipo) {
+            const areaExportacao = document.getElementById('area-exportacao'); const botoesTopo = document.querySelector('.area-botoes-topo');
+            
+            if (tipo === 'pdf') {
+                let nivelAnterior = nivelAcesso;
+                if (parametroMostrar) { nivelAcesso = 0; renderizarMapa(); }
+                
+                botoesTopo.style.display = 'none';
+                window.print(); 
+                botoesTopo.style.display = 'flex';
+                
+                if (parametroMostrar) { nivelAcesso = nivelAnterior; renderizarMapa(); }
+                return;
+            }
+
+            botoesTopo.style.display = 'none'; 
+            let nivelAnterior = nivelAcesso;
+            if (parametroMostrar) {
+                nivelAcesso = 0; 
+                renderizarMapa();
+                await new Promise(r => setTimeout(r, 200)); 
+            }
+            
+            mostrarAlerta("Preparando sua imagem VIP, aguarde... 📸", "⏳ Gerando Arquivo");
+
+            try {
+                const canvas = await html2canvas(areaExportacao, { backgroundColor: '#0A192F', scale: 2, useCORS: true, allowTaint: true });
+                const imgData = canvas.toDataURL('image/jpeg', 0.9);
+                const link = document.createElement('a'); link.download = 'Mapa_Educandario_Vendas.jpg'; link.href = imgData; link.click();
+                fecharAlertaCustomizado();
+            } catch (erro) {
+                fecharAlertaCustomizado(); console.error(erro); mostrarAlerta("O navegador bloqueou a foto. No GitHub vai funcionar perfeitamente! 🚀", "❌ Bloqueio Local");
+            } finally { 
+                botoesTopo.style.display = 'flex'; 
+                if (parametroMostrar) {
+                    nivelAcesso = nivelAnterior; 
+                    renderizarMapa();
+                }
             }
         }
 
