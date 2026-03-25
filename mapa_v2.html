@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Rápido - Noite Beneficente</title>
+    <style>
+        /* Estilos focados em performance e leveza */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .mapa-container { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; max-width: 1000px; margin: 0 auto; }
+        
+        /* Design das Mesas */
+        .mesa { width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: bold; font-size: 18px; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.2s; }
+        .mesa:hover { transform: scale(1.1); }
+        .livre { background-color: #4CAF50; } /* Verde */
+        .reservada { background-color: #FFC107; color: #333; } /* Amarelo */
+        .vendida { background-color: #F44336; } /* Vermelho */
+
+        /* Janela Modal (Pop-up) */
+        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 1000; width: 320px; }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; backdrop-filter: blur(2px); }
+        .modal h3 { margin-top: 0; text-align: center; color: #333; }
+        .modal label { font-size: 14px; color: #666; font-weight: bold; display: block; margin-top: 10px; }
+        .modal input, .modal select { width: 100%; margin-top: 5px; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; }
+        
+        /* Botões */
+        .btn { padding: 12px; font-weight: bold; color: white; border: none; cursor: pointer; width: 100%; border-radius: 6px; margin-top: 15px; font-size: 16px; }
+        .btn-salvar { background: #2196F3; }
+        .btn-fechar { background: #e0e0e0; color: #333; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Vendas - Noite Beneficente</h1>
+        <p id="status-msg">Conectando à planilha...</p>
+    </div>
+
+    <div class="mapa-container" id="mapa"></div>
+
+    <div class="overlay" id="overlay" onclick="fecharModal()"></div>
+    <div class="modal" id="modal">
+        <h3 id="modal-title">Mesa</h3>
+        
+        <label>Status:</label>
+        <select id="modal-status">
+            <option value="Livre">Livre</option>
+            <option value="Reservada">Reservada</option>
+            <option value="Vendida">Vendida</option>
+        </select>
+        
+        <label>Comprador:</label>
+        <input type="text" id="modal-nome">
+        
+        <label>Telefone:</label>
+        <input type="text" id="modal-telefone">
+        
+        <label>E-mail:</label>
+        <input type="email" id="modal-email" placeholder="nome@email.com">
+        
+        <button class="btn btn-salvar" onclick="salvarMesa()">Salvar Alterações</button>
+        <button class="btn btn-fechar" onclick="fecharModal()">Cancelar</button>
+    </div>
+
+    <script>
+        // Sua nova URL leve
+        const API_URL = 'https://script.google.com/macros/s/AKfycby6hZ1cD-uIPafXIpRDe2DJzmYwjP4IRQgysxbVPNJOlKNDlE8ALvUTyBsoJlSQL2k/exec';
+        let mesasData = [];
+
+        // Função para buscar os dados na planilha
+        async function carregarMesas() {
+            try {
+                const response = await fetch(API_URL);
+                mesasData = await response.json();
+                renderizarMapa();
+                document.getElementById('status-msg').innerHTML = "<b>Atualizado e pronto!</b>";
+            } catch (error) {
+                document.getElementById('status-msg').innerText = "Erro ao carregar dados. Verifique a conexão.";
+            }
+        }
+
+        // Função para desenhar as bolinhas (mesas) na tela
+        function renderizarMapa() {
+            const container = document.getElementById('mapa');
+            container.innerHTML = '';
+            
+            mesasData.forEach(mesa => {
+                const div = document.createElement('div');
+                // Adiciona a classe correspondente ao status para mudar a cor
+                const classeStatus = (mesa.status || "livre").toLowerCase().trim();
+                div.className = `mesa ${classeStatus}`;
+                div.innerText = mesa.id;
+                
+                // Ao clicar, abre a janela de edição
+                div.onclick = () => abrirModal(mesa);
+                
+                container.appendChild(div);
+            });
+        }
+
+        // Função para abrir a janela de edição
+        function abrirModal(mesa) {
+            document.getElementById('modal-title').innerText = `Mesa ${mesa.id} - Setor ${mesa.setor}`;
+            document.getElementById('modal-status').value = mesa.status || "Livre";
+            document.getElementById('modal-nome').value = mesa.nome || "";
+            document.getElementById('modal-telefone').value = mesa.telefone || "";
+            // O e-mail ainda não está vindo da API, deixaremos o campo preparado
+            document.getElementById('modal-email').value = ""; 
+
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('modal').style.display = 'block';
+        }
+
+        // Função para fechar a janela
+        function fecharModal() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        // Função para salvar (vamos construir no próximo passo)
+        function salvarMesa() {
+            alert("Em breve: Essa função vai enviar as edições direto para o seu Google Sheets em segundos!");
+            fecharModal();
+        }
+
+        // Inicia o carregamento assim que a página abre
+        carregarMesas();
+    </script>
+
+</body>
+</html>
