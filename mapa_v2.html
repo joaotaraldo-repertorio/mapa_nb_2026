@@ -60,7 +60,6 @@
 
         .bolinha-mesa { border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.4); color: #000; transition: all 0.2s;}
         
-        /* A MÁGICA 2.0: Agora a animação atinge SÓ a bolinha redonda! */
         .wrapper-mesa.destaque .bolinha-mesa { animation: piscarDestaque 1.2s infinite alternate; z-index: 10;}
         @keyframes piscarDestaque {
             0% { box-shadow: 0 0 10px 3px var(--ciano-destaque); transform: scale(1.05); }
@@ -113,13 +112,16 @@
            ========================================= */
         @media print {
             body { background-color: var(--azul-fundo); margin: 0; padding: 0; }
-            /* Esconde os botões e pop-ups na hora de imprimir o PDF */
             .painel-topo { display: none !important; }
             .modal, .overlay { display: none !important; }
-            /* Força a impressora a imprimir as cores de fundo escuras e os espelhos */
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             #area-exportacao { max-width: 100%; width: 100%; box-shadow: none; border: none;}
-            .painel-rodape { page-break-inside: avoid; }
+            
+            /* A SOLUÇÃO MÁGICA PARA NÃO CORTAR AS MESAS PELA METADE */
+            .setor { break-inside: avoid; page-break-inside: avoid; margin-bottom: 20px; }
+            .fileira-mesas { break-inside: avoid; page-break-inside: avoid; }
+            .wrapper-mesa { break-inside: avoid; page-break-inside: avoid; }
+            .painel-rodape { break-inside: avoid; page-break-inside: avoid; }
         }
     </style>
 </head>
@@ -215,8 +217,8 @@
         const API_URL = 'https://script.google.com/macros/s/AKfycby6hZ1cD-uIPafXIpRDe2DJzmYwjP4IRQgysxbVPNJOlKNDlE8ALvUTyBsoJlSQL2k/exec';
         let mesasData = [];
 
-        // O SISTEMA DE SENHA DA EQUIPE
-        const SENHA_SISTEMA = "1234"; 
+        // O SISTEMA DE SENHA DA EQUIPE ATUALIZADO
+        const SENHA_SISTEMA = "educ1958"; 
         let isAdmin = false; 
 
         const CONFIG_GERAL = { 
@@ -342,18 +344,16 @@
 
                                 const statusClass = (mesaObj.status || "livre").toLowerCase().trim();
                                 
-                                // O CÉREBRO DAS CARAS: Limpeza visual total
-                                let nomeParaMostrar = "---";
+                                // O CÉREBRO DAS CARAS: Agora exibe string vazia em vez de "---"
+                                let nomeParaMostrar = "";
                                 let cssDestaqueUrl = "";
 
                                 if (isAdmin) {
-                                    // A equipe vê o nome do comprador
-                                    nomeParaMostrar = mesaObj.nome ? mesaObj.nome : "---";
+                                    nomeParaMostrar = mesaObj.nome ? mesaObj.nome : "";
                                 } else {
-                                    // A visão cliente vê apenas uma linha vazia (sem poluição)
-                                    nomeParaMostrar = "---";
+                                    // A visão cliente fica 100% limpa
+                                    nomeParaMostrar = "";
                                     
-                                    // EXCETO se for a mesa do link, aí mostra o nome da pessoa
                                     if (mesaParaDestacar && mesaObj.id === mesaParaDestacar) {
                                         nomeParaMostrar = mesaObj.nome || "Sua Mesa";
                                         cssDestaqueUrl = "destaque"; 
