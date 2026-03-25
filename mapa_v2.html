@@ -117,7 +117,7 @@
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             #area-exportacao { max-width: 100%; width: 100%; box-shadow: none; border: none;}
             
-            /* A SOLUÇÃO MÁGICA PARA NÃO CORTAR AS MESAS PELA METADE */
+            /* A SOLUÇÃO PARA NÃO CORTAR AS MESAS PELA METADE */
             .setor { break-inside: avoid; page-break-inside: avoid; margin-bottom: 20px; }
             .fileira-mesas { break-inside: avoid; page-break-inside: avoid; }
             .wrapper-mesa { break-inside: avoid; page-break-inside: avoid; }
@@ -138,8 +138,6 @@
                 <div class="status-sistema" id="status-msg">CONECTANDO AO BANCO DE DADOS...</div>
             </div>
             <div class="area-botoes-topo">
-                <button class="botao-acao" onclick="window.print()" style="background-color: #ec4899; color: #fff;">🖨️ Imprimir / PDF</button>
-
                 <button class="botao-acao" id="btn-login" onclick="fazerLoginAdmin()" style="background-color: #ef4444; color: #fff;">🔒 Acesso Equipe</button>
                 
                 <div id="botoes-admin" style="display: none; gap: 10px;">
@@ -210,6 +208,9 @@
         
         <button class="btn btn-salvar" id="btn-salvar" onclick="salvarMesa()">Gravar na Planilha</button>
         <button class="btn btn-link" onclick="gerarLinkAprovacao()">🔗 Copiar Link de Aprovação</button>
+        
+        <button class="btn" onclick="pularParaFinanceiro()" style="background-color: #f59e0b; color: #000; margin-top: 10px;">💰 Financeiro Completo da Mesa</button>
+        
         <button class="btn btn-fechar" onclick="fecharModal()">Cancelar</button>
     </div>
 
@@ -217,7 +218,7 @@
         const API_URL = 'https://script.google.com/macros/s/AKfycby6hZ1cD-uIPafXIpRDe2DJzmYwjP4IRQgysxbVPNJOlKNDlE8ALvUTyBsoJlSQL2k/exec';
         let mesasData = [];
 
-        // O SISTEMA DE SENHA DA EQUIPE ATUALIZADO
+        // O SISTEMA DE SENHA DA EQUIPE 
         const SENHA_SISTEMA = "educ1958"; 
         let isAdmin = false; 
 
@@ -344,14 +345,13 @@
 
                                 const statusClass = (mesaObj.status || "livre").toLowerCase().trim();
                                 
-                                // O CÉREBRO DAS CARAS: Agora exibe string vazia em vez de "---"
+                                // O CÉREBRO DAS CARAS: Agora exibe string vazia
                                 let nomeParaMostrar = "";
                                 let cssDestaqueUrl = "";
 
                                 if (isAdmin) {
                                     nomeParaMostrar = mesaObj.nome ? mesaObj.nome : "";
                                 } else {
-                                    // A visão cliente fica 100% limpa
                                     nomeParaMostrar = "";
                                     
                                     if (mesaParaDestacar && mesaObj.id === mesaParaDestacar) {
@@ -454,10 +454,15 @@
             const linkCliente = `${urlBase}?mesa=${idMesa}`;
             
             navigator.clipboard.writeText(linkCliente).then(() => {
-                alert("✅ Link da Mesa " + idMesa + " copiado com sucesso!\n\nAgora é só colar (Ctrl+V) no WhatsApp do cliente.\nOu você mesmo pode abrir esse link em outra aba, gerar um PDF pelo botão rosa, e mandar o arquivo!");
+                alert("✅ Link da Mesa " + idMesa + " copiado com sucesso!\n\nAgora é só colar (Ctrl+V) no WhatsApp do cliente.");
             }).catch(err => {
                 prompt("Copie o link abaixo:", linkCliente);
             });
+        }
+
+        function pularParaFinanceiro() {
+            const idMesa = document.getElementById('modal-title').innerText.replace('Mesa ', '').trim();
+            window.open(`financeiro.html?mesa=${idMesa}`, '_blank');
         }
 
         function abrirCofre() {
