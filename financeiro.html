@@ -53,7 +53,7 @@
         .res-col span { font-size: 13px; color: #8892b0; text-transform: uppercase; margin-bottom: 5px; font-weight: bold;}
         .res-col strong { font-size: 24px; color: var(--texto-claro);}
 
-        /* CABEÇALHO CONGELADO (MESA) */
+        /* CABEÇALHO CONGELADO */
         .cabecalho-fixo-mesa { position: sticky; top: -30px; background-color: var(--azul-fundo); z-index: 100; padding-top: 30px; padding-bottom: 15px; margin-top: -30px; border-bottom: 1px dashed #233554; box-shadow: 0 10px 10px -5px rgba(10, 25, 47, 0.9); }
 
         .painel-financeiro { background-color: #112240; border-radius: 8px; border: 1px dashed var(--cor-livre); padding: 15px 20px; margin-top: 15px; }
@@ -144,7 +144,7 @@
                             <select id="seletor-mesas" class="seletor-mesas" onchange="trocarMesaSelecionada(this.value)">
                                 <option value="">-- Escolha uma Mesa --</option>
                             </select>
-                            <button class="botao-acao" onclick="salvarDadosFinanceiros()" style="background-color: var(--ciano-destaque); color: #000;">💾 Salvar Lançamentos</button>
+                            <button class="botao-acao" id="btnSalvarFinanceiro" onclick="salvarDadosFinanceiros()" style="background-color: var(--ciano-destaque); color: #000;">💾 Salvar Lançamentos</button>
                         </div>
                     </div>
 
@@ -265,7 +265,31 @@
             try {
                 const response = await fetch(API_URL);
                 mesasDataBanco = await response.json();
+                calcularDashboard(); // Atualiza o DRE assim que os dados chegam
             } catch (error) { console.error("Erro."); }
+        }
+
+        function calcularDashboard() {
+            let totalFechado = 0;
+            let totalRecebido = 0;
+            let totalPendente = 0;
+            
+            mesasDataBanco.forEach(m => {
+                let valor = parseFloat(m.valorTotal) || 0;
+                let pago = parseFloat(m.valorPago) || 0;
+                
+                totalFechado += valor;
+                totalRecebido += pago;
+            });
+            
+            totalPendente = totalFechado - totalRecebido;
+            
+            document.getElementById('cofreFechado').innerText = formatarMoeda(totalFechado);
+            document.getElementById('cofreRecebido').innerText = formatarMoeda(totalRecebido);
+            document.getElementById('cofrePendente').innerText = formatarMoeda(totalPendente);
+            document.getElementById('cofreLucroLiquido').innerText = formatarMoeda(totalFechado);
+            
+            document.getElementById('simAtual').innerText = formatarMoeda(totalFechado);
         }
 
         function trocarMesaSelecionada(novoId) {
@@ -279,51 +303,45 @@
             const prefixo = mesaAtualID.charAt(0).toUpperCase();
             valorBaseDaMesa = CONFIG_MESAS[prefixo] ? CONFIG_MESAS[prefixo].valorBase : 0;
             
-            // LIMPANDO A SUJEIRA DA MESA ANTERIOR (O Bug que você achou!)
-            qtdCadeirasExtrasGlobais = 0;
-            valorCadeirasExtrasGlobais = 0;
-            document.getElementById('campoQtdCadeirasGlobais').value = 0;
-            document.getElementById('campoValorCadeirasGlobais').value = "0,00";
-            document.getElementById('campoObs').value = ""; 
+            let mesaNoBanco = mesasDataBanco.find(m => m.id === novoId) || {nome: "", telefone: "", obs: "", cadeirasExtra: 0, detalhesJSON: ""};
             
+            qtdCadeirasExtrasGlobais = parseInt(mesaNoBanco.cadeirasExtra) || 0;
+            valorCadeirasExtrasGlobais = qtdCadeirasExtrasGlobais * PRECO_FIXO_CADEIRA;
+            document.getElementById('campoQtdCadeirasGlobais').value = qtdCadeirasExtrasGlobais;
+            document.getElementById('campoValorCadeirasGlobais').value = formatarNumeroLimpo(valorCadeirasExtrasGlobais);
+            
+            document.getElementById('campoObs').value = mesaNoBanco.obs || ""; 
             document.getElementById('campoValorBaseInfo').value = formatarMoeda(valorBaseDaMesa);
 
             document.getElementById('alerta-nenhuma-mesa').style.display = 'none';
             document.getElementById('area-edicao-mesa').style.display = 'block';
             document.getElementById('titulo-mesa-lancamento').innerText = `📝 Lançamentos: Mesa ${mesaAtualID} (${CONFIG_MESAS[prefixo].nome})`;
             
-            let mesaNoBanco = mesasDataBanco.find(m => m.id === novoId) || {nome: "", telefone: ""};
-            
             nomeEditadoManualmente = false;
-            document.getElementById('campoNomeExibido').value = mesaNoBanco.nome;
+            document.getElementById('campoNomeExibido').value = mesaNoBanco.nome || "";
             pagadoresAtuais = [];
             
-            // SE TEM NOME NO BANCO, CRIA O PAGADOR 1 COM ELE
-            if(mesaNoBanco.nome && mesaNoBanco.nome.trim() !== "") {
-                pagadoresAtuais.push({
-                    id: 'pag_1',
-                    nome: mesaNoBanco.nome, 
-                    telefone: mesaNoBanco.telefone || "", 
-                    valorCota: valorBaseDaMesa, 
-                    pagamento: "Dinheiro", 
-                    qtdParcelas: 1,
-                    parcelas: [{ numero: 1, valor: valorBaseDaMesa, pago: false, vencimento: "" }]
-                });
-            } else {
-                // SE NÃO TEM NOME, DEIXA UMA FICHA EM BRANCO PRONTA PRA USO
-                pagadoresAtuais.push({
-                    id: 'pag_1',
-                    nome: "", 
-                    telefone: "", 
-                    valorCota: valorBaseDaMesa, 
-                    pagamento: "Dinheiro", 
-                    qtdParcelas: 1,
-                    parcelas: [{ numero: 1, valor: valorBaseDaMesa, pago: false, vencimento: "" }]
-                });
+            // A MAGIA DA DESCOMPACTAÇÃO DO JSON (Coluna N)
+            if(mesaNoBanco.detalhesJSON && mesaNoBanco.detalhesJSON.trim() !== "") {
+                try {
+                    pagadoresAtuais = JSON.parse(mesaNoBanco.detalhesJSON);
+                } catch(e) {
+                    console.error("Erro ao ler JSON da planilha");
+                }
+            }
+            
+            // Se ainda assim estiver vazio (mesa nova), cria o pagador padrão
+            if(pagadoresAtuais.length === 0) {
+                let cotaSug = valorBaseDaMesa + valorCadeirasExtrasGlobais;
+                if(mesaNoBanco.nome && mesaNoBanco.nome.trim() !== "") {
+                    pagadoresAtuais.push({ id: 'pag_1', nome: mesaNoBanco.nome, telefone: mesaNoBanco.telefone || "", cadeirasExtra: 0, valorCota: cotaSug, pagamento: "Dinheiro", qtdParcelas: 1, parcelas: [{ numero: 1, valor: cotaSug, pago: false, vencimento: "" }] });
+                } else {
+                    pagadoresAtuais.push({ id: 'pag_1', nome: "", telefone: "", cadeirasExtra: 0, valorCota: cotaSug, pagamento: "Dinheiro", qtdParcelas: 1, parcelas: [{ numero: 1, valor: cotaSug, pago: false, vencimento: "" }] });
+                }
             }
 
             atualizarCalculoTotalMesa();
-            renderizarPagadores(); // A LINHA QUE APAGA AS FICHAS ANTIGAS E DESENHA AS NOVAS!
+            renderizarPagadores(); 
         }
 
         // ==========================================
@@ -544,8 +562,75 @@
             });
         }
 
-        function salvarDadosFinanceiros() {
-            alert("Em breve esse botão conectará à sua API para salvar!");
+        // ==========================================
+        // O BOTÃO DE SALVAR MAGIA NA NUVEM!
+        // ==========================================
+        async function salvarDadosFinanceiros() {
+            if(!mesaAtualID) {
+                alert("Selecione uma mesa primeiro!");
+                return;
+            }
+
+            const btnSalvar = document.getElementById('btnSalvarFinanceiro');
+            btnSalvar.innerText = "⏳ A guardar...";
+            btnSalvar.disabled = true;
+
+            let totalPago = 0;
+            pagadoresAtuais.forEach(p => {
+                p.parcelas.forEach(parc => { if(parc.pago) totalPago += parc.valor; });
+            });
+            let saldo = valorTotalFinalDaMesa - totalPago;
+
+            const nomeExibido = document.getElementById('campoNomeExibido').value;
+            const observacoes = document.getElementById('campoObs').value;
+
+            // Cria o pacotão de dados para a coluna N e as outras colunas
+            const pacoteDeDados = { 
+                id: mesaAtualID, 
+                nome: nomeExibido, 
+                cadeirasExtra: qtdCadeirasExtrasGlobais,
+                valorTotal: valorTotalFinalDaMesa,
+                valorPago: totalPago,
+                saldo: saldo,
+                obs: observacoes,
+                detalhesJSON: JSON.stringify(pagadoresAtuais) 
+            };
+
+            // Se houver pagador e ele tiver telefone, guarda para o cadastro principal também
+            if(pagadoresAtuais.length > 0 && pagadoresAtuais[0].telefone) {
+                pacoteDeDados.telefone = pagadoresAtuais[0].telefone;
+            }
+
+            try {
+                await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify(pacoteDeDados)
+                });
+
+                // Atualiza o banco na memória para não recarregar a página
+                let mesaNoBanco = mesasDataBanco.find(m => m.id === mesaAtualID);
+                if(mesaNoBanco) {
+                    mesaNoBanco.nome = pacoteDeDados.nome;
+                    mesaNoBanco.cadeirasExtra = pacoteDeDados.cadeirasExtra;
+                    mesaNoBanco.valorTotal = pacoteDeDados.valorTotal;
+                    mesaNoBanco.valorPago = pacoteDeDados.valorPago;
+                    mesaNoBanco.saldo = pacoteDeDados.saldo;
+                    mesaNoBanco.obs = pacoteDeDados.obs;
+                    mesaNoBanco.detalhesJSON = pacoteDeDados.detalhesJSON;
+                    if(pacoteDeDados.telefone) mesaNoBanco.telefone = pacoteDeDados.telefone;
+                } else {
+                    mesasDataBanco.push(pacoteDeDados);
+                }
+                
+                calcularDashboard(); // Atualiza os DREs em tempo real
+                alert("✅ Dados financeiros da Mesa " + mesaAtualID + " guardados com sucesso na Nuvem!");
+            } catch (error) {
+                alert("🔴 Erro de ligação! Verifique a internet e tente novamente.");
+            } finally {
+                btnSalvar.innerText = "💾 Salvar Lançamentos";
+                btnSalvar.disabled = false;
+            }
         }
     </script>
 </body>
