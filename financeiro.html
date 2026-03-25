@@ -276,7 +276,6 @@
             mesasDataBanco.forEach(m => {
                 let valor = parseFloat(m.valorTotal) || 0;
                 let pago = parseFloat(m.valorPago) || 0;
-                
                 totalFechado += valor;
                 totalRecebido += pago;
             });
@@ -296,15 +295,12 @@
                 return;
             }
 
+            // A LIMPEZA ABSOLUTA DE DADOS VISUAIS (Para a F-06 não vazar para a C-02)
+            document.getElementById('containerPagadores').innerHTML = '';
+
             mesaAtualID = novoId;
             const prefixo = mesaAtualID.charAt(0).toUpperCase();
             valorBaseDaMesa = CONFIG_MESAS[prefixo] ? CONFIG_MESAS[prefixo].valorBase : 0;
-            
-            qtdCadeirasExtrasGlobais = 0;
-            valorCadeirasExtrasGlobais = 0;
-            document.getElementById('campoQtdCadeirasGlobais').value = 0;
-            document.getElementById('campoValorCadeirasGlobais').value = "0,00";
-            document.getElementById('campoObs').value = ""; 
             
             let mesaNoBanco = mesasDataBanco.find(m => m.id === novoId) || {nome: "", telefone: "", obs: "", cadeirasExtra: 0, detalhesJSON: ""};
             
@@ -321,7 +317,7 @@
             
             nomeEditadoManualmente = false;
             document.getElementById('campoNomeExibido').value = mesaNoBanco.nome || "";
-            pagadoresAtuais = [];
+            pagadoresAtuais = []; // Array limpa 100%
             
             if(mesaNoBanco.detalhesJSON && mesaNoBanco.detalhesJSON.trim() !== "") {
                 try {
@@ -329,6 +325,7 @@
                 } catch(e) {}
             }
             
+            // Se a mesa for nova, cria o pagador 1 em branco 
             if(pagadoresAtuais.length === 0) {
                 let cotaSug = valorBaseDaMesa + valorCadeirasExtrasGlobais;
                 if(mesaNoBanco.nome && mesaNoBanco.nome.trim() !== "") {
