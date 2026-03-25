@@ -76,6 +76,16 @@
         .texto-acima { font-size: 12px; font-weight: bold; text-transform: uppercase; height: 14px; letter-spacing: 1px; margin-bottom: 2px;}
         .texto-abaixo { font-size: 16px; color: #ffffff; text-align: center; width: 120px; white-space: normal; word-wrap: break-word; line-height: 1.1; font-weight: bold; min-height: 15px; margin-top: 2px;}
 
+        /* O BADGE DAS CADEIRAS EXTRAS */
+        .badge-extra {
+            position: absolute; top: -5px; right: -5px;
+            background-color: var(--azul-fundo); color: #f59e0b;
+            border: 2px solid #f59e0b; border-radius: 50%;
+            width: 25px; height: 25px; font-size: 13px; font-weight: bold;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.8); z-index: 5;
+        }
+
         .grande-house-mix { position: absolute; top: 0; left: 0; width: 180px; height: 190px; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #1d2d50; border: 2px dashed var(--ciano-destaque); border-radius: 8px; color: var(--ciano-destaque); font-size: 16px; font-weight: bold; text-transform: uppercase; box-shadow: 0 4px 8px rgba(0,0,0,0.5); z-index: 5;}
         .grande-house-mix span.icone { font-size: 60px; margin-bottom: 5px; }
 
@@ -117,7 +127,6 @@
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             #area-exportacao { max-width: 100%; width: 100%; box-shadow: none; border: none;}
             
-            /* A SOLUÇÃO PARA NÃO CORTAR AS MESAS PELA METADE */
             .setor { break-inside: avoid; page-break-inside: avoid; margin-bottom: 20px; }
             .fileira-mesas { break-inside: avoid; page-break-inside: avoid; }
             .wrapper-mesa { break-inside: avoid; page-break-inside: avoid; }
@@ -138,6 +147,8 @@
                 <div class="status-sistema" id="status-msg">CONECTANDO AO BANCO DE DADOS...</div>
             </div>
             <div class="area-botoes-topo">
+                <button class="botao-acao" onclick="window.print()" style="background-color: #ec4899; color: #fff;">🖨️ Imprimir / PDF</button>
+
                 <button class="botao-acao" id="btn-login" onclick="fazerLoginAdmin()" style="background-color: #ef4444; color: #fff;">🔒 Acesso Equipe</button>
                 
                 <div id="botoes-admin" style="display: none; gap: 10px;">
@@ -208,9 +219,7 @@
         
         <button class="btn btn-salvar" id="btn-salvar" onclick="salvarMesa()">Gravar na Planilha</button>
         <button class="btn btn-link" onclick="gerarLinkAprovacao()">🔗 Copiar Link de Aprovação</button>
-        
         <button class="btn" onclick="pularParaFinanceiro()" style="background-color: #f59e0b; color: #000; margin-top: 10px;">💰 Financeiro Completo da Mesa</button>
-        
         <button class="btn btn-fechar" onclick="fecharModal()">Cancelar</button>
     </div>
 
@@ -345,7 +354,6 @@
 
                                 const statusClass = (mesaObj.status || "livre").toLowerCase().trim();
                                 
-                                // O CÉREBRO DAS CARAS: Agora exibe string vazia
                                 let nomeParaMostrar = "";
                                 let cssDestaqueUrl = "";
 
@@ -353,7 +361,6 @@
                                     nomeParaMostrar = mesaObj.nome ? mesaObj.nome : "";
                                 } else {
                                     nomeParaMostrar = "";
-                                    
                                     if (mesaParaDestacar && mesaObj.id === mesaParaDestacar) {
                                         nomeParaMostrar = mesaObj.nome || "Sua Mesa";
                                         cssDestaqueUrl = "destaque"; 
@@ -375,9 +382,18 @@
                                     mesaWrapper.onclick = () => abrirModal(mesaObj);
                                 }
 
+                                // O NOVO BADGE DE CADEIRAS EXTRAS AQUI (Aparecerá quando vier os dados da API)
+                                let htmlBadge = "";
+                                if(mesaObj.cadeirasExtra && mesaObj.cadeirasExtra > 0) {
+                                    htmlBadge = `<div class="badge-extra">+${mesaObj.cadeirasExtra}</div>`;
+                                }
+
                                 mesaWrapper.innerHTML = `
                                     <div class="texto-acima" style="color: ${corStatusTexto};">${mesaObj.status || "Livre"}</div>
-                                    <div class="bolinha-mesa ${setorConfig.classeTamanho} ${estiloBordaCss}" style="background-color: ${corBase};">${mesaObj.id}</div>
+                                    <div style="position: relative;">
+                                        <div class="bolinha-mesa ${setorConfig.classeTamanho} ${estiloBordaCss}" style="background-color: ${corBase};">${mesaObj.id}</div>
+                                        ${htmlBadge}
+                                    </div>
                                     <div class="texto-abaixo">${nomeParaMostrar}</div>
                                 `;
 
