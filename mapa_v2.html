@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mapa de Vendas - Dinâmico e Rápido</title>
     <style>
-        /* =========================================
-           1. CORES E VARIÁVEIS GERAIS
-           ========================================= */
         :root {
             --azul-fundo: #0A192F; --azul-card: #112240; --ciano-destaque: #66FFFF;
             --texto-claro: #e6f1ff; --cor-palco: #8A2BE2;
@@ -17,9 +14,6 @@
         body { background-color: var(--azul-fundo); color: var(--texto-claro); font-family: Arial, sans-serif; padding: 15px; margin: 0; display: flex; flex-direction: column; align-items: center; }
         #area-exportacao { width: 100%; max-width: 1300px; display: flex; flex-direction: column; align-items: center; background-color: var(--azul-fundo); padding: 10px; border-radius: 8px; }
 
-        /* =========================================
-           2. CABEÇALHO (PAINEL TOPO)
-           ========================================= */
         .painel-topo { width: 100%; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; background-color: var(--azul-card); padding: 15px 30px; border-radius: 8px; margin-bottom: 25px; box-sizing: border-box; }
         .area-imagens-topo { display: flex; gap: 15px; align-items: center; cursor: pointer; transition: transform 0.2s; justify-self: flex-start; }
         .area-imagens-topo:hover { transform: scale(1.02); }
@@ -33,9 +27,6 @@
         .botao-acao { padding: 10px 15px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; transition: 0.2s; font-size: 14px;}
         .botao-acao:hover { opacity: 0.8; transform: scale(1.05); }
 
-        /* =========================================
-           3. SALÃO E TARJAS (APARADORES)
-           ========================================= */
         #container-salao { width: 100%; padding: 0 70px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 15px; position: relative; margin-bottom: 15px;}
         .palco { width: 50%; background-color: var(--cor-palco); color: #fff; text-align: center; padding: 10px 0; font-size: 22px; font-weight: bold; letter-spacing: 5px; border-radius: 8px; border: 2px solid #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.5); margin-bottom: 30px; z-index: 2;}
         .tarja-lateral { position: absolute; width: 45px; border: 2px solid; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; border-radius: 8px; text-align: center; letter-spacing: 2px; text-transform: uppercase; z-index: 1; }
@@ -48,9 +39,6 @@
         .tarja-aparador-dir1 { right: 0; top: 13%; height: 26%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
         .tarja-aparador-dir2 { right: 0; top: 49%; height: 25%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
 
-        /* =========================================
-           4. SETORES E MESAS
-           ========================================= */
         .setor { padding: 12px 20px; border-radius: 8px; width: 100%; box-sizing: border-box; z-index: 2; margin-bottom: 30px;}
         .setor h3 { margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; text-align: center; font-size: 22px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); text-transform: uppercase;}
         .fileira-mesas { display: flex; justify-content: space-evenly; align-items: flex-start; margin-bottom: 25px; width: 100%; flex-wrap: wrap; gap: 10px;}
@@ -76,7 +64,6 @@
         .texto-acima { font-size: 12px; font-weight: bold; text-transform: uppercase; height: 14px; letter-spacing: 1px; margin-bottom: 2px;}
         .texto-abaixo { font-size: 16px; color: #ffffff; text-align: center; width: 120px; white-space: normal; word-wrap: break-word; line-height: 1.1; font-weight: bold; min-height: 15px; margin-top: 2px;}
 
-        /* O BADGE DAS CADEIRAS EXTRAS */
         .badge-extra {
             position: absolute; top: -5px; right: -5px;
             background-color: var(--azul-fundo); color: #f59e0b;
@@ -89,9 +76,6 @@
         .grande-house-mix { position: absolute; top: 0; left: 0; width: 180px; height: 190px; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #1d2d50; border: 2px dashed var(--ciano-destaque); border-radius: 8px; color: var(--ciano-destaque); font-size: 16px; font-weight: bold; text-transform: uppercase; box-shadow: 0 4px 8px rgba(0,0,0,0.5); z-index: 5;}
         .grande-house-mix span.icone { font-size: 60px; margin-bottom: 5px; }
 
-        /* =========================================
-           5. RODAPÉ (LEGENDA)
-           ========================================= */
         .painel-rodape { width: 100%; background-color: var(--azul-card); border-radius: 8px; padding: 15px 20px; border: 1px solid var(--ciano-destaque); box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 20px; margin-top: 10px;}
         .titulo-rodape { margin: 0; color: var(--ciano-destaque); text-transform: uppercase; letter-spacing: 2px; font-size: 18px; border-bottom: 1px solid #233554; padding-bottom: 5px; width: 100%; text-align: center; }
         .legenda-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; width: 100%; justify-items: center; }
@@ -102,9 +86,6 @@
         .info-contato { text-align: center; font-size: 18px; font-weight: bold; color: #47D359; border-top: 1px dashed #233554; padding-top: 10px; width: 100%; }
         .info-contato span.realizacao { display: block; color: var(--texto-claro); font-size: 14px; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* =========================================
-           6. MODAL (JANELA DE EDIÇÃO)
-           ========================================= */
         .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--azul-card); padding: 25px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); z-index: 1000; width: 320px; border: 1px solid var(--ciano-destaque); color: var(--texto-claro); }
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 25, 47, 0.8); z-index: 999; backdrop-filter: blur(3px); }
         .modal h3 { margin-top: 0; text-align: center; color: var(--ciano-destaque); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
@@ -117,16 +98,12 @@
         .btn-link { background: #10b981; color: white; margin-top: 10px; }
         .btn-fechar { background: transparent; color: #8892b0; border: 1px solid #8892b0; margin-top: 10px; }
 
-        /* =========================================
-           7. CONFIGURAÇÕES NATURAIS DE IMPRESSÃO
-           ========================================= */
         @media print {
             body { background-color: var(--azul-fundo); margin: 0; padding: 0; }
             .painel-topo { display: none !important; }
             .modal, .overlay { display: none !important; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
             #area-exportacao { max-width: 100%; width: 100%; box-shadow: none; border: none;}
-            
             .setor { break-inside: avoid; page-break-inside: avoid; margin-bottom: 20px; }
             .fileira-mesas { break-inside: avoid; page-break-inside: avoid; }
             .wrapper-mesa { break-inside: avoid; page-break-inside: avoid; }
@@ -149,7 +126,6 @@
             
             <div class="area-botoes-topo">
                 <button class="botao-acao" id="btn-login" onclick="fazerLoginAdmin()" style="background-color: #ef4444; color: #fff;">🔒 Acesso Equipe</button>
-                
                 <div id="botoes-admin" style="display: none; gap: 10px;">
                     <button class="botao-acao" onclick="carregarMesas()" style="background-color: #3b82f6; color: #fff;">🔄 Atualizar</button>
                 </div>
@@ -164,33 +140,17 @@
             <div class="tarja-lateral tarja-aparador-esq"><span class="tarja-texto">Aparador</span></div>
             <div class="tarja-lateral tarja-aparador-dir1"><span class="tarja-texto">Aparador</span></div>
             <div class="tarja-lateral tarja-aparador-dir2"><span class="tarja-texto">Aparador</span></div>
-
             <div id="mapa-dinamico" style="width: 100%;"></div>
         </div>
 
         <div class="painel-rodape">
             <h3 class="titulo-rodape">Formas de Adesão</h3>
             <div class="legenda-grid">
-                <div class="item-legenda">
-                    <span class="cor-box" style="background-color: #FFFF00;"></span> 
-                    <span class="texto-legenda">Cota Família <span class="sub-legenda">12 Lugares - R$ 25.000,00</span></span>
-                </div>
-                <div class="item-legenda">
-                    <span class="cor-box" style="background-color: #00FFFF;"></span> 
-                    <span class="texto-legenda">Cota Criança <span class="sub-legenda">08 Lugares - R$ 12.000,00</span></span>
-                </div>
-                <div class="item-legenda">
-                    <span class="cor-box" style="background-color: #47D359;"></span> 
-                    <span class="texto-legenda">Mesa Premium <span class="sub-legenda">08 Lugares - R$ 8.000,00</span></span>
-                </div>
-                <div class="item-legenda">
-                    <span class="cor-box" style="background-color: #FF9900;"></span> 
-                    <span class="texto-legenda">Mesa Master <span class="sub-legenda">06 Lugares - R$ 5.400,00</span></span>
-                </div>
-                <div class="item-legenda">
-                    <span class="cor-box" style="background-color: #FF0000;"></span> 
-                    <span class="texto-legenda">Mesa Diamante <span class="sub-legenda">06 Lugares - R$ 4.800,00</span></span>
-                </div>
+                <div class="item-legenda"><span class="cor-box" style="background-color: #FFFF00;"></span><span class="texto-legenda">Cota Família <span class="sub-legenda">12 Lugares - R$ 25.000,00</span></span></div>
+                <div class="item-legenda"><span class="cor-box" style="background-color: #00FFFF;"></span><span class="texto-legenda">Cota Criança <span class="sub-legenda">08 Lugares - R$ 12.000,00</span></span></div>
+                <div class="item-legenda"><span class="cor-box" style="background-color: #47D359;"></span><span class="texto-legenda">Mesa Premium <span class="sub-legenda">08 Lugares - R$ 8.000,00</span></span></div>
+                <div class="item-legenda"><span class="cor-box" style="background-color: #FF9900;"></span><span class="texto-legenda">Mesa Master <span class="sub-legenda">06 Lugares - R$ 5.400,00</span></span></div>
+                <div class="item-legenda"><span class="cor-box" style="background-color: #FF0000;"></span><span class="texto-legenda">Mesa Diamante <span class="sub-legenda">06 Lugares - R$ 4.800,00</span></span></div>
             </div>
             <div class="info-contato">
                 📞 Reservas: (17) 98816-3551
@@ -225,7 +185,6 @@
         const API_URL = 'https://script.google.com/macros/s/AKfycby6hZ1cD-uIPafXIpRDe2DJzmYwjP4IRQgysxbVPNJOlKNDlE8ALvUTyBsoJlSQL2k/exec';
         let mesasData = [];
 
-        // O SISTEMA DE SENHA DA EQUIPE
         const SENHA_SISTEMA = "educ1958"; 
         let isAdmin = false; 
 
@@ -380,7 +339,6 @@
                                     mesaWrapper.onclick = () => abrirModal(mesaObj);
                                 }
 
-                                // O NOVO BADGE DE CADEIRAS EXTRAS AQUI!
                                 let htmlBadge = "";
                                 if(mesaObj.cadeirasExtra && mesaObj.cadeirasExtra > 0) {
                                     htmlBadge = `<div class="badge-extra">+${mesaObj.cadeirasExtra}</div>`;
