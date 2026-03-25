@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cofre - Noite Beneficente</title>
+    <style>
+        :root {
+            --azul-fundo: #0A192F; --azul-card: #112240; --ciano-destaque: #66FFFF;
+            --texto-claro: #e6f1ff;
+        }
+
+        body { background-color: var(--azul-fundo); color: var(--texto-claro); font-family: Arial, sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
+        
+        /* MENU LATERAL */
+        .sidebar { width: 250px; background-color: var(--azul-card); border-right: 2px solid var(--ciano-destaque); display: flex; flex-direction: column; padding: 20px 0; }
+        .sidebar-logo { text-align: center; margin-bottom: 30px; color: var(--ciano-destaque); font-size: 24px; font-weight: bold; letter-spacing: 2px; }
+        .menu-item { padding: 15px 25px; cursor: pointer; font-size: 16px; font-weight: bold; color: #8892b0; border-left: 4px solid transparent; transition: 0.3s; }
+        .menu-item:hover, .menu-item.ativo { background-color: rgba(102, 255, 255, 0.1); color: var(--texto-claro); border-left-color: var(--ciano-destaque); }
+        
+        /* ÁREA PRINCIPAL */
+        .conteudo-principal { flex: 1; overflow-y: auto; padding: 30px; box-sizing: border-box; }
+        .aba-conteudo { display: none; }
+        .aba-conteudo.ativo { display: block; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* =========================================
+           O SEU CSS DO COFRE E DRE
+           ========================================= */
+        .cofre-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--ciano-destaque); padding-bottom: 15px; margin-bottom: 20px;}
+        .cofre-header h2 { margin: 0; color: var(--ciano-destaque); font-size: 28px; display: flex; align-items: center; gap: 10px;}
+        .botao-acao { padding: 10px 15px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; transition: 0.2s; font-size: 14px;}
+        .botao-acao:hover { opacity: 0.8; transform: scale(1.05); }
+
+        .cofre-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px;}
+        .cofre-card { background-color: var(--azul-card); border-radius: 8px; padding: 20px; border: 1px solid #233554; text-align: center; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        .cofre-card h4 { margin: 0 0 10px 0; color: #8892b0; font-size: 14px; text-transform: uppercase; letter-spacing: 1px;}
+        .cofre-card .valor { font-size: 28px; font-weight: bold; margin: 0;}
+        
+        .cofre-fechado { border-top: 4px solid var(--ciano-destaque); } .cofre-fechado .valor { color: var(--ciano-destaque); }
+        .cofre-custos { border-top: 4px solid #ef4444; } .cofre-custos .valor { color: #ef4444; }
+        .cofre-lucro { border-top: 4px solid #10b981; } .cofre-lucro .valor { color: #10b981; font-size: 34px; }
+        .cofre-recebido { border-top: 4px solid #f59e0b; } .cofre-recebido .valor { color: #f59e0b; }
+        .cofre-pendente { border-top: 4px solid #ff4d4d; } .cofre-pendente .valor { color: #ff4d4d; }
+
+        .area-tabela { overflow-x: auto; background-color: var(--azul-card); border-radius: 8px; border: 1px solid #233554; padding: 15px; margin-bottom: 20px;}
+        .area-tabela h3 { margin-top: 0; color: var(--ciano-destaque); font-size: 20px; border-bottom: 1px solid #233554; padding-bottom: 10px; display: flex; justify-content: space-between;}
+        .tabela-financeira { width: 100%; border-collapse: collapse; min-width: 800px;}
+        .tabela-financeira th { background-color: #1d2d50; color: #fff; padding: 12px; text-align: right; font-size: 13px; text-transform: uppercase; border-bottom: 2px solid var(--ciano-destaque);}
+        .tabela-financeira th:first-child { text-align: left; }
+        .tabela-financeira td { padding: 12px; border-bottom: 1px solid #233554; font-size: 15px; font-weight: bold; text-align: right;}
+        .tabela-financeira td:first-child { text-align: left; font-size: 16px;}
+        
+        /* O SEU CSS DO SIMULADOR */
+        .painel-simulador { background-color: #061020; border: 1px dashed #f59e0b; border-radius: 8px; padding: 25px;}
+        .painel-simulador h3 { margin: 0 0 5px 0; color: #f59e0b; font-size: 22px; display: flex; align-items: center; gap: 8px;}
+        .painel-simulador > p { color: #8892b0; margin: 0 0 20px 0; font-size: 14px;}
+        .sim-resultado-box { display: flex; justify-content: space-around; background: #112240; padding: 20px; border-radius: 8px; border: 1px solid #233554; flex-wrap: wrap; gap: 20px;}
+        .res-col { display: flex; flex-direction: column; align-items: center; text-align: center;}
+        .res-col span { font-size: 13px; color: #8892b0; text-transform: uppercase; margin-bottom: 5px; font-weight: bold;}
+        .res-col strong { font-size: 24px; color: var(--texto-claro);}
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="sidebar-logo">NOITE<br>BENEFICENTE</div>
+        <div class="menu-item ativo" onclick="mudarAba('aba-dashboard', this)">📊 Painel & DRE</div>
+        <div class="menu-item" onclick="mudarAba('aba-lancamentos', this)">📝 Lançamentos da Mesa</div>
+        <div class="menu-item" onclick="window.close()" style="margin-top: auto; color: #ef4444;">❌ Fechar Cofre</div>
+    </div>
+
+    <div class="conteudo-principal">
+
+        <div id="aba-dashboard" class="aba-conteudo ativo">
+            <div class="cofre-header">
+                <h2><span>📊</span> Painel Financeiro e DRE</h2>
+                <div style="display: flex; gap: 10px;">
+                    <button class="botao-acao" style="background-color: #ef4444; color: #fff;">➕ Lançar Despesa</button>
+                    <button class="botao-acao" onclick="carregarDadosFinanceiros()" style="background-color: #3b82f6; color: #fff;">🔄 Atualizar Cofre</button>
+                </div>
+            </div>
+            
+            <div class="cofre-grid">
+                <div class="cofre-card cofre-fechado"><h4>📈 Receita Total (Vendas)</h4><p class="valor" id="cofreFechado">R$ 0,00</p></div>
+                <div class="cofre-card cofre-custos"><h4>📉 Custos e Despesas</h4><p class="valor" id="cofreCustosTotais">R$ 0,00</p></div>
+                <div class="cofre-card cofre-lucro"><h4>🏆 Lucro Líquido Projetado</h4><p class="valor" id="cofreLucroLiquido">R$ 0,00</p></div>
+                <div class="cofre-card cofre-recebido"><h4>💰 Em Caixa (Já Recebido)</h4><p class="valor" id="cofreRecebido">R$ 0,00</p></div>
+                <div class="cofre-card cofre-pendente"><h4>⏳ Saldo a Receber</h4><p class="valor" id="cofrePendente">R$ 0,00</p></div>
+            </div>
+
+            <div class="area-tabela">
+                <h3>📋 Detalhamento de Receitas (Entradas)</h3>
+                <table class="tabela-financeira">
+                    <thead>
+                        <tr>
+                            <th>Modalidade</th>
+                            <th>Total Fechado (R$)</th>
+                            <th>Já Recebido (R$)</th>
+                            <th>Saldo a Receber (R$)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyDetalhes">
+                        <tr><td style="text-align:center;" colspan="4">Aguardando sincronização com a planilha...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="painel-simulador">
+                <h3>🔮 Simulador de Faturamento</h3>
+                <p>O que acontece com o caixa se vendermos mais mesas hoje?</p>
+                <div class="sim-resultado-box" style="margin-bottom: 20px;">
+                    <div class="res-col"><span>Receita Atual</span><strong id="simAtual">R$ 0,00</strong></div>
+                    <div class="res-col"><span>+ Simulação</span><strong id="simExtra" style="color: #4ade80;">+ R$ 0,00</strong></div>
+                    <div class="res-col"><span>Receita Projetada</span><strong id="simProjetado" style="color: #f59e0b; font-size: 32px;">R$ 0,00</strong></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="aba-lancamentos" class="aba-conteudo">
+            <div class="cofre-header">
+                <h2><span id="titulo-mesa-lancamento">📝 Selecione uma Mesa</span></h2>
+            </div>
+            <div style="background-color: var(--azul-card); padding: 40px; border-radius: 8px; text-align: center; border: 1px dashed var(--ciano-destaque);">
+                <p style="font-size: 18px; color: #8892b0;">Aqui vai entrar toda aquela lógica gigante dos múltiplos pagadores, parcelas, datas de vencimento e impressão de recibos.</p>
+                <p style="color: var(--cor-livre);">A engenharia disso será a nossa próxima etapa!</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Função do Menu Lateral
+        function mudarAba(idAba, elementoClicado) {
+            // Esconde todas as abas
+            document.querySelectorAll('.aba-conteudo').forEach(aba => aba.classList.remove('ativo'));
+            // Tira a cor de todos os botões do menu
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('ativo'));
+            
+            // Mostra a aba certa e pinta o botão
+            document.getElementById(idAba).classList.add('ativo');
+            elementoClicado.classList.add('ativo');
+        }
+
+        // A Mágica do Deep Link: Verifica se fomos jogados aqui pelo botão do Mapa!
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const mesaPuxada = urlParams.get('mesa');
+            
+            if(mesaPuxada) {
+                // Se a URL tem "?mesa=F-02", a gente já pula direto pra aba de Lançamentos!
+                document.getElementById('titulo-mesa-lancamento').innerText = `📝 Lançamentos da Mesa ${mesaPuxada}`;
+                // Força o clique no botão "Lançamentos" do menu lateral
+                mudarAba('aba-lancamentos', document.querySelectorAll('.menu-item')[1]);
+            }
+        };
+
+        function carregarDadosFinanceiros() {
+            alert("Aguarde... Nas próximas etapas vamos conectar esse botão ao Google Sheets para puxar os R$ de verdade!");
+        }
+    </script>
+</body>
+</html>
