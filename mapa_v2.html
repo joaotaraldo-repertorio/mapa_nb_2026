@@ -43,10 +43,7 @@
         
         .tarja-wc-masc { left: 0; top: 13%; height: 12%; border-color: #3b82f6; background-color: rgba(59, 130, 246, 0.15); color: #3b82f6; }
         .tarja-wc-fem { left: 0; top: 26%; height: 12%; border-color: #ec4899; background-color: rgba(236, 72, 153, 0.15); color: #ec4899; }
-        
-        /* Ajuste fino da Entrada: Grudada no fim do bloco de mesas */
         .tarja-entrada { right: 0; bottom: 30px; top: auto; height: 8%; border-color: var(--ciano-destaque); background-color: rgba(102, 255, 255, 0.15); color: var(--ciano-destaque); }
-        
         .tarja-aparador-esq { left: 0; top: 70%; height: 18%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
         .tarja-aparador-dir1 { right: 0; top: 13%; height: 26%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
         .tarja-aparador-dir2 { right: 0; top: 49%; height: 25%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
@@ -57,11 +54,19 @@
         .setor { padding: 12px 20px; border-radius: 8px; width: 100%; box-sizing: border-box; z-index: 2; margin-bottom: 30px;}
         .setor h3 { margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; text-align: center; font-size: 22px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); text-transform: uppercase;}
         .fileira-mesas { display: flex; justify-content: space-evenly; align-items: flex-start; margin-bottom: 25px; width: 100%; flex-wrap: wrap; gap: 10px;}
+        
         .wrapper-mesa { display: flex; flex-direction: column; align-items: center; gap: 5px; position: relative; transition: transform 0.2s; }
         .wrapper-mesa.clicavel:hover { transform: scale(1.05); cursor: pointer; }
 
         .bolinha-mesa { border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.4); color: #000; transition: all 0.2s;}
         
+        /* A MÁGICA 2.0: Agora a animação atinge SÓ a bolinha redonda! */
+        .wrapper-mesa.destaque .bolinha-mesa { animation: piscarDestaque 1.2s infinite alternate; z-index: 10;}
+        @keyframes piscarDestaque {
+            0% { box-shadow: 0 0 10px 3px var(--ciano-destaque); transform: scale(1.05); }
+            100% { box-shadow: 0 0 35px 15px var(--ciano-destaque); transform: scale(1.2); }
+        }
+
         .borda-solida { border: 2px solid rgba(255,255,255,0.4); }
         .borda-pontilhada { border: 3px dashed rgba(255,255,255,0.9); box-shadow: 0 4px 10px rgba(0,0,0,0.7); }
 
@@ -71,13 +76,6 @@
 
         .texto-acima { font-size: 12px; font-weight: bold; text-transform: uppercase; height: 14px; letter-spacing: 1px; margin-bottom: 2px;}
         .texto-abaixo { font-size: 16px; color: #ffffff; text-align: center; width: 120px; white-space: normal; word-wrap: break-word; line-height: 1.1; font-weight: bold; min-height: 15px; margin-top: 2px;}
-
-        /* A MÁGICA: A mesa enviada no link fica pulsando na tela! */
-        .mesa-destaque-cliente { animation: piscarDestaque 1.5s infinite alternate; z-index: 10;}
-        @keyframes piscarDestaque {
-            0% { box-shadow: 0 0 10px 5px var(--ciano-destaque); transform: scale(1.1); }
-            100% { box-shadow: 0 0 30px 15px var(--ciano-destaque); transform: scale(1.25); }
-        }
 
         .grande-house-mix { position: absolute; top: 0; left: 0; width: 180px; height: 190px; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #1d2d50; border: 2px dashed var(--ciano-destaque); border-radius: 8px; color: var(--ciano-destaque); font-size: 16px; font-weight: bold; text-transform: uppercase; box-shadow: 0 4px 8px rgba(0,0,0,0.5); z-index: 5;}
         .grande-house-mix span.icone { font-size: 60px; margin-bottom: 5px; }
@@ -109,6 +107,20 @@
         .btn-salvar:disabled { background: #555; cursor: not-allowed; }
         .btn-link { background: #10b981; color: white; margin-top: 10px; }
         .btn-fechar { background: transparent; color: #8892b0; border: 1px solid #8892b0; margin-top: 10px; }
+
+        /* =========================================
+           7. CONFIGURAÇÕES NATURAIS DE IMPRESSÃO
+           ========================================= */
+        @media print {
+            body { background-color: var(--azul-fundo); margin: 0; padding: 0; }
+            /* Esconde os botões e pop-ups na hora de imprimir o PDF */
+            .painel-topo { display: none !important; }
+            .modal, .overlay { display: none !important; }
+            /* Força a impressora a imprimir as cores de fundo escuras e os espelhos */
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            #area-exportacao { max-width: 100%; width: 100%; box-shadow: none; border: none;}
+            .painel-rodape { page-break-inside: avoid; }
+        }
     </style>
 </head>
 <body>
@@ -124,6 +136,8 @@
                 <div class="status-sistema" id="status-msg">CONECTANDO AO BANCO DE DADOS...</div>
             </div>
             <div class="area-botoes-topo">
+                <button class="botao-acao" onclick="window.print()" style="background-color: #ec4899; color: #fff;">🖨️ Imprimir / PDF</button>
+
                 <button class="botao-acao" id="btn-login" onclick="fazerLoginAdmin()" style="background-color: #ef4444; color: #fff;">🔒 Acesso Equipe</button>
                 
                 <div id="botoes-admin" style="display: none; gap: 10px;">
@@ -202,8 +216,8 @@
         let mesasData = [];
 
         // O SISTEMA DE SENHA DA EQUIPE
-        const SENHA_SISTEMA = "1234"; // Você pode trocar a senha aqui
-        let isAdmin = false; // Começa trancado como "Visão Cliente"
+        const SENHA_SISTEMA = "1234"; 
+        let isAdmin = false; 
 
         const CONFIG_GERAL = { 
             edicao: "19ª", nomeEvento: "Noite Beneficente", ano: "2026", 
@@ -225,34 +239,32 @@
             document.getElementById('img-dupla').src = CONFIG_GERAL.caminhoShow;
         }
 
-        // Função do Botão "Acesso Equipe"
         function fazerLoginAdmin() {
             const digitado = prompt("Digite a senha da equipe:");
             if (digitado === SENHA_SISTEMA) {
                 isAdmin = true;
                 document.getElementById('btn-login').style.display = 'none';
                 document.getElementById('botoes-admin').style.display = 'flex';
-                renderizarMapaDinamico(); // Recarrega o mapa mostrando os nomes e destravando o clique
+                renderizarMapaDinamico(); 
             } else if (digitado !== null) {
                 alert("Senha incorreta!");
             }
         }
 
         async function carregarMesas() {
-            let infoAnterior = document.getElementById('status-msg').innerHTML;
             document.getElementById('status-msg').innerHTML = "⏳ ATUALIZANDO DADOS...";
+            document.getElementById('status-msg').style.color = "var(--cor-reservada)";
             try {
                 const response = await fetch(API_URL);
                 mesasData = await response.json();
                 renderizarMapaDinamico();
                 
-                // Verifica se a URL tem um link de aprovação ativo e rola a tela até a mesa pulsando
                 const urlParams = new URLSearchParams(window.location.search);
                 if(urlParams.get('mesa')) {
                     document.getElementById('status-msg').innerHTML = "👀 VISÃO DO CLIENTE";
                     document.getElementById('status-msg').style.color = "var(--ciano-destaque)";
                     setTimeout(() => {
-                        const mesaPulsando = document.querySelector('.mesa-destaque-cliente');
+                        const mesaPulsando = document.querySelector('.destaque');
                         if(mesaPulsando) mesaPulsando.scrollIntoView({ behavior: "smooth", block: "center" });
                     }, 500);
                 } else {
@@ -269,7 +281,6 @@
             const container = document.getElementById('mapa-dinamico');
             container.innerHTML = '';
 
-            // Verifica se tem link especial na URL
             const urlParams = new URLSearchParams(window.location.search);
             const mesaParaDestacar = urlParams.get('mesa');
 
@@ -331,21 +342,21 @@
 
                                 const statusClass = (mesaObj.status || "livre").toLowerCase().trim();
                                 
-                                // O CÉREBRO DAS CARAS: Decide o que mostrar no texto embaixo da mesa
+                                // O CÉREBRO DAS CARAS: Limpeza visual total
                                 let nomeParaMostrar = "---";
                                 let cssDestaqueUrl = "";
 
                                 if (isAdmin) {
-                                    // Se é a equipe logada, mostra tudo!
-                                    nomeParaMostrar = mesaObj.nome ? mesaObj.nome : (statusClass === "livre" ? "Disponível" : "---");
+                                    // A equipe vê o nome do comprador
+                                    nomeParaMostrar = mesaObj.nome ? mesaObj.nome : "---";
                                 } else {
-                                    // Se é Visão Cliente, esconde os nomes...
-                                    nomeParaMostrar = statusClass === "livre" ? "Livre" : (statusClass === "vendida" ? "Vendida" : "Reservada");
+                                    // A visão cliente vê apenas uma linha vazia (sem poluição)
+                                    nomeParaMostrar = "---";
                                     
-                                    // ... EXCETO se for a mesa enviada no Link de Aprovação!
+                                    // EXCETO se for a mesa do link, aí mostra o nome da pessoa
                                     if (mesaParaDestacar && mesaObj.id === mesaParaDestacar) {
                                         nomeParaMostrar = mesaObj.nome || "Sua Mesa";
-                                        cssDestaqueUrl = "mesa-destaque-cliente"; // Ativa a luz neon!
+                                        cssDestaqueUrl = "destaque"; 
                                     }
                                 }
 
@@ -357,9 +368,8 @@
                                 let estiloBordaCss = (statusClass !== "livre") ? "borda-pontilhada" : "borda-solida";
 
                                 const mesaWrapper = document.createElement('div');
-                                mesaWrapper.className = `wrapper-mesa ${cssDestaqueUrl}`; // Adiciona a luz neon se for a mesa do link
+                                mesaWrapper.className = `wrapper-mesa ${cssDestaqueUrl}`;
                                 
-                                // O clique só funciona se a pessoa estiver logada como equipe
                                 if(isAdmin) {
                                     mesaWrapper.classList.add('clicavel');
                                     mesaWrapper.onclick = () => abrirModal(mesaObj);
@@ -438,19 +448,14 @@
             }
         }
 
-        // Função para Copiar o Link do Cliente que faz a mesa pulsar
         function gerarLinkAprovacao() {
             const idMesa = document.getElementById('modal-title').innerText.replace('Mesa ', '').trim();
-            
-            // Pega o URL base do seu site (sem parâmetros velhos) e adiciona a mesa
             const urlBase = window.location.origin + window.location.pathname;
             const linkCliente = `${urlBase}?mesa=${idMesa}`;
             
-            // Copia para a área de transferência do computador/celular
             navigator.clipboard.writeText(linkCliente).then(() => {
-                alert("✅ Link da Mesa " + idMesa + " copiado com sucesso!\n\nAgora é só colar (Ctrl+V) no WhatsApp do cliente.");
+                alert("✅ Link da Mesa " + idMesa + " copiado com sucesso!\n\nAgora é só colar (Ctrl+V) no WhatsApp do cliente.\nOu você mesmo pode abrir esse link em outra aba, gerar um PDF pelo botão rosa, e mandar o arquivo!");
             }).catch(err => {
-                // Caso o navegador bloqueie a cópia, mostra o link na tela
                 prompt("Copie o link abaixo:", linkCliente);
             });
         }
