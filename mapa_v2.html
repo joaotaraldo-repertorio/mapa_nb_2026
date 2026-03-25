@@ -3,53 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mapa Rápido - Noite Beneficente</title>
+    <title>Mapa de Vendas - Dinâmico e Rápido</title>
     <style>
         /* =========================================
-           O SEU VISUAL ORIGINAL E CORES
+           1. CORES E VARIÁVEIS GERAIS
            ========================================= */
         :root {
-            --azul-fundo: #0A192F; --azul-card: #112240; --ciano-destaque: #66FFFF;
-            --texto-claro: #e6f1ff; --cor-palco: #8A2BE2;
+            --azul-fundo: #0A192F; 
+            --azul-card: #112240; 
+            --ciano-destaque: #66FFFF;
+            --texto-claro: #e6f1ff; 
+            --cor-palco: #8A2BE2;
+            --cor-livre: #4ade80;
+            --cor-vendida: #ff4d4d;
+            --cor-reservada: #ffc107;
         }
 
         body { background-color: var(--azul-fundo); color: var(--texto-claro); font-family: Arial, sans-serif; padding: 15px; margin: 0; display: flex; flex-direction: column; align-items: center; }
-        
         #area-exportacao { width: 100%; max-width: 1300px; display: flex; flex-direction: column; align-items: center; background-color: var(--azul-fundo); padding: 10px; border-radius: 8px; }
 
-        .painel-topo { width: 100%; display: flex; justify-content: center; align-items: center; background-color: var(--azul-card); padding: 15px 30px; border-radius: 8px; margin-bottom: 15px; box-sizing: border-box; flex-direction: column;}
-        .titulo-evento { text-align: center; color: var(--ciano-destaque); margin: 0; font-size: 32px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }
-        .status-sistema { color: #f59e0b; font-weight: bold; margin-top: 10px; font-size: 14px;}
+        /* =========================================
+           2. CABEÇALHO (PAINEL TOPO)
+           ========================================= */
+        .painel-topo { width: 100%; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; background-color: var(--azul-card); padding: 15px 30px; border-radius: 8px; margin-bottom: 25px; box-sizing: border-box; }
+        
+        .area-imagens-topo { display: flex; gap: 15px; align-items: center; cursor: pointer; transition: transform 0.2s; justify-self: flex-start; }
+        .area-imagens-topo:hover { transform: scale(1.02); }
+        .area-imagens-topo img { max-height: 100px; width: auto; border-radius: 8px; }
+        
+        .area-textos-topo { display: flex; flex-direction: column; align-items: center; justify-self: center; }
+        .titulo-evento { text-align: center; color: var(--ciano-destaque); margin: 0; font-size: 32px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; line-height: 1.2; }
+        .subtitulo-evento { display: block; font-size: 16px; color: #fff; letter-spacing: 1px; font-weight: normal; margin-top: 5px; text-transform: none; text-align: center;}
+        .subtitulo-evento span { color: #f59e0b; font-weight: bold; }
+        .status-sistema { color: var(--cor-reservada); font-weight: bold; margin-top: 8px; font-size: 12px; letter-spacing: 1px;}
 
+        .area-botoes-topo { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; justify-self: flex-end; }
+        .botao-acao { padding: 10px 15px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; transition: 0.2s; font-size: 14px;}
+        .botao-acao:hover { opacity: 0.8; transform: scale(1.05); }
+
+        /* =========================================
+           3. SALÃO E TARJAS (APARADORES)
+           ========================================= */
         #container-salao { width: 100%; padding: 0 70px; box-sizing: border-box; display: flex; flex-direction: column; align-items: center; gap: 15px; position: relative; margin-bottom: 15px;}
+        .palco { width: 50%; background-color: var(--cor-palco); color: #fff; text-align: center; padding: 10px 0; font-size: 22px; font-weight: bold; letter-spacing: 5px; border-radius: 8px; border: 2px solid #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.5); margin-bottom: 30px; z-index: 2;}
         
-        .palco { width: 50%; background-color: var(--cor-palco); color: #fff; text-align: center; padding: 10px 0; font-size: 22px; font-weight: bold; letter-spacing: 5px; border-radius: 8px; border: 2px solid #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.5); margin-bottom: 25px; z-index: 2;}
-        
-        /* Tarjas Laterais */
         .tarja-lateral { position: absolute; width: 45px; border: 2px solid; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; border-radius: 8px; text-align: center; letter-spacing: 2px; text-transform: uppercase; z-index: 1; }
         .tarja-texto { writing-mode: vertical-rl; transform: rotate(180deg); margin-top: 10px; }
+        
+        /* Banheiros e Entrada */
         .tarja-wc-masc { left: 0; top: 13%; height: 12%; border-color: #3b82f6; background-color: rgba(59, 130, 246, 0.15); color: #3b82f6; }
         .tarja-wc-fem { left: 0; top: 26%; height: 12%; border-color: #ec4899; background-color: rgba(236, 72, 153, 0.15); color: #ec4899; }
-        .tarja-entrada { right: 0; top: 80%; height: 15%; border-color: var(--ciano-destaque); background-color: rgba(102, 255, 255, 0.15); color: var(--ciano-destaque); }
+        .tarja-entrada { right: 0; top: 92%; height: 8%; border-color: var(--ciano-destaque); background-color: rgba(102, 255, 255, 0.15); color: var(--ciano-destaque); }
 
-        /* O Estilo do Setor (Espelhos) */
-        .setor { padding: 12px 20px; border-radius: 8px; width: 100%; box-sizing: border-box; z-index: 2; margin-bottom: 25px;}
-        .setor h3 { margin-top: 0; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; text-align: center; font-size: 22px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); text-transform: uppercase;}
+        /* Aparadores */
+        .tarja-aparador-esq { left: 0; top: 70%; height: 18%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+        .tarja-aparador-dir1 { right: 0; top: 13%; height: 26%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+        .tarja-aparador-dir2 { right: 0; top: 49%; height: 25%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+
+        /* =========================================
+           4. SETORES, FILEIRAS E MESAS
+           ========================================= */
+        .setor { padding: 12px 20px; border-radius: 8px; width: 100%; box-sizing: border-box; z-index: 2; margin-bottom: 30px;}
+        .setor h3 { margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; text-align: center; font-size: 22px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); text-transform: uppercase;}
         
-        /* Fileiras e Mesas */
-        .fileira-mesas { display: flex; justify-content: space-evenly; align-items: flex-start; margin-bottom: 15px; width: 100%; flex-wrap: wrap; gap: 10px;}
-        .wrapper-mesa { display: flex; flex-direction: column; align-items: center; gap: 5px; width: 120px; position: relative; cursor: pointer; transition: transform 0.2s; }
+        .fileira-mesas { display: flex; justify-content: space-evenly; align-items: flex-start; margin-bottom: 25px; width: 100%; flex-wrap: wrap; gap: 10px;}
+        .wrapper-mesa { display: flex; flex-direction: column; align-items: center; gap: 5px; position: relative; cursor: pointer; transition: transform 0.2s; }
         .wrapper-mesa:hover { transform: scale(1.05); }
 
-        .bolinha-mesa { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.5); border: 2px solid rgba(255,255,255,0.4);}
-        .texto-acima { font-size: 11px; font-weight: bold; text-transform: uppercase; height: 14px; letter-spacing: 1px; }
-        .texto-abaixo { font-size: 13px; color: #ffffff; text-align: center; width: 100%; white-space: normal; word-wrap: break-word; line-height: 1.1; font-weight: bold; min-height: 15px; }
+        /* A Base da Bolinha */
+        .bolinha-mesa { border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.4); border: 2px solid rgba(255,255,255,0.4); color: #000;}
+        
+        /* Os 3 Tamanhos Oficiais */
+        .tamanho-g { width: 115px; height: 115px; font-size: 30px; }
+        .tamanho-m { width: 90px; height: 90px; font-size: 24px; }
+        .tamanho-p { width: 75px; height: 75px; font-size: 19px; }
 
-        /* A House Mix da Mesa Master */
+        .texto-acima { font-size: 12px; font-weight: bold; text-transform: uppercase; height: 14px; letter-spacing: 1px; margin-bottom: 2px;}
+        .texto-abaixo { font-size: 14px; color: #ffffff; text-align: center; width: 120px; white-space: normal; word-wrap: break-word; line-height: 1.1; font-weight: bold; min-height: 15px; margin-top: 2px;}
+
+        /* House Mix */
         .grande-house-mix { position: absolute; top: 0; left: 0; width: 180px; height: 190px; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #1d2d50; border: 2px dashed var(--ciano-destaque); border-radius: 8px; color: var(--ciano-destaque); font-size: 16px; font-weight: bold; text-transform: uppercase; box-shadow: 0 4px 8px rgba(0,0,0,0.5); z-index: 5;}
         .grande-house-mix span.icone { font-size: 60px; margin-bottom: 5px; }
 
-        /* Modal */
+        /* =========================================
+           5. MODAL (JANELA DE EDIÇÃO)
+           ========================================= */
         .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--azul-card); padding: 25px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); z-index: 1000; width: 320px; border: 1px solid var(--ciano-destaque); color: var(--texto-claro); }
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 25, 47, 0.8); z-index: 999; backdrop-filter: blur(3px); }
         .modal h3 { margin-top: 0; text-align: center; color: var(--ciano-destaque); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
@@ -64,15 +102,32 @@
 
     <div id="area-exportacao">
         <div class="painel-topo">
-            <h1 class="titulo-evento">19ª Noite Beneficente</h1>
-            <div class="status-sistema" id="status-msg">Conectando ao Banco de Dados...</div>
+            <div class="area-imagens-topo" id="logoSecreta">
+                <img id="img-logo" src="" alt="Logo" onerror="this.style.display='none'">
+                <img id="img-dupla" src="" alt="Show" style="box-shadow: 0 4px 8px rgba(0,0,0,0.5);" onerror="this.style.display='none'">
+            </div>
+            
+            <div class="area-textos-topo">
+                <h2 id="titulo-dinamico" class="titulo-evento">Carregando...</h2>
+                <div class="status-sistema" id="status-msg">CONECTANDO AO BANCO DE DADOS...</div>
+            </div>
+            
+            <div class="area-botoes-topo">
+                <button class="botao-acao" onclick="carregarMesas()" style="background-color: #3b82f6; color: #fff;">🔄 Atualizar Mapa</button>
+                <button class="botao-acao" onclick="abrirCofre()" style="background-color: #ff9900; color: #000; border: 1px solid #fff;">📊 Cofre (Financeiro)</button>
+            </div>
         </div>
 
         <div id="container-salao">
             <div class="palco">PALCO</div>
+            
             <div class="tarja-lateral tarja-wc-masc"><span class="tarja-texto">WC Masc</span></div>
             <div class="tarja-lateral tarja-wc-fem"><span class="tarja-texto">WC Fem</span></div>
             <div class="tarja-lateral tarja-entrada"><span class="tarja-texto">Entrada</span></div>
+            
+            <div class="tarja-lateral tarja-aparador-esq"><span class="tarja-texto">Aparador</span></div>
+            <div class="tarja-lateral tarja-aparador-dir1"><span class="tarja-texto">Aparador</span></div>
+            <div class="tarja-lateral tarja-aparador-dir2"><span class="tarja-texto">Aparador</span></div>
 
             <div id="mapa-dinamico" style="width: 100%;"></div>
         </div>
@@ -98,26 +153,52 @@
     </div>
 
     <script>
+        // =========================================
+        // CONFIGURAÇÕES GERAIS (O CÉREBRO)
+        // =========================================
         const API_URL = 'https://script.google.com/macros/s/AKfycby6hZ1cD-uIPafXIpRDe2DJzmYwjP4IRQgysxbVPNJOlKNDlE8ALvUTyBsoJlSQL2k/exec';
         let mesasData = [];
 
-        // O seu motor de configurações EXATO!
-        const CONFIG_MESAS = {
-            "Familia": { prefixo: "F", nome: "Cota Família", corNormal: "#FFFF00", corVendida: "#FFFFD1", layout: [ [6], [6] ], bgTranslucido: "rgba(255, 255, 0, 0.08)", bordaFina: "rgba(255, 255, 0, 0.3)" },
-            "Crianca": { prefixo: "C", nome: "Cota Criança", corNormal: "#00FFFF", corVendida: "#66CCCC", layout: [ [7], [7], [7], [7] ], bgTranslucido: "rgba(0, 255, 255, 0.08)", bordaFina: "rgba(0, 255, 255, 0.3)" },
-            "Premium": { prefixo: "P", nome: "Mesa Premium", corNormal: "#47D359", corVendida: "#75D982", layout: [ [7], [7] ], bgTranslucido: "rgba(71, 211, 89, 0.08)", bordaFina: "rgba(71, 211, 89, 0.3)" },
-            "Master": { prefixo: "M", nome: "Mesa Master", corNormal: "#FF9900", corVendida: "#FFE2B7", layout: [ [3, "BIG_MIX", 3], [3, "GAP", 3], [7] ], bgTranslucido: "rgba(255, 153, 0, 0.08)", bordaFina: "rgba(255, 153, 0, 0.3)" },
-            "Diamante": { prefixo: "D", nome: "Mesa Diamante", corNormal: "#FF0000", corVendida: "#FFCDCD", layout: [ [7], [7], [7] ], bgTranslucido: "rgba(255, 0, 0, 0.08)", bordaFina: "rgba(255, 0, 0, 0.3)" }
+        const CONFIG_GERAL = { 
+            edicao: "19ª", 
+            nomeEvento: "Noite Beneficente", 
+            ano: "2026", 
+            data: "17 de Outubro", 
+            show: "Marcos & Belutti", 
+            caminhoLogo: "logo.png",
+            caminhoShow: "ImagemShow.png"
         };
 
+        const CONFIG_MESAS = {
+            "Familia": { prefixo: "F", nome: "Cota Família", classeTamanho: "tamanho-g", corNormal: "#FFFF00", corVendida: "#FFFFD1", layout: [ [6], [6] ], bgTranslucido: "rgba(255, 255, 0, 0.08)", bordaFina: "rgba(255, 255, 0, 0.3)" },
+            "Crianca": { prefixo: "C", nome: "Cota Criança", classeTamanho: "tamanho-m", corNormal: "#00FFFF", corVendida: "#66CCCC", layout: [ [7], [7], [7], [7] ], bgTranslucido: "rgba(0, 255, 255, 0.08)", bordaFina: "rgba(0, 255, 255, 0.3)" },
+            "Premium": { prefixo: "P", nome: "Mesa Premium", classeTamanho: "tamanho-m", corNormal: "#47D359", corVendida: "#75D982", layout: [ [7], [7] ], bgTranslucido: "rgba(71, 211, 89, 0.08)", bordaFina: "rgba(71, 211, 89, 0.3)" },
+            "Master": { prefixo: "M", nome: "Mesa Master", classeTamanho: "tamanho-p", corNormal: "#FF9900", corVendida: "#FFE2B7", layout: [ [3, "BIG_MIX", 3], [3, "GAP", 3], [7] ], bgTranslucido: "rgba(255, 153, 0, 0.08)", bordaFina: "rgba(255, 153, 0, 0.3)" },
+            "Diamante": { prefixo: "D", nome: "Mesa Diamante", classeTamanho: "tamanho-p", corNormal: "#FF0000", corVendida: "#FFCDCD", layout: [ [7], [7], [7] ], bgTranslucido: "rgba(255, 0, 0, 0.08)", bordaFina: "rgba(255, 0, 0, 0.3)" }
+        };
+
+        // Injeta o texto dinâmico no cabeçalho
+        function montarCabecalho() {
+            document.getElementById('titulo-dinamico').innerHTML = `${CONFIG_GERAL.edicao} ${CONFIG_GERAL.nomeEvento} ${CONFIG_GERAL.ano}<br><span class="subtitulo-evento">${CONFIG_GERAL.data} • Show: <span>${CONFIG_GERAL.show}</span></span>`;
+            document.getElementById('img-logo').src = CONFIG_GERAL.caminhoLogo;
+            document.getElementById('img-dupla').src = CONFIG_GERAL.caminhoShow;
+        }
+
+        // =========================================
+        // LÓGICA DO MAPA E API
+        // =========================================
         async function carregarMesas() {
+            document.getElementById('status-msg').innerHTML = "⏳ ATUALIZANDO DADOS...";
+            document.getElementById('status-msg').style.color = "var(--cor-reservada)";
             try {
                 const response = await fetch(API_URL);
                 mesasData = await response.json();
                 renderizarMapaDinamico();
-                document.getElementById('status-msg').innerHTML = "🟢 MAPA ATUALIZADO E ONLINE";
+                document.getElementById('status-msg').innerHTML = "🟢 MAPA ONLINE E SINCRONIZADO";
+                document.getElementById('status-msg').style.color = "var(--cor-livre)";
             } catch (error) {
                 document.getElementById('status-msg').innerHTML = "🔴 ERRO DE CONEXÃO";
+                document.getElementById('status-msg').style.color = "var(--cor-vendida)";
             }
         }
 
@@ -125,7 +206,6 @@
             const container = document.getElementById('mapa-dinamico');
             container.innerHTML = '';
 
-            // Agrupa os dados da planilha pela primeira letra do ID (F, C, P, M, D)
             const mesasPorPrefixo = {};
             mesasData.forEach(mesa => {
                 const prefixo = mesa.id.charAt(0).toUpperCase();
@@ -133,7 +213,6 @@
                 mesasPorPrefixo[prefixo].push(mesa);
             });
 
-            // O seu motor construindo os espelhos
             for (const chave in CONFIG_MESAS) {
                 const setorConfig = CONFIG_MESAS[chave];
                 
@@ -169,11 +248,9 @@
                             divGap.style.width = "180px";
                             divFileira.appendChild(divGap);
                         } else if (typeof item === "number") {
-                            // Cria a quantidade de mesas estipulada no layout
                             for (let i = 0; i < item; i++) {
                                 let mesaObj = listaMesas[contadorArray];
                                 
-                                // Se a mesa ainda não existir na planilha, cria uma vazia na tela pra não quebrar o visual
                                 if (!mesaObj) {
                                     mesaObj = { id: `${setorConfig.prefixo}?`, status: "Livre", nome: "" };
                                 }
@@ -181,9 +258,12 @@
                                 const statusClass = (mesaObj.status || "livre").toLowerCase().trim();
                                 const nomeDisplay = mesaObj.nome ? mesaObj.nome : (statusClass === "livre" ? "Disponível" : "---");
 
-                                // Define as cores com base no seu padrão
                                 let corBase = (statusClass === "vendida" || statusClass === "reservada") ? setorConfig.corVendida : setorConfig.corNormal;
-                                let corFonteBolinha = (statusClass === "livre") ? "#000" : "#333";
+                                
+                                // Regra geral de cores para o Status Text
+                                let corStatusTexto = "var(--cor-livre)";
+                                if(statusClass === "vendida") corStatusTexto = "var(--cor-vendida)";
+                                if(statusClass === "reservada") corStatusTexto = "var(--cor-reservada)";
 
                                 const mesaWrapper = document.createElement('div');
                                 mesaWrapper.className = `wrapper-mesa`;
@@ -192,8 +272,8 @@
                                 }
 
                                 mesaWrapper.innerHTML = `
-                                    <div class="texto-acima" style="color: ${corBase};">${mesaObj.status || "Livre"}</div>
-                                    <div class="bolinha-mesa" style="background-color: ${corBase}; color: ${corFonteBolinha};">${mesaObj.id}</div>
+                                    <div class="texto-acima" style="color: ${corStatusTexto};">${mesaObj.status || "Livre"}</div>
+                                    <div class="bolinha-mesa ${setorConfig.classeTamanho}" style="background-color: ${corBase};">${mesaObj.id}</div>
                                     <div class="texto-abaixo">${nomeDisplay}</div>
                                 `;
 
@@ -208,7 +288,9 @@
             }
         }
 
-        // Funções do Modal
+        // =========================================
+        // FUNÇÕES DE CLIQUE
+        // =========================================
         function abrirModal(mesa) {
             document.getElementById('modal-title').innerText = `Mesa ${mesa.id}`;
             document.getElementById('modal-status').value = mesa.status || "Livre";
@@ -225,10 +307,17 @@
         }
 
         function salvarMesa() {
-            alert("Pronto para a última fase: Enviar dados para a planilha!");
+            alert("A interface está 100%! Agora vamos criar a função no Google Apps Script para receber esses dados e gravar na planilha.");
             fecharModal();
         }
 
+        function abrirCofre() {
+            // Isso vai direcionar para o arquivo que criaremos depois!
+            window.open('financeiro.html', '_blank');
+        }
+
+        // Inicia tudo ao abrir a página
+        montarCabecalho();
         carregarMesas();
     </script>
 </body>
