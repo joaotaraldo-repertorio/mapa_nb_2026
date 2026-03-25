@@ -13,13 +13,13 @@
         body { background-color: var(--azul-fundo); color: var(--texto-claro); font-family: Arial, sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
         
         /* MENU LATERAL */
-        .sidebar { width: 250px; background-color: var(--azul-card); border-right: 2px solid var(--ciano-destaque); display: flex; flex-direction: column; padding: 20px 0; }
+        .sidebar { width: 250px; background-color: var(--azul-card); border-right: 2px solid var(--ciano-destaque); display: flex; flex-direction: column; padding: 20px 0; z-index: 200;}
         .sidebar-logo { text-align: center; margin-bottom: 30px; color: var(--ciano-destaque); font-size: 24px; font-weight: bold; letter-spacing: 2px; }
         .menu-item { padding: 15px 25px; cursor: pointer; font-size: 16px; font-weight: bold; color: #8892b0; border-left: 4px solid transparent; transition: 0.3s; }
         .menu-item:hover, .menu-item.ativo { background-color: rgba(102, 255, 255, 0.1); color: var(--texto-claro); border-left-color: var(--ciano-destaque); }
         
         /* ÁREA PRINCIPAL */
-        .conteudo-principal { flex: 1; overflow-y: auto; padding: 30px; box-sizing: border-box; }
+        .conteudo-principal { flex: 1; overflow-y: auto; padding: 30px; box-sizing: border-box; position: relative;}
         .aba-conteudo { display: none; }
         .aba-conteudo.ativo { display: block; animation: fadeIn 0.3s; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -60,10 +60,24 @@
         .res-col strong { font-size: 24px; color: var(--texto-claro);}
 
         /* =========================================
-           CSS DA ABA: LANÇAMENTOS
+           CSS DA ABA: LANÇAMENTOS (MESA)
            ========================================= */
-        .painel-financeiro { background-color: #112240; border-radius: 8px; border: 1px dashed var(--cor-livre); padding: 20px; margin-bottom: 20px; }
-        .painel-financeiro h4 { margin-top: 0; color: var(--cor-livre); font-size: 18px; border-bottom: 1px solid #233554; padding-bottom: 10px; margin-bottom: 15px;}
+        
+        /* O SEGREDO DO CABEÇALHO CONGELADO */
+        .cabecalho-fixo-mesa {
+            position: sticky;
+            top: -30px; /* Compensa o padding do conteudo-principal */
+            background-color: var(--azul-fundo);
+            z-index: 100;
+            padding-top: 30px;
+            padding-bottom: 15px;
+            margin-top: -30px;
+            border-bottom: 1px dashed #233554;
+            box-shadow: 0 10px 10px -5px rgba(10, 25, 47, 0.9);
+        }
+
+        .painel-financeiro { background-color: #112240; border-radius: 8px; border: 1px dashed var(--cor-livre); padding: 15px 20px; margin-top: 15px; }
+        .painel-financeiro h4 { margin-top: 0; color: var(--cor-livre); font-size: 16px; border-bottom: 1px solid #233554; padding-bottom: 8px; margin-bottom: 10px;}
         
         .form-row { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;}
         .form-group { display: flex; flex-direction: column; flex: 1; min-width: 150px;}
@@ -110,7 +124,7 @@
             <div class="cofre-header">
                 <h2><span>📊</span> Painel Financeiro Geral</h2>
                 <div style="display: flex; gap: 10px;">
-                    <button class="botao-acao" onclick="carregarDadosPlanilha()" style="background-color: #3b82f6; color: #fff;">🔄 Atualizar Dados</button>
+                    <button class="botao-acao" onclick="carregarDadosDaPlanilha()" style="background-color: #3b82f6; color: #fff;">🔄 Atualizar Dados</button>
                 </div>
             </div>
             
@@ -137,16 +151,6 @@
                         <tr><td style="text-align:center;" colspan="4">Aguardando sincronização com a planilha...</td></tr>
                     </tbody>
                 </table>
-            </div>
-
-            <div class="painel-simulador">
-                <h3>🔮 Simulador de Faturamento</h3>
-                <p>O que acontece com o caixa se vendermos mais mesas hoje?</p>
-                <div class="sim-resultado-box" style="margin-bottom: 20px;">
-                    <div class="res-col"><span>Receita Atual</span><strong id="simAtual">R$ 0,00</strong></div>
-                    <div class="res-col"><span>+ Simulação</span><strong id="simExtra" style="color: #4ade80;">+ R$ 0,00</strong></div>
-                    <div class="res-col"><span>Receita Projetada</span><strong id="simProjetado" style="color: #f59e0b; font-size: 32px;">R$ 0,00</strong></div>
-                </div>
             </div>
         </div>
 
@@ -175,62 +179,71 @@
 
         <div id="aba-lancamentos" class="aba-conteudo">
             
-            <div class="cofre-header">
-                <h2><span id="titulo-mesa-lancamento">📝 Selecione uma Mesa</span></h2>
-                <div style="display: flex; gap: 10px; align-items: center;">
-                    <select id="seletor-mesas" class="seletor-mesas" onchange="trocarMesaSelecionada(this.value)">
-                        <option value="">-- Escolha uma Mesa --</option>
-                    </select>
-                    <button class="botao-acao" onclick="salvarDadosFinanceiros()" style="background-color: var(--ciano-destaque); color: #000;">💾 Salvar Lançamentos</button>
-                </div>
-            </div>
-
             <div id="alerta-nenhuma-mesa" class="alerta-selecione">
                 👈 Selecione uma mesa no menu acima ou acesse através do Mapa de Vendas.
             </div>
 
             <div id="area-edicao-mesa" style="display: none;">
                 
-                <div class="painel-financeiro">
-                    <h4>💰 Resumo Financeiro Global da Mesa</h4>
-                    <div class="form-row" style="margin-bottom: 0;">
-                        <div class="form-group">
-                            <label>Total Fechado (Ancorado) (R$)</label>
-                            <input type="text" id="campoValorTotal" class="campo-bloqueado" readonly value="R$ 0,00">
-                        </div>
-                        <div class="form-group">
-                            <label>Total Já Pago (R$)</label>
-                            <input type="text" id="campoValorPago" class="campo-bloqueado" readonly value="R$ 0,00">
-                        </div>
-                        <div class="form-group">
-                            <label>Saldo Devedor Geral (R$)</label>
-                            <input type="text" id="campoSaldo" class="campo-bloqueado-vermelho" readonly value="R$ 0,00">
+                <div class="cabecalho-fixo-mesa">
+                    <div class="cofre-header" style="margin-bottom: 10px;">
+                        <h2><span id="titulo-mesa-lancamento">📝 Selecione uma Mesa</span></h2>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <select id="seletor-mesas" class="seletor-mesas" onchange="trocarMesaSelecionada(this.value)">
+                                <option value="">-- Escolha uma Mesa --</option>
+                            </select>
+                            <button class="botao-acao" onclick="salvarDadosFinanceiros()" style="background-color: var(--ciano-destaque); color: #000;">💾 Salvar Lançamentos</button>
                         </div>
                     </div>
-                </div>
 
-                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--ciano-destaque); padding-bottom: 10px; margin-bottom: 15px; margin-top: 30px;">
-                    <h3 style="margin: 0; color: var(--ciano-destaque); font-size: 20px;">👥 Divisão de Pagadores</h3>
-                    <button class="btn-add-pagador" onclick="adicionarPagador()">➕ Adicionar Pagador</button>
-                </div>
-
-                <div id="containerPagadores">
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label style="color: var(--ciano-destaque);">Nome Exibido no Mapa (Editável)</label>
+                        <input type="text" id="campoNomeExibido" oninput="marcarNomeEditadoManualmente()" placeholder="Ex: Família Silva, João / Maria..." style="font-size: 16px; color: var(--ciano-destaque);">
+                        <span style="font-size: 11px; color: #8892b0; margin-top: 4px;">Este texto aparecerá na bolinha da mesa lá no Mapa. Ele preenche sozinho com os nomes dos pagadores, mas você pode apagar e escrever o que quiser.</span>
                     </div>
-                
-                <div class="form-group" style="margin-top: 30px;">
-                    <label>📝 Observações Gerais da Mesa</label>
-                    <textarea id="campoObs" placeholder="Anotações extras, restrições alimentares, detalhes do acordo com os clientes..." style="background-color: #0A192F; border: 1px solid #233554; color: #fff; padding: 10px; border-radius: 6px; min-height: 80px; outline: none; font-family: Arial;"></textarea>
-                </div>
 
-            </div>
+                    <div class="painel-financeiro" style="margin-bottom: 0;">
+                        <h4>💰 Resumo Financeiro Global da Mesa</h4>
+                        <div class="form-row" style="margin-bottom: 0;">
+                            <div class="form-group">
+                                <label>Total Fechado (Ancorado) (R$)</label>
+                                <input type="text" id="campoValorTotal" class="campo-bloqueado" readonly value="R$ 0,00">
+                            </div>
+                            <div class="form-group">
+                                <label>Total Já Pago (R$)</label>
+                                <input type="text" id="campoValorPago" class="campo-bloqueado" readonly value="R$ 0,00">
+                            </div>
+                            <div class="form-group">
+                                <label>Saldo Devedor Geral (R$)</label>
+                                <input type="text" id="campoSaldo" class="campo-bloqueado-vermelho" readonly value="R$ 0,00">
+                            </div>
+                        </div>
+                    </div>
+                </div> <div class="area-rolavel-mesa">
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--ciano-destaque); padding-bottom: 10px; margin-bottom: 15px; margin-top: 15px;">
+                        <h3 style="margin: 0; color: var(--ciano-destaque); font-size: 20px;">👥 Divisão de Pagadores</h3>
+                        <button class="btn-add-pagador" onclick="adicionarPagador()">➕ Adicionar Pagador</button>
+                    </div>
+
+                    <div id="containerPagadores">
+                        </div>
+                    
+                    <div class="form-group" style="margin-top: 30px; margin-bottom: 50px;">
+                        <label>📝 Observações Gerais da Mesa</label>
+                        <textarea id="campoObs" placeholder="Anotações extras, restrições alimentares, detalhes do acordo com os clientes..." style="background-color: #0A192F; border: 1px solid #233554; color: #fff; padding: 10px; border-radius: 6px; min-height: 80px; outline: none; font-family: Arial;"></textarea>
+                    </div>
+                </div> </div>
         </div>
 
     </div>
 
     <script>
         // ==========================================
-        // CONFIGURAÇÕES BASE E VARIÁVEIS DO SISTEMA
+        // CONEXÃO COM A PLANILHA (API)
         // ==========================================
+        const API_URL = 'https://script.google.com/macros/s/AKfycby6hZ1cD-uIPafXIpRDe2DJzmYwjP4IRQgysxbVPNJOlKNDlE8ALvUTyBsoJlSQL2k/exec';
+        let mesasDataBanco = []; // Vai guardar o que vem da planilha
+
         const CONFIG_MESAS = {
             "F": { nome: "Cota Família", valorBase: 25000, layout: [[6],[6]] },
             "C": { nome: "Cota Criança", valorBase: 12000, layout: [[7],[7],[7],[7]] },
@@ -242,6 +255,7 @@
         let mesaAtualID = ""; 
         let valorBaseDaMesa = 0;
         let pagadoresAtuais = []; 
+        let nomeEditadoManualmente = false; // A Trava da sua 3ª Regra
 
         // Função do Menu Lateral
         function mudarAba(idAba, elementoClicado) {
@@ -251,7 +265,7 @@
             elementoClicado.classList.add('ativo');
         }
 
-        // Popula o Dropdown (Select) de Mesas automaticamente
+        // Popula o Dropdown (Select)
         function carregarSeletorDeMesas() {
             const seletor = document.getElementById('seletor-mesas');
             seletor.innerHTML = '<option value="">-- Escolha uma Mesa --</option>';
@@ -259,15 +273,8 @@
             for (const prefixo in CONFIG_MESAS) {
                 const conf = CONFIG_MESAS[prefixo];
                 let totalMesas = 0;
+                conf.layout.forEach(linha => { linha.forEach(item => { if (typeof item === 'number') totalMesas += item; }); });
                 
-                // Conta quantas mesas tem nesse setor baseado no layout
-                conf.layout.forEach(linha => {
-                    linha.forEach(item => {
-                        if (typeof item === 'number') totalMesas += item;
-                    });
-                });
-                
-                // Cria os F-01, F-02, etc...
                 for (let i = 1; i <= totalMesas; i++) {
                     let num = i < 10 ? `0${i}` : i;
                     let idMesa = `${prefixo}-${num}`;
@@ -277,12 +284,12 @@
         }
 
         // ==========================================
-        // INICIALIZAÇÃO E TROCA DE MESA
+        // INICIALIZAÇÃO E INTEGRAÇÃO MAPA -> FINANCEIRO
         // ==========================================
-        window.onload = function() {
+        window.onload = async function() {
             carregarSeletorDeMesas();
+            await carregarDadosDaPlanilha(); // Busca do Google Sheets primeiro
             
-            // O Deep Link: Verifica se fomos jogados aqui pelo mapa
             const urlParams = new URLSearchParams(window.location.search);
             const mesaPuxada = urlParams.get('mesa');
             
@@ -293,11 +300,20 @@
             }
         };
 
+        // Busca silenciosamente os dados do Mapa para fazer a Mágica do Nome
+        async function carregarDadosDaPlanilha() {
+            try {
+                const response = await fetch(API_URL);
+                mesasDataBanco = await response.json();
+            } catch (error) {
+                console.error("Erro ao carregar banco de dados para o financeiro.");
+            }
+        }
+
         function trocarMesaSelecionada(novoId) {
             if(!novoId) {
                 document.getElementById('alerta-nenhuma-mesa').style.display = 'block';
                 document.getElementById('area-edicao-mesa').style.display = 'none';
-                document.getElementById('titulo-mesa-lancamento').innerText = "📝 Selecione uma Mesa";
                 return;
             }
 
@@ -307,38 +323,62 @@
             
             document.getElementById('alerta-nenhuma-mesa').style.display = 'none';
             document.getElementById('area-edicao-mesa').style.display = 'block';
-            document.getElementById('titulo-mesa-lancamento').innerText = `📝 Lançamentos da Mesa ${mesaAtualID}`;
+            document.getElementById('titulo-mesa-lancamento').innerText = `📝 Lançamentos: Mesa ${mesaAtualID} (${CONFIG_MESAS[prefixo].nome})`;
             
-            // Simula zerar os dados (futuramente puxará do Google Sheets)
+            // Procura se essa mesa já tem nome lá no Mapa de Vendas (Google Sheets)
+            let mesaNoBanco = mesasDataBanco.find(m => m.id === novoId) || {nome: "", telefone: ""};
+            
+            // Reseta a trava e joga o nome do mapa no campo de Exibição
+            nomeEditadoManualmente = false;
+            document.getElementById('campoNomeExibido').value = mesaNoBanco.nome;
+
             pagadoresAtuais = [];
+            
+            // A REGRA DE OURO 1: Se tem nome no mapa, cria o pagador sozinho!
+            if(mesaNoBanco.nome.trim() !== "") {
+                pagadoresAtuais.push({
+                    id: 'pag_' + new Date().getTime(),
+                    nome: mesaNoBanco.nome, 
+                    telefone: mesaNoBanco.telefone || "", 
+                    cadeirasExtra: 0,
+                    valorCota: valorBaseDaMesa, 
+                    pagamento: "Dinheiro", 
+                    qtdParcelas: 1,
+                    parcelas: [{ numero: 1, valor: valorBaseDaMesa, pago: false, vencimento: "" }]
+                });
+            }
+
             atualizarResumoGlobal();
             renderizarPagadores();
         }
 
         // ==========================================
-        // O CÉREBRO MATEMÁTICO DE PAGAMENTOS
+        // O CÉREBRO DOS NOMES E PAGAMENTOS
         // ==========================================
         
-        // Transforma 1500 em "1.500,00" (Para exibição limpa)
-        function formatarNumeroLimpo(valor) {
-            return valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        }
-        
-        // Transforma 1500 em "R$ 1.500,00" (Para o resumo global)
-        function formatarMoeda(valor) {
-            return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        }
-
-        // Transforma "1.500,00" de volta em 1500 para cálculo
+        function formatarNumeroLimpo(valor) { return valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+        function formatarMoeda(valor) { return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
         function converterParaNumero(stringMoeda) {
             if (typeof stringMoeda === 'number') return stringMoeda;
             let limpo = stringMoeda.toString().replace(/R\$\s?/g, '').replace(/\./g, '').replace(',', '.');
             return parseFloat(limpo) || 0;
         }
 
+        // A REGRA DE OURO 3: Destrava se o usuário digitar na mão
+        function marcarNomeEditadoManualmente() {
+            nomeEditadoManualmente = true;
+        }
+
+        // A REGRA DE OURO 2: Junta os nomes com " / "
+        function atualizarNomeExibidoAutomaticamente() {
+            if (nomeEditadoManualmente) return; // Se o chefe alterou na mão, não mexe mais!
+            
+            let nomesValidos = pagadoresAtuais.map(p => p.nome.trim()).filter(n => n !== "");
+            document.getElementById('campoNomeExibido').value = nomesValidos.join(" / ");
+        }
+
         function adicionarPagador() {
             let cotaSugerida = pagadoresAtuais.length === 0 ? valorBaseDaMesa : 0;
-            
             pagadoresAtuais.push({
                 id: 'pag_' + new Date().getTime(),
                 nome: "", telefone: "", cadeirasExtra: 0,
@@ -351,27 +391,30 @@
         function removerPagador(index) {
             if(confirm("Deseja remover este pagador?")) {
                 pagadoresAtuais.splice(index, 1); 
+                atualizarNomeExibidoAutomaticamente();
                 renderizarPagadores();
             }
         }
 
         function atualizarPagador(pIndex, campo, valor) {
             let p = pagadoresAtuais[pIndex];
-            if(campo === 'nome') p.nome = valor; 
+            
+            if(campo === 'nome') {
+                p.nome = valor; 
+                atualizarNomeExibidoAutomaticamente(); // Atualiza o letreiro do mapa
+            }
             if(campo === 'telefone') p.telefone = valor;
             if(campo === 'pagamento') p.pagamento = valor;
             if(campo === 'cadeirasExtra') p.cadeirasExtra = parseInt(valor) || 0;
             
             if(campo === 'valorCota') { 
                 p.valorCota = converterParaNumero(valor);
-                // Refaz todas as parcelas dividindo o novo total
                 let valorPorParcela = p.valorCota / p.qtdParcelas;
                 p.parcelas.forEach(parc => parc.valor = valorPorParcela);
                 renderizarPagadores(); 
             }
             if(campo === 'qtdParcelas') { 
                 p.qtdParcelas = parseInt(valor) || 1;
-                // Recria o array de parcelas
                 let valorPorParcela = p.valorCota / p.qtdParcelas;
                 p.parcelas = [];
                 for(let i = 1; i <= p.qtdParcelas; i++) {
@@ -382,29 +425,19 @@
             atualizarResumoGlobal();
         }
 
-        // A MÁGICA DA PARCELA DINÂMICA
         function atualizarParc(pIndex, parcIndex, campo, valor) {
             let p = pagadoresAtuais[pIndex];
             let parc = p.parcelas[parcIndex];
             if(campo === 'vencimento') parc.vencimento = valor;
-            if(campo === 'pago') { 
-                parc.pago = valor; 
-                renderizarPagadores(); // Para mudar a cor de PENDENTE/PAGO
-            }
+            if(campo === 'pago') { parc.pago = valor; renderizarPagadores(); }
             
             if(campo === 'valor') { 
                 parc.valor = converterParaNumero(valor);
-                
-                // Descobre quanto sobrou da cota total
                 let somaAnteriores = 0;
-                for(let i=0; i<=parcIndex; i++) {
-                    somaAnteriores += p.parcelas[i].valor;
-                }
-                
+                for(let i=0; i<=parcIndex; i++) { somaAnteriores += p.parcelas[i].valor; }
                 let saldoRestante = p.valorCota - somaAnteriores;
                 let numParcelasFuturas = p.qtdParcelas - (parcIndex + 1);
                 
-                // Se ainda existirem parcelas para frente, divide a sobra entre elas
                 if (numParcelasFuturas > 0) {
                     let valorPorParcelaFutura = saldoRestante / numParcelasFuturas;
                     for(let i = parcIndex + 1; i < p.qtdParcelas; i++) {
@@ -422,24 +455,18 @@
 
             pagadoresAtuais.forEach(p => {
                 totalMesa += p.valorCota; 
-                p.parcelas.forEach(parc => {
-                    if(parc.pago) totalPago += parc.valor; 
-                });
+                p.parcelas.forEach(parc => { if(parc.pago) totalPago += parc.valor; });
             });
 
             let saldo = totalMesa - totalPago;
 
             document.getElementById('campoValorTotal').value = formatarMoeda(totalMesa);
             document.getElementById('campoValorPago').value = formatarMoeda(totalPago);
-            
             let inputSaldo = document.getElementById('campoSaldo');
             inputSaldo.value = formatarMoeda(saldo);
             
-            if (saldo <= 0 && totalMesa > 0) {
-                inputSaldo.className = "campo-bloqueado"; // Verde
-            } else {
-                inputSaldo.className = "campo-bloqueado-vermelho"; // Vermelho
-            }
+            if (saldo <= 0 && totalMesa > 0) inputSaldo.className = "campo-bloqueado";
+            else inputSaldo.className = "campo-bloqueado-vermelho";
         }
 
         function renderizarPagadores() {
@@ -453,7 +480,6 @@
                             <h5>👤 Pagador ${pIndex + 1}</h5>
                             <button class="btn-remover" onclick="removerPagador(${pIndex})">Excluir Pagador</button>
                         </div>
-                        
                         <div class="form-row">
                             <div class="form-group" style="flex: 2;">
                                 <label>Nome da Pessoa / Empresa</label>
@@ -464,7 +490,6 @@
                                 <input type="text" value="${p.telefone}" onchange="atualizarPagador(${pIndex}, 'telefone', this.value)" placeholder="(17) 999...">
                             </div>
                         </div>
-
                         <div class="form-row">
                             <div class="form-group">
                                 <label>Fatia da Mesa (R$)</label>
@@ -512,16 +537,10 @@
                 `;
                 container.innerHTML += htmlCard;
             });
-
-            atualizarResumoGlobal();
         }
 
         function salvarDadosFinanceiros() {
-            alert("Perfeito! A engenharia visual e matemática está completa. O próximo passo é enviar esses dados para as colunas certas do seu Google Sheets!");
-        }
-
-        function carregarDadosPlanilha() {
-            alert("Essa função vai buscar todos os totais e preencher os painéis do DRE.");
+            alert("Salvamento bloqueado no momento: A próxima etapa será escrever o código para conectar e salvar essa maravilha na Nuvem (Google Sheets)!");
         }
     </script>
 </body>
