@@ -146,14 +146,12 @@
                 <h2 id="titulo-dinamico" class="titulo-evento">Carregando...</h2>
                 <div class="status-sistema" id="status-msg">CONECTANDO AO BANCO DE DADOS...</div>
             </div>
+            
             <div class="area-botoes-topo">
-                <button class="botao-acao" onclick="window.print()" style="background-color: #ec4899; color: #fff;">🖨️ Imprimir / PDF</button>
-
                 <button class="botao-acao" id="btn-login" onclick="fazerLoginAdmin()" style="background-color: #ef4444; color: #fff;">🔒 Acesso Equipe</button>
                 
                 <div id="botoes-admin" style="display: none; gap: 10px;">
                     <button class="botao-acao" onclick="carregarMesas()" style="background-color: #3b82f6; color: #fff;">🔄 Atualizar</button>
-                    <button class="botao-acao" onclick="abrirCofre()" style="background-color: #ff9900; color: #000; border: 1px solid #fff;">📊 Cofre</button>
                 </div>
             </div>
         </div>
@@ -227,7 +225,7 @@
         const API_URL = 'https://script.google.com/macros/s/AKfycby6hZ1cD-uIPafXIpRDe2DJzmYwjP4IRQgysxbVPNJOlKNDlE8ALvUTyBsoJlSQL2k/exec';
         let mesasData = [];
 
-        // O SISTEMA DE SENHA DA EQUIPE 
+        // O SISTEMA DE SENHA DA EQUIPE
         const SENHA_SISTEMA = "educ1958"; 
         let isAdmin = false; 
 
@@ -382,7 +380,7 @@
                                     mesaWrapper.onclick = () => abrirModal(mesaObj);
                                 }
 
-                                // O NOVO BADGE DE CADEIRAS EXTRAS AQUI (Aparecerá quando vier os dados da API)
+                                // O NOVO BADGE DE CADEIRAS EXTRAS AQUI!
                                 let htmlBadge = "";
                                 if(mesaObj.cadeirasExtra && mesaObj.cadeirasExtra > 0) {
                                     htmlBadge = `<div class="badge-extra">+${mesaObj.cadeirasExtra}</div>`;
@@ -479,10 +477,6 @@
         function pularParaFinanceiro() {
             const idMesa = document.getElementById('modal-title').innerText.replace('Mesa ', '').trim();
             window.open(`financeiro.html?mesa=${idMesa}`, '_blank');
-        }
-
-        function abrirCofre() {
-            window.open('financeiro.html', '_blank');
         }
 
         montarCabecalho();
