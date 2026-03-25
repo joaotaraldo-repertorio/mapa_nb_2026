@@ -9,14 +9,9 @@
            1. CORES E VARIÁVEIS GERAIS
            ========================================= */
         :root {
-            --azul-fundo: #0A192F; 
-            --azul-card: #112240; 
-            --ciano-destaque: #66FFFF;
-            --texto-claro: #e6f1ff; 
-            --cor-palco: #8A2BE2;
-            --cor-livre: #4ade80;
-            --cor-vendida: #ff4d4d;
-            --cor-reservada: #ffc107;
+            --azul-fundo: #0A192F; --azul-card: #112240; --ciano-destaque: #66FFFF;
+            --texto-claro: #e6f1ff; --cor-palco: #8A2BE2;
+            --cor-livre: #4ade80; --cor-vendida: #ff4d4d; --cor-reservada: #ffc107;
         }
 
         body { background-color: var(--azul-fundo); color: var(--texto-claro); font-family: Arial, sans-serif; padding: 15px; margin: 0; display: flex; flex-direction: column; align-items: center; }
@@ -45,15 +40,19 @@
         .palco { width: 50%; background-color: var(--cor-palco); color: #fff; text-align: center; padding: 10px 0; font-size: 22px; font-weight: bold; letter-spacing: 5px; border-radius: 8px; border: 2px solid #fff; box-shadow: 0 10px 20px rgba(0,0,0,0.5); margin-bottom: 30px; z-index: 2;}
         .tarja-lateral { position: absolute; width: 45px; border: 2px solid; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: bold; font-size: 12px; border-radius: 8px; text-align: center; letter-spacing: 2px; text-transform: uppercase; z-index: 1; }
         .tarja-texto { writing-mode: vertical-rl; transform: rotate(180deg); margin-top: 10px; }
+        
         .tarja-wc-masc { left: 0; top: 13%; height: 12%; border-color: #3b82f6; background-color: rgba(59, 130, 246, 0.15); color: #3b82f6; }
         .tarja-wc-fem { left: 0; top: 26%; height: 12%; border-color: #ec4899; background-color: rgba(236, 72, 153, 0.15); color: #ec4899; }
-        .tarja-entrada { right: 0; top: 92%; height: 8%; border-color: var(--ciano-destaque); background-color: rgba(102, 255, 255, 0.15); color: var(--ciano-destaque); }
+        
+        /* AJUSTE FINO: Entrada agora alinhada embaixo com o Diamante */
+        .tarja-entrada { right: 0; bottom: 0; top: auto; height: 8%; border-color: var(--ciano-destaque); background-color: rgba(102, 255, 255, 0.15); color: var(--ciano-destaque); }
+        
         .tarja-aparador-esq { left: 0; top: 70%; height: 18%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
         .tarja-aparador-dir1 { right: 0; top: 13%; height: 26%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
         .tarja-aparador-dir2 { right: 0; top: 49%; height: 25%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
 
         /* =========================================
-           4. SETORES, FILEIRAS E MESAS
+           4. SETORES E MESAS
            ========================================= */
         .setor { padding: 12px 20px; border-radius: 8px; width: 100%; box-sizing: border-box; z-index: 2; margin-bottom: 30px;}
         .setor h3 { margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; text-align: center; font-size: 22px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); text-transform: uppercase;}
@@ -61,10 +60,8 @@
         .wrapper-mesa { display: flex; flex-direction: column; align-items: center; gap: 5px; position: relative; cursor: pointer; transition: transform 0.2s; }
         .wrapper-mesa:hover { transform: scale(1.05); }
 
-        /* A Base da Bolinha */
         .bolinha-mesa { border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.4); color: #000; transition: all 0.2s;}
         
-        /* O efeito pontilhado mágico para as vendidas/reservadas */
         .borda-solida { border: 2px solid rgba(255,255,255,0.4); }
         .borda-pontilhada { border: 3px dashed rgba(255,255,255,0.9); box-shadow: 0 4px 10px rgba(0,0,0,0.7); }
 
@@ -73,7 +70,9 @@
         .tamanho-p { width: 75px; height: 75px; font-size: 19px; }
 
         .texto-acima { font-size: 12px; font-weight: bold; text-transform: uppercase; height: 14px; letter-spacing: 1px; margin-bottom: 2px;}
-        .texto-abaixo { font-size: 14px; color: #ffffff; text-align: center; width: 120px; white-space: normal; word-wrap: break-word; line-height: 1.1; font-weight: bold; min-height: 15px; margin-top: 2px;}
+        
+        /* AJUSTE FINO: Fonte do nome aumentada de 14px para 16px */
+        .texto-abaixo { font-size: 16px; color: #ffffff; text-align: center; width: 120px; white-space: normal; word-wrap: break-word; line-height: 1.1; font-weight: bold; min-height: 15px; margin-top: 2px;}
 
         .grande-house-mix { position: absolute; top: 0; left: 0; width: 180px; height: 190px; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #1d2d50; border: 2px dashed var(--ciano-destaque); border-radius: 8px; color: var(--ciano-destaque); font-size: 16px; font-weight: bold; text-transform: uppercase; box-shadow: 0 4px 8px rgba(0,0,0,0.5); z-index: 5;}
         .grande-house-mix span.icone { font-size: 60px; margin-bottom: 5px; }
@@ -99,8 +98,10 @@
         .modal h3 { margin-top: 0; text-align: center; color: var(--ciano-destaque); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
         .modal label { font-size: 13px; font-weight: bold; display: block; margin-top: 12px; color: #8892b0;}
         .modal input, .modal select { width: 100%; margin-top: 5px; padding: 10px; box-sizing: border-box; border: 1px solid #233554; border-radius: 6px; background: #0A192F; color: white; outline: none; }
-        .btn { padding: 12px; font-weight: bold; border: none; cursor: pointer; width: 100%; border-radius: 6px; margin-top: 15px; font-size: 15px; text-transform: uppercase; letter-spacing: 1px; }
+        .btn { padding: 12px; font-weight: bold; border: none; cursor: pointer; width: 100%; border-radius: 6px; margin-top: 15px; font-size: 15px; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s;}
+        .btn:hover { opacity: 0.8; }
         .btn-salvar { background: var(--ciano-destaque); color: #0A192F; }
+        .btn-salvar:disabled { background: #555; cursor: not-allowed; }
         .btn-fechar { background: transparent; color: #8892b0; border: 1px solid #8892b0; margin-top: 10px; }
     </style>
 </head>
@@ -167,7 +168,7 @@
 
     <div class="overlay" id="overlay" onclick="fecharModal()"></div>
     <div class="modal" id="modal">
-        <h3 id="modal-title">Editar Mesa</h3>
+        <h3 id="modal-title">Mesa</h3>
         <label>Status da Venda:</label>
         <select id="modal-status">
             <option value="Livre">Livre</option>
@@ -180,7 +181,7 @@
         <input type="text" id="modal-telefone" placeholder="(00) 00000-0000">
         <label>E-mail:</label>
         <input type="email" id="modal-email" placeholder="nome@email.com">
-        <button class="btn btn-salvar" onclick="salvarMesa()">Gravar na Planilha</button>
+        <button class="btn btn-salvar" id="btn-salvar" onclick="salvarMesa()">Gravar na Planilha</button>
         <button class="btn btn-fechar" onclick="fecharModal()">Cancelar</button>
     </div>
 
@@ -250,7 +251,6 @@
 
                 let listaMesas = mesasPorPrefixo[setorConfig.prefixo] || [];
                 
-                // O SEGREDO ESTÁ AQUI: Organiza as mesas por ordem matemática!
                 listaMesas.sort((a, b) => {
                     let numA = parseInt(a.id.replace(/\D/g, '')) || 0;
                     let numB = parseInt(b.id.replace(/\D/g, '')) || 0;
@@ -258,7 +258,7 @@
                 });
 
                 let contadorArray = 0;
-                let idNumerico = 1; // Para garantir o número exato na sequência se faltar dados
+                let idNumerico = 1;
 
                 setorConfig.layout.forEach(fileira => {
                     const divFileira = document.createElement('div');
@@ -281,7 +281,6 @@
                             for (let i = 0; i < item; i++) {
                                 let mesaObj = listaMesas[contadorArray];
                                 
-                                // Se a mesa não existir na planilha, a gente cria uma com o ID perfeitinho
                                 if (!mesaObj) {
                                     mesaObj = { id: `${setorConfig.prefixo}${idNumerico}`, status: "Livre", nome: "" };
                                 }
@@ -290,18 +289,14 @@
                                 const nomeDisplay = mesaObj.nome ? mesaObj.nome : (statusClass === "livre" ? "Disponível" : "---");
 
                                 let corBase = (statusClass === "vendida" || statusClass === "reservada") ? setorConfig.corVendida : setorConfig.corNormal;
-                                
                                 let corStatusTexto = "var(--cor-livre)";
                                 if(statusClass === "vendida") corStatusTexto = "var(--cor-vendida)";
                                 if(statusClass === "reservada") corStatusTexto = "var(--cor-reservada)";
 
-                                // Aqui define se a linha em volta é contínua ou pontilhada
                                 let estiloBordaCss = (statusClass !== "livre") ? "borda-pontilhada" : "borda-solida";
 
                                 const mesaWrapper = document.createElement('div');
                                 mesaWrapper.className = `wrapper-mesa`;
-                                
-                                // Agora TODAS são clicáveis
                                 mesaWrapper.onclick = () => abrirModal(mesaObj);
 
                                 mesaWrapper.innerHTML = `
@@ -322,6 +317,9 @@
             }
         }
 
+        // =========================================
+        // FUNÇÕES DO MODAL E O GRANDE SALVAMENTO
+        // =========================================
         function abrirModal(mesa) {
             document.getElementById('modal-title').innerText = `Mesa ${mesa.id}`;
             document.getElementById('modal-status').value = mesa.status || "Livre";
@@ -337,9 +335,52 @@
             document.getElementById('modal').style.display = 'none';
         }
 
-        function salvarMesa() {
-            alert("A interface está 100%! Agora vamos criar a função no Google Apps Script para receber esses dados e gravar na planilha.");
-            fecharModal();
+        // A MÁGICA DE ENVIAR PARA O GOOGLE SHEETS
+        async function salvarMesa() {
+            // Extrai a ID exata que está no título (Ex: tira o "Mesa " de "Mesa F12")
+            const idMesa = document.getElementById('modal-title').innerText.replace('Mesa ', '').trim();
+            const status = document.getElementById('modal-status').value;
+            const nome = document.getElementById('modal-nome').value;
+            const telefone = document.getElementById('modal-telefone').value;
+            const email = document.getElementById('modal-email').value;
+
+            // Muda o botão pra avisar o usuário que está carregando
+            const btnSalvar = document.getElementById('btn-salvar');
+            btnSalvar.innerText = "Salvando...";
+            btnSalvar.disabled = true;
+
+            const pacoteDeDados = { id: idMesa, status: status, nome: nome, telefone: telefone, email: email };
+
+            try {
+                // Envia o pacote de dados pro Apps Script
+                await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify(pacoteDeDados)
+                });
+
+                // Atualiza a nossa lista de mesas do navegador sem precisar baixar a planilha inteira de novo!
+                const mesaIndex = mesasData.findIndex(m => m.id === idMesa);
+                if(mesaIndex !== -1) {
+                    mesasData[mesaIndex].status = status;
+                    mesasData[mesaIndex].nome = nome;
+                    mesasData[mesaIndex].telefone = telefone;
+                    mesasData[mesaIndex].email = email;
+                } else {
+                    mesasData.push(pacoteDeDados); // Adiciona na memória se a mesa não existia
+                }
+
+                // Pinta a tela de novo com os dados atualizados em piscar de olhos
+                renderizarMapaDinamico(); 
+                fecharModal();
+
+            } catch (error) {
+                alert("Opa! Houve um erro de conexão ao tentar salvar. Verifique a internet e tente de novo.");
+            } finally {
+                // Devolve o botão ao normal
+                btnSalvar.innerText = "Gravar na Planilha";
+                btnSalvar.disabled = false;
+            }
         }
 
         function abrirCofre() {
