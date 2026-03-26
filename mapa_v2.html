@@ -76,7 +76,7 @@
         .texto-acima { font-size: 12px; font-weight: bold; text-transform: uppercase; height: 14px; letter-spacing: 1px; margin-bottom: 2px;}
         .texto-abaixo { font-size: 16px; color: #ffffff; text-align: center; width: 120px; white-space: normal; word-wrap: break-word; line-height: 1.1; font-weight: bold; min-height: 15px; margin-top: 2px;}
 
-        /* O BADGE DAS CADEIRAS EXTRAS */
+        /* BADGES (Cadeiras Extras e Cifrão de Devedor) */
         .badge-extra {
             position: absolute; top: -5px; right: -5px;
             background-color: var(--azul-fundo); color: #f59e0b;
@@ -84,6 +84,20 @@
             width: 25px; height: 25px; font-size: 13px; font-weight: bold;
             display: flex; align-items: center; justify-content: center;
             box-shadow: 0 2px 4px rgba(0,0,0,0.8); z-index: 5;
+        }
+        .badge-pagamento {
+            position: absolute; top: -5px; left: -5px;
+            background-color: #ef4444; color: white;
+            border: 2px solid #fff; border-radius: 50%;
+            width: 25px; height: 25px; font-size: 14px; font-weight: bold;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.8); z-index: 6;
+        }
+
+        /* EFEITO VISÃO BUFFET PARA MESA VAZIA */
+        .mesa-escura-buffet {
+            opacity: 0.3;
+            filter: grayscale(100%);
         }
 
         .grande-house-mix { position: absolute; top: 0; left: 0; width: 180px; height: 190px; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #1d2d50; border: 2px dashed var(--ciano-destaque); border-radius: 8px; color: var(--ciano-destaque); font-size: 16px; font-weight: bold; text-transform: uppercase; box-shadow: 0 4px 8px rgba(0,0,0,0.5); z-index: 5;}
@@ -119,13 +133,12 @@
         .btn-excluir { background: transparent; color: #ef4444; border: 1px solid #ef4444; margin-top: 10px; }
         .btn-fechar { background: transparent; color: #8892b0; border: 1px solid #8892b0; margin-top: 10px; }
 
-        /* Estilo do Input de Senha com o Olho */
         .input-senha-container { position: relative; margin-top: 5px; margin-bottom: 15px; }
         .input-senha-container input { padding-right: 40px; }
         .btn-olho { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 18px; user-select: none;}
 
         /* =========================================
-           7. CONFIGURAÇÕES DE IMPRESSÃO
+           7. CONFIGURAÇÕES NATURAIS DE IMPRESSÃO
            ========================================= */
         @media print {
             body { background-color: var(--azul-fundo); margin: 0; padding: 0; }
@@ -157,6 +170,8 @@
                 <button class="botao-acao" id="btn-login" onclick="abrirModalSenha()" style="background-color: #ef4444; color: #fff;">🔒 Acesso Equipe</button>
                 <div id="botoes-admin" style="display: none; gap: 10px;">
                     <button class="botao-acao" onclick="carregarMesas()" style="background-color: #3b82f6; color: #fff;">🔄 Atualizar</button>
+                    <button class="botao-acao" id="btn-buffet" onclick="toggleBuffet()" style="background-color: #10b981; color: #000;">🍽️ Visão Buffet</button>
+                    <button class="botao-acao" onclick="abrirCofre()" style="background-color: #f59e0b; color: #000; border: 1px solid #fff;">📊 Cofre</button>
                 </div>
             </div>
         </div>
@@ -240,6 +255,7 @@
 
         const SENHA_SISTEMA = "educ1958"; 
         let isAdmin = false; 
+        let isBuffetMode = false;
         let acaoConfirmacaoGlobal = null; 
 
         const CONFIG_GERAL = { 
@@ -262,9 +278,6 @@
             document.getElementById('img-dupla').src = CONFIG_GERAL.caminhoShow;
         }
 
-        // ==========================================
-        // SISTEMA DE ALERTAS PREMIUM
-        // ==========================================
         function mostrarAlerta(mensagem, tipo = 'info', callback = null) {
             const modal = document.getElementById('modal-alerta');
             const overlay = document.getElementById('overlay-alerta');
@@ -277,72 +290,36 @@
             msg.innerHTML = mensagem;
 
             if (tipo === 'erro') {
-                titulo.innerHTML = '🔴 Erro';
-                titulo.style.color = '#ff4d4d';
+                titulo.innerHTML = '🔴 Erro'; titulo.style.color = '#ff4d4d';
                 botoes.innerHTML = `<button class="btn" style="background-color: #ff4d4d; color: #fff; margin-top: 0;" onclick="fecharAlerta()">Entendi</button>`;
             } else if (tipo === 'sucesso') {
-                titulo.innerHTML = '🟢 Sucesso';
-                titulo.style.color = '#4ade80';
+                titulo.innerHTML = '🟢 Sucesso'; titulo.style.color = '#4ade80';
                 botoes.innerHTML = `<button class="btn" style="background-color: #4ade80; color: #000; margin-top: 0;" onclick="fecharAlerta()">OK</button>`;
             } else if (tipo === 'confirmacao') {
-                titulo.innerHTML = '⚠️ Atenção';
-                titulo.style.color = '#f59e0b';
-                acaoConfirmacaoGlobal = callback;
-                botoes.innerHTML = `
-                    <button class="btn" style="background-color: #ef4444; color: #fff; margin-top: 0;" onclick="executarConfirmacao()">Sim, excluir tudo</button>
-                    <button class="btn btn-fechar" style="margin-top: 0;" onclick="fecharAlerta()">Cancelar</button>
-                `;
+                titulo.innerHTML = '⚠️ Atenção'; titulo.style.color = '#f59e0b'; acaoConfirmacaoGlobal = callback;
+                botoes.innerHTML = `<button class="btn" style="background-color: #ef4444; color: #fff; margin-top: 0;" onclick="executarConfirmacao()">Sim, excluir tudo</button><button class="btn btn-fechar" style="margin-top: 0;" onclick="fecharAlerta()">Cancelar</button>`;
             } else {
-                titulo.innerHTML = 'ℹ️ Aviso';
-                titulo.style.color = 'var(--ciano-destaque)';
+                titulo.innerHTML = 'ℹ️ Aviso'; titulo.style.color = 'var(--ciano-destaque)';
                 botoes.innerHTML = `<button class="btn btn-salvar" style="margin-top: 0;" onclick="fecharAlerta()">OK</button>`;
             }
         }
 
-        function fecharAlerta() {
-            document.getElementById('overlay-alerta').style.display = 'none';
-            document.getElementById('modal-alerta').style.display = 'none';
-            acaoConfirmacaoGlobal = null;
-        }
+        function fecharAlerta() { document.getElementById('overlay-alerta').style.display = 'none'; document.getElementById('modal-alerta').style.display = 'none'; acaoConfirmacaoGlobal = null; }
+        function executarConfirmacao() { if (acaoConfirmacaoGlobal) acaoConfirmacaoGlobal(); fecharAlerta(); }
 
-        function executarConfirmacao() {
-            if (acaoConfirmacaoGlobal) acaoConfirmacaoGlobal();
-            fecharAlerta();
-        }
-
-        // ==========================================
-        // SISTEMA DE SENHA PREMIUM
-        // ==========================================
         function abrirModalSenha() {
             document.getElementById('overlay-senha').style.display = 'block';
             document.getElementById('modal-senha').style.display = 'block';
             const input = document.getElementById('input-senha-equipe');
-            input.value = '';
-            input.type = 'password';
-            document.getElementById('icone-olho').innerText = '👁️';
-            input.focus();
+            input.value = ''; input.type = 'password'; document.getElementById('icone-olho').innerText = '👁️'; input.focus();
         }
-
-        function fecharModalSenha() {
-            document.getElementById('overlay-senha').style.display = 'none';
-            document.getElementById('modal-senha').style.display = 'none';
-        }
-
+        function fecharModalSenha() { document.getElementById('overlay-senha').style.display = 'none'; document.getElementById('modal-senha').style.display = 'none'; }
+        
         function toggleSenha() {
-            const input = document.getElementById('input-senha-equipe');
-            const icone = document.getElementById('icone-olho');
-            if (input.type === "password") {
-                input.type = "text";
-                icone.innerText = '🙈';
-            } else {
-                input.type = "password";
-                icone.innerText = '👁️';
-            }
+            const input = document.getElementById('input-senha-equipe'); const icone = document.getElementById('icone-olho');
+            if (input.type === "password") { input.type = "text"; icone.innerText = '🙈'; } else { input.type = "password"; icone.innerText = '👁️'; }
         }
-
-        function verificarSenhaEnter(event) {
-            if (event.key === "Enter") verificarSenha();
-        }
+        function verificarSenhaEnter(event) { if (event.key === "Enter") verificarSenha(); }
 
         function verificarSenha() {
             const digitado = document.getElementById('input-senha-equipe').value;
@@ -358,17 +335,29 @@
             }
         }
 
-        // ==========================================
-        // LÓGICA DO MAPA E API
-        // ==========================================
+        function toggleBuffet() {
+            isBuffetMode = !isBuffetMode;
+            const btn = document.getElementById('btn-buffet');
+            if(isBuffetMode) {
+                btn.style.backgroundColor = '#ec4899'; 
+                btn.innerHTML = '❌ Sair do Buffet';
+            } else {
+                btn.style.backgroundColor = '#10b981';
+                btn.innerHTML = '🍽️ Visão Buffet';
+            }
+            renderizarMapaDinamico();
+        }
+
+        function abrirCofre() {
+            window.open('financeiro.html', '_blank');
+        }
+
         async function carregarMesas() {
             document.getElementById('status-msg').innerHTML = "⏳ ATUALIZANDO DADOS...";
             document.getElementById('status-msg').style.color = "var(--cor-reservada)";
             try {
                 const response = await fetch(API_URL);
                 const json = await response.json();
-                
-                // O SEGREDO DA CORREÇÃO: Lendo só o array "mesas" do pacotão
                 mesasData = json.mesas || json;
 
                 renderizarMapaDinamico();
@@ -400,9 +389,7 @@
 
             const mesasPorPrefixo = {};
             mesasData.forEach(mesa => {
-                // Se a mesa.id estiver vazia, ignora para não travar
                 if (!mesa || !mesa.id) return; 
-                
                 const prefixo = mesa.id.charAt(0).toUpperCase();
                 if (!mesasPorPrefixo[prefixo]) mesasPorPrefixo[prefixo] = [];
                 mesasPorPrefixo[prefixo].push(mesa);
@@ -461,9 +448,22 @@
                                 
                                 let nomeParaMostrar = "";
                                 let cssDestaqueUrl = "";
+                                let htmlBadgeExtra = "";
+                                let htmlBadgePagamento = "";
 
                                 if (isAdmin) {
                                     nomeParaMostrar = mesaObj.nome ? mesaObj.nome : "";
+                                    
+                                    // Aparece o botão de cadeiras extras
+                                    if (mesaObj.cadeirasExtra && parseInt(mesaObj.cadeirasExtra) > 0) {
+                                        htmlBadgeExtra = `<div class="badge-extra">+${mesaObj.cadeirasExtra}</div>`;
+                                    }
+
+                                    // O NOVO ALERTA DO CIFRÃO (Não aparece se for Buffet)
+                                    if (!isBuffetMode && parseFloat(mesaObj.saldo) > 0 && statusClass !== "livre") {
+                                        htmlBadgePagamento = `<div class="badge-pagamento" title="Possui saldo devedor">💲</div>`;
+                                    }
+
                                 } else {
                                     nomeParaMostrar = "";
                                     if (mesaParaDestacar && mesaObj.id === mesaParaDestacar) {
@@ -478,6 +478,21 @@
                                 if(statusClass === "reservada") corStatusTexto = "var(--cor-reservada)";
 
                                 let estiloBordaCss = (statusClass !== "livre") ? "borda-pontilhada" : "borda-solida";
+                                
+                                let textoStatusAcima = mesaObj.status || "Livre";
+                                let classeMesaBuffet = "";
+
+                                // MÁGICA DA VISÃO BUFFET
+                                if (isBuffetMode) {
+                                    if (statusClass === "livre") {
+                                        corBase = "#112240"; 
+                                        corStatusTexto = "#555";
+                                        estiloBordaCss = "borda-solida";
+                                        textoStatusAcima = "NÃO MONTAR";
+                                        nomeParaMostrar = "<span style='color:#ef4444; font-weight:bold; letter-spacing:1px;'>VAZIA</span>";
+                                        classeMesaBuffet = "mesa-escura-buffet";
+                                    }
+                                }
 
                                 const mesaWrapper = document.createElement('div');
                                 mesaWrapper.className = `wrapper-mesa ${cssDestaqueUrl}`;
@@ -487,16 +502,12 @@
                                     mesaWrapper.onclick = () => abrirModal(mesaObj);
                                 }
 
-                                let htmlBadge = "";
-                                if(isAdmin && mesaObj.cadeirasExtra && parseInt(mesaObj.cadeirasExtra) > 0) {
-                                    htmlBadge = `<div class="badge-extra">+${mesaObj.cadeirasExtra}</div>`;
-                                }
-
                                 mesaWrapper.innerHTML = `
-                                    <div class="texto-acima" style="color: ${corStatusTexto};">${mesaObj.status || "Livre"}</div>
-                                    <div style="position: relative;">
+                                    <div class="texto-acima" style="color: ${corStatusTexto};">${textoStatusAcima}</div>
+                                    <div style="position: relative;" class="${classeMesaBuffet}">
                                         <div class="bolinha-mesa ${setorConfig.classeTamanho} ${estiloBordaCss}" style="background-color: ${corBase};">${mesaObj.id}</div>
-                                        ${htmlBadge}
+                                        ${htmlBadgeExtra}
+                                        ${htmlBadgePagamento}
                                     </div>
                                     <div class="texto-abaixo">${nomeParaMostrar}</div>
                                 `;
@@ -512,9 +523,6 @@
             }
         }
 
-        // ==========================================
-        // MODAL DA MESA E A GUILHOTINA DE DADOS
-        // ==========================================
         function abrirModal(mesa) {
             document.getElementById('modal-title').innerText = `Mesa ${mesa.id}`;
             document.getElementById('modal-status').value = mesa.status || "Livre";
@@ -583,17 +591,8 @@
             btnLimpar.disabled = true;
 
             const pacoteZero = { 
-                id: idMesa, 
-                status: "Livre", 
-                nome: "", 
-                telefone: "", 
-                email: "",
-                cadeirasExtra: 0,
-                valorTotal: 0,
-                valorPago: 0,
-                saldo: 0,
-                obs: "",
-                detalhesJSON: ""
+                id: idMesa, status: "Livre", nome: "", telefone: "", email: "", cadeirasExtra: 0,
+                valorTotal: 0, valorPago: 0, saldo: 0, obs: "", detalhesJSON: ""
             };
 
             try {
@@ -604,9 +603,7 @@
                 });
 
                 const mesaIndex = mesasData.findIndex(m => m.id === idMesa);
-                if(mesaIndex !== -1) {
-                    mesasData[mesaIndex] = pacoteZero; 
-                }
+                if(mesaIndex !== -1) mesasData[mesaIndex] = pacoteZero; 
 
                 renderizarMapaDinamico(); 
                 fecharModal();
