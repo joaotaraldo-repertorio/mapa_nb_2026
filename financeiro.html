@@ -251,11 +251,14 @@
         window.onload = async function() {
             carregarSeletorDeMesas();
             await carregarDadosDaPlanilha();
+            
             const urlParams = new URLSearchParams(window.location.search);
             const mesaPuxada = urlParams.get('mesa');
+            const nomeDigitadoNoMapa = urlParams.get('nome'); // Pega o nome vindo do mapa!
+            
             if(mesaPuxada) {
                 document.getElementById('seletor-mesas').value = mesaPuxada;
-                trocarMesaSelecionada(mesaPuxada);
+                trocarMesaSelecionada(mesaPuxada, nomeDigitadoNoMapa ? decodeURIComponent(nomeDigitadoNoMapa) : null);
                 mudarAba('aba-lancamentos', document.querySelectorAll('.menu-item')[2]);
             }
         };
@@ -265,7 +268,7 @@
                 const response = await fetch(API_URL);
                 mesasDataBanco = await response.json();
                 calcularDashboard(); 
-            } catch (error) { console.error("Erro."); }
+            } catch (error) { console.error("Erro ao puxar dados."); }
         }
 
         function calcularDashboard() {
@@ -288,14 +291,14 @@
             document.getElementById('cofreLucroLiquido').innerText = formatarMoeda(totalFechado);
         }
 
-        function trocarMesaSelecionada(novoId) {
+        function trocarMesaSelecionada(novoId, nomeDoMapa = null) {
             if(!novoId) {
                 document.getElementById('alerta-nenhuma-mesa').style.display = 'block';
                 document.getElementById('area-edicao-mesa').style.display = 'none';
                 return;
             }
 
-            // A LIMPEZA ABSOLUTA DE DADOS VISUAIS (Para a F-06 não vazar para a C-02)
+            // LIMPEZA DA MESA ANTERIOR
             document.getElementById('containerPagadores').innerHTML = '';
 
             mesaAtualID = novoId;
@@ -316,23 +319,38 @@
             document.getElementById('titulo-mesa-lancamento').innerText = `📝 Lançamentos: Mesa ${mesaAtualID} (${CONFIG_MESAS[prefixo].nome})`;
             
             nomeEditadoManualmente = false;
-            document.getElementById('campoNomeExibido').value = mesaNoBanco.nome || "";
-            pagadoresAtuais = []; // Array limpa 100%
             
+            // Lógica do Nome Fresquinho do Mapa
+            let nomeParaUsar = nomeDoMapa !== null ? nomeDoMapa : (mesaNoBanco.nome || "");
+            document.getElementById('campoNomeExibido').value = nomeParaUsar;
+            
+            pagadoresAtuais = []; 
+            
+            // O SANITIZADOR DE DADOS: Conserta as sujeiras dos testes passados
             if(mesaNoBanco.detalhesJSON && mesaNoBanco.detalhesJSON.trim() !== "") {
                 try {
-                    pagadoresAtuais = JSON.parse(mesaNoBanco.detalhesJSON);
-                } catch(e) {}
+                    let parsed = JSON.parse(mesaNoBanco.detalhesJSON);
+                    if(Array.isArray(parsed)) pagadoresAtuais = parsed;
+                    else if (parsed && typeof parsed === 'object') pagadoresAtuais = [parsed];
+
+                    pagadoresAtuais.forEach(p => {
+                        if(!p.parcelas || !Array.isArray(p.parcelas)) {
+                            p.parcelas = [{ numero: 1, valor: p.valorCota || 0, pago: false, vencimento: "" }];
+                            p.qtdParcelas = 1;
+                        }
+                        if(p.valorCota === undefined) p.valorCota = 0;
+                        if(p.nome === undefined) p.nome = "";
+                    });
+                } catch(e) { pagadoresAtuais = []; }
             }
             
-            // Se a mesa for nova, cria o pagador 1 em branco 
+            // Se a mesa for nova, cria a ficha com o Nome Fresquinho
             if(pagadoresAtuais.length === 0) {
                 let cotaSug = valorBaseDaMesa + valorCadeirasExtrasGlobais;
-                if(mesaNoBanco.nome && mesaNoBanco.nome.trim() !== "") {
-                    pagadoresAtuais.push({ id: 'pag_1', nome: mesaNoBanco.nome, telefone: mesaNoBanco.telefone || "", cadeirasExtra: 0, valorCota: cotaSug, pagamento: "Dinheiro", qtdParcelas: 1, parcelas: [{ numero: 1, valor: cotaSug, pago: false, vencimento: "" }] });
-                } else {
-                    pagadoresAtuais.push({ id: 'pag_1', nome: "", telefone: "", cadeirasExtra: 0, valorCota: cotaSug, pagamento: "Dinheiro", qtdParcelas: 1, parcelas: [{ numero: 1, valor: cotaSug, pago: false, vencimento: "" }] });
-                }
+                pagadoresAtuais.push({ id: 'pag_1', nome: nomeParaUsar, telefone: mesaNoBanco.telefone || "", cadeirasExtra: 0, valorCota: cotaSug, pagamento: "Dinheiro", qtdParcelas: 1, parcelas: [{ numero: 1, valor: cotaSug, pago: false, vencimento: "" }] });
+            } else if (pagadoresAtuais.length === 1 && pagadoresAtuais[0].nome === "" && nomeParaUsar !== "") {
+                // Se tinha uma ficha em branco, atualiza o nome
+                pagadoresAtuais[0].nome = nomeParaUsar;
             }
 
             atualizarCalculoTotalMesa();
