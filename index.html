@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=1300">
     <title>Mapa de Vendas - Dinâmico e Rápido</title>
     <style>
         /* =========================================
@@ -348,9 +348,7 @@
             renderizarMapaDinamico();
         }
 
-        function abrirCofre() {
-            window.open('financeiro.html', '_blank');
-        }
+        function abrirCofre() { window.open('financeiro.html', '_blank'); }
 
         async function carregarMesas() {
             document.getElementById('status-msg').innerHTML = "⏳ ATUALIZANDO DADOS...";
@@ -481,15 +479,14 @@
                                 let classeMesaBuffet = "";
                                 let conteudoBolinha = mesaObj.id;
 
-                                // MÁGICA DA VISÃO BUFFET
                                 if (isBuffetMode) {
-                                    textoStatusAcima = ""; // Oculta legenda do topo
+                                    textoStatusAcima = ""; 
                                     if (statusClass === "livre") {
                                         corBase = "#112240"; 
                                         estiloBordaCss = "borda-solida";
-                                        nomeParaMostrar = ""; // Oculta nome/vazia de baixo
+                                        nomeParaMostrar = ""; 
                                         classeMesaBuffet = "mesa-escura-buffet";
-                                        conteudoBolinha = `<span style="font-size: 1.8em; color: #8892b0;">✖</span>`; // O "X" proporcional
+                                        conteudoBolinha = `<span style="font-size: 1.8em; color: #8892b0;">✖</span>`; 
                                     }
                                 }
 
