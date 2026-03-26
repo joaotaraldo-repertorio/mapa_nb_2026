@@ -76,7 +76,6 @@
         .texto-acima { font-size: 12px; font-weight: bold; text-transform: uppercase; height: 14px; letter-spacing: 1px; margin-bottom: 2px;}
         .texto-abaixo { font-size: 16px; color: #ffffff; text-align: center; width: 120px; white-space: normal; word-wrap: break-word; line-height: 1.1; font-weight: bold; min-height: 15px; margin-top: 2px;}
 
-        /* O BADGE DAS CADEIRAS EXTRAS */
         .badge-extra {
             position: absolute; top: -5px; right: -5px;
             background-color: var(--azul-fundo); color: #f59e0b;
@@ -103,20 +102,41 @@
         .info-contato span.realizacao { display: block; color: var(--texto-claro); font-size: 14px; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
 
         /* =========================================
-           6. MODAL (JANELA DE EDIÇÃO)
+           6. MODAIS (JANELAS DE AVISO E EDIÇÃO)
            ========================================= */
         .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--azul-card); padding: 25px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); z-index: 1000; width: 320px; border: 1px solid var(--ciano-destaque); color: var(--texto-claro); }
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 25, 47, 0.8); z-index: 999; backdrop-filter: blur(3px); }
         .modal h3 { margin-top: 0; text-align: center; color: var(--ciano-destaque); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
         .modal label { font-size: 13px; font-weight: bold; display: block; margin-top: 12px; color: #8892b0;}
-        .modal input, .modal select { width: 100%; margin-top: 5px; padding: 10px; box-sizing: border-box; border: 1px solid #233554; border-radius: 6px; background: #0A192F; color: white; outline: none; }
+        .modal input, .modal select { width: 100%; margin-top: 5px; padding: 10px; box-sizing: border-box; border: 1px solid #233554; border-radius: 6px; background: #0A192F; color: white; outline: none; font-size: 14px; font-weight: bold;}
+        .modal input:focus, .modal select:focus { border-color: var(--ciano-destaque); }
         .btn { padding: 12px; font-weight: bold; border: none; cursor: pointer; width: 100%; border-radius: 6px; margin-top: 15px; font-size: 15px; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s;}
         .btn:hover { opacity: 0.8; }
         .btn-salvar { background: var(--ciano-destaque); color: #0A192F; }
         .btn-salvar:disabled { background: #555; cursor: not-allowed; }
         .btn-link { background: #10b981; color: white; margin-top: 10px; }
+        .btn-excluir { background: transparent; color: #ef4444; border: 1px solid #ef4444; margin-top: 10px; }
         .btn-fechar { background: transparent; color: #8892b0; border: 1px solid #8892b0; margin-top: 10px; }
 
+        /* Estilo do Input de Senha com o Olho */
+        .input-senha-container { position: relative; margin-top: 5px; margin-bottom: 15px; }
+        .input-senha-container input { padding-right: 40px; }
+        .btn-olho { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 18px; user-select: none;}
+
+        /* =========================================
+           7. CONFIGURAÇÕES DE IMPRESSÃO
+           ========================================= */
+        @media print {
+            body { background-color: var(--azul-fundo); margin: 0; padding: 0; }
+            .painel-topo { display: none !important; }
+            .modal, .overlay { display: none !important; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            #area-exportacao { max-width: 100%; width: 100%; box-shadow: none; border: none;}
+            .setor { break-inside: avoid; page-break-inside: avoid; margin-bottom: 20px; }
+            .fileira-mesas { break-inside: avoid; page-break-inside: avoid; }
+            .wrapper-mesa { break-inside: avoid; page-break-inside: avoid; }
+            .painel-rodape { break-inside: avoid; page-break-inside: avoid; }
+        }
     </style>
 </head>
 <body>
@@ -133,9 +153,9 @@
             </div>
             
             <div class="area-botoes-topo">
-                <button class="botao-acao" id="btn-login" onclick="fazerLoginAdmin()" style="background-color: #ef4444; color: #fff;">🔒 Acesso Equipe</button>
+                <button class="botao-acao" id="btn-login" onclick="abrirModalSenha()" style="background-color: #ef4444; color: #fff;">🔒 Acesso Equipe</button>
                 <div id="botoes-admin" style="display: none; gap: 10px;">
-                    <button class="botao-acao" onclick="carregarMesas()" style="background-color: #3b82f6; color: #fff;">🔄 Atualizar Mapa</button>
+                    <button class="botao-acao" onclick="carregarMesas()" style="background-color: #3b82f6; color: #fff;">🔄 Atualizar</button>
                 </div>
             </div>
         </div>
@@ -148,6 +168,7 @@
             <div class="tarja-lateral tarja-aparador-esq"><span class="tarja-texto">Aparador</span></div>
             <div class="tarja-lateral tarja-aparador-dir1"><span class="tarja-texto">Aparador</span></div>
             <div class="tarja-lateral tarja-aparador-dir2"><span class="tarja-texto">Aparador</span></div>
+
             <div id="mapa-dinamico" style="width: 100%;"></div>
         </div>
 
@@ -186,16 +207,39 @@
         <button class="btn btn-salvar" id="btn-salvar" onclick="salvarMesa()">Gravar na Planilha</button>
         <button class="btn btn-link" onclick="gerarLinkAprovacao()">🔗 Copiar Link de Aprovação</button>
         <button class="btn" onclick="pularParaFinanceiro()" style="background-color: #f59e0b; color: #000; margin-top: 10px;">💰 Financeiro Completo da Mesa</button>
+        <button class="btn btn-excluir" id="btn-limpar" onclick="confirmarExclusaoMesa()">🗑️ Excluir Todos os Dados</button>
         <button class="btn btn-fechar" onclick="fecharModal()">Cancelar</button>
     </div>
 
+    <div class="overlay" id="overlay-senha" style="z-index: 2000;" onclick="fecharModalSenha()"></div>
+    <div class="modal" id="modal-senha" style="z-index: 2001; width: 280px; text-align: center;">
+        <h3 style="border-bottom: none; margin-bottom: 5px;">🔒 Acesso Restrito</h3>
+        <p style="font-size: 13px; color: #8892b0; margin-top: 0;">Digite a senha da equipe para gerenciar o mapa.</p>
+        
+        <div class="input-senha-container">
+            <input type="password" id="input-senha-equipe" placeholder="Sua senha..." onkeypress="verificarSenhaEnter(event)">
+            <span class="btn-olho" onclick="toggleSenha()" id="icone-olho">👁️</span>
+        </div>
+        
+        <button class="btn btn-salvar" onclick="verificarSenha()">Entrar no Sistema</button>
+        <button class="btn btn-fechar" onclick="fecharModalSenha()">Cancelar</button>
+    </div>
+
+    <div class="overlay" id="overlay-alerta" style="z-index: 3000;"></div>
+    <div class="modal" id="modal-alerta" style="z-index: 3001; width: 320px; text-align: center;">
+        <h3 id="alerta-titulo" style="border-bottom: none; margin-bottom: 10px; font-size: 22px;">Aviso</h3>
+        <p id="alerta-mensagem" style="color: var(--texto-claro); font-size: 15px; margin-bottom: 25px; line-height: 1.4;"></p>
+        <div id="alerta-botoes" style="display: flex; gap: 10px; justify-content: center; flex-direction: column;">
+            </div>
+    </div>
+
     <script>
-        // O SEU LINK DA API AQUI
         const API_URL = 'https://script.google.com/macros/s/AKfycby6hZ1cD-uIPafXIpRDe2DJzmYwjP4IRQgysxbVPNJOlKNDlE8ALvUTyBsoJlSQL2k/exec';
         let mesasData = [];
 
         const SENHA_SISTEMA = "educ1958"; 
         let isAdmin = false; 
+        let acaoConfirmacaoGlobal = null; // Guarda a ação do botão "Sim, excluir"
 
         const CONFIG_GERAL = { 
             edicao: "19ª", nomeEvento: "Noite Beneficente", ano: "2026", 
@@ -217,18 +261,105 @@
             document.getElementById('img-dupla').src = CONFIG_GERAL.caminhoShow;
         }
 
-        function fazerLoginAdmin() {
-            const digitado = prompt("Digite a senha da equipe:");
-            if (digitado === SENHA_SISTEMA) {
-                isAdmin = true;
-                document.getElementById('btn-login').style.display = 'none';
-                document.getElementById('botoes-admin').style.display = 'flex';
-                renderizarMapaDinamico(); 
-            } else if (digitado !== null) {
-                alert("Senha incorreta!");
+        // ==========================================
+        // SISTEMA DE ALERTAS PREMIUM
+        // ==========================================
+        function mostrarAlerta(mensagem, tipo = 'info', callback = null) {
+            const modal = document.getElementById('modal-alerta');
+            const overlay = document.getElementById('overlay-alerta');
+            const titulo = document.getElementById('alerta-titulo');
+            const msg = document.getElementById('alerta-mensagem');
+            const botoes = document.getElementById('alerta-botoes');
+
+            overlay.style.display = 'block';
+            modal.style.display = 'block';
+            msg.innerHTML = mensagem;
+
+            if (tipo === 'erro') {
+                titulo.innerHTML = '🔴 Erro';
+                titulo.style.color = '#ff4d4d';
+                botoes.innerHTML = `<button class="btn" style="background-color: #ff4d4d; color: #fff; margin-top: 0;" onclick="fecharAlerta()">Entendi</button>`;
+            } else if (tipo === 'sucesso') {
+                titulo.innerHTML = '🟢 Sucesso';
+                titulo.style.color = '#4ade80';
+                botoes.innerHTML = `<button class="btn" style="background-color: #4ade80; color: #000; margin-top: 0;" onclick="fecharAlerta()">OK</button>`;
+            } else if (tipo === 'confirmacao') {
+                titulo.innerHTML = '⚠️ Atenção';
+                titulo.style.color = '#f59e0b';
+                acaoConfirmacaoGlobal = callback;
+                botoes.innerHTML = `
+                    <button class="btn" style="background-color: #ef4444; color: #fff; margin-top: 0;" onclick="executarConfirmacao()">Sim, excluir tudo</button>
+                    <button class="btn btn-fechar" style="margin-top: 0;" onclick="fecharAlerta()">Cancelar</button>
+                `;
+            } else {
+                titulo.innerHTML = 'ℹ️ Aviso';
+                titulo.style.color = 'var(--ciano-destaque)';
+                botoes.innerHTML = `<button class="btn btn-salvar" style="margin-top: 0;" onclick="fecharAlerta()">OK</button>`;
             }
         }
 
+        function fecharAlerta() {
+            document.getElementById('overlay-alerta').style.display = 'none';
+            document.getElementById('modal-alerta').style.display = 'none';
+            acaoConfirmacaoGlobal = null;
+        }
+
+        function executarConfirmacao() {
+            if (acaoConfirmacaoGlobal) acaoConfirmacaoGlobal();
+            fecharAlerta();
+        }
+
+        // ==========================================
+        // SISTEMA DE SENHA PREMIUM
+        // ==========================================
+        function abrirModalSenha() {
+            document.getElementById('overlay-senha').style.display = 'block';
+            document.getElementById('modal-senha').style.display = 'block';
+            const input = document.getElementById('input-senha-equipe');
+            input.value = '';
+            input.type = 'password';
+            document.getElementById('icone-olho').innerText = '👁️';
+            input.focus();
+        }
+
+        function fecharModalSenha() {
+            document.getElementById('overlay-senha').style.display = 'none';
+            document.getElementById('modal-senha').style.display = 'none';
+        }
+
+        function toggleSenha() {
+            const input = document.getElementById('input-senha-equipe');
+            const icone = document.getElementById('icone-olho');
+            if (input.type === "password") {
+                input.type = "text";
+                icone.innerText = '🙈';
+            } else {
+                input.type = "password";
+                icone.innerText = '👁️';
+            }
+        }
+
+        function verificarSenhaEnter(event) {
+            if (event.key === "Enter") verificarSenha();
+        }
+
+        function verificarSenha() {
+            const digitado = document.getElementById('input-senha-equipe').value;
+            if (digitado === SENHA_SISTEMA) {
+                isAdmin = true;
+                fecharModalSenha();
+                document.getElementById('btn-login').style.display = 'none';
+                document.getElementById('botoes-admin').style.display = 'flex';
+                renderizarMapaDinamico(); 
+                mostrarAlerta("Acesso à edição liberado com sucesso!", "sucesso");
+            } else {
+                mostrarAlerta("Senha incorreta! Verifique se digitou corretamente.", "erro");
+            }
+        }
+
+        // ==========================================
+        // LÓGICA DO MAPA E API
+        // ==========================================
         async function carregarMesas() {
             document.getElementById('status-msg').innerHTML = "⏳ ATUALIZANDO DADOS...";
             document.getElementById('status-msg').style.color = "var(--cor-reservada)";
@@ -373,6 +504,9 @@
             }
         }
 
+        // ==========================================
+        // MODAL DA MESA E A GUILHOTINA DE DADOS
+        // ==========================================
         function abrirModal(mesa) {
             document.getElementById('modal-title').innerText = `Mesa ${mesa.id}`;
             document.getElementById('modal-status').value = mesa.status || "Livre";
@@ -422,10 +556,61 @@
                 fecharModal();
 
             } catch (error) {
-                alert("Opa! Houve um erro de conexão ao tentar salvar. Verifique a internet e tente de novo.");
+                mostrarAlerta("Houve um erro de conexão ao tentar salvar. Verifique a internet e tente de novo.", "erro");
             } finally {
                 btnSalvar.innerText = "Gravar na Planilha";
                 btnSalvar.disabled = false;
+            }
+        }
+
+        // A BOMBA ATÔMICA: Limpa o mapa e aniquila o financeiro da mesa!
+        function confirmarExclusaoMesa() {
+            mostrarAlerta("Tem certeza que deseja excluir esta mesa?<br><br><b>Isso apagará o nome, contato e TODO O HISTÓRICO FINANCEIRO (parcelas e pagadores)!</b>", "confirmacao", limparMesaVerdadeiro);
+        }
+
+        async function limparMesaVerdadeiro() {
+            const idMesa = document.getElementById('modal-title').innerText.replace('Mesa ', '').trim();
+            const btnLimpar = document.getElementById('btn-limpar');
+            
+            btnLimpar.innerText = "⏳ Excluindo...";
+            btnLimpar.disabled = true;
+
+            // O Pacote Zero: Manda vazio para o Mapa e zera as colunas do Financeiro
+            const pacoteZero = { 
+                id: idMesa, 
+                status: "Livre", 
+                nome: "", 
+                telefone: "", 
+                email: "",
+                cadeirasExtra: 0,
+                valorTotal: 0,
+                valorPago: 0,
+                saldo: 0,
+                obs: "",
+                detalhesJSON: ""
+            };
+
+            try {
+                await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify(pacoteZero)
+                });
+
+                const mesaIndex = mesasData.findIndex(m => m.id === idMesa);
+                if(mesaIndex !== -1) {
+                    mesasData[mesaIndex] = pacoteZero; // Atualiza a memória local
+                }
+
+                renderizarMapaDinamico(); 
+                fecharModal();
+                mostrarAlerta(`A Mesa ${idMesa} foi limpa e todos os seus registros financeiros foram apagados!`, "sucesso");
+
+            } catch (error) {
+                mostrarAlerta("Erro de conexão ao tentar excluir os dados. Verifique a internet.", "erro");
+            } finally {
+                btnLimpar.innerHTML = "🗑️ Excluir Todos os Dados";
+                btnLimpar.disabled = false;
             }
         }
 
@@ -435,13 +620,12 @@
             const linkCliente = `${urlBase}?mesa=${idMesa}`;
             
             navigator.clipboard.writeText(linkCliente).then(() => {
-                alert("✅ Link da Mesa " + idMesa + " copiado com sucesso!\n\nAgora é só colar (Ctrl+V) no WhatsApp do cliente.");
+                mostrarAlerta("<b>Link copiado com sucesso!</b><br><br>Agora é só colar (Ctrl+V) no WhatsApp do cliente.", "sucesso");
             }).catch(err => {
-                prompt("Copie o link abaixo:", linkCliente);
+                mostrarAlerta("Copie o link abaixo para enviar ao cliente:<br><br>" + linkCliente, "info");
             });
         }
 
-        // A MÁGICA DE PASSAR O NOME NO LINK PARA O FINANCEIRO ABRIR PRONTO
         function pularParaFinanceiro() {
             const idMesa = document.getElementById('modal-title').innerText.replace('Mesa ', '').trim();
             const nomeDigitado = encodeURIComponent(document.getElementById('modal-nome').value);
