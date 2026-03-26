@@ -117,20 +117,6 @@
         .btn-link { background: #10b981; color: white; margin-top: 10px; }
         .btn-fechar { background: transparent; color: #8892b0; border: 1px solid #8892b0; margin-top: 10px; }
 
-        /* =========================================
-           7. CONFIGURAÇÕES NATURAIS DE IMPRESSÃO
-           ========================================= */
-        @media print {
-            body { background-color: var(--azul-fundo); margin: 0; padding: 0; }
-            .painel-topo { display: none !important; }
-            .modal, .overlay { display: none !important; }
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            #area-exportacao { max-width: 100%; width: 100%; box-shadow: none; border: none;}
-            .setor { break-inside: avoid; page-break-inside: avoid; margin-bottom: 20px; }
-            .fileira-mesas { break-inside: avoid; page-break-inside: avoid; }
-            .wrapper-mesa { break-inside: avoid; page-break-inside: avoid; }
-            .painel-rodape { break-inside: avoid; page-break-inside: avoid; }
-        }
     </style>
 </head>
 <body>
@@ -162,33 +148,17 @@
             <div class="tarja-lateral tarja-aparador-esq"><span class="tarja-texto">Aparador</span></div>
             <div class="tarja-lateral tarja-aparador-dir1"><span class="tarja-texto">Aparador</span></div>
             <div class="tarja-lateral tarja-aparador-dir2"><span class="tarja-texto">Aparador</span></div>
-
             <div id="mapa-dinamico" style="width: 100%;"></div>
         </div>
 
         <div class="painel-rodape">
             <h3 class="titulo-rodape">Formas de Adesão</h3>
             <div class="legenda-grid">
-                <div class="item-legenda">
-                    <span class="cor-box" style="background-color: #FFFF00;"></span> 
-                    <span class="texto-legenda">Cota Família <span class="sub-legenda">12 Lugares - R$ 25.000,00</span></span>
-                </div>
-                <div class="item-legenda">
-                    <span class="cor-box" style="background-color: #00FFFF;"></span> 
-                    <span class="texto-legenda">Cota Criança <span class="sub-legenda">08 Lugares - R$ 12.000,00</span></span>
-                </div>
-                <div class="item-legenda">
-                    <span class="cor-box" style="background-color: #47D359;"></span> 
-                    <span class="texto-legenda">Mesa Premium <span class="sub-legenda">08 Lugares - R$ 8.000,00</span></span>
-                </div>
-                <div class="item-legenda">
-                    <span class="cor-box" style="background-color: #FF9900;"></span> 
-                    <span class="texto-legenda">Mesa Master <span class="sub-legenda">06 Lugares - R$ 5.400,00</span></span>
-                </div>
-                <div class="item-legenda">
-                    <span class="cor-box" style="background-color: #FF0000;"></span> 
-                    <span class="texto-legenda">Mesa Diamante <span class="sub-legenda">06 Lugares - R$ 4.800,00</span></span>
-                </div>
+                <div class="item-legenda"><span class="cor-box" style="background-color: #FFFF00;"></span><span class="texto-legenda">Cota Família <span class="sub-legenda">12 Lugares - R$ 25.000,00</span></span></div>
+                <div class="item-legenda"><span class="cor-box" style="background-color: #00FFFF;"></span><span class="texto-legenda">Cota Criança <span class="sub-legenda">08 Lugares - R$ 12.000,00</span></span></div>
+                <div class="item-legenda"><span class="cor-box" style="background-color: #47D359;"></span><span class="texto-legenda">Mesa Premium <span class="sub-legenda">08 Lugares - R$ 8.000,00</span></span></div>
+                <div class="item-legenda"><span class="cor-box" style="background-color: #FF9900;"></span><span class="texto-legenda">Mesa Master <span class="sub-legenda">06 Lugares - R$ 5.400,00</span></span></div>
+                <div class="item-legenda"><span class="cor-box" style="background-color: #FF0000;"></span><span class="texto-legenda">Mesa Diamante <span class="sub-legenda">06 Lugares - R$ 4.800,00</span></span></div>
             </div>
             <div class="info-contato">
                 📞 Reservas: (17) 98816-3551
@@ -220,6 +190,7 @@
     </div>
 
     <script>
+        // O SEU LINK DA API AQUI
         const API_URL = 'https://script.google.com/macros/s/AKfycby6hZ1cD-uIPafXIpRDe2DJzmYwjP4IRQgysxbVPNJOlKNDlE8ALvUTyBsoJlSQL2k/exec';
         let mesasData = [];
 
@@ -377,7 +348,6 @@
                                     mesaWrapper.onclick = () => abrirModal(mesaObj);
                                 }
 
-                                // CORREÇÃO: O BALÃO SÓ APARECE PARA ADMIN (Acesso Equipe)
                                 let htmlBadge = "";
                                 if(isAdmin && mesaObj.cadeirasExtra && parseInt(mesaObj.cadeirasExtra) > 0) {
                                     htmlBadge = `<div class="badge-extra">+${mesaObj.cadeirasExtra}</div>`;
@@ -471,9 +441,11 @@
             });
         }
 
+        // A MÁGICA DE PASSAR O NOME NO LINK PARA O FINANCEIRO ABRIR PRONTO
         function pularParaFinanceiro() {
             const idMesa = document.getElementById('modal-title').innerText.replace('Mesa ', '').trim();
-            window.open(`financeiro.html?mesa=${idMesa}`, '_blank');
+            const nomeDigitado = encodeURIComponent(document.getElementById('modal-nome').value);
+            window.open(`financeiro.html?mesa=${idMesa}&nome=${nomeDigitado}`, '_blank');
         }
 
         montarCabecalho();
