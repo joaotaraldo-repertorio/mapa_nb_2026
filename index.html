@@ -133,10 +133,10 @@
         .btn-olho { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 18px; user-select: none;}
 
         /* =========================================
-           7. CONFIGURAÇÕES NATURAIS DE IMPRESSÃO (O SEGREDO DA ECONOMIA E NAVEGAÇÃO)
+           7. CONFIGURAÇÕES NATURAIS DE IMPRESSÃO
            ========================================= */
         @media print {
-            @page { size: landscape; margin: 10mm; }
+            @page { margin: 10mm; } /* Removida a trava de landscape para permitir controle manual */
             body { background-color: #ffffff !important; margin: 0; padding: 0; }
             #area-exportacao { max-width: 100%; width: 100%; box-shadow: none; border: none; background-color: #ffffff !important; }
             
@@ -316,9 +316,6 @@
             document.getElementById('img-dupla').src = CONFIG_GERAL.caminhoShow;
         }
 
-        // ==========================================
-        // SISTEMA DE ALERTAS PREMIUM E MARKETING
-        // ==========================================
         function mostrarAlerta(mensagem, tipo = 'info', callback = null) {
             const modal = document.getElementById('modal-alerta');
             const overlay = document.getElementById('overlay-alerta');
@@ -402,9 +399,6 @@
             });
         }
 
-        // ==========================================
-        // SISTEMA DE SENHA E MENU TOP
-        // ==========================================
         function abrirModalSenha() {
             document.getElementById('overlay-senha').style.display = 'block';
             document.getElementById('modal-senha').style.display = 'block';
@@ -453,9 +447,6 @@
 
         function abrirCofre() { window.open('financeiro.html', '_blank'); }
 
-        // ==========================================
-        // LÓGICA DO MAPA E API
-        // ==========================================
         async function carregarMesas() {
             document.getElementById('status-msg').innerHTML = "⏳ ATUALIZANDO DADOS...";
             document.getElementById('status-msg').style.color = "var(--cor-reservada)";
