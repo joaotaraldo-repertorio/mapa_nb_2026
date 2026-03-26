@@ -46,14 +46,6 @@
         .tabela-financeira td:first-child { text-align: left; font-size: 16px;}
         .tabela-financeira tfoot td { background-color: #112240; color: var(--ciano-destaque); font-size: 16px; border-top: 2px solid var(--ciano-destaque); border-bottom: none;}
         
-        .painel-simulador { background-color: #061020; border: 1px dashed #f59e0b; border-radius: 8px; padding: 25px;}
-        .painel-simulador h3 { margin: 0 0 5px 0; color: #f59e0b; font-size: 22px; display: flex; align-items: center; gap: 8px;}
-        .painel-simulador > p { color: #8892b0; margin: 0 0 20px 0; font-size: 14px;}
-        .sim-resultado-box { display: flex; justify-content: space-around; background: #112240; padding: 20px; border-radius: 8px; border: 1px solid #233554; flex-wrap: wrap; gap: 20px;}
-        .res-col { display: flex; flex-direction: column; align-items: center; text-align: center;}
-        .res-col span { font-size: 13px; color: #8892b0; text-transform: uppercase; margin-bottom: 5px; font-weight: bold;}
-        .res-col strong { font-size: 24px; color: var(--texto-claro);}
-
         .cabecalho-fixo-mesa { position: sticky; top: -30px; background-color: var(--azul-fundo); z-index: 100; padding-top: 30px; padding-bottom: 15px; margin-top: -30px; border-bottom: 1px dashed #233554; box-shadow: 0 10px 10px -5px rgba(10, 25, 47, 0.9); }
 
         .painel-financeiro { background-color: #112240; border-radius: 8px; border: 1px dashed var(--cor-livre); padding: 15px 20px; margin-top: 15px; }
@@ -87,6 +79,7 @@
         .alerta-selecione { background-color: rgba(245, 158, 11, 0.1); border: 1px solid #f59e0b; color: #f59e0b; padding: 20px; border-radius: 8px; text-align: center; font-size: 18px; font-weight: bold; margin-top: 50px;}
         .seletor-mesas { padding: 10px; border-radius: 6px; background-color: #0A192F; border: 1px solid var(--ciano-destaque); color: var(--ciano-destaque); font-weight: bold; font-size: 16px; cursor: pointer;}
 
+        /* MODAIS E ALERTAS */
         .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--azul-card); padding: 25px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.9); z-index: 1000; width: 400px; border: 1px solid var(--ciano-destaque); color: var(--texto-claro); }
         .modal-largo { width: 600px; }
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 25, 47, 0.85); z-index: 999; backdrop-filter: blur(4px); }
@@ -150,7 +143,7 @@
                         <tr><td style="text-align:center;" colspan="5">Aguardando sincronização com a planilha...</td></tr>
                     </tbody>
                     <tfoot id="tfootCustos">
-                        </tfoot>
+                    </tfoot>
                 </table>
             </div>
         </div>
@@ -161,7 +154,6 @@
             </div>
 
             <div id="area-edicao-mesa" style="display: none;">
-                
                 <div class="cabecalho-fixo-mesa">
                     <div class="cofre-header" style="margin-bottom: 10px;">
                         <h2><span id="titulo-mesa-lancamento">📝 Selecione uma Mesa</span></h2>
@@ -239,8 +231,7 @@
             <div class="form-group" style="flex: 1;">
                 <label>Categoria</label>
                 <input type="text" id="custo-categoria" list="lista-categorias-datalist" placeholder="Escolha ou digite uma nova...">
-                <datalist id="lista-categorias-datalist">
-                    </datalist>
+                <datalist id="lista-categorias-datalist"></datalist>
                 <span style="font-size: 11px; color: #8892b0; margin-top: 4px;">Se a categoria não existir, basta digitar o nome novo e salvar!</span>
             </div>
             <div class="form-group" style="flex: 2;">
@@ -278,7 +269,7 @@
             </div>
         </div>
         
-        <button class="btn btn-salvar" style="background-color: #ef4444; color: #fff;" onclick="salvarCusto()">💾 Salvar Despesa na Tela</button>
+        <button class="btn btn-salvar" style="background-color: #ef4444; color: #fff;" onclick="salvarCusto()">💾 Salvar Despesa</button>
         <button class="btn btn-fechar" onclick="fecharModalCusto()">Cancelar</button>
     </div>
 
@@ -291,11 +282,11 @@
     </div>
 
     <script>
+        // O SEU LINK DA API OFICIAL
         const API_URL = 'https://script.google.com/macros/s/AKfycby6hZ1cD-uIPafXIpRDe2DJzmYwjP4IRQgysxbVPNJOlKNDlE8ALvUTyBsoJlSQL2k/exec';
+        
         let mesasDataBanco = []; 
         let custosDataBanco = []; 
-
-        // O SEU BANCO DE CATEGORIAS PADRÃO
         let categoriasPadrao = ["Atração Musical", "Estrutura e Som", "Bebidas", "Buffet", "Decoração", "Publicidade", "Taxas e Impostos", "Outras Demandas"];
 
         const CONFIG_MESAS = {
@@ -317,6 +308,9 @@
         let nomeEditadoManualmente = false;
         let acaoConfirmacaoGlobal = null;
 
+        // ==========================================
+        // SISTEMA DE ALERTAS
+        // ==========================================
         function mostrarAlerta(mensagem, tipo = 'info', callback = null) {
             const modal = document.getElementById('modal-alerta');
             const overlay = document.getElementById('overlay-alerta');
@@ -384,41 +378,27 @@
             }
         }
 
-        // ==========================================
-        // O MOTOR DAS CATEGORIAS DINÂMICAS
-        // ==========================================
         function atualizarListasCategorias() {
-            // Pega as categorias que você já usou nos lançamentos
             let categoriasUsadas = custosDataBanco.map(c => c.categoria);
-            
-            // Mistura as padrões com as usadas, remove duplicadas e põe em ordem alfabética
             let todasCategorias = [...new Set([...categoriasPadrao, ...categoriasUsadas])].sort();
 
-            // Atualiza o DataList do Formulário
             let datalist = document.getElementById('lista-categorias-datalist');
             datalist.innerHTML = todasCategorias.map(c => `<option value="${c}">`).join('');
 
-            // Atualiza o Filtro do Topo da Tabela
             let filtro = document.getElementById('filtro-categoria-custos');
-            let valorAtual = filtro.value; // Guarda o que o usuário tava filtrando
+            let valorAtual = filtro.value; 
             
             filtro.innerHTML = '<option value="TODAS">Mostrando: Todas as Categorias</option>' + 
                                todasCategorias.map(c => `<option value="${c}">Filtrar: ${c}</option>`).join('');
             
-            // Devolve o valor que tava selecionado antes
             filtro.value = valorAtual || "TODAS";
         }
 
+        // ==========================================
+        // O LEITOR GERAL (MAPA + DESPESAS)
+        // ==========================================
         window.onload = async function() {
             carregarSeletorDeMesas();
-            
-            // Simulação de despesa só para você testar a tabela e o filtro antes da API
-            custosDataBanco = [
-                {id: 1, categoria: "Estrutura e Som", fornecedor: "Tenda Certa", descricao: "Aluguel de Tendas", qtd: 1, valorUnit: 1500, valorTotal: 1500, obs: "Montagem na sexta-feira"},
-                {id: 2, categoria: "Bebidas", fornecedor: "Distribuidora XP", descricao: "Refrigerantes", qtd: 1, valorUnit: 800, valorTotal: 800, obs: ""}
-            ];
-            atualizarListasCategorias();
-            
             await carregarDadosDaPlanilha();
             
             const urlParams = new URLSearchParams(window.location.search);
@@ -430,15 +410,22 @@
                 trocarMesaSelecionada(mesaPuxada, nomeDigitadoNoMapa ? decodeURIComponent(nomeDigitadoNoMapa) : null);
                 mudarAba('aba-lancamentos', document.querySelectorAll('.menu-item')[2]);
             }
-            renderizarTabelaCustos();
         };
 
         async function carregarDadosDaPlanilha() {
             try {
                 const response = await fetch(API_URL);
-                mesasDataBanco = await response.json();
+                const pacote = await response.json();
+                
+                mesasDataBanco = pacote.mesas || [];
+                custosDataBanco = pacote.custos || [];
+                
+                atualizarListasCategorias();
+                renderizarTabelaCustos();
                 calcularDashboard(); 
-            } catch (error) { console.error("Erro ao puxar dados."); }
+            } catch (error) { 
+                console.error("Erro ao puxar dados da planilha."); 
+            }
         }
 
         function calcularDashboard() {
@@ -476,6 +463,9 @@
             }
         }
 
+        // ==========================================
+        // GESTÃO DE CUSTOS (DESPESAS)
+        // ==========================================
         function abrirModalCusto(id = null) {
             document.getElementById('overlay-custo').style.display = 'block';
             document.getElementById('modal-custo').style.display = 'block';
@@ -483,13 +473,13 @@
             if (id === null) {
                 document.getElementById('titulo-modal-custo').innerText = "➕ Lançar Despesa";
                 document.getElementById('custo-id').value = "";
-                document.getElementById('custo-categoria').value = ""; // Vem em branco para ele escolher/digitar
+                document.getElementById('custo-categoria').value = ""; 
                 document.getElementById('custo-fornecedor').value = "";
                 document.getElementById('custo-descricao').value = "";
                 document.getElementById('custo-qtd').value = 1;
                 document.getElementById('custo-valor-unit').value = "0,00";
                 document.getElementById('custo-valor-total').value = "R$ 0,00";
-                document.getElementById('custo-obs').value = ""; // Limpa a obs nova
+                document.getElementById('custo-obs').value = ""; 
             }
         }
 
@@ -503,15 +493,14 @@
                 let valLimpo = converterParaNumero(inputElement.value);
                 inputElement.value = formatarNumeroLimpo(valLimpo);
             }
-            
             let qtd = parseInt(document.getElementById('custo-qtd').value) || 1;
             let valorUnit = converterParaNumero(document.getElementById('custo-valor-unit').value);
             let total = qtd * valorUnit;
-            
             document.getElementById('custo-valor-total').value = formatarMoeda(total);
         }
 
-        function salvarCusto() {
+        // O BOTÃO DE SALVAR DESPESA NA PLANILHA
+        async function salvarCusto() {
             let id = document.getElementById('custo-id').value;
             let categoria = document.getElementById('custo-categoria').value.trim();
             let fornecedor = document.getElementById('custo-fornecedor').value;
@@ -521,33 +510,83 @@
             let valorUnit = converterParaNumero(document.getElementById('custo-valor-unit').value);
             let valorTotal = qtd * valorUnit;
 
-            if (categoria === "") categoria = "Outras Demandas"; // Proteção se ele salvar em branco
+            if (categoria === "") categoria = "Outras Demandas";
 
             if (fornecedor.trim() === "" || valorTotal <= 0) {
                 mostrarAlerta("Preencha o Fornecedor e o Valor Unitário para salvar a despesa.", "erro");
                 return;
             }
 
-            let novoCusto = { id: new Date().getTime(), categoria, fornecedor, descricao, obs, qtd, valorUnit, valorTotal };
-            custosDataBanco.push(novoCusto); 
+            if (!id) id = new Date().getTime(); // Gera um ID único se for novo
 
-            atualizarListasCategorias(); // O SEGREDO: Atualiza o filtro e o datalist com a nova categoria!
-            renderizarTabelaCustos();
-            calcularDashboard();
-            fecharModalCusto();
-            mostrarAlerta("Despesa adicionada na tela!<br><br>No próximo passo conectaremos a sua aba 'Custos' do Google Sheets.", "sucesso");
+            let novoCusto = { 
+                tipo: "CUSTO", 
+                id: id, 
+                categoria: categoria, 
+                fornecedor: fornecedor, 
+                descricao: descricao, 
+                obs: obs, 
+                qtd: qtd, 
+                valorUnit: valorUnit, 
+                valorTotal: valorTotal 
+            };
+
+            const btnSalvar = document.querySelector('#modal-custo .btn-salvar');
+            btnSalvar.innerText = "⏳ Salvando...";
+            btnSalvar.disabled = true;
+
+            try {
+                await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify(novoCusto)
+                });
+                
+                custosDataBanco.push(novoCusto); // Atualiza a memória local
+
+                atualizarListasCategorias(); 
+                renderizarTabelaCustos();
+                calcularDashboard();
+                fecharModalCusto();
+                mostrarAlerta("Despesa salva com sucesso na sua planilha!", "sucesso");
+            } catch (error) {
+                mostrarAlerta("Erro de conexão ao salvar a despesa. Tente novamente.", "erro");
+            } finally {
+                btnSalvar.innerText = "💾 Salvar Despesa";
+                btnSalvar.disabled = false;
+            }
         }
 
-        // ==========================================
-        // TABELA DE CUSTOS COM FILTRO E SOMA
-        // ==========================================
+        // O BOTÃO DE EXCLUIR DESPESA DA PLANILHA
+        function confirmarExclusaoCusto(id) {
+            mostrarAlerta("Deseja realmente excluir esta despesa permanentemente?", "confirmacao", () => executarExclusaoCusto(id));
+        }
+
+        async function executarExclusaoCusto(id) {
+            try {
+                await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({ acao: "EXCLUIR_CUSTO", id: id })
+                });
+
+                custosDataBanco = custosDataBanco.filter(c => c.id != id); // Apaga da memória
+                
+                atualizarListasCategorias();
+                renderizarTabelaCustos();
+                calcularDashboard();
+                mostrarAlerta("Despesa excluída com sucesso!", "sucesso");
+            } catch(e) {
+                mostrarAlerta("Erro ao excluir despesa da planilha.", "erro");
+            }
+        }
+
         function renderizarTabelaCustos() {
             const tbody = document.getElementById('tbodyCustos');
             const tfoot = document.getElementById('tfootCustos');
             tbody.innerHTML = '';
             tfoot.innerHTML = '';
 
-            // Lógica do Filtro Dinâmico
             let filtroSelecionado = document.getElementById('filtro-categoria-custos').value;
             let custosFiltrados = custosDataBanco;
 
@@ -563,9 +602,8 @@
             let somaVisaoAtual = 0;
 
             custosFiltrados.forEach(c => {
-                somaVisaoAtual += c.valorTotal;
+                somaVisaoAtual += parseFloat(c.valorTotal) || 0;
                 
-                // Formatação da Observação: Só aparece a linha se o cara digitou alguma coisa
                 let htmlObs = c.obs ? `<br><span style="font-size: 12px; color: #f59e0b; font-style: italic;">📝 Obs: ${c.obs}</span>` : '';
 
                 let tr = document.createElement('tr');
@@ -575,13 +613,12 @@
                     <td>${c.qtd}x</td>
                     <td style="color: #ef4444;">${formatarMoeda(c.valorTotal)}</td>
                     <td style="text-align: center;">
-                        <button class="btn-remover" onclick="mostrarAlerta('A exclusão será ativada com o banco de dados!', 'info')">🗑️</button>
+                        <button class="btn-remover" onclick="confirmarExclusaoCusto('${c.id}')">🗑️</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
 
-            // Adiciona o Rodapé com o Somatório Final
             tfoot.innerHTML = `
                 <tr>
                     <td colspan="3" style="text-align: right; font-size: 16px; color: #fff;">TOTAL DESTA VISÃO:</td>
@@ -592,7 +629,7 @@
         }
 
         // ==========================================
-        // RESTO DO SISTEMA DE MESAS MANTIDO
+        // LANÇAMENTOS DA MESA E PAGADORES
         // ==========================================
         function trocarMesaSelecionada(novoId, nomeDoMapa = null) {
             if(!novoId) {
@@ -926,7 +963,7 @@
                 }
                 
                 calcularDashboard(); 
-                mostrarAlerta("✅ Dados financeiros guardados com sucesso na Nuvem!", "sucesso");
+                mostrarAlerta("✅ Dados da Mesa guardados com sucesso na Nuvem!", "sucesso");
             } catch (error) {
                 mostrarAlerta("🔴 Erro de ligação! Verifique a internet e tente novamente.", "erro");
             } finally {
