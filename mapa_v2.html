@@ -96,7 +96,7 @@
 
         /* EFEITO VISÃO BUFFET PARA MESA VAZIA */
         .mesa-escura-buffet {
-            opacity: 0.3;
+            opacity: 0.35;
             filter: grayscale(100%);
         }
 
@@ -454,12 +454,10 @@
                                 if (isAdmin) {
                                     nomeParaMostrar = mesaObj.nome ? mesaObj.nome : "";
                                     
-                                    // Aparece o botão de cadeiras extras
                                     if (mesaObj.cadeirasExtra && parseInt(mesaObj.cadeirasExtra) > 0) {
                                         htmlBadgeExtra = `<div class="badge-extra">+${mesaObj.cadeirasExtra}</div>`;
                                     }
 
-                                    // O NOVO ALERTA DO CIFRÃO (Não aparece se for Buffet)
                                     if (!isBuffetMode && parseFloat(mesaObj.saldo) > 0 && statusClass !== "livre") {
                                         htmlBadgePagamento = `<div class="badge-pagamento" title="Possui saldo devedor">💲</div>`;
                                     }
@@ -481,16 +479,17 @@
                                 
                                 let textoStatusAcima = mesaObj.status || "Livre";
                                 let classeMesaBuffet = "";
+                                let conteudoBolinha = mesaObj.id;
 
                                 // MÁGICA DA VISÃO BUFFET
                                 if (isBuffetMode) {
+                                    textoStatusAcima = ""; // Oculta legenda do topo
                                     if (statusClass === "livre") {
                                         corBase = "#112240"; 
-                                        corStatusTexto = "#555";
                                         estiloBordaCss = "borda-solida";
-                                        textoStatusAcima = "NÃO MONTAR";
-                                        nomeParaMostrar = "<span style='color:#ef4444; font-weight:bold; letter-spacing:1px;'>VAZIA</span>";
+                                        nomeParaMostrar = ""; // Oculta nome/vazia de baixo
                                         classeMesaBuffet = "mesa-escura-buffet";
+                                        conteudoBolinha = `<span style="font-size: 1.8em; color: #8892b0;">✖</span>`; // O "X" proporcional
                                     }
                                 }
 
@@ -505,7 +504,7 @@
                                 mesaWrapper.innerHTML = `
                                     <div class="texto-acima" style="color: ${corStatusTexto};">${textoStatusAcima}</div>
                                     <div style="position: relative;" class="${classeMesaBuffet}">
-                                        <div class="bolinha-mesa ${setorConfig.classeTamanho} ${estiloBordaCss}" style="background-color: ${corBase};">${mesaObj.id}</div>
+                                        <div class="bolinha-mesa ${setorConfig.classeTamanho} ${estiloBordaCss}" style="background-color: ${corBase};">${conteudoBolinha}</div>
                                         ${htmlBadgeExtra}
                                         ${htmlBadgePagamento}
                                     </div>
