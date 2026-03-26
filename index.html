@@ -94,12 +94,7 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.8); z-index: 6;
         }
 
-        /* EFEITO VISÃO BUFFET PARA MESA VAZIA */
-        .mesa-escura-buffet {
-            opacity: 0.35;
-            filter: grayscale(100%);
-        }
-
+        .mesa-escura-buffet { opacity: 0.35; filter: grayscale(100%); }
         .grande-house-mix { position: absolute; top: 0; left: 0; width: 180px; height: 190px; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #1d2d50; border: 2px dashed var(--ciano-destaque); border-radius: 8px; color: var(--ciano-destaque); font-size: 16px; font-weight: bold; text-transform: uppercase; box-shadow: 0 4px 8px rgba(0,0,0,0.5); z-index: 5;}
         .grande-house-mix span.icone { font-size: 60px; margin-bottom: 5px; }
 
@@ -170,6 +165,7 @@
                 <button class="botao-acao" id="btn-login" onclick="abrirModalSenha()" style="background-color: #ef4444; color: #fff;">🔒 Acesso Equipe</button>
                 <div id="botoes-admin" style="display: none; gap: 10px;">
                     <button class="botao-acao" onclick="carregarMesas()" style="background-color: #3b82f6; color: #fff;">🔄 Atualizar</button>
+                    <button class="botao-acao" onclick="gerarRelatorioMarketing()" style="background-color: #a855f7; color: #fff;">📸 Relatório Marketing</button>
                     <button class="botao-acao" id="btn-buffet" onclick="toggleBuffet()" style="background-color: #10b981; color: #000;">🍽️ Visão Buffet</button>
                     <button class="botao-acao" onclick="abrirCofre()" style="background-color: #f59e0b; color: #000; border: 1px solid #fff;">📊 Cofre</button>
                 </div>
@@ -220,6 +216,12 @@
         <label>E-mail:</label>
         <input type="email" id="modal-email" placeholder="nome@email.com">
         
+        <label style="color: #a855f7;">📸 Projetar Logomarca (Marketing):</label>
+        <select id="modal-logo" style="border-color: #a855f7;">
+            <option value="Não">Não</option>
+            <option value="Sim">Sim, quero projetar minha marca</option>
+        </select>
+        
         <button class="btn btn-salvar" id="btn-salvar" onclick="salvarMesa()">Gravar na Planilha</button>
         <button class="btn btn-link" onclick="gerarLinkAprovacao()">🔗 Copiar Link de Aprovação</button>
         <button class="btn" onclick="pularParaFinanceiro()" style="background-color: #f59e0b; color: #000; margin-top: 10px;">💰 Financeiro Completo da Mesa</button>
@@ -242,7 +244,7 @@
     </div>
 
     <div class="overlay" id="overlay-alerta" style="z-index: 3000;"></div>
-    <div class="modal" id="modal-alerta" style="z-index: 3001; width: 320px; text-align: center;">
+    <div class="modal" id="modal-alerta" style="z-index: 3001; width: 340px; text-align: center;">
         <h3 id="alerta-titulo" style="border-bottom: none; margin-bottom: 10px; font-size: 22px;">Aviso</h3>
         <p id="alerta-mensagem" style="color: var(--texto-claro); font-size: 15px; margin-bottom: 25px; line-height: 1.4;"></p>
         <div id="alerta-botoes" style="display: flex; gap: 10px; justify-content: center; flex-direction: column;">
@@ -257,6 +259,7 @@
         let isAdmin = false; 
         let isBuffetMode = false;
         let acaoConfirmacaoGlobal = null; 
+        let textoRelatorioMarketingGlobal = "";
 
         const CONFIG_GERAL = { 
             edicao: "19ª", nomeEvento: "Noite Beneficente", ano: "2026", 
@@ -278,6 +281,9 @@
             document.getElementById('img-dupla').src = CONFIG_GERAL.caminhoShow;
         }
 
+        // ==========================================
+        // SISTEMA DE ALERTAS PREMIUM E MARKETING
+        // ==========================================
         function mostrarAlerta(mensagem, tipo = 'info', callback = null) {
             const modal = document.getElementById('modal-alerta');
             const overlay = document.getElementById('overlay-alerta');
@@ -296,29 +302,92 @@
                 titulo.innerHTML = '🟢 Sucesso'; titulo.style.color = '#4ade80';
                 botoes.innerHTML = `<button class="btn" style="background-color: #4ade80; color: #000; margin-top: 0;" onclick="fecharAlerta()">OK</button>`;
             } else if (tipo === 'confirmacao') {
-                titulo.innerHTML = '⚠️ Atenção'; titulo.style.color = '#f59e0b'; acaoConfirmacaoGlobal = callback;
-                botoes.innerHTML = `<button class="btn" style="background-color: #ef4444; color: #fff; margin-top: 0;" onclick="executarConfirmacao()">Sim, excluir tudo</button><button class="btn btn-fechar" style="margin-top: 0;" onclick="fecharAlerta()">Cancelar</button>`;
+                titulo.innerHTML = '⚠️ Atenção'; titulo.style.color = '#f59e0b';
+                acaoConfirmacaoGlobal = callback;
+                botoes.innerHTML = `
+                    <button class="btn" style="background-color: #ef4444; color: #fff; margin-top: 0;" onclick="executarConfirmacao()">Sim, excluir tudo</button>
+                    <button class="btn btn-fechar" style="margin-top: 0;" onclick="fecharAlerta()">Cancelar</button>
+                `;
             } else {
                 titulo.innerHTML = 'ℹ️ Aviso'; titulo.style.color = 'var(--ciano-destaque)';
                 botoes.innerHTML = `<button class="btn btn-salvar" style="margin-top: 0;" onclick="fecharAlerta()">OK</button>`;
             }
         }
 
-        function fecharAlerta() { document.getElementById('overlay-alerta').style.display = 'none'; document.getElementById('modal-alerta').style.display = 'none'; acaoConfirmacaoGlobal = null; }
-        function executarConfirmacao() { if (acaoConfirmacaoGlobal) acaoConfirmacaoGlobal(); fecharAlerta(); }
+        function fecharAlerta() {
+            document.getElementById('overlay-alerta').style.display = 'none';
+            document.getElementById('modal-alerta').style.display = 'none';
+            acaoConfirmacaoGlobal = null;
+        }
 
+        function executarConfirmacao() {
+            if (acaoConfirmacaoGlobal) acaoConfirmacaoGlobal();
+            fecharAlerta();
+        }
+
+        // LÓGICA DO RELATÓRIO DE MARKETING
+        function gerarRelatorioMarketing() {
+            let lista = mesasData.filter(m => m.logo === "Sim" && (m.status.toLowerCase() === "vendida" || m.status.toLowerCase() === "reservada"));
+            
+            if (lista.length === 0) {
+                mostrarAlerta("Nenhuma mesa optou pela projeção da logomarca até o momento.", "info");
+                return;
+            }
+
+            let htmlLista = "<div style='text-align: left; max-height: 250px; overflow-y: auto; background: #061020; padding: 15px; border-radius: 8px; border: 1px solid #233554;'>";
+            textoRelatorioMarketingGlobal = "📸 RELATÓRIO DE MARKETING - LOGOMARCAS 📸\n\n";
+
+            lista.forEach(m => {
+                htmlLista += `<p style="margin: 5px 0; border-bottom: 1px dashed #233554; padding-bottom: 5px;">
+                    <strong style="color: var(--ciano-destaque);">${m.id}</strong> - ${m.nome || "Sem Nome"} <br>
+                    <span style="font-size: 12px; color: #8892b0;">📞 ${m.telefone || "Sem telefone"}</span>
+                </p>`;
+                textoRelatorioMarketingGlobal += `Mesa ${m.id} - ${m.nome || "Sem Nome"} (Tel: ${m.telefone || "N/A"})\n`;
+            });
+            htmlLista += "</div>";
+
+            const modal = document.getElementById('modal-alerta');
+            document.getElementById('overlay-alerta').style.display = 'block';
+            modal.style.display = 'block';
+            
+            document.getElementById('alerta-titulo').innerHTML = '📸 Relatório de Marketing'; 
+            document.getElementById('alerta-titulo').style.color = '#a855f7';
+            document.getElementById('alerta-mensagem').innerHTML = "Lista de quem solicitou a projeção nos telões:<br><br>" + htmlLista;
+            
+            document.getElementById('alerta-botoes').innerHTML = `
+                <button class="btn" style="background-color: #a855f7; color: #fff; margin-top: 0;" onclick="copiarTextoMarketing()">📋 Copiar Lista p/ WhatsApp</button>
+                <button class="btn btn-fechar" style="margin-top: 0;" onclick="fecharAlerta()">Fechar</button>
+            `;
+        }
+
+        function copiarTextoMarketing() {
+            navigator.clipboard.writeText(textoRelatorioMarketingGlobal).then(() => {
+                alert("✅ Lista copiada com sucesso! Só colar no WhatsApp do Marketing.");
+            }).catch(err => {
+                alert("Erro ao copiar. Selecione o texto manualmente.");
+            });
+        }
+
+        // ==========================================
+        // SISTEMA DE SENHA E MENU TOP
+        // ==========================================
         function abrirModalSenha() {
             document.getElementById('overlay-senha').style.display = 'block';
             document.getElementById('modal-senha').style.display = 'block';
             const input = document.getElementById('input-senha-equipe');
             input.value = ''; input.type = 'password'; document.getElementById('icone-olho').innerText = '👁️'; input.focus();
         }
-        function fecharModalSenha() { document.getElementById('overlay-senha').style.display = 'none'; document.getElementById('modal-senha').style.display = 'none'; }
-        
+
+        function fecharModalSenha() {
+            document.getElementById('overlay-senha').style.display = 'none';
+            document.getElementById('modal-senha').style.display = 'none';
+        }
+
         function toggleSenha() {
             const input = document.getElementById('input-senha-equipe'); const icone = document.getElementById('icone-olho');
             if (input.type === "password") { input.type = "text"; icone.innerText = '🙈'; } else { input.type = "password"; icone.innerText = '👁️'; }
         }
+
         function verificarSenhaEnter(event) { if (event.key === "Enter") verificarSenha(); }
 
         function verificarSenha() {
@@ -350,6 +419,9 @@
 
         function abrirCofre() { window.open('financeiro.html', '_blank'); }
 
+        // ==========================================
+        // LÓGICA DO MAPA E API
+        // ==========================================
         async function carregarMesas() {
             document.getElementById('status-msg').innerHTML = "⏳ ATUALIZANDO DADOS...";
             document.getElementById('status-msg').style.color = "var(--cor-reservada)";
@@ -439,7 +511,7 @@
                                 
                                 if (!mesaObj) {
                                     let idFormatado = numeroEsperadoNaPosicaoFisica < 10 ? `0${numeroEsperadoNaPosicaoFisica}` : numeroEsperadoNaPosicaoFisica;
-                                    mesaObj = { id: `${setorConfig.prefixo}-${idFormatado}`, status: "Livre", nome: "" };
+                                    mesaObj = { id: `${setorConfig.prefixo}-${idFormatado}`, status: "Livre", nome: "", logo: "Não" };
                                 }
 
                                 const statusClass = (mesaObj.status || "livre").toLowerCase().trim();
@@ -519,12 +591,17 @@
             }
         }
 
+        // ==========================================
+        // MODAL DA MESA E A GUILHOTINA DE DADOS
+        // ==========================================
         function abrirModal(mesa) {
             document.getElementById('modal-title').innerText = `Mesa ${mesa.id}`;
             document.getElementById('modal-status').value = mesa.status || "Livre";
             document.getElementById('modal-nome').value = mesa.nome || "";
             document.getElementById('modal-telefone').value = mesa.telefone || "";
             document.getElementById('modal-email').value = mesa.email || ""; 
+            document.getElementById('modal-logo').value = mesa.logo === "Sim" ? "Sim" : "Não"; 
+            
             document.getElementById('overlay').style.display = 'block';
             document.getElementById('modal').style.display = 'block';
         }
@@ -540,12 +617,13 @@
             const nome = document.getElementById('modal-nome').value;
             const telefone = document.getElementById('modal-telefone').value;
             const email = document.getElementById('modal-email').value;
+            const logo = document.getElementById('modal-logo').value;
 
             const btnSalvar = document.getElementById('btn-salvar');
             btnSalvar.innerText = "Salvando...";
             btnSalvar.disabled = true;
 
-            const pacoteDeDados = { id: idMesa, status: status, nome: nome, telefone: telefone, email: email };
+            const pacoteDeDados = { id: idMesa, status: status, nome: nome, telefone: telefone, email: email, logo: logo };
 
             try {
                 await fetch(API_URL, {
@@ -560,6 +638,7 @@
                     mesasData[mesaIndex].nome = nome;
                     mesasData[mesaIndex].telefone = telefone;
                     mesasData[mesaIndex].email = email;
+                    mesasData[mesaIndex].logo = logo;
                 } else {
                     mesasData.push(pacoteDeDados); 
                 }
@@ -587,7 +666,7 @@
             btnLimpar.disabled = true;
 
             const pacoteZero = { 
-                id: idMesa, status: "Livre", nome: "", telefone: "", email: "", cadeirasExtra: 0,
+                id: idMesa, status: "Livre", nome: "", telefone: "", email: "", logo: "Não", cadeirasExtra: 0,
                 valorTotal: 0, valorPago: 0, saldo: 0, obs: "", detalhesJSON: ""
             };
 
