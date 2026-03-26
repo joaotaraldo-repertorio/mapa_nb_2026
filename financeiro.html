@@ -44,6 +44,7 @@
         .tabela-financeira th:first-child { text-align: left; }
         .tabela-financeira td { padding: 12px; border-bottom: 1px solid #233554; font-size: 15px; font-weight: bold; text-align: right;}
         .tabela-financeira td:first-child { text-align: left; font-size: 16px;}
+        .tabela-financeira tfoot td { background-color: #112240; color: var(--ciano-destaque); font-size: 16px; border-top: 2px solid var(--ciano-destaque); border-bottom: none;}
         
         .painel-simulador { background-color: #061020; border: 1px dashed #f59e0b; border-radius: 8px; padding: 25px;}
         .painel-simulador h3 { margin: 0 0 5px 0; color: #f59e0b; font-size: 22px; display: flex; align-items: center; gap: 8px;}
@@ -61,8 +62,8 @@
         .form-row { display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;}
         .form-group { display: flex; flex-direction: column; flex: 1; min-width: 150px;}
         .form-group label { font-size: 13px; color: #8892b0; font-weight: bold; margin-bottom: 5px;}
-        .form-group input, .form-group select { background-color: #0A192F; border: 1px solid #233554; color: #fff; padding: 10px; border-radius: 6px; outline: none; font-size: 15px; font-weight: bold;}
-        .form-group input:focus, .form-group select:focus { border-color: var(--ciano-destaque); }
+        .form-group input, .form-group select, .form-group textarea { background-color: #0A192F; border: 1px solid #233554; color: #fff; padding: 10px; border-radius: 6px; outline: none; font-size: 15px; font-weight: bold; font-family: Arial;}
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--ciano-destaque); }
         
         .campo-bloqueado { background-color: #061020 !important; color: #4ade80 !important; border-color: #4ade80 !important;}
         .campo-bloqueado-vermelho { background-color: #061020 !important; color: #ff4d4d !important; border-color: #ff4d4d !important;}
@@ -71,29 +72,24 @@
         .card-pagador { background-color: #0A192F; border: 1px solid var(--ciano-destaque); border-radius: 8px; padding: 15px; margin-bottom: 15px;}
         .card-pagador-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #233554; padding-bottom: 10px; margin-bottom: 15px;}
         .card-pagador-header h5 { margin: 0; color: var(--ciano-destaque); font-size: 18px;}
-        
-        /* BOTÕES */
         .btn-remover { background-color: transparent; border: 1px solid #ff4d4d; color: #ff4d4d; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;}
         .btn-remover:hover { background-color: #ff4d4d; color: #fff; }
-        .btn-add-pagador { background-color: #10b981; color: #fff; padding: 10px 15px; font-size: 14px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: 0.2s;}
-        .btn-add-pagador:hover { background-color: #059669; }
 
         .parcela-linha { display: flex; align-items: center; gap: 10px; background-color: #112240; padding: 10px; border-radius: 6px; margin-top: 8px; border: 1px solid #233554;}
         .parcela-linha input[type="date"] { background-color: #0A192F; border: 1px solid #233554; color: #fff; padding: 8px; border-radius: 4px; outline: none;}
         .parcela-linha input[type="text"] { background-color: #0A192F; border: 1px solid #233554; color: #fff; padding: 8px; border-radius: 4px; outline: none; width: 120px; font-weight: bold; text-align: right;}
         .status-pago { color: #4ade80; font-weight: bold; font-size: 14px;}
         .status-pendente { color: #f59e0b; font-weight: bold; font-size: 14px;}
+        
+        .btn-add-pagador { background-color: #10b981; color: #fff; padding: 10px 15px; font-size: 14px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: 0.2s;}
+        .btn-add-pagador:hover { background-color: #059669; }
 
         .alerta-selecione { background-color: rgba(245, 158, 11, 0.1); border: 1px solid #f59e0b; color: #f59e0b; padding: 20px; border-radius: 8px; text-align: center; font-size: 18px; font-weight: bold; margin-top: 50px;}
         .seletor-mesas { padding: 10px; border-radius: 6px; background-color: #0A192F; border: 1px solid var(--ciano-destaque); color: var(--ciano-destaque); font-weight: bold; font-size: 16px; cursor: pointer;}
 
-        /* =========================================
-           MODAIS E ALERTAS PREMIUM
-           ========================================= */
         .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--azul-card); padding: 25px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.9); z-index: 1000; width: 400px; border: 1px solid var(--ciano-destaque); color: var(--texto-claro); }
         .modal-largo { width: 600px; }
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 25, 47, 0.85); z-index: 999; backdrop-filter: blur(4px); }
-        
         .modal h3 { margin-top: 0; text-align: center; color: var(--ciano-destaque); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
         .btn { padding: 12px; font-weight: bold; border: none; cursor: pointer; width: 100%; border-radius: 6px; margin-top: 15px; font-size: 15px; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s;}
         .btn:hover { opacity: 0.8; }
@@ -106,7 +102,7 @@
     <div class="sidebar">
         <div class="sidebar-logo">NOITE<br>BENEFICENTE</div>
         <div class="menu-item ativo" onclick="mudarAba('aba-dashboard', this)">📊 Painel Financeiro</div>
-        <div class="menu-item" onclick="mudarAba('aba-custos', this)">💸 Custos</div>
+        <div class="menu-item" onclick="mudarAba('aba-custos', this)">💸 Gestão de Custos</div>
         <div class="menu-item" onclick="mudarAba('aba-lancamentos', this)">📝 Lançamentos (Mesa)</div>
         <div class="menu-item" onclick="window.close()" style="margin-top: auto; color: #ef4444;">❌ Fechar Cofre</div>
     </div>
@@ -115,7 +111,7 @@
 
         <div id="aba-dashboard" class="aba-conteudo ativo">
             <div class="cofre-header">
-                <h2><span>📊</span> Painel Financeiro Geral</h2>
+                <h2><span>📊</span> Painel Financeiro Geral (DRE)</h2>
                 <div style="display: flex; gap: 10px;">
                     <button class="botao-acao" onclick="carregarDadosDaPlanilha()" style="background-color: #3b82f6; color: #fff;">🔄 Atualizar Dados</button>
                 </div>
@@ -132,30 +128,34 @@
         <div id="aba-custos" class="aba-conteudo">
             <div class="cofre-header">
                 <h2><span>💸</span> Gestão de Custos e Despesas</h2>
-                <button class="botao-acao" onclick="abrirModalCusto()" style="background-color: #ef4444; color: #fff; font-size: 16px;">➕ Lançar Nova Despesa</button>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <select id="filtro-categoria-custos" class="seletor-mesas" onchange="renderizarTabelaCustos()" style="border-color: #ef4444; color: #ef4444;">
+                        <option value="TODAS">Mostrando: Todas as Categorias</option>
+                    </select>
+                    <button class="botao-acao" onclick="abrirModalCusto()" style="background-color: #ef4444; color: #fff; font-size: 16px;">➕ Lançar Nova Despesa</button>
+                </div>
             </div>
             <div class="area-tabela">
                 <table class="tabela-financeira" style="border-bottom: 2px solid #ef4444; min-width: 900px;">
                     <thead>
                         <tr>
                             <th style="border-bottom-color: #ef4444;">Categoria</th>
-                            <th style="border-bottom-color: #ef4444;">Fornecedor / Profissional</th>
-                            <th style="border-bottom-color: #ef4444;">Descrição do Item</th>
+                            <th style="border-bottom-color: #ef4444;">Fornecedor / Descrição</th>
                             <th style="border-bottom-color: #ef4444;">Qtd</th>
-                            <th style="border-bottom-color: #ef4444;">Valor Unit.</th>
                             <th style="border-bottom-color: #ef4444;">Valor Total</th>
                             <th style="border-bottom-color: #ef4444; text-align: center;">Ações</th>
                         </tr>
                     </thead>
                     <tbody id="tbodyCustos">
-                        <tr><td style="text-align:center;" colspan="7">Aguardando sincronização com a planilha...</td></tr>
+                        <tr><td style="text-align:center;" colspan="5">Aguardando sincronização com a planilha...</td></tr>
                     </tbody>
+                    <tfoot id="tfootCustos">
+                        </tfoot>
                 </table>
             </div>
         </div>
 
         <div id="aba-lancamentos" class="aba-conteudo">
-            
             <div id="alerta-nenhuma-mesa" class="alerta-selecione">
                 👈 Selecione uma mesa no menu acima ou acesse através do Mapa de Vendas.
             </div>
@@ -238,14 +238,10 @@
         <div class="form-row">
             <div class="form-group" style="flex: 1;">
                 <label>Categoria</label>
-                <select id="custo-categoria">
-                    <option value="Estrutura">Estrutura / Local</option>
-                    <option value="Buffet">Alimentação / Bebidas</option>
-                    <option value="Atrações">Atrações / Som / Luz</option>
-                    <option value="Marketing">Marketing / Gráfica</option>
-                    <option value="Equipe">Equipe de Apoio</option>
-                    <option value="Outros">Outros</option>
-                </select>
+                <input type="text" id="custo-categoria" list="lista-categorias-datalist" placeholder="Escolha ou digite uma nova...">
+                <datalist id="lista-categorias-datalist">
+                    </datalist>
+                <span style="font-size: 11px; color: #8892b0; margin-top: 4px;">Se a categoria não existir, basta digitar o nome novo e salvar!</span>
             </div>
             <div class="form-group" style="flex: 2;">
                 <label>Fornecedor / Profissional</label>
@@ -274,8 +270,15 @@
                 <input type="text" id="custo-valor-total" class="campo-bloqueado-vermelho" readonly value="R$ 0,00">
             </div>
         </div>
+
+        <div class="form-row">
+            <div class="form-group" style="flex: 1;">
+                <label>📝 Observações da Despesa</label>
+                <textarea id="custo-obs" placeholder="Dados de conta bancária, data de vencimento, acordos..." style="min-height: 60px;"></textarea>
+            </div>
+        </div>
         
-        <button class="btn btn-salvar" style="background-color: #ef4444; color: #fff;" onclick="salvarCusto()">💾 Salvar Despesa</button>
+        <button class="btn btn-salvar" style="background-color: #ef4444; color: #fff;" onclick="salvarCusto()">💾 Salvar Despesa na Tela</button>
         <button class="btn btn-fechar" onclick="fecharModalCusto()">Cancelar</button>
     </div>
 
@@ -290,7 +293,10 @@
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycby6hZ1cD-uIPafXIpRDe2DJzmYwjP4IRQgysxbVPNJOlKNDlE8ALvUTyBsoJlSQL2k/exec';
         let mesasDataBanco = []; 
-        let custosDataBanco = []; // O Banco de Dados local das despesas
+        let custosDataBanco = []; 
+
+        // O SEU BANCO DE CATEGORIAS PADRÃO
+        let categoriasPadrao = ["Atração Musical", "Estrutura e Som", "Bebidas", "Buffet", "Decoração", "Publicidade", "Taxas e Impostos", "Outras Demandas"];
 
         const CONFIG_MESAS = {
             "F": { nome: "Cota Família", valorBase: 25000, layout: [[6],[6]] },
@@ -309,10 +315,6 @@
 
         let pagadoresAtuais = []; 
         let nomeEditadoManualmente = false;
-
-        // ==========================================
-        // SISTEMA DE ALERTAS PREMIUM
-        // ==========================================
         let acaoConfirmacaoGlobal = null;
 
         function mostrarAlerta(mensagem, tipo = 'info', callback = null) {
@@ -382,12 +384,40 @@
             }
         }
 
+        // ==========================================
+        // O MOTOR DAS CATEGORIAS DINÂMICAS
+        // ==========================================
+        function atualizarListasCategorias() {
+            // Pega as categorias que você já usou nos lançamentos
+            let categoriasUsadas = custosDataBanco.map(c => c.categoria);
+            
+            // Mistura as padrões com as usadas, remove duplicadas e põe em ordem alfabética
+            let todasCategorias = [...new Set([...categoriasPadrao, ...categoriasUsadas])].sort();
+
+            // Atualiza o DataList do Formulário
+            let datalist = document.getElementById('lista-categorias-datalist');
+            datalist.innerHTML = todasCategorias.map(c => `<option value="${c}">`).join('');
+
+            // Atualiza o Filtro do Topo da Tabela
+            let filtro = document.getElementById('filtro-categoria-custos');
+            let valorAtual = filtro.value; // Guarda o que o usuário tava filtrando
+            
+            filtro.innerHTML = '<option value="TODAS">Mostrando: Todas as Categorias</option>' + 
+                               todasCategorias.map(c => `<option value="${c}">Filtrar: ${c}</option>`).join('');
+            
+            // Devolve o valor que tava selecionado antes
+            filtro.value = valorAtual || "TODAS";
+        }
+
         window.onload = async function() {
             carregarSeletorDeMesas();
-            // Simulação de despesa só para você ver a tela inicial bonita
+            
+            // Simulação de despesa só para você testar a tabela e o filtro antes da API
             custosDataBanco = [
-                {id: 1, categoria: "Estrutura", fornecedor: "Tenda Certa", descricao: "Aluguel de Tendas", qtd: 1, valorUnit: 1500, valorTotal: 1500}
+                {id: 1, categoria: "Estrutura e Som", fornecedor: "Tenda Certa", descricao: "Aluguel de Tendas", qtd: 1, valorUnit: 1500, valorTotal: 1500, obs: "Montagem na sexta-feira"},
+                {id: 2, categoria: "Bebidas", fornecedor: "Distribuidora XP", descricao: "Refrigerantes", qtd: 1, valorUnit: 800, valorTotal: 800, obs: ""}
             ];
+            atualizarListasCategorias();
             
             await carregarDadosDaPlanilha();
             
@@ -424,13 +454,12 @@
                 totalRecebido += pago;
             });
             
-            // Soma as Despesas
             custosDataBanco.forEach(c => {
                 totalCustos += parseFloat(c.valorTotal) || 0;
             });
 
             totalPendente = totalFechado - totalRecebido;
-            let lucroLiquido = totalFechado - totalCustos; // DRE REAL!
+            let lucroLiquido = totalFechado - totalCustos; 
             
             document.getElementById('cofreFechado').innerText = formatarMoeda(totalFechado);
             document.getElementById('cofreRecebido').innerText = formatarMoeda(totalRecebido);
@@ -438,7 +467,6 @@
             document.getElementById('cofreCustosTotais').innerText = formatarMoeda(totalCustos);
             document.getElementById('cofreLucroLiquido').innerText = formatarMoeda(lucroLiquido);
             
-            // Se der prejuízo, o lucro fica vermelho
             if(lucroLiquido < 0) {
                 document.getElementById('cofreLucroLiquido').style.color = '#ff4d4d';
                 document.querySelector('.cofre-lucro').style.borderTopColor = '#ff4d4d';
@@ -448,9 +476,6 @@
             }
         }
 
-        // ==========================================
-        // GESTÃO DE CUSTOS (DESPESAS)
-        // ==========================================
         function abrirModalCusto(id = null) {
             document.getElementById('overlay-custo').style.display = 'block';
             document.getElementById('modal-custo').style.display = 'block';
@@ -458,12 +483,13 @@
             if (id === null) {
                 document.getElementById('titulo-modal-custo').innerText = "➕ Lançar Despesa";
                 document.getElementById('custo-id').value = "";
-                document.getElementById('custo-categoria').value = "Estrutura";
+                document.getElementById('custo-categoria').value = ""; // Vem em branco para ele escolher/digitar
                 document.getElementById('custo-fornecedor').value = "";
                 document.getElementById('custo-descricao').value = "";
                 document.getElementById('custo-qtd').value = 1;
                 document.getElementById('custo-valor-unit').value = "0,00";
                 document.getElementById('custo-valor-total').value = "R$ 0,00";
+                document.getElementById('custo-obs').value = ""; // Limpa a obs nova
             }
         }
 
@@ -487,53 +513,86 @@
 
         function salvarCusto() {
             let id = document.getElementById('custo-id').value;
-            let categoria = document.getElementById('custo-categoria').value;
+            let categoria = document.getElementById('custo-categoria').value.trim();
             let fornecedor = document.getElementById('custo-fornecedor').value;
             let descricao = document.getElementById('custo-descricao').value;
+            let obs = document.getElementById('custo-obs').value;
             let qtd = parseInt(document.getElementById('custo-qtd').value) || 1;
             let valorUnit = converterParaNumero(document.getElementById('custo-valor-unit').value);
             let valorTotal = qtd * valorUnit;
+
+            if (categoria === "") categoria = "Outras Demandas"; // Proteção se ele salvar em branco
 
             if (fornecedor.trim() === "" || valorTotal <= 0) {
                 mostrarAlerta("Preencha o Fornecedor e o Valor Unitário para salvar a despesa.", "erro");
                 return;
             }
 
-            let novoCusto = { id: new Date().getTime(), categoria, fornecedor, descricao, qtd, valorUnit, valorTotal };
-            custosDataBanco.push(novoCusto); // Salva na memória por enquanto
+            let novoCusto = { id: new Date().getTime(), categoria, fornecedor, descricao, obs, qtd, valorUnit, valorTotal };
+            custosDataBanco.push(novoCusto); 
 
+            atualizarListasCategorias(); // O SEGREDO: Atualiza o filtro e o datalist com a nova categoria!
             renderizarTabelaCustos();
             calcularDashboard();
             fecharModalCusto();
-            mostrarAlerta("Despesa adicionada na tela com sucesso!<br><br>No próximo passo vamos conectar a sua aba 'Custos' do Google Sheets para arquivar isso definitivamente.", "sucesso");
+            mostrarAlerta("Despesa adicionada na tela!<br><br>No próximo passo conectaremos a sua aba 'Custos' do Google Sheets.", "sucesso");
         }
 
+        // ==========================================
+        // TABELA DE CUSTOS COM FILTRO E SOMA
+        // ==========================================
         function renderizarTabelaCustos() {
             const tbody = document.getElementById('tbodyCustos');
+            const tfoot = document.getElementById('tfootCustos');
             tbody.innerHTML = '';
+            tfoot.innerHTML = '';
 
-            if(custosDataBanco.length === 0) {
-                tbody.innerHTML = '<tr><td style="text-align:center;" colspan="5">Nenhuma despesa lançada ainda.</td></tr>';
+            // Lógica do Filtro Dinâmico
+            let filtroSelecionado = document.getElementById('filtro-categoria-custos').value;
+            let custosFiltrados = custosDataBanco;
+
+            if (filtroSelecionado !== "TODAS") {
+                custosFiltrados = custosDataBanco.filter(c => c.categoria === filtroSelecionado);
+            }
+
+            if(custosFiltrados.length === 0) {
+                tbody.innerHTML = '<tr><td style="text-align:center;" colspan="5">Nenhuma despesa encontrada nesta visão.</td></tr>';
                 return;
             }
 
-            custosDataBanco.forEach(c => {
+            let somaVisaoAtual = 0;
+
+            custosFiltrados.forEach(c => {
+                somaVisaoAtual += c.valorTotal;
+                
+                // Formatação da Observação: Só aparece a linha se o cara digitou alguma coisa
+                let htmlObs = c.obs ? `<br><span style="font-size: 12px; color: #f59e0b; font-style: italic;">📝 Obs: ${c.obs}</span>` : '';
+
                 let tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td style="text-align: left; font-size: 14px; font-weight: normal; color: var(--ciano-destaque);">${c.categoria}</td>
-                    <td style="text-align: left; font-size: 15px;">${c.fornecedor}<br><span style="font-size: 12px; color: #8892b0; font-weight: normal;">${c.descricao}</span></td>
+                    <td style="text-align: left; font-size: 15px;">${c.fornecedor}<br><span style="font-size: 13px; color: #8892b0; font-weight: normal;">${c.descricao}</span>${htmlObs}</td>
                     <td>${c.qtd}x</td>
                     <td style="color: #ef4444;">${formatarMoeda(c.valorTotal)}</td>
                     <td style="text-align: center;">
-                        <button class="btn-remover" onclick="mostrarAlerta('A exclusão será ativada junto com o banco de dados!', 'info')">🗑️</button>
+                        <button class="btn-remover" onclick="mostrarAlerta('A exclusão será ativada com o banco de dados!', 'info')">🗑️</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
+
+            // Adiciona o Rodapé com o Somatório Final
+            tfoot.innerHTML = `
+                <tr>
+                    <td colspan="3" style="text-align: right; font-size: 16px; color: #fff;">TOTAL DESTA VISÃO:</td>
+                    <td style="color: #ef4444; font-size: 20px;">${formatarMoeda(somaVisaoAtual)}</td>
+                    <td></td>
+                </tr>
+            `;
         }
 
         // ==========================================
-        // LANÇAMENTOS DA MESA E PAGADORES
+        // RESTO DO SISTEMA DE MESAS MANTIDO
         // ==========================================
         function trocarMesaSelecionada(novoId, nomeDoMapa = null) {
             if(!novoId) {
