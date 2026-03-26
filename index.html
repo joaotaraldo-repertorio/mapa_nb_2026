@@ -133,18 +133,48 @@
         .btn-olho { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; font-size: 18px; user-select: none;}
 
         /* =========================================
-           7. CONFIGURAÇÕES NATURAIS DE IMPRESSÃO
+           7. CONFIGURAÇÕES NATURAIS DE IMPRESSÃO (O SEGREDO DA ECONOMIA)
            ========================================= */
         @media print {
-            body { background-color: var(--azul-fundo); margin: 0; padding: 0; }
-            .painel-topo { display: none !important; }
-            .modal, .overlay { display: none !important; }
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            #area-exportacao { max-width: 100%; width: 100%; box-shadow: none; border: none;}
-            .setor { break-inside: avoid; page-break-inside: avoid; margin-bottom: 20px; }
-            .fileira-mesas { break-inside: avoid; page-break-inside: avoid; }
+            @page { size: landscape; margin: 10mm; }
+            body { background-color: #ffffff !important; margin: 0; padding: 0; }
+            #area-exportacao { max-width: 100%; width: 100%; box-shadow: none; border: none; background-color: #ffffff !important; }
+            
+            /* Esconde painéis, menus, modais e a legenda do rodapé */
+            .painel-topo, .painel-rodape, .modal, .overlay { display: none !important; }
+            
+            /* Esconde os banheiros e aparadores (as tarjas laterais) */
+            .tarja-lateral { display: none !important; }
+
+            /* Ajusta o Palco para impressão econômica */
+            .palco { background-color: #e5e7eb !important; color: #000 !important; border: 2px solid #000 !important; box-shadow: none !important; margin-bottom: 20px;}
+
+            /* Tira o fundo do setor e bota contorno escuro e limpo */
+            .setor { 
+                background-color: transparent !important; 
+                border: 2px solid #333 !important; 
+                box-shadow: none !important; 
+                margin-bottom: 15px; 
+                padding: 10px;
+                break-inside: avoid; 
+                page-break-inside: avoid; 
+            }
+            
+            /* Textos na cor preta para dar leitura no papel branco */
+            .setor h3 { color: #000 !important; text-shadow: none !important; border-bottom: 1px solid #ccc !important; padding-bottom: 5px; margin-bottom: 10px;}
+            .texto-abaixo { color: #000 !important; font-weight: bold !important; font-size: 14px !important;}
+            .texto-acima { color: #555 !important; }
+            
+            /* Escala mágica para caber na folha sem travar */
+            #container-salao { 
+                padding: 0 !important;
+                zoom: 0.65; /* Efeito encolhedor ativado na hora da impressão */
+            }
+            
+            .fileira-mesas { break-inside: avoid; page-break-inside: avoid; margin-bottom: 15px;}
             .wrapper-mesa { break-inside: avoid; page-break-inside: avoid; }
-            .painel-rodape { break-inside: avoid; page-break-inside: avoid; }
+            
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
     </style>
 </head>
@@ -325,7 +355,6 @@
             fecharAlerta();
         }
 
-        // LÓGICA DO RELATÓRIO DE MARKETING
         function gerarRelatorioMarketing() {
             let lista = mesasData.filter(m => m.logo === "Sim" && (m.status.toLowerCase() === "vendida" || m.status.toLowerCase() === "reservada"));
             
@@ -591,9 +620,6 @@
             }
         }
 
-        // ==========================================
-        // MODAL DA MESA E A GUILHOTINA DE DADOS
-        // ==========================================
         function abrirModal(mesa) {
             document.getElementById('modal-title').innerText = `Mesa ${mesa.id}`;
             document.getElementById('modal-status').value = mesa.status || "Livre";
