@@ -71,20 +71,34 @@
         .card-pagador { background-color: #0A192F; border: 1px solid var(--ciano-destaque); border-radius: 8px; padding: 15px; margin-bottom: 15px;}
         .card-pagador-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #233554; padding-bottom: 10px; margin-bottom: 15px;}
         .card-pagador-header h5 { margin: 0; color: var(--ciano-destaque); font-size: 18px;}
+        
+        /* BOTÕES */
         .btn-remover { background-color: transparent; border: 1px solid #ff4d4d; color: #ff4d4d; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;}
         .btn-remover:hover { background-color: #ff4d4d; color: #fff; }
+        .btn-add-pagador { background-color: #10b981; color: #fff; padding: 10px 15px; font-size: 14px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: 0.2s;}
+        .btn-add-pagador:hover { background-color: #059669; }
 
         .parcela-linha { display: flex; align-items: center; gap: 10px; background-color: #112240; padding: 10px; border-radius: 6px; margin-top: 8px; border: 1px solid #233554;}
         .parcela-linha input[type="date"] { background-color: #0A192F; border: 1px solid #233554; color: #fff; padding: 8px; border-radius: 4px; outline: none;}
         .parcela-linha input[type="text"] { background-color: #0A192F; border: 1px solid #233554; color: #fff; padding: 8px; border-radius: 4px; outline: none; width: 120px; font-weight: bold; text-align: right;}
         .status-pago { color: #4ade80; font-weight: bold; font-size: 14px;}
         .status-pendente { color: #f59e0b; font-weight: bold; font-size: 14px;}
-        
-        .btn-add-pagador { background-color: #10b981; color: #fff; padding: 10px 15px; font-size: 14px; font-weight: bold; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: 0.2s;}
-        .btn-add-pagador:hover { background-color: #059669; }
 
         .alerta-selecione { background-color: rgba(245, 158, 11, 0.1); border: 1px solid #f59e0b; color: #f59e0b; padding: 20px; border-radius: 8px; text-align: center; font-size: 18px; font-weight: bold; margin-top: 50px;}
         .seletor-mesas { padding: 10px; border-radius: 6px; background-color: #0A192F; border: 1px solid var(--ciano-destaque); color: var(--ciano-destaque); font-weight: bold; font-size: 16px; cursor: pointer;}
+
+        /* =========================================
+           MODAIS E ALERTAS PREMIUM
+           ========================================= */
+        .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--azul-card); padding: 25px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.9); z-index: 1000; width: 400px; border: 1px solid var(--ciano-destaque); color: var(--texto-claro); }
+        .modal-largo { width: 600px; }
+        .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 25, 47, 0.85); z-index: 999; backdrop-filter: blur(4px); }
+        
+        .modal h3 { margin-top: 0; text-align: center; color: var(--ciano-destaque); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; }
+        .btn { padding: 12px; font-weight: bold; border: none; cursor: pointer; width: 100%; border-radius: 6px; margin-top: 15px; font-size: 15px; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s;}
+        .btn:hover { opacity: 0.8; }
+        .btn-salvar { background: var(--ciano-destaque); color: #0A192F; }
+        .btn-fechar { background: transparent; color: #8892b0; border: 1px solid #8892b0; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -118,12 +132,24 @@
         <div id="aba-custos" class="aba-conteudo">
             <div class="cofre-header">
                 <h2><span>💸</span> Gestão de Custos e Despesas</h2>
-                <button class="botao-acao" style="background-color: #ef4444; color: #fff;">➕ Lançar Nova Despesa</button>
+                <button class="botao-acao" onclick="abrirModalCusto()" style="background-color: #ef4444; color: #fff; font-size: 16px;">➕ Lançar Nova Despesa</button>
             </div>
             <div class="area-tabela">
-                <table class="tabela-financeira" style="border-bottom: 2px solid #ef4444;">
-                    <thead><tr><th>Categoria</th><th>Fornecedor</th><th>Qtd</th><th>Valor Total</th><th>Ações</th></tr></thead>
-                    <tbody><tr><td style="text-align:center;" colspan="5">Nenhuma despesa lançada ainda.</td></tr></tbody>
+                <table class="tabela-financeira" style="border-bottom: 2px solid #ef4444; min-width: 900px;">
+                    <thead>
+                        <tr>
+                            <th style="border-bottom-color: #ef4444;">Categoria</th>
+                            <th style="border-bottom-color: #ef4444;">Fornecedor / Profissional</th>
+                            <th style="border-bottom-color: #ef4444;">Descrição do Item</th>
+                            <th style="border-bottom-color: #ef4444;">Qtd</th>
+                            <th style="border-bottom-color: #ef4444;">Valor Unit.</th>
+                            <th style="border-bottom-color: #ef4444;">Valor Total</th>
+                            <th style="border-bottom-color: #ef4444; text-align: center;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyCustos">
+                        <tr><td style="text-align:center;" colspan="7">Aguardando sincronização com a planilha...</td></tr>
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -204,9 +230,67 @@
 
     </div>
 
+    <div class="overlay" id="overlay-custo" onclick="fecharModalCusto()"></div>
+    <div class="modal modal-largo" id="modal-custo">
+        <h3 id="titulo-modal-custo" style="color: #ef4444; border-bottom-color: #ef4444;">➕ Lançar Despesa</h3>
+        <input type="hidden" id="custo-id">
+        
+        <div class="form-row">
+            <div class="form-group" style="flex: 1;">
+                <label>Categoria</label>
+                <select id="custo-categoria">
+                    <option value="Estrutura">Estrutura / Local</option>
+                    <option value="Buffet">Alimentação / Bebidas</option>
+                    <option value="Atrações">Atrações / Som / Luz</option>
+                    <option value="Marketing">Marketing / Gráfica</option>
+                    <option value="Equipe">Equipe de Apoio</option>
+                    <option value="Outros">Outros</option>
+                </select>
+            </div>
+            <div class="form-group" style="flex: 2;">
+                <label>Fornecedor / Profissional</label>
+                <input type="text" id="custo-fornecedor" placeholder="Nome da empresa ou pessoa...">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group" style="flex: 1;">
+                <label>Descrição do Item</label>
+                <input type="text" id="custo-descricao" placeholder="O que foi contratado?">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group" style="flex: 1;">
+                <label>Quantidade</label>
+                <input type="number" id="custo-qtd" value="1" min="1" onchange="calcularTotalCusto()">
+            </div>
+            <div class="form-group" style="flex: 1;">
+                <label>Valor Unitário (R$)</label>
+                <input type="text" id="custo-valor-unit" value="0,00" onchange="calcularTotalCusto(this)">
+            </div>
+            <div class="form-group" style="flex: 1;">
+                <label>Valor Total (R$)</label>
+                <input type="text" id="custo-valor-total" class="campo-bloqueado-vermelho" readonly value="R$ 0,00">
+            </div>
+        </div>
+        
+        <button class="btn btn-salvar" style="background-color: #ef4444; color: #fff;" onclick="salvarCusto()">💾 Salvar Despesa</button>
+        <button class="btn btn-fechar" onclick="fecharModalCusto()">Cancelar</button>
+    </div>
+
+    <div class="overlay" id="overlay-alerta" style="z-index: 3000;"></div>
+    <div class="modal" id="modal-alerta" style="z-index: 3001; width: 320px; text-align: center;">
+        <h3 id="alerta-titulo" style="border-bottom: none; margin-bottom: 10px; font-size: 22px;">Aviso</h3>
+        <p id="alerta-mensagem" style="color: var(--texto-claro); font-size: 15px; margin-bottom: 25px; line-height: 1.4;"></p>
+        <div id="alerta-botoes" style="display: flex; gap: 10px; justify-content: center; flex-direction: column;">
+        </div>
+    </div>
+
     <script>
         const API_URL = 'https://script.google.com/macros/s/AKfycby6hZ1cD-uIPafXIpRDe2DJzmYwjP4IRQgysxbVPNJOlKNDlE8ALvUTyBsoJlSQL2k/exec';
         let mesasDataBanco = []; 
+        let custosDataBanco = []; // O Banco de Dados local das despesas
 
         const CONFIG_MESAS = {
             "F": { nome: "Cota Família", valorBase: 25000, layout: [[6],[6]] },
@@ -225,6 +309,56 @@
 
         let pagadoresAtuais = []; 
         let nomeEditadoManualmente = false;
+
+        // ==========================================
+        // SISTEMA DE ALERTAS PREMIUM
+        // ==========================================
+        let acaoConfirmacaoGlobal = null;
+
+        function mostrarAlerta(mensagem, tipo = 'info', callback = null) {
+            const modal = document.getElementById('modal-alerta');
+            const overlay = document.getElementById('overlay-alerta');
+            const titulo = document.getElementById('alerta-titulo');
+            const msg = document.getElementById('alerta-mensagem');
+            const botoes = document.getElementById('alerta-botoes');
+
+            overlay.style.display = 'block';
+            modal.style.display = 'block';
+            msg.innerHTML = mensagem;
+
+            if (tipo === 'erro') {
+                titulo.innerHTML = '🔴 Erro';
+                titulo.style.color = '#ff4d4d';
+                botoes.innerHTML = `<button class="btn" style="background-color: #ff4d4d; color: #fff; margin-top: 0;" onclick="fecharAlerta()">Entendi</button>`;
+            } else if (tipo === 'sucesso') {
+                titulo.innerHTML = '🟢 Sucesso';
+                titulo.style.color = '#4ade80';
+                botoes.innerHTML = `<button class="btn" style="background-color: #4ade80; color: #000; margin-top: 0;" onclick="fecharAlerta()">OK</button>`;
+            } else if (tipo === 'confirmacao') {
+                titulo.innerHTML = '⚠️ Atenção';
+                titulo.style.color = '#f59e0b';
+                acaoConfirmacaoGlobal = callback;
+                botoes.innerHTML = `
+                    <button class="btn" style="background-color: #ef4444; color: #fff; margin-top: 0;" onclick="executarConfirmacao()">Sim, confirmar</button>
+                    <button class="btn btn-fechar" style="margin-top: 0;" onclick="fecharAlerta()">Cancelar</button>
+                `;
+            } else {
+                titulo.innerHTML = 'ℹ️ Aviso';
+                titulo.style.color = 'var(--ciano-destaque)';
+                botoes.innerHTML = `<button class="btn btn-salvar" style="margin-top: 0;" onclick="fecharAlerta()">OK</button>`;
+            }
+        }
+
+        function fecharAlerta() {
+            document.getElementById('overlay-alerta').style.display = 'none';
+            document.getElementById('modal-alerta').style.display = 'none';
+            acaoConfirmacaoGlobal = null;
+        }
+
+        function executarConfirmacao() {
+            if (acaoConfirmacaoGlobal) acaoConfirmacaoGlobal();
+            fecharAlerta();
+        }
 
         function mudarAba(idAba, elementoClicado) {
             document.querySelectorAll('.aba-conteudo').forEach(aba => aba.classList.remove('ativo'));
@@ -250,17 +384,23 @@
 
         window.onload = async function() {
             carregarSeletorDeMesas();
+            // Simulação de despesa só para você ver a tela inicial bonita
+            custosDataBanco = [
+                {id: 1, categoria: "Estrutura", fornecedor: "Tenda Certa", descricao: "Aluguel de Tendas", qtd: 1, valorUnit: 1500, valorTotal: 1500}
+            ];
+            
             await carregarDadosDaPlanilha();
             
             const urlParams = new URLSearchParams(window.location.search);
             const mesaPuxada = urlParams.get('mesa');
-            const nomeDigitadoNoMapa = urlParams.get('nome'); // Pega o nome vindo do mapa!
+            const nomeDigitadoNoMapa = urlParams.get('nome'); 
             
             if(mesaPuxada) {
                 document.getElementById('seletor-mesas').value = mesaPuxada;
                 trocarMesaSelecionada(mesaPuxada, nomeDigitadoNoMapa ? decodeURIComponent(nomeDigitadoNoMapa) : null);
                 mudarAba('aba-lancamentos', document.querySelectorAll('.menu-item')[2]);
             }
+            renderizarTabelaCustos();
         };
 
         async function carregarDadosDaPlanilha() {
@@ -275,6 +415,7 @@
             let totalFechado = 0;
             let totalRecebido = 0;
             let totalPendente = 0;
+            let totalCustos = 0;
             
             mesasDataBanco.forEach(m => {
                 let valor = parseFloat(m.valorTotal) || 0;
@@ -283,14 +424,117 @@
                 totalRecebido += pago;
             });
             
+            // Soma as Despesas
+            custosDataBanco.forEach(c => {
+                totalCustos += parseFloat(c.valorTotal) || 0;
+            });
+
             totalPendente = totalFechado - totalRecebido;
+            let lucroLiquido = totalFechado - totalCustos; // DRE REAL!
             
             document.getElementById('cofreFechado').innerText = formatarMoeda(totalFechado);
             document.getElementById('cofreRecebido').innerText = formatarMoeda(totalRecebido);
             document.getElementById('cofrePendente').innerText = formatarMoeda(totalPendente);
-            document.getElementById('cofreLucroLiquido').innerText = formatarMoeda(totalFechado);
+            document.getElementById('cofreCustosTotais').innerText = formatarMoeda(totalCustos);
+            document.getElementById('cofreLucroLiquido').innerText = formatarMoeda(lucroLiquido);
+            
+            // Se der prejuízo, o lucro fica vermelho
+            if(lucroLiquido < 0) {
+                document.getElementById('cofreLucroLiquido').style.color = '#ff4d4d';
+                document.querySelector('.cofre-lucro').style.borderTopColor = '#ff4d4d';
+            } else {
+                document.getElementById('cofreLucroLiquido').style.color = '#10b981';
+                document.querySelector('.cofre-lucro').style.borderTopColor = '#10b981';
+            }
         }
 
+        // ==========================================
+        // GESTÃO DE CUSTOS (DESPESAS)
+        // ==========================================
+        function abrirModalCusto(id = null) {
+            document.getElementById('overlay-custo').style.display = 'block';
+            document.getElementById('modal-custo').style.display = 'block';
+            
+            if (id === null) {
+                document.getElementById('titulo-modal-custo').innerText = "➕ Lançar Despesa";
+                document.getElementById('custo-id').value = "";
+                document.getElementById('custo-categoria').value = "Estrutura";
+                document.getElementById('custo-fornecedor').value = "";
+                document.getElementById('custo-descricao').value = "";
+                document.getElementById('custo-qtd').value = 1;
+                document.getElementById('custo-valor-unit').value = "0,00";
+                document.getElementById('custo-valor-total').value = "R$ 0,00";
+            }
+        }
+
+        function fecharModalCusto() {
+            document.getElementById('overlay-custo').style.display = 'none';
+            document.getElementById('modal-custo').style.display = 'none';
+        }
+
+        function calcularTotalCusto(inputElement = null) {
+            if(inputElement) {
+                let valLimpo = converterParaNumero(inputElement.value);
+                inputElement.value = formatarNumeroLimpo(valLimpo);
+            }
+            
+            let qtd = parseInt(document.getElementById('custo-qtd').value) || 1;
+            let valorUnit = converterParaNumero(document.getElementById('custo-valor-unit').value);
+            let total = qtd * valorUnit;
+            
+            document.getElementById('custo-valor-total').value = formatarMoeda(total);
+        }
+
+        function salvarCusto() {
+            let id = document.getElementById('custo-id').value;
+            let categoria = document.getElementById('custo-categoria').value;
+            let fornecedor = document.getElementById('custo-fornecedor').value;
+            let descricao = document.getElementById('custo-descricao').value;
+            let qtd = parseInt(document.getElementById('custo-qtd').value) || 1;
+            let valorUnit = converterParaNumero(document.getElementById('custo-valor-unit').value);
+            let valorTotal = qtd * valorUnit;
+
+            if (fornecedor.trim() === "" || valorTotal <= 0) {
+                mostrarAlerta("Preencha o Fornecedor e o Valor Unitário para salvar a despesa.", "erro");
+                return;
+            }
+
+            let novoCusto = { id: new Date().getTime(), categoria, fornecedor, descricao, qtd, valorUnit, valorTotal };
+            custosDataBanco.push(novoCusto); // Salva na memória por enquanto
+
+            renderizarTabelaCustos();
+            calcularDashboard();
+            fecharModalCusto();
+            mostrarAlerta("Despesa adicionada na tela com sucesso!<br><br>No próximo passo vamos conectar a sua aba 'Custos' do Google Sheets para arquivar isso definitivamente.", "sucesso");
+        }
+
+        function renderizarTabelaCustos() {
+            const tbody = document.getElementById('tbodyCustos');
+            tbody.innerHTML = '';
+
+            if(custosDataBanco.length === 0) {
+                tbody.innerHTML = '<tr><td style="text-align:center;" colspan="5">Nenhuma despesa lançada ainda.</td></tr>';
+                return;
+            }
+
+            custosDataBanco.forEach(c => {
+                let tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="text-align: left; font-size: 14px; font-weight: normal; color: var(--ciano-destaque);">${c.categoria}</td>
+                    <td style="text-align: left; font-size: 15px;">${c.fornecedor}<br><span style="font-size: 12px; color: #8892b0; font-weight: normal;">${c.descricao}</span></td>
+                    <td>${c.qtd}x</td>
+                    <td style="color: #ef4444;">${formatarMoeda(c.valorTotal)}</td>
+                    <td style="text-align: center;">
+                        <button class="btn-remover" onclick="mostrarAlerta('A exclusão será ativada junto com o banco de dados!', 'info')">🗑️</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ==========================================
+        // LANÇAMENTOS DA MESA E PAGADORES
+        // ==========================================
         function trocarMesaSelecionada(novoId, nomeDoMapa = null) {
             if(!novoId) {
                 document.getElementById('alerta-nenhuma-mesa').style.display = 'block';
@@ -298,7 +542,6 @@
                 return;
             }
 
-            // LIMPEZA DA MESA ANTERIOR
             document.getElementById('containerPagadores').innerHTML = '';
 
             mesaAtualID = novoId;
@@ -320,13 +563,11 @@
             
             nomeEditadoManualmente = false;
             
-            // Lógica do Nome Fresquinho do Mapa
             let nomeParaUsar = nomeDoMapa !== null ? nomeDoMapa : (mesaNoBanco.nome || "");
             document.getElementById('campoNomeExibido').value = nomeParaUsar;
             
             pagadoresAtuais = []; 
             
-            // O SANITIZADOR DE DADOS: Conserta as sujeiras dos testes passados
             if(mesaNoBanco.detalhesJSON && mesaNoBanco.detalhesJSON.trim() !== "") {
                 try {
                     let parsed = JSON.parse(mesaNoBanco.detalhesJSON);
@@ -344,12 +585,10 @@
                 } catch(e) { pagadoresAtuais = []; }
             }
             
-            // Se a mesa for nova, cria a ficha com o Nome Fresquinho
             if(pagadoresAtuais.length === 0) {
                 let cotaSug = valorBaseDaMesa + valorCadeirasExtrasGlobais;
                 pagadoresAtuais.push({ id: 'pag_1', nome: nomeParaUsar, telefone: mesaNoBanco.telefone || "", cadeirasExtra: 0, valorCota: cotaSug, pagamento: "Dinheiro", qtdParcelas: 1, parcelas: [{ numero: 1, valor: cotaSug, pago: false, vencimento: "" }] });
             } else if (pagadoresAtuais.length === 1 && pagadoresAtuais[0].nome === "" && nomeParaUsar !== "") {
-                // Se tinha uma ficha em branco, atualiza o nome
                 pagadoresAtuais[0].nome = nomeParaUsar;
             }
 
@@ -430,11 +669,11 @@
         }
 
         function removerPagador(index) {
-            if(confirm("Deseja remover este pagador?")) {
+            mostrarAlerta("Deseja remover este pagador e todas as suas parcelas?", "confirmacao", () => {
                 pagadoresAtuais.splice(index, 1); 
                 atualizarNomeExibidoAutomaticamente();
                 dividirTotalIgualmente(); 
-            }
+            });
         }
 
         function atualizarPagador(pIndex, campo, valor) {
@@ -574,7 +813,7 @@
 
         async function salvarDadosFinanceiros() {
             if(!mesaAtualID) {
-                alert("Selecione uma mesa primeiro!");
+                mostrarAlerta("Selecione uma mesa primeiro!", "erro");
                 return;
             }
 
@@ -628,9 +867,9 @@
                 }
                 
                 calcularDashboard(); 
-                alert("✅ Dados financeiros guardados com sucesso na Nuvem!");
+                mostrarAlerta("✅ Dados financeiros guardados com sucesso na Nuvem!", "sucesso");
             } catch (error) {
-                alert("🔴 Erro de ligação! Verifique a internet e tente novamente.");
+                mostrarAlerta("🔴 Erro de ligação! Verifique a internet e tente novamente.", "erro");
             } finally {
                 btnSalvar.innerText = "💾 Salvar Lançamentos";
                 btnSalvar.disabled = false;
