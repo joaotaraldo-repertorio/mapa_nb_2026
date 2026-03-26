@@ -46,6 +46,22 @@
         .tabela-financeira td:first-child { text-align: left; font-size: 16px;}
         .tabela-financeira tfoot td { background-color: #112240; color: var(--ciano-destaque); font-size: 16px; border-top: 2px solid var(--ciano-destaque); border-bottom: none;}
         
+        /* CSS DO SIMULADOR E DETALHAMENTO */
+        .painel-simulador { background-color: #061020; border: 1px dashed #f59e0b; border-radius: 8px; padding: 25px;}
+        .painel-simulador h3 { margin: 0 0 5px 0; color: #f59e0b; font-size: 22px; display: flex; align-items: center; gap: 8px; justify-content: space-between;}
+        .painel-simulador > p { color: #8892b0; margin: 0 0 20px 0; font-size: 14px;}
+        .sim-resultado-box { display: flex; justify-content: space-around; background: #112240; padding: 20px; border-radius: 8px; border: 1px solid #233554; flex-wrap: wrap; gap: 20px;}
+        .res-col { display: flex; flex-direction: column; align-items: center; text-align: center; justify-content: center;}
+        .res-col span { font-size: 13px; color: #8892b0; text-transform: uppercase; margin-bottom: 5px; font-weight: bold;}
+        .res-col strong { font-size: 24px; color: var(--texto-claro);}
+        
+        .sim-grid-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px;}
+        .sim-item { display: flex; flex-direction: column; background: var(--azul-card); padding: 15px; border-radius: 6px; border: 1px solid #233554; gap: 8px;}
+        .sim-item label { font-size: 14px; font-weight: bold; margin-bottom: 5px;}
+        .sim-input-row { display: flex; align-items: center; gap: 10px;}
+        .sim-item input { background: #0A192F; border: 1px solid var(--ciano-destaque); color: #fff; padding: 8px; border-radius: 4px; font-size: 18px; width: 60px; text-align: center; font-weight: bold;}
+        .sim-item span { color: #8892b0; font-size: 12px;}
+
         .cabecalho-fixo-mesa { position: sticky; top: -30px; background-color: var(--azul-fundo); z-index: 100; padding-top: 30px; padding-bottom: 15px; margin-top: -30px; border-bottom: 1px dashed #233554; box-shadow: 0 10px 10px -5px rgba(10, 25, 47, 0.9); }
 
         .painel-financeiro { background-color: #112240; border-radius: 8px; border: 1px dashed var(--cor-livre); padding: 15px 20px; margin-top: 15px; }
@@ -64,8 +80,6 @@
         .card-pagador { background-color: #0A192F; border: 1px solid var(--ciano-destaque); border-radius: 8px; padding: 15px; margin-bottom: 15px;}
         .card-pagador-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px dashed #233554; padding-bottom: 10px; margin-bottom: 15px;}
         .card-pagador-header h5 { margin: 0; color: var(--ciano-destaque); font-size: 18px;}
-        
-        /* BOTÕES DE AÇÃO NA TABELA */
         .btn-remover { background-color: transparent; border: 1px solid #ff4d4d; color: #ff4d4d; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold;}
         .btn-remover:hover { background-color: #ff4d4d; color: #fff; }
         .btn-editar { background-color: transparent; border: 1px solid #3b82f6; color: #3b82f6; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; margin-right: 5px;}
@@ -83,14 +97,9 @@
         .alerta-selecione { background-color: rgba(245, 158, 11, 0.1); border: 1px solid #f59e0b; color: #f59e0b; padding: 20px; border-radius: 8px; text-align: center; font-size: 18px; font-weight: bold; margin-top: 50px;}
         .seletor-mesas { padding: 10px; border-radius: 6px; background-color: #0A192F; border: 1px solid var(--ciano-destaque); color: var(--ciano-destaque); font-weight: bold; font-size: 16px; cursor: pointer;}
 
-        /* EFEITO VISUAL DA LINHA TRAVADA (MARCA TEXTO) */
         .linha-custo { transition: all 0.3s ease; }
-        .linha-custo.travada { 
-            background-color: rgba(16, 185, 129, 0.1) !important; 
-            opacity: 0.65; 
-        }
+        .linha-custo.travada { background-color: rgba(16, 185, 129, 0.1) !important; opacity: 0.65; }
 
-        /* MODAIS E ALERTAS */
         .modal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--azul-card); padding: 25px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.9); z-index: 1000; width: 400px; border: 1px solid var(--ciano-destaque); color: var(--texto-claro); }
         .modal-largo { width: 600px; }
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 25, 47, 0.85); z-index: 999; backdrop-filter: blur(4px); }
@@ -105,7 +114,7 @@
 
     <div class="sidebar">
         <div class="sidebar-logo">NOITE<br>BENEFICENTE</div>
-        <div class="menu-item ativo" onclick="mudarAba('aba-dashboard', this)">📊 Painel Financeiro</div>
+        <div class="menu-item ativo" onclick="mudarAba('aba-dashboard', this)">📊 Painel & DRE</div>
         <div class="menu-item" onclick="mudarAba('aba-custos', this)">💸 Gestão de Custos</div>
         <div class="menu-item" onclick="mudarAba('aba-lancamentos', this)">📝 Lançamentos (Mesa)</div>
         <div class="menu-item" onclick="window.close()" style="margin-top: auto; color: #ef4444;">❌ Fechar Cofre</div>
@@ -120,12 +129,68 @@
                     <button class="botao-acao" onclick="carregarDadosDaPlanilha()" style="background-color: #3b82f6; color: #fff;">🔄 Atualizar Dados</button>
                 </div>
             </div>
+            
             <div class="cofre-grid">
                 <div class="cofre-card cofre-fechado"><h4>📈 Receita Total (Vendas)</h4><p class="valor" id="cofreFechado">R$ 0,00</p></div>
                 <div class="cofre-card cofre-custos"><h4>📉 Custos e Despesas</h4><p class="valor" id="cofreCustosTotais">R$ 0,00</p></div>
                 <div class="cofre-card cofre-lucro"><h4>🏆 Lucro Líquido Projetado</h4><p class="valor" id="cofreLucroLiquido">R$ 0,00</p></div>
                 <div class="cofre-card cofre-recebido"><h4>💰 Em Caixa (Já Recebido)</h4><p class="valor" id="cofreRecebido">R$ 0,00</p></div>
                 <div class="cofre-card cofre-pendente"><h4>⏳ Saldo a Receber</h4><p class="valor" id="cofrePendente">R$ 0,00</p></div>
+            </div>
+
+            <div class="area-tabela">
+                <h3>📋 Detalhamento de Receitas (Entradas)</h3>
+                <table class="tabela-financeira">
+                    <thead>
+                        <tr>
+                            <th>Modalidade</th>
+                            <th style="text-align: center;">Mesas<br>(Total)</th>
+                            <th>Prev. Máxima<br>(R$)</th>
+                            <th style="text-align: center;">Mesas/Itens<br>(Vendidos)</th>
+                            <th>Total Fechado<br>(R$)</th>
+                            <th>Já Recebido<br>(R$)</th>
+                            <th>Saldo a Receber<br>(R$)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyDetalhes">
+                        <tr><td style="text-align:center;" colspan="7">Aguardando sincronização com a planilha...</td></tr>
+                    </tbody>
+                    <tfoot id="tfootDetalhes">
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="painel-simulador">
+                <h3>
+                    <span>🔮 Simulador de Faturamento e Lotação</span>
+                    <button class="botao-acao" onclick="limparSimulador()" style="background-color: #233554; color: #8892b0; border: 1px solid #8892b0; font-size: 12px; padding: 5px 10px;">🧹 Limpar Simulação</button>
+                </h3>
+                <p>O que acontece com o caixa e com o salão se vendermos mais algumas mesas ou cadeiras hoje?</p>
+                
+                <div class="sim-grid-inputs" id="containerSimuladorInputs">
+                    </div>
+                
+                <h4 style="color: var(--ciano-destaque); margin-top: 15px; margin-bottom: 10px; border-bottom: 1px dashed #233554; padding-bottom: 5px;">💰 Projeção Financeira</h4>
+                <div class="sim-resultado-box" style="margin-bottom: 20px;">
+                    <div class="res-col"><span>Receita Atual</span><strong id="simAtual">R$ 0,00</strong></div>
+                    <div class="res-col"><span>+ Simulação</span><strong id="simExtra" style="color: #4ade80;">+ R$ 0,00</strong></div>
+                    <div class="res-col"><span>Receita Projetada</span><strong id="simProjetado" style="color: #f59e0b; font-size: 32px;">R$ 0,00</strong></div>
+                    <div class="res-col" style="border-left: 1px dashed #f59e0b; padding-left: 20px;">
+                        <span style="color: #ef4444;">- Despesas Reais</span>
+                        <strong id="simCustos" style="color: #ef4444;">R$ 0,00</strong>
+                    </div>
+                    <div class="res-col" style="background-color: rgba(16, 185, 129, 0.1); padding: 10px; border-radius: 8px;">
+                        <span style="color: #10b981;">= SALDO PROJETADO (Lucro)</span>
+                        <strong id="simSaldo" style="color: #10b981; font-size: 32px;">R$ 0,00</strong>
+                    </div>
+                </div>
+
+                <h4 style="color: #a855f7; margin-top: 15px; margin-bottom: 10px; border-bottom: 1px dashed #233554; padding-bottom: 5px;">👥 Projeção de Público no Salão</h4>
+                <div class="sim-resultado-box">
+                    <div class="res-col"><span>Público Real Atual</span><strong id="simPessoasAtual">0</strong></div>
+                    <div class="res-col"><span style="color: #a855f7;">+ Simulação</span><strong id="simPessoasExtra" style="color: #a855f7;">+ 0</strong></div>
+                    <div class="res-col"><span style="color: #f59e0b;">Nova Lotação Projetada</span><strong id="simPessoasProjetado" style="color: #f59e0b; font-size: 32px;">0</strong></div>
+                </div>
             </div>
         </div>
 
@@ -153,17 +218,13 @@
                     <tbody id="tbodyCustos">
                         <tr><td style="text-align:center;" colspan="5">Aguardando sincronização com a planilha...</td></tr>
                     </tbody>
-                    <tfoot id="tfootCustos">
-                    </tfoot>
+                    <tfoot id="tfootCustos"></tfoot>
                 </table>
             </div>
         </div>
 
         <div id="aba-lancamentos" class="aba-conteudo">
-            <div id="alerta-nenhuma-mesa" class="alerta-selecione">
-                👈 Selecione uma mesa no menu acima ou acesse através do Mapa de Vendas.
-            </div>
-
+            <div id="alerta-nenhuma-mesa" class="alerta-selecione">👈 Selecione uma mesa no menu acima ou acesse através do Mapa de Vendas.</div>
             <div id="area-edicao-mesa" style="display: none;">
                 <div class="cabecalho-fixo-mesa">
                     <div class="cofre-header" style="margin-bottom: 10px;">
@@ -179,7 +240,6 @@
                     <div class="form-group" style="margin-bottom: 15px;">
                         <label style="color: var(--ciano-destaque);">Nome Exibido no Mapa (Editável)</label>
                         <input type="text" id="campoNomeExibido" oninput="marcarNomeEditadoManualmente()" placeholder="Ex: João / Maria..." style="font-size: 16px; color: var(--ciano-destaque);">
-                        <span style="font-size: 11px; color: #8892b0; margin-top: 4px;">Este texto aparecerá na bolinha da mesa lá no Mapa.</span>
                     </div>
 
                     <div class="painel-financeiro" style="margin-bottom: 0;">
@@ -197,7 +257,6 @@
                                 <label style="color: #f59e0b;">Valor Extras (R$)</label>
                                 <input type="text" id="campoValorCadeirasGlobais" class="campo-extra" value="0,00" onchange="atualizarCadeirasAvulsasGlobaisValorEditado(this.value)">
                             </div>
-                            
                             <div class="form-group">
                                 <label>Total Fechado (R$)</label>
                                 <input type="text" id="campoValorTotal" class="campo-bloqueado" readonly value="R$ 0,00">
@@ -219,15 +278,12 @@
                         <h3 style="margin: 0; color: var(--ciano-destaque); font-size: 20px;">👥 Divisão de Pagadores</h3>
                         <button class="btn-add-pagador" onclick="adicionarPagador()">➕ Adicionar Pagador</button>
                     </div>
-
                     <div id="containerPagadores"></div>
-                    
                     <div class="form-group" style="margin-top: 30px; margin-bottom: 50px;">
                         <label>📝 Observações Gerais da Mesa</label>
                         <textarea id="campoObs" placeholder="Anotações extras..." style="background-color: #0A192F; border: 1px solid #233554; color: #fff; padding: 10px; border-radius: 6px; min-height: 80px; outline: none; font-family: Arial;"></textarea>
                     </div>
                 </div>
-
             </div>
         </div>
 
@@ -237,27 +293,23 @@
     <div class="modal modal-largo" id="modal-custo">
         <h3 id="titulo-modal-custo" style="color: #ef4444; border-bottom-color: #ef4444;">➕ Lançar Despesa</h3>
         <input type="hidden" id="custo-id">
-        
         <div class="form-row">
             <div class="form-group" style="flex: 1;">
                 <label>Categoria</label>
                 <input type="text" id="custo-categoria" list="lista-categorias-datalist" placeholder="Escolha ou digite uma nova...">
                 <datalist id="lista-categorias-datalist"></datalist>
-                <span style="font-size: 11px; color: #8892b0; margin-top: 4px;">Se a categoria não existir, basta digitar o nome novo e salvar!</span>
             </div>
             <div class="form-group" style="flex: 2;">
                 <label>Fornecedor / Profissional</label>
                 <input type="text" id="custo-fornecedor" placeholder="Nome da empresa ou pessoa...">
             </div>
         </div>
-
         <div class="form-row">
             <div class="form-group" style="flex: 1;">
                 <label>Descrição do Item</label>
                 <input type="text" id="custo-descricao" placeholder="O que foi contratado?">
             </div>
         </div>
-
         <div class="form-row">
             <div class="form-group" style="flex: 1;">
                 <label>Quantidade</label>
@@ -272,14 +324,12 @@
                 <input type="text" id="custo-valor-total" class="campo-bloqueado-vermelho" readonly value="R$ 0,00">
             </div>
         </div>
-
         <div class="form-row">
             <div class="form-group" style="flex: 1;">
                 <label>📝 Observações da Despesa</label>
-                <textarea id="custo-obs" placeholder="Dados de conta bancária, data de vencimento, acordos..." style="min-height: 60px;"></textarea>
+                <textarea id="custo-obs" placeholder="Dados de conta bancária, vencimento..." style="min-height: 60px;"></textarea>
             </div>
         </div>
-        
         <button class="btn btn-salvar" style="background-color: #ef4444; color: #fff;" onclick="salvarCusto()">💾 Salvar Despesa</button>
         <button class="btn btn-fechar" onclick="fecharModalCusto()">Cancelar</button>
     </div>
@@ -288,24 +338,23 @@
     <div class="modal" id="modal-alerta" style="z-index: 3001; width: 320px; text-align: center;">
         <h3 id="alerta-titulo" style="border-bottom: none; margin-bottom: 10px; font-size: 22px;">Aviso</h3>
         <p id="alerta-mensagem" style="color: var(--texto-claro); font-size: 15px; margin-bottom: 25px; line-height: 1.4;"></p>
-        <div id="alerta-botoes" style="display: flex; gap: 10px; justify-content: center; flex-direction: column;">
-        </div>
+        <div id="alerta-botoes" style="display: flex; gap: 10px; justify-content: center; flex-direction: column;"></div>
     </div>
 
     <script>
-        // O SEU LINK DA API
         const API_URL = 'https://script.google.com/macros/s/AKfycby6hZ1cD-uIPafXIpRDe2DJzmYwjP4IRQgysxbVPNJOlKNDlE8ALvUTyBsoJlSQL2k/exec';
         
         let mesasDataBanco = []; 
         let custosDataBanco = []; 
         let categoriasPadrao = ["Atração Musical", "Estrutura e Som", "Bebidas", "Buffet", "Decoração", "Publicidade", "Taxas e Impostos", "Outras Demandas"];
 
+        // CONFIGURAÇÃO COM LUGARES (Para cálculo de pessoas)
         const CONFIG_MESAS = {
-            "F": { nome: "Cota Família", valorBase: 25000, layout: [[6],[6]] },
-            "C": { nome: "Cota Criança", valorBase: 12000, layout: [[7],[7],[7],[7]] },
-            "P": { nome: "Mesa Premium", valorBase: 8000, layout: [[7],[7]] },
-            "M": { nome: "Mesa Master", valorBase: 5400, layout: [[3, "MIX", 3],[3, "GAP", 3],[7]] },
-            "D": { nome: "Mesa Diamante", valorBase: 4800, layout: [[7],[7],[7]] }
+            "F": { nome: "Cota Família", valorBase: 25000, layout: [[6],[6]], lugares: 12 },
+            "C": { nome: "Cota Criança", valorBase: 12000, layout: [[7],[7],[7],[7]], lugares: 8 },
+            "P": { nome: "Mesa Premium", valorBase: 8000, layout: [[7],[7]], lugares: 8 },
+            "M": { nome: "Mesa Master", valorBase: 5400, layout: [[3, "MIX", 3],[3, "GAP", 3],[7]], lugares: 6 },
+            "D": { nome: "Mesa Diamante", valorBase: 4800, layout: [[7],[7],[7]], lugares: 6 }
         };
 
         let mesaAtualID = ""; 
@@ -318,54 +367,49 @@
         let pagadoresAtuais = []; 
         let nomeEditadoManualmente = false;
         let acaoConfirmacaoGlobal = null;
+        
+        // Variáveis Globais de Totalização para o Simulador
+        let G_receitaReal = 0;
+        let G_custosReais = 0;
+        let G_pessoasReal = 0;
 
-        // ==========================================
-        // SISTEMA DE ALERTAS E NAVEGAÇÃO
-        // ==========================================
+        function formatarNumeroLimpo(valor) { return valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+        function formatarMoeda(valor) { return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
+        function converterParaNumero(stringMoeda) {
+            if (typeof stringMoeda === 'number') return stringMoeda;
+            let limpo = stringMoeda.toString().replace(/R\$\s?/g, '').replace(/\./g, '').replace(',', '.');
+            return parseFloat(limpo) || 0;
+        }
+
+        // ALERTAS
         function mostrarAlerta(mensagem, tipo = 'info', callback = null) {
             const modal = document.getElementById('modal-alerta');
-            const overlay = document.getElementById('overlay-alerta');
+            document.getElementById('overlay-alerta').style.display = 'block';
+            modal.style.display = 'block';
+            document.getElementById('alerta-mensagem').innerHTML = mensagem;
             const titulo = document.getElementById('alerta-titulo');
-            const msg = document.getElementById('alerta-mensagem');
             const botoes = document.getElementById('alerta-botoes');
 
-            overlay.style.display = 'block';
-            modal.style.display = 'block';
-            msg.innerHTML = mensagem;
-
             if (tipo === 'erro') {
-                titulo.innerHTML = '🔴 Erro';
-                titulo.style.color = '#ff4d4d';
+                titulo.innerHTML = '🔴 Erro'; titulo.style.color = '#ff4d4d';
                 botoes.innerHTML = `<button class="btn" style="background-color: #ff4d4d; color: #fff; margin-top: 0;" onclick="fecharAlerta()">Entendi</button>`;
             } else if (tipo === 'sucesso') {
-                titulo.innerHTML = '🟢 Sucesso';
-                titulo.style.color = '#4ade80';
+                titulo.innerHTML = '🟢 Sucesso'; titulo.style.color = '#4ade80';
                 botoes.innerHTML = `<button class="btn" style="background-color: #4ade80; color: #000; margin-top: 0;" onclick="fecharAlerta()">OK</button>`;
             } else if (tipo === 'confirmacao') {
-                titulo.innerHTML = '⚠️ Atenção';
-                titulo.style.color = '#f59e0b';
+                titulo.innerHTML = '⚠️ Atenção'; titulo.style.color = '#f59e0b';
                 acaoConfirmacaoGlobal = callback;
                 botoes.innerHTML = `
                     <button class="btn" style="background-color: #ef4444; color: #fff; margin-top: 0;" onclick="executarConfirmacao()">Sim, confirmar</button>
                     <button class="btn btn-fechar" style="margin-top: 0;" onclick="fecharAlerta()">Cancelar</button>
                 `;
             } else {
-                titulo.innerHTML = 'ℹ️ Aviso';
-                titulo.style.color = 'var(--ciano-destaque)';
+                titulo.innerHTML = 'ℹ️ Aviso'; titulo.style.color = 'var(--ciano-destaque)';
                 botoes.innerHTML = `<button class="btn btn-salvar" style="margin-top: 0;" onclick="fecharAlerta()">OK</button>`;
             }
         }
-
-        function fecharAlerta() {
-            document.getElementById('overlay-alerta').style.display = 'none';
-            document.getElementById('modal-alerta').style.display = 'none';
-            acaoConfirmacaoGlobal = null;
-        }
-
-        function executarConfirmacao() {
-            if (acaoConfirmacaoGlobal) acaoConfirmacaoGlobal();
-            fecharAlerta();
-        }
+        function fecharAlerta() { document.getElementById('overlay-alerta').style.display = 'none'; document.getElementById('modal-alerta').style.display = 'none'; acaoConfirmacaoGlobal = null; }
+        function executarConfirmacao() { if (acaoConfirmacaoGlobal) acaoConfirmacaoGlobal(); fecharAlerta(); }
 
         function mudarAba(idAba, elementoClicado) {
             document.querySelectorAll('.aba-conteudo').forEach(aba => aba.classList.remove('ativo'));
@@ -383,8 +427,7 @@
                 conf.layout.forEach(linha => { linha.forEach(item => { if (typeof item === 'number') totalMesas += item; }); });
                 for (let i = 1; i <= totalMesas; i++) {
                     let num = i < 10 ? `0${i}` : i;
-                    let idMesa = `${prefixo}-${num}`;
-                    seletor.innerHTML += `<option value="${idMesa}">${idMesa} (${conf.nome})</option>`;
+                    seletor.innerHTML += `<option value="${prefixo}-${num}">${prefixo}-${num} (${conf.nome})</option>`;
                 }
             }
         }
@@ -392,22 +435,13 @@
         function atualizarListasCategorias() {
             let categoriasUsadas = custosDataBanco.map(c => c.categoria);
             let todasCategorias = [...new Set([...categoriasPadrao, ...categoriasUsadas])].sort();
-
-            let datalist = document.getElementById('lista-categorias-datalist');
-            datalist.innerHTML = todasCategorias.map(c => `<option value="${c}">`).join('');
-
+            document.getElementById('lista-categorias-datalist').innerHTML = todasCategorias.map(c => `<option value="${c}">`).join('');
             let filtro = document.getElementById('filtro-categoria-custos');
             let valorAtual = filtro.value; 
-            
-            filtro.innerHTML = '<option value="TODAS">Mostrando: Todas as Categorias</option>' + 
-                               todasCategorias.map(c => `<option value="${c}">Filtrar: ${c}</option>`).join('');
-            
+            filtro.innerHTML = '<option value="TODAS">Mostrando: Todas as Categorias</option>' + todasCategorias.map(c => `<option value="${c}">Filtrar: ${c}</option>`).join('');
             filtro.value = valorAtual || "TODAS";
         }
 
-        // ==========================================
-        // LEITURA GERAL DO BANCO
-        // ==========================================
         window.onload = async function() {
             carregarSeletorDeMesas();
             await carregarDadosDaPlanilha();
@@ -415,7 +449,6 @@
             const urlParams = new URLSearchParams(window.location.search);
             const mesaPuxada = urlParams.get('mesa');
             const nomeDigitadoNoMapa = urlParams.get('nome'); 
-            
             if(mesaPuxada) {
                 document.getElementById('seletor-mesas').value = mesaPuxada;
                 trocarMesaSelecionada(mesaPuxada, nomeDigitadoNoMapa ? decodeURIComponent(nomeDigitadoNoMapa) : null);
@@ -427,631 +460,457 @@
             try {
                 const response = await fetch(API_URL);
                 const pacote = await response.json();
-                
                 mesasDataBanco = pacote.mesas || [];
                 custosDataBanco = pacote.custos || [];
                 
                 atualizarListasCategorias();
                 renderizarTabelaCustos();
-                calcularDashboard(); 
-            } catch (error) { 
-                console.error("Erro ao puxar dados da planilha."); 
-            }
+                calcularDashboardERelatorios(); 
+            } catch (error) { console.error("Erro ao puxar dados."); }
         }
 
-        function calcularDashboard() {
-            let totalFechado = 0;
-            let totalRecebido = 0;
-            let totalPendente = 0;
-            let totalCustos = 0;
-            
-            mesasDataBanco.forEach(m => {
-                let valor = parseFloat(m.valorTotal) || 0;
-                let pago = parseFloat(m.valorPago) || 0;
-                totalFechado += valor;
-                totalRecebido += pago;
-            });
-            
-            custosDataBanco.forEach(c => {
-                totalCustos += parseFloat(c.valorTotal) || 0;
-            });
+        // ==========================================
+        // DRE, DETALHAMENTO E SIMULADOR
+        // ==========================================
+        function calcularDashboardERelatorios() {
+            let totalFechado = 0; let totalRecebido = 0; let totalPendente = 0; let totalCustos = 0;
+            let totalPessoas = 0;
 
+            // Estrutura para a tabela de detalhamento
+            let det = {
+                F: { total: 12, prev: 12*25000, vendidas: 0, fechado: 0, recebido: 0, saldo: 0 },
+                C: { total: 28, prev: 28*12000, vendidas: 0, fechado: 0, recebido: 0, saldo: 0 },
+                P: { total: 14, prev: 14*8000, vendidas: 0, fechado: 0, recebido: 0, saldo: 0 },
+                M: { total: 19, prev: 19*5400, vendidas: 0, fechado: 0, recebido: 0, saldo: 0 },
+                D: { total: 21, prev: 21*4800, vendidas: 0, fechado: 0, recebido: 0, saldo: 0 },
+                Avulsas: { vendidas: 0, fechado: 0, recebido: 0, saldo: 0 } // Avulsas (Cadeiras)
+            };
+
+            mesasDataBanco.forEach(m => {
+                let prefixo = m.id.charAt(0).toUpperCase();
+                let status = (m.status || "livre").toLowerCase();
+                let vTotal = parseFloat(m.valorTotal) || 0;
+                let vPago = parseFloat(m.valorPago) || 0;
+                let vSaldo = parseFloat(m.saldo) || 0;
+                let cExtra = parseInt(m.cadeirasExtra) || 0;
+
+                totalFechado += vTotal;
+                totalRecebido += vPago;
+
+                if (status === "vendida" || status === "reservada") {
+                    if (det[prefixo]) {
+                        det[prefixo].vendidas++;
+                        totalPessoas += CONFIG_MESAS[prefixo].lugares;
+                        
+                        // Lógica de separação do dinheiro das cadeiras avulsas
+                        let vCadeiras = cExtra * PRECO_FIXO_CADEIRA;
+                        let vMesaLivre = vTotal - vCadeiras;
+                        
+                        // Proporção para dividir o que já foi pago entre mesa e cadeiras
+                        let ratio = vTotal > 0 ? vCadeiras / vTotal : 0;
+                        let pagoCadeiras = vPago * ratio;
+                        let pagoMesa = vPago - pagoCadeiras;
+                        let saldoCadeiras = vSaldo * ratio;
+                        let saldoMesa = vSaldo - saldoCadeiras;
+
+                        // Joga pra Mesa
+                        det[prefixo].fechado += vMesaLivre;
+                        det[prefixo].recebido += pagoMesa;
+                        det[prefixo].saldo += saldoMesa;
+
+                        // Joga pras Cadeiras
+                        if(cExtra > 0) {
+                            det.Avulsas.vendidas += cExtra;
+                            det.Avulsas.fechado += vCadeiras;
+                            det.Avulsas.recebido += pagoCadeiras;
+                            det.Avulsas.saldo += saldoCadeiras;
+                            totalPessoas += cExtra;
+                        }
+                    }
+                }
+            });
+            
+            custosDataBanco.forEach(c => { totalCustos += parseFloat(c.valorTotal) || 0; });
             totalPendente = totalFechado - totalRecebido;
             let lucroLiquido = totalFechado - totalCustos; 
+
+            // Salva as globais para o Simulador usar
+            G_receitaReal = totalFechado;
+            G_custosReais = totalCustos;
+            G_pessoasReal = totalPessoas;
             
+            // CARDS SUPERIORES
             document.getElementById('cofreFechado').innerText = formatarMoeda(totalFechado);
             document.getElementById('cofreRecebido').innerText = formatarMoeda(totalRecebido);
             document.getElementById('cofrePendente').innerText = formatarMoeda(totalPendente);
             document.getElementById('cofreCustosTotais').innerText = formatarMoeda(totalCustos);
             document.getElementById('cofreLucroLiquido').innerText = formatarMoeda(lucroLiquido);
-            
             if(lucroLiquido < 0) {
-                document.getElementById('cofreLucroLiquido').style.color = '#ff4d4d';
-                document.querySelector('.cofre-lucro').style.borderTopColor = '#ff4d4d';
+                document.getElementById('cofreLucroLiquido').style.color = '#ff4d4d'; document.querySelector('.cofre-lucro').style.borderTopColor = '#ff4d4d';
             } else {
-                document.getElementById('cofreLucroLiquido').style.color = '#10b981';
-                document.querySelector('.cofre-lucro').style.borderTopColor = '#10b981';
+                document.getElementById('cofreLucroLiquido').style.color = '#10b981'; document.querySelector('.cofre-lucro').style.borderTopColor = '#10b981';
             }
+
+            // RENDERIZA A TABELA DE DETALHAMENTO
+            const tbodyDet = document.getElementById('tbodyDetalhes');
+            tbodyDet.innerHTML = '';
+            let chaves = ['F', 'C', 'P', 'M', 'D'];
+            
+            chaves.forEach(k => {
+                let cor = CONFIG_MESAS[k].nome === "Mesa Diamante" ? "#ff4d4d" : (k==='F'?'#FFFF00':(k==='C'?'#00FFFF':(k==='P'?'#47D359':'#FF9900')));
+                let tr = `<tr>
+                    <td style="color: ${cor};">${CONFIG_MESAS[k].nome}</td>
+                    <td style="text-align: center;">${det[k].total}</td>
+                    <td style="color: #8892b0;">${formatarMoeda(det[k].prev)}</td>
+                    <td style="text-align: center; color: var(--texto-claro);">${det[k].vendidas}</td>
+                    <td style="color: var(--ciano-destaque);">${formatarMoeda(det[k].fechado)}</td>
+                    <td style="color: #10b981;">${formatarMoeda(det[k].recebido)}</td>
+                    <td style="color: #ff4d4d;">${formatarMoeda(det[k].saldo)}</td>
+                </tr>`;
+                tbodyDet.innerHTML += tr;
+            });
+            
+            // Linha Cadeiras Avulsas
+            tbodyDet.innerHTML += `<tr style="background-color: rgba(245, 158, 11, 0.05);">
+                <td style="color: #f59e0b;">🪑 Cadeiras Avulsas</td><td style="text-align: center;">-</td><td style="color: #8892b0;">-</td>
+                <td style="text-align: center; color: var(--texto-claro);">${det.Avulsas.vendidas}</td>
+                <td style="color: var(--ciano-destaque);">${formatarMoeda(det.Avulsas.fechado)}</td>
+                <td style="color: #10b981;">${formatarMoeda(det.Avulsas.recebido)}</td>
+                <td style="color: #ff4d4d;">${formatarMoeda(det.Avulsas.saldo)}</td>
+            </tr>`;
+            
+            // Linha Pessoas
+            tbodyDet.innerHTML += `<tr style="background-color: #112240;">
+                <td colspan="3" style="text-align: right; color: #a855f7; font-size: 14px;">👥 QUANTIDADE DE PESSOAS (NO SALÃO):</td>
+                <td style="text-align: center; font-size: 18px; color: var(--texto-claro);">${totalPessoas} <span style="font-size:10px; color:#8892b0; display:block; font-weight:normal;">(Soma de assentos + extras)</span></td>
+                <td colspan="3"></td>
+            </tr>`;
+
+            // Footer Totais
+            document.getElementById('tfootDetalhes').innerHTML = `<tr>
+                <td style="color: var(--ciano-destaque);">TOTAIS GERAIS</td>
+                <td style="text-align: center;">94</td>
+                <td>${formatarMoeda(951400)}</td>
+                <td style="text-align: center;">${det.F.vendidas+det.C.vendidas+det.P.vendidas+det.M.vendidas+det.D.vendidas}</td>
+                <td style="color: var(--ciano-destaque);">${formatarMoeda(totalFechado)}</td>
+                <td style="color: #10b981;">${formatarMoeda(totalRecebido)}</td>
+                <td style="color: #ff4d4d;">${formatarMoeda(totalPendente)}</td>
+            </tr>`;
+
+            // INICIALIZA O SIMULADOR
+            inicializarSimulador(det);
+        }
+
+        function inicializarSimulador(det) {
+            const container = document.getElementById('containerSimuladorInputs');
+            container.innerHTML = '';
+            
+            // Puxa a memória do navegador se tiver
+            let memStr = localStorage.getItem('simulador_noite_beneficente');
+            let memoria = memStr ? JSON.parse(memStr) : { F: 0, C: 0, P: 0, M: 0, D: 0, Avulsas: 0 };
+
+            let chaves = ['F', 'C', 'P', 'M', 'D'];
+            chaves.forEach(k => {
+                let disp = det[k].total - det[k].vendidas;
+                let cor = CONFIG_MESAS[k].nome === "Mesa Diamante" ? "#ff4d4d" : (k==='F'?'#FFFF00':(k==='C'?'#00FFFF':(k==='P'?'#47D359':'#FF9900')));
+                
+                // Se a memória salvou um valor maior que o disponível agora, ajusta.
+                let val = memoria[k] > disp ? disp : memoria[k]; 
+                
+                container.innerHTML += `
+                    <div class="sim-item">
+                        <label style="color: ${cor};">${CONFIG_MESAS[k].nome}</label>
+                        <div class="sim-input-row">
+                            <input type="number" id="sim_${k}" min="0" max="${disp}" value="${val}" oninput="if(this.value > this.max) this.value = this.max; if(this.value < 0) this.value = 0; calcularSimulacao();">
+                            <span style="font-size: 14px;">x R$ ${CONFIG_MESAS[k].valorBase.toLocaleString('pt-BR')}</span>
+                        </div>
+                        <span>(Máx disp: ${disp})</span>
+                    </div>
+                `;
+            });
+
+            container.innerHTML += `
+                <div class="sim-item" style="border-color: #f59e0b;">
+                    <label style="color: #f59e0b;">🪑 Cadeiras Avulsas</label>
+                    <div class="sim-input-row">
+                        <input type="number" id="sim_Avulsas" min="0" value="${memoria.Avulsas}" oninput="if(this.value < 0) this.value = 0; calcularSimulacao();">
+                        <span style="font-size: 14px;">x R$ 800</span>
+                    </div>
+                    <span>(Venda Extra Opcional)</span>
+                </div>
+            `;
+            calcularSimulacao(); // Roda o cálculo inicial
+        }
+
+        function calcularSimulacao() {
+            let inputs = {
+                F: parseInt(document.getElementById('sim_F').value) || 0,
+                C: parseInt(document.getElementById('sim_C').value) || 0,
+                P: parseInt(document.getElementById('sim_P').value) || 0,
+                M: parseInt(document.getElementById('sim_M').value) || 0,
+                D: parseInt(document.getElementById('sim_D').value) || 0,
+                Avulsas: parseInt(document.getElementById('sim_Avulsas').value) || 0
+            };
+
+            // Salva no navegador silenciosamente
+            localStorage.setItem('simulador_noite_beneficente', JSON.stringify(inputs));
+
+            let extraReceita = (inputs.F * 25000) + (inputs.C * 12000) + (inputs.P * 8000) + (inputs.M * 5400) + (inputs.D * 4800) + (inputs.Avulsas * 800);
+            let extraPessoas = (inputs.F * 12) + (inputs.C * 8) + (inputs.P * 8) + (inputs.M * 6) + (inputs.D * 6) + inputs.Avulsas;
+
+            let recProj = G_receitaReal + extraReceita;
+            let saldoProj = recProj - G_custosReais;
+            let pesProj = G_pessoasReal + extraPessoas;
+
+            document.getElementById('simAtual').innerText = formatarMoeda(G_receitaReal);
+            document.getElementById('simExtra').innerText = '+ ' + formatarMoeda(extraReceita);
+            document.getElementById('simProjetado').innerText = formatarMoeda(recProj);
+            document.getElementById('simCustos').innerText = formatarMoeda(G_custosReais);
+            document.getElementById('simSaldo').innerText = formatarMoeda(saldoProj);
+
+            document.getElementById('simPessoasAtual').innerText = G_pessoasReal;
+            document.getElementById('simPessoasExtra').innerText = '+ ' + extraPessoas;
+            document.getElementById('simPessoasProjetado').innerText = pesProj;
+        }
+
+        function limparSimulador() {
+            localStorage.removeItem('simulador_noite_beneficente');
+            ['F', 'C', 'P', 'M', 'D', 'Avulsas'].forEach(k => {
+                let el = document.getElementById('sim_' + k);
+                if(el) el.value = 0;
+            });
+            calcularSimulacao();
         }
 
         // ==========================================
-        // GESTÃO DE CUSTOS E DESPESAS (CRIAR/EDITAR)
+        // GESTÃO DE CUSTOS (DESPESAS)
         // ==========================================
         function abrirModalCusto(id = null) {
             document.getElementById('overlay-custo').style.display = 'block';
             document.getElementById('modal-custo').style.display = 'block';
-            
             if (id === null) {
                 document.getElementById('titulo-modal-custo').innerText = "➕ Lançar Despesa";
-                document.getElementById('custo-id').value = "";
-                document.getElementById('custo-categoria').value = ""; 
-                document.getElementById('custo-fornecedor').value = "";
-                document.getElementById('custo-descricao').value = "";
-                document.getElementById('custo-qtd').value = 1;
-                document.getElementById('custo-valor-unit').value = "0,00";
-                document.getElementById('custo-valor-total').value = "R$ 0,00";
-                document.getElementById('custo-obs').value = ""; 
+                document.getElementById('custo-id').value = ""; document.getElementById('custo-categoria').value = ""; document.getElementById('custo-fornecedor').value = "";
+                document.getElementById('custo-descricao').value = ""; document.getElementById('custo-qtd').value = 1; document.getElementById('custo-valor-unit').value = "0,00";
+                document.getElementById('custo-valor-total').value = "R$ 0,00"; document.getElementById('custo-obs').value = ""; 
             }
         }
-
-        // FUNÇÃO NOVA: Puxa os dados para o formulário de edição
         function editarCusto(id) {
-            let custo = custosDataBanco.find(c => c.id == id);
-            if(!custo) return;
-
+            let custo = custosDataBanco.find(c => c.id == id); if(!custo) return;
             document.getElementById('titulo-modal-custo').innerHTML = "✏️ Editar Despesa";
-            document.getElementById('custo-id').value = custo.id;
-            document.getElementById('custo-categoria').value = custo.categoria;
-            document.getElementById('custo-fornecedor').value = custo.fornecedor;
-            document.getElementById('custo-descricao').value = custo.descricao;
-            document.getElementById('custo-qtd').value = custo.qtd;
-            document.getElementById('custo-valor-unit').value = formatarNumeroLimpo(custo.valorUnit);
-            document.getElementById('custo-valor-total').value = formatarMoeda(custo.valorTotal);
-            document.getElementById('custo-obs').value = custo.obs || "";
-
-            document.getElementById('overlay-custo').style.display = 'block';
-            document.getElementById('modal-custo').style.display = 'block';
+            document.getElementById('custo-id').value = custo.id; document.getElementById('custo-categoria').value = custo.categoria;
+            document.getElementById('custo-fornecedor').value = custo.fornecedor; document.getElementById('custo-descricao').value = custo.descricao;
+            document.getElementById('custo-qtd').value = custo.qtd; document.getElementById('custo-valor-unit').value = formatarNumeroLimpo(custo.valorUnit);
+            document.getElementById('custo-valor-total').value = formatarMoeda(custo.valorTotal); document.getElementById('custo-obs').value = custo.obs || "";
+            document.getElementById('overlay-custo').style.display = 'block'; document.getElementById('modal-custo').style.display = 'block';
         }
-
-        function fecharModalCusto() {
-            document.getElementById('overlay-custo').style.display = 'none';
-            document.getElementById('modal-custo').style.display = 'none';
-        }
-
+        function fecharModalCusto() { document.getElementById('overlay-custo').style.display = 'none'; document.getElementById('modal-custo').style.display = 'none'; }
         function calcularTotalCusto(inputElement = null) {
-            if(inputElement) {
-                let valLimpo = converterParaNumero(inputElement.value);
-                inputElement.value = formatarNumeroLimpo(valLimpo);
-            }
-            let qtd = parseInt(document.getElementById('custo-qtd').value) || 1;
-            let valorUnit = converterParaNumero(document.getElementById('custo-valor-unit').value);
-            let total = qtd * valorUnit;
-            document.getElementById('custo-valor-total').value = formatarMoeda(total);
+            if(inputElement) { let valLimpo = converterParaNumero(inputElement.value); inputElement.value = formatarNumeroLimpo(valLimpo); }
+            let qtd = parseInt(document.getElementById('custo-qtd').value) || 1; let valorUnit = converterParaNumero(document.getElementById('custo-valor-unit').value);
+            document.getElementById('custo-valor-total').value = formatarMoeda(qtd * valorUnit);
         }
 
         async function salvarCusto() {
-            let id = document.getElementById('custo-id').value;
-            let categoria = document.getElementById('custo-categoria').value.trim();
-            let fornecedor = document.getElementById('custo-fornecedor').value;
-            let descricao = document.getElementById('custo-descricao').value;
-            let obs = document.getElementById('custo-obs').value;
-            let qtd = parseInt(document.getElementById('custo-qtd').value) || 1;
-            let valorUnit = converterParaNumero(document.getElementById('custo-valor-unit').value);
-            let valorTotal = qtd * valorUnit;
-
+            let id = document.getElementById('custo-id').value; let categoria = document.getElementById('custo-categoria').value.trim();
+            let fornecedor = document.getElementById('custo-fornecedor').value; let descricao = document.getElementById('custo-descricao').value;
+            let obs = document.getElementById('custo-obs').value; let qtd = parseInt(document.getElementById('custo-qtd').value) || 1;
+            let valorUnit = converterParaNumero(document.getElementById('custo-valor-unit').value); let valorTotal = qtd * valorUnit;
             let isEdit = id ? true : false;
-            if (!id) id = new Date().getTime(); 
-            if (categoria === "") categoria = "Outras Demandas";
-
-            if (fornecedor.trim() === "" || valorTotal <= 0) {
-                mostrarAlerta("Preencha o Fornecedor e o Valor Unitário para salvar.", "erro");
-                return;
-            }
-
-            let novoCusto = { 
-                tipo: "CUSTO", 
-                id: id, 
-                categoria: categoria, 
-                fornecedor: fornecedor, 
-                descricao: descricao, 
-                obs: obs, 
-                qtd: qtd, 
-                valorUnit: valorUnit, 
-                valorTotal: valorTotal,
-                travada: false
-            };
-
-            // Se for edição, mantém a trava antiga se existir (embora não deva editar linha travada)
-            if(isEdit) {
-                let cExistente = custosDataBanco.find(c => c.id == id);
-                if(cExistente) novoCusto.travada = cExistente.travada;
-            }
-
-            const btnSalvar = document.querySelector('#modal-custo .btn-salvar');
-            btnSalvar.innerText = "⏳ Salvando...";
-            btnSalvar.disabled = true;
-
+            if (!id) id = new Date().getTime(); if (categoria === "") categoria = "Outras Demandas";
+            if (fornecedor.trim() === "" || valorTotal <= 0) { mostrarAlerta("Preencha o Fornecedor e o Valor Unitário.", "erro"); return; }
+            let novoCusto = { tipo: "CUSTO", id: id, categoria: categoria, fornecedor: fornecedor, descricao: descricao, obs: obs, qtd: qtd, valorUnit: valorUnit, valorTotal: valorTotal, travada: false };
+            if(isEdit) { let cExistente = custosDataBanco.find(c => c.id == id); if(cExistente) novoCusto.travada = cExistente.travada; }
+            const btnSalvar = document.querySelector('#modal-custo .btn-salvar'); btnSalvar.innerText = "⏳ Salvando..."; btnSalvar.disabled = true;
             try {
-                await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify(novoCusto)
-                });
-                
-                if(isEdit) {
-                    let index = custosDataBanco.findIndex(c => c.id == id);
-                    if(index !== -1) custosDataBanco[index] = novoCusto;
-                } else {
-                    custosDataBanco.push(novoCusto);
-                }
-
-                atualizarListasCategorias(); 
-                renderizarTabelaCustos();
-                calcularDashboard();
-                fecharModalCusto();
-                mostrarAlerta("Despesa salva com sucesso na planilha!", "sucesso");
-            } catch (error) {
-                mostrarAlerta("Erro de conexão ao salvar a despesa. Tente novamente.", "erro");
-            } finally {
-                btnSalvar.innerText = "💾 Salvar Despesa";
-                btnSalvar.disabled = false;
-            }
+                await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(novoCusto) });
+                if(isEdit) { let index = custosDataBanco.findIndex(c => c.id == id); if(index !== -1) custosDataBanco[index] = novoCusto; } else { custosDataBanco.push(novoCusto); }
+                atualizarListasCategorias(); renderizarTabelaCustos(); calcularDashboardERelatorios(); fecharModalCusto(); mostrarAlerta("Despesa salva na planilha!", "sucesso");
+            } catch (error) { mostrarAlerta("Erro de conexão. Tente novamente.", "erro"); } finally { btnSalvar.innerText = "💾 Salvar Despesa"; btnSalvar.disabled = false; }
         }
 
-        // A MÁGICA DA TRAVA/MARCA-TEXTO (Gravando na Coluna I)
         async function travarCusto(id, status) {
-            let custo = custosDataBanco.find(c => c.id == id);
-            if(!custo) return;
-            
-            custo.travada = status;
-            renderizarTabelaCustos(); // A tela reage na hora e fica verdinha/opaca
-
-            try {
-                // Envia a atualização pro banco de trás da cortina
-                await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify({
-                        tipo: "CUSTO",
-                        id: custo.id,
-                        categoria: custo.categoria,
-                        fornecedor: custo.fornecedor,
-                        descricao: custo.descricao,
-                        obs: custo.obs,
-                        qtd: custo.qtd,
-                        valorUnit: custo.valorUnit,
-                        valorTotal: custo.valorTotal,
-                        travada: custo.travada
-                    })
-                });
-            } catch(e) {
-                console.error("Erro ao travar a despesa no banco.");
-            }
+            let custo = custosDataBanco.find(c => c.id == id); if(!custo) return;
+            custo.travada = status; renderizarTabelaCustos(); 
+            try { await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ tipo: "CUSTO", id: custo.id, categoria: custo.categoria, fornecedor: custo.fornecedor, descricao: custo.descricao, obs: custo.obs, qtd: custo.qtd, valorUnit: custo.valorUnit, valorTotal: custo.valorTotal, travada: custo.travada }) });
+            } catch(e) { console.error("Erro"); }
         }
 
-        function confirmarExclusaoCusto(id) {
-            mostrarAlerta("Deseja realmente excluir esta despesa permanentemente?", "confirmacao", () => executarExclusaoCusto(id));
-        }
-
+        function confirmarExclusaoCusto(id) { mostrarAlerta("Deseja excluir esta despesa permanentemente?", "confirmacao", () => executarExclusaoCusto(id)); }
         async function executarExclusaoCusto(id) {
-            try {
-                await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify({ acao: "EXCLUIR_CUSTO", id: id })
-                });
-
-                custosDataBanco = custosDataBanco.filter(c => c.id != id); 
-                atualizarListasCategorias();
-                renderizarTabelaCustos();
-                calcularDashboard();
-                mostrarAlerta("Despesa excluída com sucesso!", "sucesso");
-            } catch(e) {
-                mostrarAlerta("Erro ao excluir despesa da planilha.", "erro");
-            }
+            try { await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify({ acao: "EXCLUIR_CUSTO", id: id }) });
+                custosDataBanco = custosDataBanco.filter(c => c.id != id); atualizarListasCategorias(); renderizarTabelaCustos(); calcularDashboardERelatorios(); mostrarAlerta("Despesa excluída!", "sucesso");
+            } catch(e) { mostrarAlerta("Erro ao excluir.", "erro"); }
         }
 
         function renderizarTabelaCustos() {
-            const tbody = document.getElementById('tbodyCustos');
-            const tfoot = document.getElementById('tfootCustos');
-            tbody.innerHTML = '';
-            tfoot.innerHTML = '';
-
-            let filtroSelecionado = document.getElementById('filtro-categoria-custos').value;
-            let custosFiltrados = custosDataBanco;
-
-            if (filtroSelecionado !== "TODAS") {
-                custosFiltrados = custosDataBanco.filter(c => c.categoria === filtroSelecionado);
-            }
-
-            if(custosFiltrados.length === 0) {
-                tbody.innerHTML = '<tr><td style="text-align:center;" colspan="5">Nenhuma despesa encontrada nesta visão.</td></tr>';
-                return;
-            }
-
+            const tbody = document.getElementById('tbodyCustos'); const tfoot = document.getElementById('tfootCustos'); tbody.innerHTML = ''; tfoot.innerHTML = '';
+            let filtroSelecionado = document.getElementById('filtro-categoria-custos').value; let custosFiltrados = custosDataBanco;
+            if (filtroSelecionado !== "TODAS") custosFiltrados = custosDataBanco.filter(c => c.categoria === filtroSelecionado);
+            if(custosFiltrados.length === 0) { tbody.innerHTML = '<tr><td style="text-align:center;" colspan="5">Nenhuma despesa encontrada nesta visão.</td></tr>'; return; }
             let somaVisaoAtual = 0;
-
             custosFiltrados.forEach(c => {
                 somaVisaoAtual += parseFloat(c.valorTotal) || 0;
                 let htmlObs = c.obs ? `<br><span style="font-size: 12px; color: #f59e0b; font-style: italic;">📝 Obs: ${c.obs}</span>` : '';
-
-                let botoesAcao = `
-                    <button class="btn-editar" onclick="editarCusto('${c.id}')" title="Editar">✏️</button>
-                    <button class="btn-remover" onclick="confirmarExclusaoCusto('${c.id}')" title="Excluir">🗑️</button>
-                `;
-
-                // Se tiver travada, esconde o Lápis e a Lixeira e mostra o Cadeado!
-                if(c.travada) {
-                    botoesAcao = `<span style="font-size: 18px;" title="Despesa Aprovada e Travada">🔒</span>`;
-                }
-
-                let tr = document.createElement('tr');
-                tr.className = c.travada ? 'linha-custo travada' : 'linha-custo';
-                
-                tr.innerHTML = `
-                    <td style="text-align: left; font-size: 14px; font-weight: normal; color: var(--ciano-destaque);">${c.categoria}</td>
+                let botoesAcao = `<button class="btn-editar" onclick="editarCusto('${c.id}')" title="Editar">✏️</button><button class="btn-remover" onclick="confirmarExclusaoCusto('${c.id}')" title="Excluir">🗑️</button>`;
+                if(c.travada) botoesAcao = `<span style="font-size: 18px;" title="Despesa Aprovada e Travada">🔒</span>`;
+                let tr = document.createElement('tr'); tr.className = c.travada ? 'linha-custo travada' : 'linha-custo';
+                tr.innerHTML = `<td style="text-align: left; font-size: 14px; font-weight: normal; color: var(--ciano-destaque);">${c.categoria}</td>
                     <td style="text-align: left; font-size: 15px;">${c.fornecedor}<br><span style="font-size: 13px; color: #8892b0; font-weight: normal;">${c.descricao}</span>${htmlObs}</td>
-                    <td>${c.qtd}x</td>
-                    <td style="color: #ef4444;">${formatarMoeda(c.valorTotal)}</td>
+                    <td>${c.qtd}x</td><td style="color: #ef4444;">${formatarMoeda(c.valorTotal)}</td>
                     <td style="text-align: center; display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 45px;">
-                        <input type="checkbox" style="width: 18px; height: 18px; cursor: pointer; margin-right: 10px;" ${c.travada ? 'checked' : ''} onchange="travarCusto('${c.id}', this.checked)" title="Marcar como Aprovado">
-                        ${botoesAcao}
-                    </td>
-                `;
+                        <input type="checkbox" style="width: 18px; height: 18px; cursor: pointer; margin-right: 10px;" ${c.travada ? 'checked' : ''} onchange="travarCusto('${c.id}', this.checked)" title="Marcar como Aprovado">${botoesAcao}
+                    </td>`;
                 tbody.appendChild(tr);
             });
-
-            tfoot.innerHTML = `
-                <tr>
-                    <td colspan="3" style="text-align: right; font-size: 16px; color: #fff;">TOTAL DESTA VISÃO:</td>
-                    <td style="color: #ef4444; font-size: 20px;">${formatarMoeda(somaVisaoAtual)}</td>
-                    <td></td>
-                </tr>
-            `;
+            tfoot.innerHTML = `<tr><td colspan="3" style="text-align: right; font-size: 16px; color: #fff;">TOTAL DESTA VISÃO:</td><td style="color: #ef4444; font-size: 20px;">${formatarMoeda(somaVisaoAtual)}</td><td></td></tr>`;
         }
 
         // ==========================================
         // LANÇAMENTOS DA MESA E PAGADORES
         // ==========================================
         function trocarMesaSelecionada(novoId, nomeDoMapa = null) {
-            if(!novoId) {
-                document.getElementById('alerta-nenhuma-mesa').style.display = 'block';
-                document.getElementById('area-edicao-mesa').style.display = 'none';
-                return;
-            }
-
-            document.getElementById('containerPagadores').innerHTML = '';
-
-            mesaAtualID = novoId;
-            const prefixo = mesaAtualID.charAt(0).toUpperCase();
+            if(!novoId) { document.getElementById('alerta-nenhuma-mesa').style.display = 'block'; document.getElementById('area-edicao-mesa').style.display = 'none'; return; }
+            document.getElementById('containerPagadores').innerHTML = ''; mesaAtualID = novoId; const prefixo = mesaAtualID.charAt(0).toUpperCase();
             valorBaseDaMesa = CONFIG_MESAS[prefixo] ? CONFIG_MESAS[prefixo].valorBase : 0;
-            
             let mesaNoBanco = mesasDataBanco.find(m => m.id === novoId) || {nome: "", telefone: "", obs: "", cadeirasExtra: 0, detalhesJSON: ""};
-            
-            qtdCadeirasExtrasGlobais = parseInt(mesaNoBanco.cadeirasExtra) || 0;
-            valorCadeirasExtrasGlobais = qtdCadeirasExtrasGlobais * PRECO_FIXO_CADEIRA;
-            document.getElementById('campoQtdCadeirasGlobais').value = qtdCadeirasExtrasGlobais;
-            document.getElementById('campoValorCadeirasGlobais').value = formatarNumeroLimpo(valorCadeirasExtrasGlobais);
-            document.getElementById('campoObs').value = mesaNoBanco.obs || ""; 
-            document.getElementById('campoValorBaseInfo').value = formatarMoeda(valorBaseDaMesa);
-
-            document.getElementById('alerta-nenhuma-mesa').style.display = 'none';
-            document.getElementById('area-edicao-mesa').style.display = 'block';
+            qtdCadeirasExtrasGlobais = parseInt(mesaNoBanco.cadeirasExtra) || 0; valorCadeirasExtrasGlobais = qtdCadeirasExtrasGlobais * PRECO_FIXO_CADEIRA;
+            document.getElementById('campoQtdCadeirasGlobais').value = qtdCadeirasExtrasGlobais; document.getElementById('campoValorCadeirasGlobais').value = formatarNumeroLimpo(valorCadeirasExtrasGlobais);
+            document.getElementById('campoObs').value = mesaNoBanco.obs || ""; document.getElementById('campoValorBaseInfo').value = formatarMoeda(valorBaseDaMesa);
+            document.getElementById('alerta-nenhuma-mesa').style.display = 'none'; document.getElementById('area-edicao-mesa').style.display = 'block';
             document.getElementById('titulo-mesa-lancamento').innerText = `📝 Lançamentos: Mesa ${mesaAtualID} (${CONFIG_MESAS[prefixo].nome})`;
-            
-            nomeEditadoManualmente = false;
-            
-            let nomeParaUsar = nomeDoMapa !== null ? nomeDoMapa : (mesaNoBanco.nome || "");
-            document.getElementById('campoNomeExibido').value = nomeParaUsar;
-            
+            nomeEditadoManualmente = false; let nomeParaUsar = nomeDoMapa !== null ? nomeDoMapa : (mesaNoBanco.nome || ""); document.getElementById('campoNomeExibido').value = nomeParaUsar;
             pagadoresAtuais = []; 
-            
             if(mesaNoBanco.detalhesJSON && mesaNoBanco.detalhesJSON.trim() !== "") {
-                try {
-                    let parsed = JSON.parse(mesaNoBanco.detalhesJSON);
-                    if(Array.isArray(parsed)) pagadoresAtuais = parsed;
-                    else if (parsed && typeof parsed === 'object') pagadoresAtuais = [parsed];
-
-                    pagadoresAtuais.forEach(p => {
-                        if(!p.parcelas || !Array.isArray(p.parcelas)) {
-                            p.parcelas = [{ numero: 1, valor: p.valorCota || 0, pago: false, vencimento: "" }];
-                            p.qtdParcelas = 1;
-                        }
-                        if(p.valorCota === undefined) p.valorCota = 0;
-                        if(p.nome === undefined) p.nome = "";
-                    });
+                try { let parsed = JSON.parse(mesaNoBanco.detalhesJSON);
+                    if(Array.isArray(parsed)) pagadoresAtuais = parsed; else if (parsed && typeof parsed === 'object') pagadoresAtuais = [parsed];
+                    pagadoresAtuais.forEach(p => { if(!p.parcelas || !Array.isArray(p.parcelas)) { p.parcelas = [{ numero: 1, valor: p.valorCota || 0, pago: false, vencimento: "" }]; p.qtdParcelas = 1; }
+                        if(p.valorCota === undefined) p.valorCota = 0; if(p.nome === undefined) p.nome = ""; });
                 } catch(e) { pagadoresAtuais = []; }
             }
-            
             if(pagadoresAtuais.length === 0) {
                 let cotaSug = valorBaseDaMesa + valorCadeirasExtrasGlobais;
                 pagadoresAtuais.push({ id: 'pag_1', nome: nomeParaUsar, telefone: mesaNoBanco.telefone || "", cadeirasExtra: 0, valorCota: cotaSug, pagamento: "Dinheiro", qtdParcelas: 1, parcelas: [{ numero: 1, valor: cotaSug, pago: false, vencimento: "" }] });
-            } else if (pagadoresAtuais.length === 1 && pagadoresAtuais[0].nome === "" && nomeParaUsar !== "") {
-                pagadoresAtuais[0].nome = nomeParaUsar;
-            }
-
-            atualizarCalculoTotalMesa();
-            renderizarPagadores(); 
-        }
-
-        function formatarNumeroLimpo(valor) { return valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
-        function formatarMoeda(valor) { return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }); }
-        function converterParaNumero(stringMoeda) {
-            if (typeof stringMoeda === 'number') return stringMoeda;
-            let limpo = stringMoeda.toString().replace(/R\$\s?/g, '').replace(/\./g, '').replace(',', '.');
-            return parseFloat(limpo) || 0;
+            } else if (pagadoresAtuais.length === 1 && pagadoresAtuais[0].nome === "" && nomeParaUsar !== "") { pagadoresAtuais[0].nome = nomeParaUsar; }
+            atualizarCalculoTotalMesa(); renderizarPagadores(); 
         }
 
         function atualizarCadeirasAvulsasGlobais() {
-            qtdCadeirasExtrasGlobais = parseInt(document.getElementById('campoQtdCadeirasGlobais').value) || 0;
-            valorCadeirasExtrasGlobais = qtdCadeirasExtrasGlobais * PRECO_FIXO_CADEIRA;
-            document.getElementById('campoValorCadeirasGlobais').value = formatarNumeroLimpo(valorCadeirasExtrasGlobais);
-            atualizarCalculoTotalMesa();
-            dividirTotalIgualmente(); 
+            qtdCadeirasExtrasGlobais = parseInt(document.getElementById('campoQtdCadeirasGlobais').value) || 0; valorCadeirasExtrasGlobais = qtdCadeirasExtrasGlobais * PRECO_FIXO_CADEIRA;
+            document.getElementById('campoValorCadeirasGlobais').value = formatarNumeroLimpo(valorCadeirasExtrasGlobais); atualizarCalculoTotalMesa(); dividirTotalIgualmente(); 
         }
 
         function atualizarCadeirasAvulsasGlobaisValorEditado(novoValorStr) {
-            valorCadeirasExtrasGlobais = converterParaNumero(novoValorStr);
-            document.getElementById('campoValorCadeirasGlobais').value = formatarNumeroLimpo(valorCadeirasExtrasGlobais);
-            atualizarCalculoTotalMesa();
-            dividirTotalIgualmente();
+            valorCadeirasExtrasGlobais = converterParaNumero(novoValorStr); document.getElementById('campoValorCadeirasGlobais').value = formatarNumeroLimpo(valorCadeirasExtrasGlobais);
+            atualizarCalculoTotalMesa(); dividirTotalIgualmente();
         }
 
-        function atualizarCalculoTotalMesa() {
-            valorTotalFinalDaMesa = valorBaseDaMesa + valorCadeirasExtrasGlobais;
-            atualizarResumoGlobal();
-        }
+        function atualizarCalculoTotalMesa() { valorTotalFinalDaMesa = valorBaseDaMesa + valorCadeirasExtrasGlobais; atualizarResumoGlobal(); }
 
         function dividirTotalIgualmente() {
-            if (pagadoresAtuais.length === 0) return;
-            let valorPorCabeca = valorTotalFinalDaMesa / pagadoresAtuais.length;
-            pagadoresAtuais.forEach(p => {
-                p.valorCota = valorPorCabeca;
-                p.parcelas.forEach(parc => parc.valor = valorPorCabeca / p.qtdParcelas);
-            });
+            if (pagadoresAtuais.length === 0) return; let valorPorCabeca = valorTotalFinalDaMesa / pagadoresAtuais.length;
+            pagadoresAtuais.forEach(p => { p.valorCota = valorPorCabeca; p.parcelas.forEach(parc => parc.valor = valorPorCabeca / p.qtdParcelas); });
             renderizarPagadores();
         }
 
         function ajustarFatiasEmCascata(pagadorEditadoIndex) {
-            let somaTravada = pagadoresAtuais[pagadorEditadoIndex].valorCota;
-            let saldoParaOsOutros = valorTotalFinalDaMesa - somaTravada;
-            let pagadoresRestantes = pagadoresAtuais.length - 1;
-            
-            if (pagadoresRestantes > 0) {
-                let valorProResto = saldoParaOsOutros / pagadoresRestantes;
-                pagadoresAtuais.forEach((p, i) => {
-                    if (i !== pagadorEditadoIndex) {
-                        p.valorCota = valorProResto;
-                        p.parcelas.forEach(parc => parc.valor = valorProResto / p.qtdParcelas);
-                    }
-                });
-            }
-            renderizarPagadores();
+            let somaTravada = pagadoresAtuais[pagadorEditadoIndex].valorCota; let saldoParaOsOutros = valorTotalFinalDaMesa - somaTravada; let pagadoresRestantes = pagadoresAtuais.length - 1;
+            if (pagadoresRestantes > 0) { let valorProResto = saldoParaOsOutros / pagadoresRestantes;
+                pagadoresAtuais.forEach((p, i) => { if (i !== pagadorEditadoIndex) { p.valorCota = valorProResto; p.parcelas.forEach(parc => parc.valor = valorProResto / p.qtdParcelas); } });
+            } renderizarPagadores();
         }
 
         function marcarNomeEditadoManualmente() { nomeEditadoManualmente = true; }
-        
         function atualizarNomeExibidoAutomaticamente() {
             if (nomeEditadoManualmente) return; 
-            let nomesValidos = pagadoresAtuais.map(p => p.nome.trim()).filter(n => n !== "");
-            document.getElementById('campoNomeExibido').value = nomesValidos.join(" / ");
+            let nomesValidos = pagadoresAtuais.map(p => p.nome.trim()).filter(n => n !== ""); document.getElementById('campoNomeExibido').value = nomesValidos.join(" / ");
         }
 
         function adicionarPagador() {
-            pagadoresAtuais.push({
-                id: 'pag_' + new Date().getTime(),
-                nome: "", telefone: "", valorCota: 0, pagamento: "Dinheiro", qtdParcelas: 1,
-                parcelas: [{ numero: 1, valor: 0, pago: false, vencimento: "" }]
-            });
+            pagadoresAtuais.push({ id: 'pag_' + new Date().getTime(), nome: "", telefone: "", valorCota: 0, pagamento: "Dinheiro", qtdParcelas: 1, parcelas: [{ numero: 1, valor: 0, pago: false, vencimento: "" }] });
             dividirTotalIgualmente(); 
         }
 
-        function removerPagador(index) {
-            mostrarAlerta("Deseja remover este pagador e todas as suas parcelas?", "confirmacao", () => {
-                pagadoresAtuais.splice(index, 1); 
-                atualizarNomeExibidoAutomaticamente();
-                dividirTotalIgualmente(); 
-            });
-        }
+        function removerPagador(index) { mostrarAlerta("Deseja remover este pagador e todas as parcelas?", "confirmacao", () => { pagadoresAtuais.splice(index, 1); atualizarNomeExibidoAutomaticamente(); dividirTotalIgualmente(); }); }
 
         function atualizarPagador(pIndex, campo, valor) {
             let p = pagadoresAtuais[pIndex];
-            
             if(campo === 'nome') { p.nome = valor; atualizarNomeExibidoAutomaticamente(); }
-            if(campo === 'telefone') p.telefone = valor;
-            if(campo === 'pagamento') p.pagamento = valor;
-            
-            if(campo === 'valorCota') { 
-                p.valorCota = converterParaNumero(valor);
-                let valorPorParcela = p.valorCota / p.qtdParcelas;
-                p.parcelas.forEach(parc => parc.valor = valorPorParcela);
-                ajustarFatiasEmCascata(pIndex);
-            }
-            if(campo === 'qtdParcelas') { 
-                p.qtdParcelas = parseInt(valor) || 1;
-                let valorPorParcela = p.valorCota / p.qtdParcelas;
-                p.parcelas = [];
-                for(let i = 1; i <= p.qtdParcelas; i++) {
-                    p.parcelas.push({ numero: i, valor: valorPorParcela, pago: false, vencimento: "" });
-                }
-                renderizarPagadores(); 
-            }
+            if(campo === 'telefone') p.telefone = valor; if(campo === 'pagamento') p.pagamento = valor;
+            if(campo === 'valorCota') { p.valorCota = converterParaNumero(valor); let valorPorParcela = p.valorCota / p.qtdParcelas; p.parcelas.forEach(parc => parc.valor = valorPorParcela); ajustarFatiasEmCascata(pIndex); }
+            if(campo === 'qtdParcelas') { p.qtdParcelas = parseInt(valor) || 1; let valorPorParcela = p.valorCota / p.qtdParcelas; p.parcelas = [];
+                for(let i = 1; i <= p.qtdParcelas; i++) { p.parcelas.push({ numero: i, valor: valorPorParcela, pago: false, vencimento: "" }); } renderizarPagadores(); }
             atualizarResumoGlobal();
         }
 
         function atualizarParc(pIndex, parcIndex, campo, valor) {
-            let p = pagadoresAtuais[pIndex];
-            let parc = p.parcelas[parcIndex];
-            if(campo === 'vencimento') parc.vencimento = valor;
-            if(campo === 'pago') { parc.pago = valor; renderizarPagadores(); }
-            
-            if(campo === 'valor') { 
-                parc.valor = converterParaNumero(valor);
-                let somaAnteriores = 0;
-                for(let i=0; i<=parcIndex; i++) { somaAnteriores += p.parcelas[i].valor; }
-                let saldoRestante = p.valorCota - somaAnteriores;
-                let numParcelasFuturas = p.qtdParcelas - (parcIndex + 1);
-                
-                if (numParcelasFuturas > 0) {
-                    let valorPorParcelaFutura = saldoRestante / numParcelasFuturas;
-                    for(let i = parcIndex + 1; i < p.qtdParcelas; i++) {
-                        p.parcelas[i].valor = valorPorParcelaFutura;
-                    }
-                }
+            let p = pagadoresAtuais[pIndex]; let parc = p.parcelas[parcIndex];
+            if(campo === 'vencimento') parc.vencimento = valor; if(campo === 'pago') { parc.pago = valor; renderizarPagadores(); }
+            if(campo === 'valor') { parc.valor = converterParaNumero(valor); let somaAnteriores = 0;
+                for(let i=0; i<=parcIndex; i++) { somaAnteriores += p.parcelas[i].valor; } let saldoRestante = p.valorCota - somaAnteriores; let numParcelasFuturas = p.qtdParcelas - (parcIndex + 1);
+                if (numParcelasFuturas > 0) { let valorPorParcelaFutura = saldoRestante / numParcelasFuturas; for(let i = parcIndex + 1; i < p.qtdParcelas; i++) { p.parcelas[i].valor = valorPorParcelaFutura; } }
                 renderizarPagadores(); 
-            }
-            atualizarResumoGlobal();
+            } atualizarResumoGlobal();
         }
 
         function atualizarResumoGlobal() {
-            let totalMesaSomadoDosPagadores = 0;
-            let totalPago = 0;
-
-            pagadoresAtuais.forEach(p => {
-                totalMesaSomadoDosPagadores += p.valorCota; 
-                p.parcelas.forEach(parc => { if(parc.pago) totalPago += parc.valor; });
-            });
-
+            let totalMesaSomadoDosPagadores = 0; let totalPago = 0;
+            pagadoresAtuais.forEach(p => { totalMesaSomadoDosPagadores += p.valorCota; p.parcelas.forEach(parc => { if(parc.pago) totalPago += parc.valor; }); });
             let saldo = valorTotalFinalDaMesa - totalPago;
-
-            document.getElementById('campoValorTotal').value = formatarMoeda(valorTotalFinalDaMesa);
-            document.getElementById('campoValorPago').value = formatarMoeda(totalPago);
-            let inputSaldo = document.getElementById('campoSaldo');
-            inputSaldo.value = formatarMoeda(saldo);
-            
-            if (saldo <= 0 && valorTotalFinalDaMesa > 0) inputSaldo.className = "campo-bloqueado";
-            else inputSaldo.className = "campo-bloqueado-vermelho";
+            document.getElementById('campoValorTotal').value = formatarMoeda(valorTotalFinalDaMesa); document.getElementById('campoValorPago').value = formatarMoeda(totalPago);
+            let inputSaldo = document.getElementById('campoSaldo'); inputSaldo.value = formatarMoeda(saldo);
+            if (saldo <= 0 && valorTotalFinalDaMesa > 0) inputSaldo.className = "campo-bloqueado"; else inputSaldo.className = "campo-bloqueado-vermelho";
         }
 
         function renderizarPagadores() {
-            const container = document.getElementById('containerPagadores');
-            container.innerHTML = '';
-
+            const container = document.getElementById('containerPagadores'); container.innerHTML = '';
             pagadoresAtuais.forEach((p, pIndex) => {
                 let htmlCard = `
                     <div class="card-pagador">
-                        <div class="card-pagador-header">
-                            <h5>👤 Pagador ${pIndex + 1}</h5>
-                            <button class="btn-remover" onclick="removerPagador(${pIndex})">Excluir Pagador</button>
+                        <div class="card-pagador-header"><h5>👤 Pagador ${pIndex + 1}</h5><button class="btn-remover" onclick="removerPagador(${pIndex})">Excluir Pagador</button></div>
+                        <div class="form-row">
+                            <div class="form-group" style="flex: 2;"><label>Nome / Empresa</label><input type="text" value="${p.nome}" onchange="atualizarPagador(${pIndex}, 'nome', this.value)"></div>
+                            <div class="form-group"><label>Telefone</label><input type="text" value="${p.telefone}" onchange="atualizarPagador(${pIndex}, 'telefone', this.value)"></div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group" style="flex: 2;">
-                                <label>Nome da Pessoa / Empresa</label>
-                                <input type="text" value="${p.nome}" onchange="atualizarPagador(${pIndex}, 'nome', this.value)" placeholder="Nome...">
-                            </div>
-                            <div class="form-group">
-                                <label>Telefone</label>
-                                <input type="text" value="${p.telefone}" onchange="atualizarPagador(${pIndex}, 'telefone', this.value)" placeholder="(17) 999...">
-                            </div>
+                            <div class="form-group"><label>Fatia da Mesa (R$)</label><input type="text" value="${formatarNumeroLimpo(p.valorCota)}" onchange="atualizarPagador(${pIndex}, 'valorCota', this.value)" style="color: var(--ciano-destaque);"></div>
+                            <div class="form-group"><label>Forma Pgto</label><select onchange="atualizarPagador(${pIndex}, 'pagamento', this.value)">
+                                <option value="Dinheiro" ${p.pagamento === 'Dinheiro' ? 'selected' : ''}>Dinheiro</option><option value="Pix" ${p.pagamento === 'Pix' ? 'selected' : ''}>Pix</option>
+                                <option value="Cartão" ${p.pagamento === 'Cartão' ? 'selected' : ''}>Cartão</option><option value="Boleto" ${p.pagamento === 'Boleto' ? 'selected' : ''}>Boleto</option>
+                            </select></div>
+                            <div class="form-group" style="max-width: 100px;"><label>Parcelas</label><select onchange="atualizarPagador(${pIndex}, 'qtdParcelas', this.value)">
+                                ${[1,2,3,4,5,6,7,8,9,10,11,12].map(n => `<option value="${n}" ${p.qtdParcelas === n ? 'selected' : ''}>${n}x</option>`).join('')}
+                            </select></div>
                         </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Fatia da Mesa (R$)</label>
-                                <input type="text" value="${formatarNumeroLimpo(p.valorCota)}" onchange="atualizarPagador(${pIndex}, 'valorCota', this.value)" style="color: var(--ciano-destaque);">
-                            </div>
-                            <div class="form-group">
-                                <label>Forma Pgto</label>
-                                <select onchange="atualizarPagador(${pIndex}, 'pagamento', this.value)">
-                                    <option value="Dinheiro" ${p.pagamento === 'Dinheiro' ? 'selected' : ''}>Dinheiro</option>
-                                    <option value="Pix" ${p.pagamento === 'Pix' ? 'selected' : ''}>Pix</option>
-                                    <option value="Cartão de Crédito" ${p.pagamento === 'Cartão de Crédito' ? 'selected' : ''}>Cartão de Crédito</option>
-                                    <option value="Cartão de Débito" ${p.pagamento === 'Cartão de Débito' ? 'selected' : ''}>Cartão de Débito</option>
-                                    <option value="Boleto" ${p.pagamento === 'Boleto' ? 'selected' : ''}>Boleto</option>
-                                    <option value="Depósito" ${p.pagamento === 'Depósito' ? 'selected' : ''}>Depósito</option>
-                                    <option value="Cortesia" ${p.pagamento === 'Cortesia' ? 'selected' : ''}>Cortesia</option>
-                                </select>
-                            </div>
-                            <div class="form-group" style="max-width: 100px;">
-                                <label>Parcelas</label>
-                                <select onchange="atualizarPagador(${pIndex}, 'qtdParcelas', this.value)">
-                                    ${[1,2,3,4,5,6,7,8,9,10,11,12].map(n => `<option value="${n}" ${p.qtdParcelas === n ? 'selected' : ''}>${n}x</option>`).join('')}
-                                </select>
-                            </div>
-                        </div>
-
                         <div style="background-color: #061020; padding: 15px; border-radius: 6px; margin-top: 10px; border: 1px dashed #233554;">
-                            <label style="font-size: 12px; color: #8892b0; text-transform: uppercase; font-weight: bold; margin-bottom: 10px; display: block;">CRONOGRAMA DE PAGAMENTOS DESTE PAGADOR:</label>
+                            <label style="font-size: 12px; color: #8892b0; text-transform: uppercase; font-weight: bold; margin-bottom: 10px; display: block;">CRONOGRAMA DE PAGAMENTOS:</label>
                             ${p.parcelas.map((parc, parcIndex) => `
-                                <div class="parcela-linha">
-                                    <span style="color: var(--ciano-destaque); width: 50px; font-weight: bold; font-size: 14px;">${parc.numero}ª Parc</span>
-                                    <input type="date" value="${parc.vencimento}" onchange="atualizarParc(${pIndex}, ${parcIndex}, 'vencimento', this.value)">
-                                    <input type="text" value="${formatarNumeroLimpo(parc.valor)}" onchange="atualizarParc(${pIndex}, ${parcIndex}, 'valor', this.value)" style="margin-left: auto;">
-                                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; margin-left: 15px;">
-                                        <input type="checkbox" ${parc.pago ? 'checked' : ''} onchange="atualizarParc(${pIndex}, ${parcIndex}, 'pago', this.checked)" style="width: 18px; height: 18px;">
-                                        <span class="${parc.pago ? 'status-pago' : 'status-pendente'}">${parc.pago ? 'PAGO' : 'PENDENTE'}</span>
-                                    </label>
-                                </div>
+                                <div class="parcela-linha"><span style="color: var(--ciano-destaque); width: 50px; font-weight: bold; font-size: 14px;">${parc.numero}ª Parc</span>
+                                <input type="date" value="${parc.vencimento}" onchange="atualizarParc(${pIndex}, ${parcIndex}, 'vencimento', this.value)">
+                                <input type="text" value="${formatarNumeroLimpo(parc.valor)}" onchange="atualizarParc(${pIndex}, ${parcIndex}, 'valor', this.value)" style="margin-left: auto;">
+                                <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; margin-left: 15px;">
+                                <input type="checkbox" ${parc.pago ? 'checked' : ''} onchange="atualizarParc(${pIndex}, ${parcIndex}, 'pago', this.checked)" style="width: 18px; height: 18px;">
+                                <span class="${parc.pago ? 'status-pago' : 'status-pendente'}">${parc.pago ? 'PAGO' : 'PENDENTE'}</span></label></div>
                             `).join('')}
                         </div>
                     </div>
-                `;
-                container.innerHTML += htmlCard;
+                `; container.innerHTML += htmlCard;
             });
         }
 
         async function salvarDadosFinanceiros() {
-            if(!mesaAtualID) {
-                mostrarAlerta("Selecione uma mesa primeiro!", "erro");
-                return;
-            }
-
-            const btnSalvar = document.getElementById('btnSalvarFinanceiro');
-            btnSalvar.innerText = "⏳ A guardar...";
-            btnSalvar.disabled = true;
-
-            let totalPago = 0;
-            pagadoresAtuais.forEach(p => {
-                p.parcelas.forEach(parc => { if(parc.pago) totalPago += parc.valor; });
-            });
+            if(!mesaAtualID) { mostrarAlerta("Selecione uma mesa primeiro!", "erro"); return; }
+            const btnSalvar = document.getElementById('btnSalvarFinanceiro'); btnSalvar.innerText = "⏳ A guardar..."; btnSalvar.disabled = true;
+            let totalPago = 0; pagadoresAtuais.forEach(p => { p.parcelas.forEach(parc => { if(parc.pago) totalPago += parc.valor; }); });
             let saldo = valorTotalFinalDaMesa - totalPago;
-
-            const nomeExibido = document.getElementById('campoNomeExibido').value;
-            const observacoes = document.getElementById('campoObs').value;
-
-            const pacoteDeDados = { 
-                id: mesaAtualID, 
-                nome: nomeExibido, 
-                cadeirasExtra: qtdCadeirasExtrasGlobais,
-                valorTotal: valorTotalFinalDaMesa,
-                valorPago: totalPago,
-                saldo: saldo,
-                obs: observacoes,
-                detalhesJSON: JSON.stringify(pagadoresAtuais) 
-            };
-
-            if(pagadoresAtuais.length > 0 && pagadoresAtuais[0].telefone) {
-                pacoteDeDados.telefone = pagadoresAtuais[0].telefone;
-            }
-
+            const pacoteDeDados = { id: mesaAtualID, nome: document.getElementById('campoNomeExibido').value, cadeirasExtra: qtdCadeirasExtrasGlobais, valorTotal: valorTotalFinalDaMesa, valorPago: totalPago, saldo: saldo, obs: document.getElementById('campoObs').value, detalhesJSON: JSON.stringify(pagadoresAtuais) };
+            if(pagadoresAtuais.length > 0 && pagadoresAtuais[0].telefone) pacoteDeDados.telefone = pagadoresAtuais[0].telefone;
             try {
-                await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify(pacoteDeDados)
-                });
-
+                await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(pacoteDeDados) });
                 let mesaNoBanco = mesasDataBanco.find(m => m.id === mesaAtualID);
-                if(mesaNoBanco) {
-                    mesaNoBanco.nome = pacoteDeDados.nome;
-                    mesaNoBanco.cadeirasExtra = pacoteDeDados.cadeirasExtra;
-                    mesaNoBanco.valorTotal = pacoteDeDados.valorTotal;
-                    mesaNoBanco.valorPago = pacoteDeDados.valorPago;
-                    mesaNoBanco.saldo = pacoteDeDados.saldo;
-                    mesaNoBanco.obs = pacoteDeDados.obs;
-                    mesaNoBanco.detalhesJSON = pacoteDeDados.detalhesJSON;
-                    if(pacoteDeDados.telefone) mesaNoBanco.telefone = pacoteDeDados.telefone;
-                } else {
-                    mesasDataBanco.push(pacoteDeDados);
-                }
-                
-                calcularDashboard(); 
-                mostrarAlerta("✅ Dados da Mesa guardados com sucesso na Nuvem!", "sucesso");
-            } catch (error) {
-                mostrarAlerta("🔴 Erro de ligação! Verifique a internet e tente novamente.", "erro");
-            } finally {
-                btnSalvar.innerText = "💾 Salvar Lançamentos";
-                btnSalvar.disabled = false;
-            }
+                if(mesaNoBanco) { Object.assign(mesaNoBanco, pacoteDeDados); } else { mesasDataBanco.push(pacoteDeDados); }
+                calcularDashboardERelatorios(); mostrarAlerta("✅ Dados da Mesa guardados com sucesso!", "sucesso");
+            } catch (error) { mostrarAlerta("🔴 Erro de ligação! Verifique a internet.", "erro"); } finally { btnSalvar.innerText = "💾 Salvar Lançamentos"; btnSalvar.disabled = false; }
         }
     </script>
 </body>
