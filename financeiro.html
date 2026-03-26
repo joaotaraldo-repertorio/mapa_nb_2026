@@ -46,7 +46,6 @@
         .tabela-financeira td:first-child { text-align: left; font-size: 16px;}
         .tabela-financeira tfoot td { background-color: #112240; color: var(--ciano-destaque); font-size: 16px; border-top: 2px solid var(--ciano-destaque); border-bottom: none;}
         
-        /* CSS DO SIMULADOR E DETALHAMENTO */
         .painel-simulador { background-color: #061020; border: 1px dashed #f59e0b; border-radius: 8px; padding: 25px;}
         .painel-simulador h3 { margin: 0 0 5px 0; color: #f59e0b; font-size: 22px; display: flex; align-items: center; gap: 8px; justify-content: space-between;}
         .painel-simulador > p { color: #8892b0; margin: 0 0 20px 0; font-size: 14px;}
@@ -168,7 +167,7 @@
                 <p>O que acontece com o caixa e com o salão se vendermos mais algumas mesas ou cadeiras hoje?</p>
                 
                 <div class="sim-grid-inputs" id="containerSimuladorInputs">
-                    </div>
+                </div>
                 
                 <h4 style="color: var(--ciano-destaque); margin-top: 15px; margin-bottom: 10px; border-bottom: 1px dashed #233554; padding-bottom: 5px;">💰 Projeção Financeira</h4>
                 <div class="sim-resultado-box" style="margin-bottom: 20px;">
@@ -348,7 +347,6 @@
         let custosDataBanco = []; 
         let categoriasPadrao = ["Atração Musical", "Estrutura e Som", "Bebidas", "Buffet", "Decoração", "Publicidade", "Taxas e Impostos", "Outras Demandas"];
 
-        // CONFIGURAÇÃO COM LUGARES (Para cálculo de pessoas)
         const CONFIG_MESAS = {
             "F": { nome: "Cota Família", valorBase: 25000, layout: [[6],[6]], lugares: 12 },
             "C": { nome: "Cota Criança", valorBase: 12000, layout: [[7],[7],[7],[7]], lugares: 8 },
@@ -368,7 +366,6 @@
         let nomeEditadoManualmente = false;
         let acaoConfirmacaoGlobal = null;
         
-        // Variáveis Globais de Totalização para o Simulador
         let G_receitaReal = 0;
         let G_custosReais = 0;
         let G_pessoasReal = 0;
@@ -381,7 +378,6 @@
             return parseFloat(limpo) || 0;
         }
 
-        // ALERTAS
         function mostrarAlerta(mensagem, tipo = 'info', callback = null) {
             const modal = document.getElementById('modal-alerta');
             document.getElementById('overlay-alerta').style.display = 'block';
@@ -469,21 +465,17 @@
             } catch (error) { console.error("Erro ao puxar dados."); }
         }
 
-        // ==========================================
-        // DRE, DETALHAMENTO E SIMULADOR
-        // ==========================================
         function calcularDashboardERelatorios() {
             let totalFechado = 0; let totalRecebido = 0; let totalPendente = 0; let totalCustos = 0;
             let totalPessoas = 0;
 
-            // Estrutura para a tabela de detalhamento
             let det = {
                 F: { total: 12, prev: 12*25000, vendidas: 0, fechado: 0, recebido: 0, saldo: 0 },
                 C: { total: 28, prev: 28*12000, vendidas: 0, fechado: 0, recebido: 0, saldo: 0 },
                 P: { total: 14, prev: 14*8000, vendidas: 0, fechado: 0, recebido: 0, saldo: 0 },
                 M: { total: 19, prev: 19*5400, vendidas: 0, fechado: 0, recebido: 0, saldo: 0 },
                 D: { total: 21, prev: 21*4800, vendidas: 0, fechado: 0, recebido: 0, saldo: 0 },
-                Avulsas: { vendidas: 0, fechado: 0, recebido: 0, saldo: 0 } // Avulsas (Cadeiras)
+                Avulsas: { vendidas: 0, fechado: 0, recebido: 0, saldo: 0 }
             };
 
             mesasDataBanco.forEach(m => {
@@ -494,31 +486,28 @@
                 let vSaldo = parseFloat(m.saldo) || 0;
                 let cExtra = parseInt(m.cadeirasExtra) || 0;
 
-                totalFechado += vTotal;
-                totalRecebido += vPago;
-
+                // A CORREÇÃO: Só contabiliza no financeiro se a mesa estiver vendida ou reservada
                 if (status === "vendida" || status === "reservada") {
+                    totalFechado += vTotal;
+                    totalRecebido += vPago;
+
                     if (det[prefixo]) {
                         det[prefixo].vendidas++;
                         totalPessoas += CONFIG_MESAS[prefixo].lugares;
                         
-                        // Lógica de separação do dinheiro das cadeiras avulsas
                         let vCadeiras = cExtra * PRECO_FIXO_CADEIRA;
                         let vMesaLivre = vTotal - vCadeiras;
                         
-                        // Proporção para dividir o que já foi pago entre mesa e cadeiras
                         let ratio = vTotal > 0 ? vCadeiras / vTotal : 0;
                         let pagoCadeiras = vPago * ratio;
                         let pagoMesa = vPago - pagoCadeiras;
                         let saldoCadeiras = vSaldo * ratio;
                         let saldoMesa = vSaldo - saldoCadeiras;
 
-                        // Joga pra Mesa
                         det[prefixo].fechado += vMesaLivre;
                         det[prefixo].recebido += pagoMesa;
                         det[prefixo].saldo += saldoMesa;
 
-                        // Joga pras Cadeiras
                         if(cExtra > 0) {
                             det.Avulsas.vendidas += cExtra;
                             det.Avulsas.fechado += vCadeiras;
@@ -534,12 +523,10 @@
             totalPendente = totalFechado - totalRecebido;
             let lucroLiquido = totalFechado - totalCustos; 
 
-            // Salva as globais para o Simulador usar
             G_receitaReal = totalFechado;
             G_custosReais = totalCustos;
             G_pessoasReal = totalPessoas;
             
-            // CARDS SUPERIORES
             document.getElementById('cofreFechado').innerText = formatarMoeda(totalFechado);
             document.getElementById('cofreRecebido').innerText = formatarMoeda(totalRecebido);
             document.getElementById('cofrePendente').innerText = formatarMoeda(totalPendente);
@@ -551,7 +538,6 @@
                 document.getElementById('cofreLucroLiquido').style.color = '#10b981'; document.querySelector('.cofre-lucro').style.borderTopColor = '#10b981';
             }
 
-            // RENDERIZA A TABELA DE DETALHAMENTO
             const tbodyDet = document.getElementById('tbodyDetalhes');
             tbodyDet.innerHTML = '';
             let chaves = ['F', 'C', 'P', 'M', 'D'];
@@ -570,7 +556,6 @@
                 tbodyDet.innerHTML += tr;
             });
             
-            // Linha Cadeiras Avulsas
             tbodyDet.innerHTML += `<tr style="background-color: rgba(245, 158, 11, 0.05);">
                 <td style="color: #f59e0b;">🪑 Cadeiras Avulsas</td><td style="text-align: center;">-</td><td style="color: #8892b0;">-</td>
                 <td style="text-align: center; color: var(--texto-claro);">${det.Avulsas.vendidas}</td>
@@ -579,25 +564,24 @@
                 <td style="color: #ff4d4d;">${formatarMoeda(det.Avulsas.saldo)}</td>
             </tr>`;
             
-            // Linha Pessoas
             tbodyDet.innerHTML += `<tr style="background-color: #112240;">
                 <td colspan="3" style="text-align: right; color: #a855f7; font-size: 14px;">👥 QUANTIDADE DE PESSOAS (NO SALÃO):</td>
                 <td style="text-align: center; font-size: 18px; color: var(--texto-claro);">${totalPessoas} <span style="font-size:10px; color:#8892b0; display:block; font-weight:normal;">(Soma de assentos + extras)</span></td>
                 <td colspan="3"></td>
             </tr>`;
 
-            // Footer Totais
+            let prevGeral = det.F.prev + det.C.prev + det.P.prev + det.M.prev + det.D.prev;
+            
             document.getElementById('tfootDetalhes').innerHTML = `<tr>
                 <td style="color: var(--ciano-destaque);">TOTAIS GERAIS</td>
                 <td style="text-align: center;">94</td>
-                <td>${formatarMoeda(951400)}</td>
+                <td>${formatarMoeda(prevGeral)}</td>
                 <td style="text-align: center;">${det.F.vendidas+det.C.vendidas+det.P.vendidas+det.M.vendidas+det.D.vendidas}</td>
                 <td style="color: var(--ciano-destaque);">${formatarMoeda(totalFechado)}</td>
                 <td style="color: #10b981;">${formatarMoeda(totalRecebido)}</td>
                 <td style="color: #ff4d4d;">${formatarMoeda(totalPendente)}</td>
             </tr>`;
 
-            // INICIALIZA O SIMULADOR
             inicializarSimulador(det);
         }
 
@@ -605,7 +589,6 @@
             const container = document.getElementById('containerSimuladorInputs');
             container.innerHTML = '';
             
-            // Puxa a memória do navegador se tiver
             let memStr = localStorage.getItem('simulador_noite_beneficente');
             let memoria = memStr ? JSON.parse(memStr) : { F: 0, C: 0, P: 0, M: 0, D: 0, Avulsas: 0 };
 
@@ -613,8 +596,6 @@
             chaves.forEach(k => {
                 let disp = det[k].total - det[k].vendidas;
                 let cor = CONFIG_MESAS[k].nome === "Mesa Diamante" ? "#ff4d4d" : (k==='F'?'#FFFF00':(k==='C'?'#00FFFF':(k==='P'?'#47D359':'#FF9900')));
-                
-                // Se a memória salvou um valor maior que o disponível agora, ajusta.
                 let val = memoria[k] > disp ? disp : memoria[k]; 
                 
                 container.innerHTML += `
@@ -633,13 +614,13 @@
                 <div class="sim-item" style="border-color: #f59e0b;">
                     <label style="color: #f59e0b;">🪑 Cadeiras Avulsas</label>
                     <div class="sim-input-row">
-                        <input type="number" id="sim_Avulsas" min="0" value="${memoria.Avulsas}" oninput="if(this.value < 0) this.value = 0; calcularSimulacao();">
+                        <input type="number" id="sim_Avulsas" min="0" value="${memoria.Avulsas || 0}" oninput="if(this.value < 0) this.value = 0; calcularSimulacao();">
                         <span style="font-size: 14px;">x R$ 800</span>
                     </div>
                     <span>(Venda Extra Opcional)</span>
                 </div>
             `;
-            calcularSimulacao(); // Roda o cálculo inicial
+            calcularSimulacao(); 
         }
 
         function calcularSimulacao() {
@@ -652,7 +633,6 @@
                 Avulsas: parseInt(document.getElementById('sim_Avulsas').value) || 0
             };
 
-            // Salva no navegador silenciosamente
             localStorage.setItem('simulador_noite_beneficente', JSON.stringify(inputs));
 
             let extraReceita = (inputs.F * 25000) + (inputs.C * 12000) + (inputs.P * 8000) + (inputs.M * 5400) + (inputs.D * 4800) + (inputs.Avulsas * 800);
@@ -682,9 +662,6 @@
             calcularSimulacao();
         }
 
-        // ==========================================
-        // GESTÃO DE CUSTOS (DESPESAS)
-        // ==========================================
         function abrirModalCusto(id = null) {
             document.getElementById('overlay-custo').style.display = 'block';
             document.getElementById('modal-custo').style.display = 'block';
