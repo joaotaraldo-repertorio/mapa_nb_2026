@@ -223,65 +223,68 @@
         </div>
 
         <div id="aba-lancamentos" class="aba-conteudo">
-            <div id="alerta-nenhuma-mesa" class="alerta-selecione">👈 Selecione uma mesa no menu acima ou acesse através do Mapa de Vendas.</div>
-            <div id="area-edicao-mesa" style="display: none;">
-                <div class="cabecalho-fixo-mesa">
-                    <div class="cofre-header" style="margin-bottom: 10px;">
-                        <h2><span id="titulo-mesa-lancamento">📝 Selecione uma Mesa</span></h2>
-                        <div style="display: flex; gap: 10px; align-items: center;">
-                            <select id="seletor-mesas" class="seletor-mesas" onchange="trocarMesaSelecionada(this.value)">
-                                <option value="">-- Escolha uma Mesa --</option>
-                            </select>
-                            <button class="botao-acao" id="btnSalvarFinanceiro" onclick="salvarDadosFinanceiros()" style="background-color: var(--ciano-destaque); color: #000;">💾 Salvar Lançamentos</button>
+            
+            <div class="cabecalho-fixo-mesa" style="margin-bottom: 20px;">
+                <div class="cofre-header" style="margin-bottom: 10px; border-bottom: none; padding-bottom: 0;">
+                    <h2><span id="titulo-mesa-lancamento">📝 Lançamentos da Mesa</span></h2>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <select id="seletor-mesas" class="seletor-mesas" onchange="trocarMesaSelecionada(this.value)" style="min-width: 250px;">
+                            <option value="">-- Selecione uma Mesa --</option>
+                        </select>
+                        <button class="botao-acao" id="btnSalvarFinanceiro" onclick="salvarDadosFinanceiros()" style="background-color: var(--ciano-destaque); color: #000; display: none;">💾 Salvar Lançamentos</button>
+                    </div>
+                </div>
+                <div style="border-bottom: 2px solid var(--ciano-destaque); margin-bottom: 15px;"></div>
+
+                <div id="area-nome-exibido" class="form-group" style="margin-bottom: 15px; display: none;">
+                    <label style="color: var(--ciano-destaque);">Nome Exibido no Mapa (Editável)</label>
+                    <input type="text" id="campoNomeExibido" oninput="marcarNomeEditadoManualmente()" placeholder="Ex: João / Maria..." style="font-size: 16px; color: var(--ciano-destaque);">
+                </div>
+
+                <div id="area-resumo-financeiro" class="painel-financeiro" style="margin-bottom: 0; display: none;">
+                    <h4>💰 Resumo Financeiro Global da Mesa</h4>
+                    <div class="form-row" style="margin-bottom: 0;">
+                        <div class="form-group">
+                            <label>Valor Base Mesa</label>
+                            <input type="text" id="campoValorBaseInfo" class="campo-bloqueado" readonly value="R$ 0,00">
                         </div>
-                    </div>
-
-                    <div class="form-group" style="margin-bottom: 15px;">
-                        <label style="color: var(--ciano-destaque);">Nome Exibido no Mapa (Editável)</label>
-                        <input type="text" id="campoNomeExibido" oninput="marcarNomeEditadoManualmente()" placeholder="Ex: João / Maria..." style="font-size: 16px; color: var(--ciano-destaque);">
-                    </div>
-
-                    <div class="painel-financeiro" style="margin-bottom: 0;">
-                        <h4>💰 Resumo Financeiro Global da Mesa</h4>
-                        <div class="form-row" style="margin-bottom: 0;">
-                            <div class="form-group">
-                                <label>Valor Base Mesa</label>
-                                <input type="text" id="campoValorBaseInfo" class="campo-bloqueado" readonly value="R$ 0,00">
-                            </div>
-                            <div class="form-group" style="max-width: 100px;">
-                                <label style="color: #f59e0b;">Cadeiras Extra</label>
-                                <input type="number" id="campoQtdCadeirasGlobais" class="campo-extra" value="0" min="0" onchange="atualizarCadeirasAvulsasGlobais()">
-                            </div>
-                            <div class="form-group">
-                                <label style="color: #f59e0b;">Valor Extras (R$)</label>
-                                <input type="text" id="campoValorCadeirasGlobais" class="campo-extra" value="0,00" onchange="atualizarCadeirasAvulsasGlobaisValorEditado(this.value)">
-                            </div>
-                            <div class="form-group">
-                                <label>Total Fechado (R$)</label>
-                                <input type="text" id="campoValorTotal" class="campo-bloqueado" readonly value="R$ 0,00">
-                            </div>
-                            <div class="form-group">
-                                <label>Total Pago (R$)</label>
-                                <input type="text" id="campoValorPago" class="campo-bloqueado" readonly value="R$ 0,00">
-                            </div>
-                            <div class="form-group">
-                                <label>Saldo Devedor (R$)</label>
-                                <input type="text" id="campoSaldo" class="campo-bloqueado-vermelho" readonly value="R$ 0,00">
-                            </div>
+                        <div class="form-group" style="max-width: 100px;">
+                            <label style="color: #f59e0b;">Cadeiras Extra</label>
+                            <input type="number" id="campoQtdCadeirasGlobais" class="campo-extra" value="0" min="0" onchange="atualizarCadeirasAvulsasGlobais()">
+                        </div>
+                        <div class="form-group">
+                            <label style="color: #f59e0b;">Valor Extras (R$)</label>
+                            <input type="text" id="campoValorCadeirasGlobais" class="campo-extra" value="0,00" onchange="atualizarCadeirasAvulsasGlobaisValorEditado(this.value)">
+                        </div>
+                        <div class="form-group">
+                            <label>Total Fechado (R$)</label>
+                            <input type="text" id="campoValorTotal" class="campo-bloqueado" readonly value="R$ 0,00">
+                        </div>
+                        <div class="form-group">
+                            <label>Total Pago (R$)</label>
+                            <input type="text" id="campoValorPago" class="campo-bloqueado" readonly value="R$ 0,00">
+                        </div>
+                        <div class="form-group">
+                            <label>Saldo Devedor (R$)</label>
+                            <input type="text" id="campoSaldo" class="campo-bloqueado-vermelho" readonly value="R$ 0,00">
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="area-rolavel-mesa">
-                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--ciano-destaque); padding-bottom: 10px; margin-bottom: 15px; margin-top: 15px;">
-                        <h3 style="margin: 0; color: var(--ciano-destaque); font-size: 20px;">👥 Divisão de Pagadores</h3>
-                        <button class="btn-add-pagador" onclick="adicionarPagador()">➕ Adicionar Pagador</button>
-                    </div>
-                    <div id="containerPagadores"></div>
-                    <div class="form-group" style="margin-top: 30px; margin-bottom: 50px;">
-                        <label>📝 Observações Gerais da Mesa</label>
-                        <textarea id="campoObs" placeholder="Anotações extras..." style="background-color: #0A192F; border: 1px solid #233554; color: #fff; padding: 10px; border-radius: 6px; min-height: 80px; outline: none; font-family: Arial;"></textarea>
-                    </div>
+            <div id="alerta-nenhuma-mesa" class="alerta-selecione" style="margin-top: 20px;">
+                👈 Selecione uma mesa no menu acima para iniciar os lançamentos financeiros.
+            </div>
+
+            <div id="area-edicao-mesa" class="area-rolavel-mesa" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--ciano-destaque); padding-bottom: 10px; margin-bottom: 15px; margin-top: 15px;">
+                    <h3 style="margin: 0; color: var(--ciano-destaque); font-size: 20px;">👥 Divisão de Pagadores</h3>
+                    <button class="btn-add-pagador" onclick="adicionarPagador()">➕ Adicionar Pagador</button>
+                </div>
+                <div id="containerPagadores"></div>
+                <div class="form-group" style="margin-top: 30px; margin-bottom: 50px;">
+                    <label>📝 Observações Gerais da Mesa</label>
+                    <textarea id="campoObs" placeholder="Anotações extras..." style="background-color: #0A192F; border: 1px solid #233554; color: #fff; padding: 10px; border-radius: 6px; min-height: 80px; outline: none; font-family: Arial;"></textarea>
                 </div>
             </div>
         </div>
@@ -414,18 +417,31 @@
             elementoClicado.classList.add('ativo');
         }
 
+        // CARREGA INICIALMENTE APENAS COM NÚMEROS (ANTES DA API)
         function carregarSeletorDeMesas() {
             const seletor = document.getElementById('seletor-mesas');
-            seletor.innerHTML = '<option value="">-- Escolha uma Mesa --</option>';
+            let valorAtual = seletor.value; 
+            seletor.innerHTML = '<option value="">-- Selecione uma Mesa --</option>';
+            
             for (const prefixo in CONFIG_MESAS) {
                 const conf = CONFIG_MESAS[prefixo];
                 let totalMesas = 0;
                 conf.layout.forEach(linha => { linha.forEach(item => { if (typeof item === 'number') totalMesas += item; }); });
                 for (let i = 1; i <= totalMesas; i++) {
                     let num = i < 10 ? `0${i}` : i;
-                    seletor.innerHTML += `<option value="${prefixo}-${num}">${prefixo}-${num} (${conf.nome})</option>`;
+                    let idMesa = `${prefixo}-${num}`;
+                    
+                    let nomeComprador = "Livre";
+                    if (mesasDataBanco && mesasDataBanco.length > 0) {
+                        let mesaBanco = mesasDataBanco.find(m => m.id === idMesa);
+                        if (mesaBanco && (mesaBanco.status.toLowerCase() === "vendida" || mesaBanco.status.toLowerCase() === "reservada")) {
+                            nomeComprador = mesaBanco.nome ? mesaBanco.nome : "Sem Nome";
+                        }
+                    }
+                    seletor.innerHTML += `<option value="${idMesa}">${idMesa} - ${nomeComprador} (${conf.nome})</option>`;
                 }
             }
+            if (valorAtual) seletor.value = valorAtual;
         }
 
         function atualizarListasCategorias() {
@@ -459,6 +475,7 @@
                 mesasDataBanco = pacote.mesas || [];
                 custosDataBanco = pacote.custos || [];
                 
+                carregarSeletorDeMesas(); // Roda de novo agora com os nomes injetados do banco!
                 atualizarListasCategorias();
                 renderizarTabelaCustos();
                 calcularDashboardERelatorios(); 
@@ -486,7 +503,6 @@
                 let vSaldo = parseFloat(m.saldo) || 0;
                 let cExtra = parseInt(m.cadeirasExtra) || 0;
 
-                // A CORREÇÃO: Só contabiliza no financeiro se a mesa estiver vendida ou reservada
                 if (status === "vendida" || status === "reservada") {
                     totalFechado += vTotal;
                     totalRecebido += vPago;
@@ -747,17 +763,43 @@
         // LANÇAMENTOS DA MESA E PAGADORES
         // ==========================================
         function trocarMesaSelecionada(novoId, nomeDoMapa = null) {
-            if(!novoId) { document.getElementById('alerta-nenhuma-mesa').style.display = 'block'; document.getElementById('area-edicao-mesa').style.display = 'none'; return; }
-            document.getElementById('containerPagadores').innerHTML = ''; mesaAtualID = novoId; const prefixo = mesaAtualID.charAt(0).toUpperCase();
+            if(!novoId) { 
+                document.getElementById('alerta-nenhuma-mesa').style.display = 'block'; 
+                document.getElementById('area-edicao-mesa').style.display = 'none'; 
+                document.getElementById('area-nome-exibido').style.display = 'none'; 
+                document.getElementById('area-resumo-financeiro').style.display = 'none'; 
+                document.getElementById('btnSalvarFinanceiro').style.display = 'none'; 
+                document.getElementById('titulo-mesa-lancamento').innerText = '📝 Lançamentos da Mesa';
+                return; 
+            }
+
+            document.getElementById('containerPagadores').innerHTML = ''; 
+            mesaAtualID = novoId; 
+            const prefixo = mesaAtualID.charAt(0).toUpperCase();
             valorBaseDaMesa = CONFIG_MESAS[prefixo] ? CONFIG_MESAS[prefixo].valorBase : 0;
+            
             let mesaNoBanco = mesasDataBanco.find(m => m.id === novoId) || {nome: "", telefone: "", obs: "", cadeirasExtra: 0, detalhesJSON: ""};
-            qtdCadeirasExtrasGlobais = parseInt(mesaNoBanco.cadeirasExtra) || 0; valorCadeirasExtrasGlobais = qtdCadeirasExtrasGlobais * PRECO_FIXO_CADEIRA;
-            document.getElementById('campoQtdCadeirasGlobais').value = qtdCadeirasExtrasGlobais; document.getElementById('campoValorCadeirasGlobais').value = formatarNumeroLimpo(valorCadeirasExtrasGlobais);
-            document.getElementById('campoObs').value = mesaNoBanco.obs || ""; document.getElementById('campoValorBaseInfo').value = formatarMoeda(valorBaseDaMesa);
-            document.getElementById('alerta-nenhuma-mesa').style.display = 'none'; document.getElementById('area-edicao-mesa').style.display = 'block';
-            document.getElementById('titulo-mesa-lancamento').innerText = `📝 Lançamentos: Mesa ${mesaAtualID} (${CONFIG_MESAS[prefixo].nome})`;
-            nomeEditadoManualmente = false; let nomeParaUsar = nomeDoMapa !== null ? nomeDoMapa : (mesaNoBanco.nome || ""); document.getElementById('campoNomeExibido').value = nomeParaUsar;
+            qtdCadeirasExtrasGlobais = parseInt(mesaNoBanco.cadeirasExtra) || 0; 
+            valorCadeirasExtrasGlobais = qtdCadeirasExtrasGlobais * PRECO_FIXO_CADEIRA;
+            
+            document.getElementById('campoQtdCadeirasGlobais').value = qtdCadeirasExtrasGlobais; 
+            document.getElementById('campoValorCadeirasGlobais').value = formatarNumeroLimpo(valorCadeirasExtrasGlobais);
+            document.getElementById('campoObs').value = mesaNoBanco.obs || ""; 
+            document.getElementById('campoValorBaseInfo').value = formatarMoeda(valorBaseDaMesa);
+            
+            // LIGA A EXIBIÇÃO
+            document.getElementById('alerta-nenhuma-mesa').style.display = 'none'; 
+            document.getElementById('area-edicao-mesa').style.display = 'block';
+            document.getElementById('area-nome-exibido').style.display = 'block'; 
+            document.getElementById('area-resumo-financeiro').style.display = 'block'; 
+            document.getElementById('btnSalvarFinanceiro').style.display = 'block'; 
+
+            document.getElementById('titulo-mesa-lancamento').innerText = `📝 Mesa ${mesaAtualID} (${CONFIG_MESAS[prefixo].nome})`;
+            nomeEditadoManualmente = false; 
+            let nomeParaUsar = nomeDoMapa !== null ? nomeDoMapa : (mesaNoBanco.nome || ""); 
+            document.getElementById('campoNomeExibido').value = nomeParaUsar;
             pagadoresAtuais = []; 
+            
             if(mesaNoBanco.detalhesJSON && mesaNoBanco.detalhesJSON.trim() !== "") {
                 try { let parsed = JSON.parse(mesaNoBanco.detalhesJSON);
                     if(Array.isArray(parsed)) pagadoresAtuais = parsed; else if (parsed && typeof parsed === 'object') pagadoresAtuais = [parsed];
