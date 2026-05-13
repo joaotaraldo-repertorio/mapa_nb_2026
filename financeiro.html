@@ -943,6 +943,13 @@
         window.close();
     }
 }
+
+    window.addEventListener('beforeunload', function(e) {
+        if (mesaAtualID && document.getElementById('btnSalvarFinanceiro').style.display !== 'none') {
+            e.preventDefault();
+            e.returnValue = '';
+    }
+});
     </script>
 </body>
 </html>
