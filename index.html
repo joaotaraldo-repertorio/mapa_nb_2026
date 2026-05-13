@@ -285,7 +285,7 @@
         const API_URL = 'https://script.google.com/macros/s/AKfycby6hZ1cD-uIPafXIpRDe2DJzmYwjP4IRQgysxbVPNJOlKNDlE8ALvUTyBsoJlSQL2k/exec';
         let mesasData = [];
 
-        const SENHA_SISTEMA = "educ1958"; 
+        const SENHA_SISTEMA = "__VERIFICAR_NO_SERVIDOR__"; 
         let isAdmin = false; 
         let isBuffetMode = false;
         let acaoConfirmacaoGlobal = null; 
@@ -413,19 +413,35 @@
 
         function verificarSenhaEnter(event) { if (event.key === "Enter") verificarSenha(); }
 
-        function verificarSenha() {
-            const digitado = document.getElementById('input-senha-equipe').value;
-            if (digitado === SENHA_SISTEMA) {
-                isAdmin = true;
-                fecharModalSenha();
-                document.getElementById('btn-login').style.display = 'none';
-                document.getElementById('botoes-admin').style.display = 'flex';
-                renderizarMapaDinamico(); 
-                mostrarAlerta("Acesso à edição liberado com sucesso!", "sucesso");
-            } else {
-                mostrarAlerta("Senha incorreta! Verifique se digitou corretamente.", "erro");
-            }
+async function verificarSenha() {
+    const digitado = document.getElementById('input-senha-equipe').value;
+    if (!digitado) return;
+
+    const btnEntrar = document.querySelector('#modal-senha .btn-salvar');
+    btnEntrar.innerText = "Verificando...";
+    btnEntrar.disabled = true;
+
+    try {
+        const response = await fetch(`${API_URL}?acao=verificarSenha&senha=${encodeURIComponent(digitado)}`);
+        const resultado = await response.json();
+
+        if (resultado.autorizado === true) {
+            isAdmin = true;
+            fecharModalSenha();
+            document.getElementById('btn-login').style.display = 'none';
+            document.getElementById('botoes-admin').style.display = 'flex';
+            renderizarMapaDinamico();
+            mostrarAlerta("Acesso à edição liberado com sucesso!", "sucesso");
+        } else {
+            mostrarAlerta("Senha incorreta! Verifique se digitou corretamente.", "erro");
         }
+    } catch (error) {
+        mostrarAlerta("Erro de conexão ao verificar a senha. Verifique a internet.", "erro");
+    } finally {
+        btnEntrar.innerText = "Entrar no Sistema";
+        btnEntrar.disabled = false;
+    }
+}
 
         function toggleBuffet() {
             isBuffetMode = !isBuffetMode;
