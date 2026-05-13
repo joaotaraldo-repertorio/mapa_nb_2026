@@ -943,14 +943,11 @@
             btnSalvar.disabled = false;
 
             mostrarAlerta(
-                `⚠️ <b>Conflito detectado!</b><br><br>A Mesa <b>${mesaAtualID}</b> foi alterada por outra pessoa às <b>${horaConflito}</b>.<br><br>Deseja sobrescrever com seus dados mesmo assim?`,
-                "confirmacao",
-                async function() {
-                    await gravarDadosFinanceirosServidor();
-                }
-            );
-            return;
-        }
+    `🔴 <b>Mesa indisponível!</b><br><br>A Mesa <b>${mesaAtualID}</b> foi alterada por outra pessoa às <b>${horaConflito}</b>.<br><br>Feche esta janela e atualize os dados antes de tentar novamente.`,
+    "erro"
+);
+return;
+}
 
         await gravarDadosFinanceirosServidor();
 
