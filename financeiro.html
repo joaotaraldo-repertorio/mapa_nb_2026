@@ -919,19 +919,94 @@
         }
 
         async function salvarDadosFinanceiros() {
-            if(!mesaAtualID) { mostrarAlerta("Selecione uma mesa primeiro!", "erro"); return; }
-            const btnSalvar = document.getElementById('btnSalvarFinanceiro'); btnSalvar.innerText = "⏳ A guardar..."; btnSalvar.disabled = true;
-            let totalPago = 0; pagadoresAtuais.forEach(p => { p.parcelas.forEach(parc => { if(parc.pago) totalPago += parc.valor; }); });
-            let saldo = valorTotalFinalDaMesa - totalPago;
-            const pacoteDeDados = { id: mesaAtualID, nome: document.getElementById('campoNomeExibido').value, cadeirasExtra: qtdCadeirasExtrasGlobais, valorTotal: valorTotalFinalDaMesa, valorPago: totalPago, saldo: saldo, obs: document.getElementById('campoObs').value, detalhesJSON: JSON.stringify(pagadoresAtuais) };
-            if(pagadoresAtuais.length > 0 && pagadoresAtuais[0].telefone) pacoteDeDados.telefone = pagadoresAtuais[0].telefone;
-            try {
-                await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(pacoteDeDados) });
-                let mesaNoBanco = mesasDataBanco.find(m => m.id === mesaAtualID);
-                if(mesaNoBanco) { Object.assign(mesaNoBanco, pacoteDeDados); } else { mesasDataBanco.push(pacoteDeDados); }
-                calcularDashboardERelatorios(); mostrarAlerta("✅ Dados da Mesa guardados com sucesso!", "sucesso");
-            } catch (error) { mostrarAlerta("🔴 Erro de ligação! Verifique a internet.", "erro"); } finally { btnSalvar.innerText = "💾 Salvar Lançamentos"; btnSalvar.disabled = false; }
+    if(!mesaAtualID) { mostrarAlerta("Selecione uma mesa primeiro!", "erro"); return; }
+    const btnSalvar = document.getElementById('btnSalvarFinanceiro'); 
+    btnSalvar.innerText = "⏳ Verificando..."; 
+    btnSalvar.disabled = true;
+
+    try {
+        // VERIFICAÇÃO DE CONFLITO — busca o estado atual da mesa no servidor
+        const respostaAtual = await fetch(API_URL);
+        const dadosAtuais = await respostaAtual.json();
+        const mesasAtuais = dadosAtuais.mesas || [];
+        const mesaNoServidor = mesasAtuais.find(m => m.id === mesaAtualID);
+        const mesaLocal = mesasDataBanco.find(m => m.id === mesaAtualID);
+
+        // Se a mesa foi alterada por outra pessoa desde que abrimos os lançamentos
+        if (mesaNoServidor && mesaLocal &&
+            mesaNoServidor.ultimaAtualizacao && mesaLocal.ultimaAtualizacao &&
+            mesaNoServidor.ultimaAtualizacao > mesaLocal.ultimaAtualizacao) {
+
+            const horaConflito = new Date(mesaNoServidor.ultimaAtualizacao).toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+
+            btnSalvar.innerText = "💾 Salvar Lançamentos";
+            btnSalvar.disabled = false;
+
+            mostrarAlerta(
+                `⚠️ <b>Conflito detectado!</b><br><br>A Mesa <b>${mesaAtualID}</b> foi alterada por outra pessoa às <b>${horaConflito}</b>.<br><br>Deseja sobrescrever com seus dados mesmo assim?`,
+                "confirmacao",
+                async function() {
+                    await gravarDadosFinanceirosServidor();
+                }
+            );
+            return;
         }
+
+        await gravarDadosFinanceirosServidor();
+
+    } catch (error) { 
+        mostrarAlerta("🔴 Erro de ligação! Verifique a internet.", "erro"); 
+    } finally { 
+        btnSalvar.innerText = "💾 Salvar Lançamentos"; 
+        btnSalvar.disabled = false; 
+    }
+}
+
+async function gravarDadosFinanceirosServidor() {
+    const btnSalvar = document.getElementById('btnSalvarFinanceiro');
+    btnSalvar.innerText = "⏳ A guardar...";
+    btnSalvar.disabled = true;
+
+    let totalPago = 0; 
+    pagadoresAtuais.forEach(p => { p.parcelas.forEach(parc => { if(parc.pago) totalPago += parc.valor; }); });
+    let saldo = valorTotalFinalDaMesa - totalPago;
+
+    const pacoteDeDados = { 
+        id: mesaAtualID, 
+        nome: document.getElementById('campoNomeExibido').value, 
+        cadeirasExtra: qtdCadeirasExtrasGlobais, 
+        valorTotal: valorTotalFinalDaMesa, 
+        valorPago: totalPago, 
+        saldo: saldo, 
+        obs: document.getElementById('campoObs').value, 
+        detalhesJSON: JSON.stringify(pagadoresAtuais) 
+    };
+
+    if(pagadoresAtuais.length > 0 && pagadoresAtuais[0].telefone) {
+        pacoteDeDados.telefone = pagadoresAtuais[0].telefone;
+    }
+
+    try {
+        await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(pacoteDeDados) });
+        
+        let mesaNoBanco = mesasDataBanco.find(m => m.id === mesaAtualID);
+        const agora = new Date().getTime();
+        if(mesaNoBanco) { 
+            Object.assign(mesaNoBanco, pacoteDeDados); 
+            mesaNoBanco.ultimaAtualizacao = agora;
+        } else { 
+            mesasDataBanco.push({...pacoteDeDados, ultimaAtualizacao: agora}); 
+        }
+
+        calcularDashboardERelatorios(); 
+        mostrarAlerta("✅ Dados da Mesa guardados com sucesso!", "sucesso");
+    } catch (error) { 
+        mostrarAlerta("🔴 Erro de ligação! Verifique a internet.", "erro"); 
+    } finally { 
+        btnSalvar.innerText = "💾 Salvar Lançamentos"; 
+        btnSalvar.disabled = false; 
+    }
+}
 
         function fecharCofreComAviso() {
     if (mesaAtualID && document.getElementById('btnSalvarFinanceiro').style.display !== 'none') {

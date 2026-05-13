@@ -655,47 +655,80 @@ async function verificarSenha() {
         }
 
         async function salvarMesa() {
-            const idMesa = document.getElementById('modal-title').innerText.replace('Mesa ', '').trim();
-            const status = document.getElementById('modal-status').value;
-            const nome = document.getElementById('modal-nome').value;
-            const telefone = document.getElementById('modal-telefone').value;
-            const email = document.getElementById('modal-email').value;
-            const logo = document.getElementById('modal-logo').value;
+    const idMesa = document.getElementById('modal-title').innerText.replace('Mesa ', '').trim();
+    const status = document.getElementById('modal-status').value;
+    const nome = document.getElementById('modal-nome').value;
+    const telefone = document.getElementById('modal-telefone').value;
+    const email = document.getElementById('modal-email').value;
+    const logo = document.getElementById('modal-logo').value;
 
-            const btnSalvar = document.getElementById('btn-salvar');
-            btnSalvar.innerText = "Salvando...";
-            btnSalvar.disabled = true;
+    const btnSalvar = document.getElementById('btn-salvar');
+    btnSalvar.innerText = "Verificando...";
+    btnSalvar.disabled = true;
 
-            const pacoteDeDados = { id: idMesa, status: status, nome: nome, telefone: telefone, email: email, logo: logo };
+    try {
+        // VERIFICAÇÃO DE CONFLITO — busca o estado atual da mesa no servidor
+        const respostaAtual = await fetch(API_URL);
+        const dadosAtuais = await respostaAtual.json();
+        const mesasAtuais = dadosAtuais.mesas || [];
+        const mesaNoServidor = mesasAtuais.find(m => m.id === idMesa);
+        const mesaLocal = mesasData.find(m => m.id === idMesa);
 
-            try {
-                await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify(pacoteDeDados)
-                });
+        // Se a mesa foi alterada por outra pessoa desde que abrimos o modal
+        if (mesaNoServidor && mesaLocal && 
+            mesaNoServidor.ultimaAtualizacao && mesaLocal.ultimaAtualizacao &&
+            mesaNoServidor.ultimaAtualizacao > mesaLocal.ultimaAtualizacao) {
 
-                const mesaIndex = mesasData.findIndex(m => m.id === idMesa);
-                if(mesaIndex !== -1) {
-                    mesasData[mesaIndex].status = status;
-                    mesasData[mesaIndex].nome = nome;
-                    mesasData[mesaIndex].telefone = telefone;
-                    mesasData[mesaIndex].email = email;
-                    mesasData[mesaIndex].logo = logo;
-                } else {
-                    mesasData.push(pacoteDeDados); 
+            const horaConflito = new Date(mesaNoServidor.ultimaAtualizacao).toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+            
+            btnSalvar.innerText = "Gravar na Planilha";
+            btnSalvar.disabled = false;
+
+            mostrarAlerta(
+                `⚠️ <b>Conflito detectado!</b><br><br>A Mesa <b>${idMesa}</b> foi alterada por outra pessoa às <b>${horaConflito}</b>.<br><br>Deseja sobrescrever com seus dados mesmo assim?`,
+                "confirmacao",
+                async function() {
+                    await gravarMesaServidor(idMesa, status, nome, telefone, email, logo);
                 }
-
-                renderizarMapaDinamico(); 
-                fecharModal();
-
-            } catch (error) {
-                mostrarAlerta("Houve um erro de conexão ao tentar salvar. Verifique a internet e tente de novo.", "erro");
-            } finally {
-                btnSalvar.innerText = "Gravar na Planilha";
-                btnSalvar.disabled = false;
-            }
+            );
+            return;
         }
+
+        await gravarMesaServidor(idMesa, status, nome, telefone, email, logo);
+
+    } catch (error) {
+        mostrarAlerta("Houve um erro de conexão ao tentar salvar. Verifique a internet e tente de novo.", "erro");
+    } finally {
+        btnSalvar.innerText = "Gravar na Planilha";
+        btnSalvar.disabled = false;
+    }
+}
+
+async function gravarMesaServidor(idMesa, status, nome, telefone, email, logo) {
+    const pacoteDeDados = { id: idMesa, status: status, nome: nome, telefone: telefone, email: email, logo: logo };
+
+    await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(pacoteDeDados)
+    });
+
+    const mesaIndex = mesasData.findIndex(m => m.id === idMesa);
+    const agora = new Date().getTime();
+    if(mesaIndex !== -1) {
+        mesasData[mesaIndex].status = status;
+        mesasData[mesaIndex].nome = nome;
+        mesasData[mesaIndex].telefone = telefone;
+        mesasData[mesaIndex].email = email;
+        mesasData[mesaIndex].logo = logo;
+        mesasData[mesaIndex].ultimaAtualizacao = agora;
+    } else {
+        mesasData.push({ id: idMesa, status, nome, telefone, email, logo, ultimaAtualizacao: agora });
+    }
+
+    renderizarMapaDinamico();
+    fecharModal();
+}
 
         function confirmarExclusaoMesa() {
             mostrarAlerta("Tem certeza que deseja excluir esta mesa?<br><br><b>Isso apagará o nome, contato e TODO O HISTÓRICO FINANCEIRO (parcelas e pagadores)!</b>", "confirmacao", limparMesaVerdadeiro);
