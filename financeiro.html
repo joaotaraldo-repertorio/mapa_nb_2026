@@ -126,6 +126,7 @@
                 <h2><span>📊</span> Painel Financeiro Geral (DRE)</h2>
                 <div style="display: flex; gap: 10px;">
                     <button class="botao-acao" onclick="carregarDadosDaPlanilha()" style="background-color: #3b82f6; color: #fff;">🔄 Atualizar Dados</button>
+                    <button class="botao-acao" onclick="exportarBackupExcel()" style="background-color: #10b981; color: #000;">📥 Exportar Backup</button>
                 </div>
             </div>
             
@@ -950,6 +951,35 @@
             e.returnValue = '';
     }
 });
+
+        function exportarBackupExcel() {
+        if (!mesasDataBanco || mesasDataBanco.length === 0) {
+        mostrarAlerta("Nenhum dado carregado ainda. Clique em Atualizar Dados primeiro.", "erro");
+        return;
+    }
+
+    let csvContent = "ID Mesa;Setor;Status;Nome;Telefone;Cadeiras Extra;Valor Total;Valor Pago;Saldo;Observações\n";
+    
+    mesasDataBanco.forEach(m => {
+        let status = m.status || "Livre";
+        if (status.toLowerCase() === "livre") return;
+        
+        csvContent += `${m.id};${m.setor || ""};${status};${m.nome || ""};${m.telefone || ""};${m.cadeirasExtra || 0};${m.valorTotal || 0};${m.valorPago || 0};${m.saldo || 0};"${(m.obs || "").replace(/"/g, "'")}"\n`;
+    });
+
+    let dataHoje = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
+    let nomeArquivo = `Backup_Mapa_${dataHoje}.csv`;
+    
+    let blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+    let link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = nomeArquivo;
+    link.click();
+    
+    mostrarAlerta(`✅ Backup exportado com sucesso!<br><br>Arquivo: <b>${nomeArquivo}</b><br>Abre direto no Excel.`, "sucesso");
+}
+
+
     </script>
 </body>
 </html>
