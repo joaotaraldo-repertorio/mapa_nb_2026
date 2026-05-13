@@ -116,7 +116,7 @@
         <div class="menu-item ativo" onclick="mudarAba('aba-dashboard', this)">📊 Painel & DRE</div>
         <div class="menu-item" onclick="mudarAba('aba-custos', this)">💸 Gestão de Custos</div>
         <div class="menu-item" onclick="mudarAba('aba-lancamentos', this)">📝 Lançamentos (Mesa)</div>
-        <div class="menu-item" onclick="window.close()" style="margin-top: auto; color: #ef4444;">❌ Fechar Cofre</div>
+        <div class="menu-item" onclick="fecharCofreComAviso()" style="margin-top: auto; color: #ef4444;">❌ Fechar Cofre</div>
     </div>
 
     <div class="conteudo-principal">
@@ -931,6 +931,18 @@
                 calcularDashboardERelatorios(); mostrarAlerta("✅ Dados da Mesa guardados com sucesso!", "sucesso");
             } catch (error) { mostrarAlerta("🔴 Erro de ligação! Verifique a internet.", "erro"); } finally { btnSalvar.innerText = "💾 Salvar Lançamentos"; btnSalvar.disabled = false; }
         }
+
+        function fecharCofreComAviso() {
+    if (mesaAtualID && document.getElementById('btnSalvarFinanceiro').style.display !== 'none') {
+        mostrarAlerta(
+            "⚠️ Você pode ter alterações não salvas na mesa <b>" + mesaAtualID + "</b>.<br><br>Deseja fechar mesmo assim?",
+            "confirmacao",
+            function() { window.close(); }
+        );
+    } else {
+        window.close();
+    }
+}
     </script>
 </body>
 </html>
