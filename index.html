@@ -189,6 +189,7 @@
             <div class="area-textos-topo">
                 <h2 id="titulo-dinamico" class="titulo-evento">Carregando...</h2>
                 <div class="status-sistema" id="status-msg">CONECTANDO AO BANCO DE DADOS...</div>
+                <div id="contador-regressivo" style="font-size: 13px; color: #f59e0b; font-weight: bold; margin-top: 6px; letter-spacing: 1px;"></div>
             </div>
             
             <div class="area-botoes-topo">
@@ -754,6 +755,34 @@ async function verificarSenha() {
 
         montarCabecalho();
         carregarMesas();
+        
+        function iniciarContadorRegressivo() {
+    const dataEvento = new Date('2026-10-17T20:00:00');
+    
+    function atualizar() {
+        const agora = new Date();
+        const diff = dataEvento - agora;
+        
+        if (diff <= 0) {
+            document.getElementById('contador-regressivo').innerHTML = '🎉 O EVENTO ESTÁ ACONTECENDO AGORA!';
+            return;
+        }
+        
+        const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const horas = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const segundos = Math.floor((diff % (1000 * 60)) / 1000);
+        
+        document.getElementById('contador-regressivo').innerHTML = 
+            `⏳ Faltam <span style="color:#66FFFF;">${dias}d ${horas}h ${minutos}m ${segundos}s</span> para o evento`;
+    }
+    
+        atualizar();
+        setInterval(atualizar, 1000);
+}
+
+        iniciarContadorRegressivo();
+
     </script>
 </body>
 </html>
