@@ -953,30 +953,98 @@
 });
 
         function exportarBackupExcel() {
-        if (!mesasDataBanco || mesasDataBanco.length === 0) {
+    if (!mesasDataBanco || mesasDataBanco.length === 0) {
         mostrarAlerta("Nenhum dado carregado ainda. Clique em Atualizar Dados primeiro.", "erro");
         return;
     }
 
-    let csvContent = "ID Mesa;Setor;Status;Nome;Telefone;Cadeiras Extra;Valor Total;Valor Pago;Saldo;Observações\n";
-    
+    // Monta o HTML da tabela para exportar como Excel verdadeiro
+    let html = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel">
+        <head><meta charset="UTF-8">
+        <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets>
+        <x:ExcelWorksheet><x:Name>Backup Mapa</x:Name>
+        <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
+        </x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+        </head><body>
+        <table border="1">
+            <thead>
+                <tr style="background-color:#0A192F; color:#66FFFF; font-weight:bold;">
+                    <th>ID Mesa</th>
+                    <th>Setor</th>
+                    <th>Status</th>
+                    <th>Nome</th>
+                    <th>Telefone</th>
+                    <th>Cadeiras Extra</th>
+                    <th>Valor Total</th>
+                    <th>Valor Pago</th>
+                    <th>Saldo Devedor</th>
+                    <th>Observações</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    let totalMesas = 0;
+    let totalFechado = 0;
+    let totalPago = 0;
+    let totalSaldo = 0;
+
     mesasDataBanco.forEach(m => {
         let status = m.status || "Livre";
         if (status.toLowerCase() === "livre") return;
-        
-        csvContent += `${m.id};${m.setor || ""};${status};${m.nome || ""};${m.telefone || ""};${m.cadeirasExtra || 0};${m.valorTotal || 0};${m.valorPago || 0};${m.saldo || 0};"${(m.obs || "").replace(/"/g, "'")}"\n`;
+
+        let corLinha = status.toLowerCase() === "vendida" ? "#fff0f0" : "#fffbe6";
+        let vTotal = parseFloat(m.valorTotal) || 0;
+        let vPago = parseFloat(m.valorPago) || 0;
+        let vSaldo = parseFloat(m.saldo) || 0;
+
+        totalMesas++;
+        totalFechado += vTotal;
+        totalPago += vPago;
+        totalSaldo += vSaldo;
+
+        let obs = (m.obs || "").replace(/\n/g, " ").replace(/\r/g, " ");
+
+        html += `
+            <tr style="background-color:${corLinha};">
+                <td style="font-weight:bold;">${m.id}</td>
+                <td>${m.setor || ""}</td>
+                <td style="font-weight:bold; color:${status.toLowerCase() === "vendida" ? "#cc0000" : "#cc7700"}">${status}</td>
+                <td>${m.nome || ""}</td>
+                <td>${m.telefone || ""}</td>
+                <td style="text-align:center;">${m.cadeirasExtra || 0}</td>
+                <td style="text-align:right;">R$ ${Number(vTotal).toLocaleString('pt-BR', {minimumFractionDigits:2})}</td>
+                <td style="text-align:right; color:#006600;">R$ ${Number(vPago).toLocaleString('pt-BR', {minimumFractionDigits:2})}</td>
+                <td style="text-align:right; color:#cc0000;">R$ ${Number(vSaldo).toLocaleString('pt-BR', {minimumFractionDigits:2})}</td>
+                <td style="max-width:300px;">${obs}</td>
+            </tr>
+        `;
     });
 
+    // Linha de totais
+    html += `
+            <tr style="background-color:#0A192F; color:#66FFFF; font-weight:bold;">
+                <td colspan="5">TOTAIS — ${totalMesas} mesa(s) vendida(s)/reservada(s)</td>
+                <td></td>
+                <td style="text-align:right;">R$ ${totalFechado.toLocaleString('pt-BR', {minimumFractionDigits:2})}</td>
+                <td style="text-align:right;">R$ ${totalPago.toLocaleString('pt-BR', {minimumFractionDigits:2})}</td>
+                <td style="text-align:right;">R$ ${totalSaldo.toLocaleString('pt-BR', {minimumFractionDigits:2})}</td>
+                <td></td>
+            </tr>
+        </tbody></table></body></html>
+    `;
+
     let dataHoje = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
-    let nomeArquivo = `Backup_Mapa_${dataHoje}.csv`;
-    
-    let blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+    let nomeArquivo = `Backup_Mapa_${dataHoje}.xls`;
+
+    let blob = new Blob([html], { type: 'application/vnd.ms-excel;charset=utf-8;' });
     let link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
     link.download = nomeArquivo;
     link.click();
-    
-    mostrarAlerta(`✅ Backup exportado com sucesso!<br><br>Arquivo: <b>${nomeArquivo}</b><br>Abre direto no Excel.`, "sucesso");
+
+    mostrarAlerta(`✅ Backup exportado com sucesso!<br><br>Arquivo: <b>${nomeArquivo}</b><br>Abre direto no Excel, organizado e formatado.`, "sucesso");
 }
 
 
