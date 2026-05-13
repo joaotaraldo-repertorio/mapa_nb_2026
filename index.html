@@ -478,8 +478,11 @@ async function verificarSenha() {
                         if(primeiraMesaPulsando) primeiraMesaPulsando.scrollIntoView({ behavior: "smooth", block: "center" });
                     }, 500);
                 } else {
-                    document.getElementById('status-msg').innerHTML = "🟢 MAPA ONLINE";
-                    document.getElementById('status-msg').style.color = "var(--cor-livre)";
+                    const agora = new Date();
+                    const horaFormatada = agora.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+                    const dataFormatada = agora.toLocaleDateString('pt-BR');
+                     document.getElementById('status-msg').innerHTML = `🟢 MAPA ONLINE — Atualizado em ${dataFormatada} às ${horaFormatada}`;
+                     document.getElementById('status-msg').style.color = "var(--cor-livre)";
                 }
             } catch (error) {
                 document.getElementById('status-msg').innerHTML = "🔴 ERRO DE CONEXÃO";
