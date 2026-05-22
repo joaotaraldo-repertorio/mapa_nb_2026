@@ -666,39 +666,30 @@ async function verificarSenha() {
     btnSalvar.innerText = "Verificando...";
     btnSalvar.disabled = true;
 
-    try {
-        // VERIFICAÇÃO DE CONFLITO — busca o estado atual da mesa no servidor
-        const respostaAtual = await fetch(API_URL);
-        const dadosAtuais = await respostaAtual.json();
-        const mesasAtuais = dadosAtuais.mesas || [];
-        const mesaNoServidor = mesasAtuais.find(m => m.id === idMesa);
-        const mesaLocal = mesasData.find(m => m.id === idMesa);
+    // VERIFICAÇÃO DE CONFLITO — usa apenas os dados já em memória (sem viagem extra ao servidor)
+    const mesaNoServidor = mesasData.find(m => m.id === idMesa);
+    const mesaLocal = mesasData.find(m => m.id === idMesa);
 
-        // Se a mesa foi alterada por outra pessoa desde que abrimos o modal
-        if (mesaNoServidor && mesaLocal && 
-            mesaNoServidor.ultimaAtualizacao && mesaLocal.ultimaAtualizacao &&
-            mesaNoServidor.ultimaAtualizacao > mesaLocal.ultimaAtualizacao) {
+    if (mesaNoServidor && mesaLocal &&
+        mesaNoServidor.ultimaAtualizacao && mesaLocal.ultimaAtualizacao &&
+        mesaNoServidor.ultimaAtualizacao > mesaLocal.ultimaAtualizacao) {
 
-            const horaConflito = new Date(mesaNoServidor.ultimaAtualizacao).toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
-            
-            btnSalvar.innerText = "Gravar na Planilha";
-            btnSalvar.disabled = false;
+        const horaConflito = new Date(mesaNoServidor.ultimaAtualizacao).toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
 
-           mostrarAlerta(
-        `🔴 <b>Mesa indisponível!</b><br><br>A Mesa <b>${idMesa}</b> foi alterada por outra pessoa às <b>${horaConflito}</b>.<br><br>Feche esta janela e atualize o mapa antes de tentar novamente.`,
-        "erro"
-    );
-    return;
-    }
-
-        await gravarMesaServidor(idMesa, status, nome, telefone, email, logo);
-
-    } catch (error) {
-        mostrarAlerta("Houve um erro de conexão ao tentar salvar. Verifique a internet e tente de novo.", "erro");
-    } finally {
         btnSalvar.innerText = "Gravar na Planilha";
         btnSalvar.disabled = false;
+
+        mostrarAlerta(
+            `🔴 <b>Mesa indisponível!</b><br><br>A Mesa <b>${idMesa}</b> foi alterada por outra pessoa às <b>${horaConflito}</b>.<br><br>Feche esta janela e atualize o mapa antes de tentar novamente.`,
+            "erro"
+        );
+        return;
     }
+
+    await gravarMesaServidor(idMesa, status, nome, telefone, email, logo);
+
+    btnSalvar.innerText = "Gravar na Planilha";
+    btnSalvar.disabled = false;
 }
 
 async function gravarMesaServidor(idMesa, status, nome, telefone, email, logo) {

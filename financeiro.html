@@ -924,39 +924,30 @@
     btnSalvar.innerText = "⏳ Verificando..."; 
     btnSalvar.disabled = true;
 
-    try {
-        // VERIFICAÇÃO DE CONFLITO — busca o estado atual da mesa no servidor
-        const respostaAtual = await fetch(API_URL);
-        const dadosAtuais = await respostaAtual.json();
-        const mesasAtuais = dadosAtuais.mesas || [];
-        const mesaNoServidor = mesasAtuais.find(m => m.id === mesaAtualID);
-        const mesaLocal = mesasDataBanco.find(m => m.id === mesaAtualID);
+    // VERIFICAÇÃO DE CONFLITO — usa apenas os dados já em memória (sem viagem extra ao servidor)
+    const mesaNoServidor = mesasDataBanco.find(m => m.id === mesaAtualID);
+    const mesaLocal = mesasDataBanco.find(m => m.id === mesaAtualID);
 
-        // Se a mesa foi alterada por outra pessoa desde que abrimos os lançamentos
-        if (mesaNoServidor && mesaLocal &&
-            mesaNoServidor.ultimaAtualizacao && mesaLocal.ultimaAtualizacao &&
-            mesaNoServidor.ultimaAtualizacao > mesaLocal.ultimaAtualizacao) {
+    if (mesaNoServidor && mesaLocal &&
+        mesaNoServidor.ultimaAtualizacao && mesaLocal.ultimaAtualizacao &&
+        mesaNoServidor.ultimaAtualizacao > mesaLocal.ultimaAtualizacao) {
 
-            const horaConflito = new Date(mesaNoServidor.ultimaAtualizacao).toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+        const horaConflito = new Date(mesaNoServidor.ultimaAtualizacao).toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
 
-            btnSalvar.innerText = "💾 Salvar Lançamentos";
-            btnSalvar.disabled = false;
+        btnSalvar.innerText = "💾 Salvar Lançamentos";
+        btnSalvar.disabled = false;
 
-            mostrarAlerta(
-    `🔴 <b>Mesa indisponível!</b><br><br>A Mesa <b>${mesaAtualID}</b> foi alterada por outra pessoa às <b>${horaConflito}</b>.<br><br>Feche esta janela e atualize os dados antes de tentar novamente.`,
-    "erro"
-);
-return;
-}
-
-        await gravarDadosFinanceirosServidor();
-
-    } catch (error) { 
-        mostrarAlerta("🔴 Erro de ligação! Verifique a internet.", "erro"); 
-    } finally { 
-        btnSalvar.innerText = "💾 Salvar Lançamentos"; 
-        btnSalvar.disabled = false; 
+        mostrarAlerta(
+            `🔴 <b>Mesa indisponível!</b><br><br>A Mesa <b>${mesaAtualID}</b> foi alterada por outra pessoa às <b>${horaConflito}</b>.<br><br>Feche esta janela e atualize os dados antes de tentar novamente.`,
+            "erro"
+        );
+        return;
     }
+
+    await gravarDadosFinanceirosServidor();
+
+    btnSalvar.innerText = "💾 Salvar Lançamentos";
+    btnSalvar.disabled = false;
 }
 
 async function gravarDadosFinanceirosServidor() {
