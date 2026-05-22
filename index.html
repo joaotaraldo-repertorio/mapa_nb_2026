@@ -739,8 +739,53 @@ async function gravarMesaServidor(idMesa, status, nome, telefone, email, logo) {
         mesasData.push({ id: idMesa, status, nome, telefone, email, logo, ultimaAtualizacao: agora });
     }
 
-    renderizarMapaDinamico();
+    // ATUALIZAÇÃO PARCIAL — só redesenha a mesa alterada, não o mapa inteiro
+    atualizarMesaNaTela(idMesa);
     fecharModal();
+}
+
+function atualizarMesaNaTela(idMesa) {
+    const mesaObj = mesasData.find(m => m.id === idMesa);
+    if (!mesaObj) { renderizarMapaDinamico(); return; }
+
+    const prefixo = idMesa.charAt(0).toUpperCase();
+    const setorConfig = Object.values(CONFIG_MESAS).find(c => c.prefixo === prefixo);
+    if (!setorConfig) { renderizarMapaDinamico(); return; }
+
+    // Encontra o wrapper da mesa na tela pelo ID
+    const todosWrappers = document.querySelectorAll('.wrapper-mesa');
+    let wrapperEncontrado = null;
+    todosWrappers.forEach(w => {
+        const bolinha = w.querySelector('.bolinha-mesa');
+        if (bolinha && bolinha.textContent.trim() === idMesa) {
+            wrapperEncontrado = w;
+        }
+    });
+
+    if (!wrapperEncontrado) { renderizarMapaDinamico(); return; }
+
+    const statusClass = (mesaObj.status || "livre").toLowerCase().trim();
+    let corBase = (statusClass === "vendida" || statusClass === "reservada") ? setorConfig.corVendida : setorConfig.corNormal;
+    let corStatusTexto = "var(--cor-livre)";
+    if(statusClass === "vendida") corStatusTexto = "var(--cor-vendida)";
+    if(statusClass === "reservada") corStatusTexto = "var(--cor-reservada)";
+    let estiloBordaCss = statusClass !== "livre" ? "borda-pontilhada" : "borda-solida";
+
+    let nomeParaMostrar = mesaObj.nome || "";
+    let htmlBadgeExtra = mesaObj.cadeirasExtra && parseInt(mesaObj.cadeirasExtra) > 0
+        ? `<div class="badge-extra">+${mesaObj.cadeirasExtra}</div>` : "";
+    let htmlBadgePagamento = parseFloat(mesaObj.saldo) > 0 && statusClass !== "livre"
+        ? `<div class="badge-pagamento" title="Possui saldo devedor">💲</div>` : "";
+
+    wrapperEncontrado.innerHTML = `
+        <div class="texto-acima" style="color: ${corStatusTexto};">${mesaObj.status || "Livre"}</div>
+        <div style="position: relative;">
+            <div class="bolinha-mesa ${setorConfig.classeTamanho} ${estiloBordaCss}" style="background-color: ${corBase};">${idMesa}</div>
+            ${htmlBadgeExtra}
+            ${htmlBadgePagamento}
+        </div>
+        <div class="texto-abaixo">${nomeParaMostrar}</div>
+    `;
 }
 
         function confirmarExclusaoMesa() {
