@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=1300">
     <title>Mapa de Vendas - Dinâmico e Rápido</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<style>
     <style>
         /* =========================================
            1. CORES E VARIÁVEIS GERAIS
@@ -1057,10 +1059,8 @@ function gerarMapaApresentacao(tipo) {
                 restaurarMapa(painelTopo, todosWrappers, setaEl);
             };
         } else {
-            // GERA IMAGEM
-            const script = document.createElement('script');
-            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-            script.onload = () => {
+            // GERA IMAGEM — verifica se html2canvas já está carregado
+            if (typeof html2canvas !== 'undefined') {
                 html2canvas(document.getElementById('area-exportacao'), { 
                     backgroundColor: '#0A192F',
                     scale: 1.5,
@@ -1072,8 +1072,10 @@ function gerarMapaApresentacao(tipo) {
                     link.click();
                     restaurarMapa(painelTopo, todosWrappers, setaEl);
                 });
-            };
-            document.head.appendChild(script);
+            } else {
+                mostrarAlerta("Biblioteca de imagem não carregada. Use a opção PDF.", "erro");
+                restaurarMapa(painelTopo, todosWrappers, setaEl);
+            }
         }
     }, 300);
 }
