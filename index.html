@@ -199,6 +199,7 @@
                     <button class="botao-acao" onclick="gerarRelatorioMarketing()" style="background-color: #a855f7; color: #fff;">📸 Relatório Marketing</button>
                     <button class="botao-acao" id="btn-buffet" onclick="toggleBuffet()" style="background-color: #10b981; color: #000;">🍽️ Visão Buffet</button>
                     <button class="botao-acao" onclick="abrirCofre()" style="background-color: #f59e0b; color: #000; border: 1px solid #fff;">📊 Cofre</button>
+<button class="botao-acao" onclick="abrirModalGerarMapa()" style="background-color: #a855f7; color: #fff;">🗺️ Gerar Mapa</button>
                 </div>
             </div>
         </div>
@@ -260,6 +261,25 @@
         <button class="btn btn-fechar" onclick="fecharModal()">Cancelar</button>
     </div>
 
+    <div class="overlay" id="overlay-gerar-mapa" style="z-index: 2000;"></div>
+<div class="modal" id="modal-gerar-mapa" style="z-index: 2001; width: 400px;">
+    <h3 style="color: #a855f7; border-bottom-color: #a855f7;">🗺️ Gerar Mapa para Apresentação</h3>
+    
+    <label style="color: #8892b0; font-size: 13px; font-weight: bold; display: block; margin-top: 10px;">Mesa a Destacar:</label>
+    <select id="gerar-mapa-mesa" style="width: 100%; margin-top: 5px; padding: 10px; box-sizing: border-box; border: 1px solid #a855f7; border-radius: 6px; background: #0A192F; color: #a855f7; font-size: 15px; font-weight: bold; outline: none;">
+        <option value="">-- Selecione uma Mesa Livre --</option>
+    </select>
+
+    <label style="color: #8892b0; font-size: 13px; font-weight: bold; display: block; margin-top: 15px;">Nome da Pessoa (opcional):</label>
+    <input type="text" id="gerar-mapa-nome" placeholder="Ex: João Silva..." style="width: 100%; margin-top: 5px; padding: 10px; box-sizing: border-box; border: 1px solid #233554; border-radius: 6px; background: #0A192F; color: #fff; font-size: 15px; font-weight: bold; outline: none;">
+
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button class="btn" onclick="gerarMapaApresentacao('pdf')" style="background-color: #a855f7; color: #fff; margin-top: 0; flex: 1;">📄 Gerar PDF</button>
+        <button class="btn" onclick="gerarMapaApresentacao('imagem')" style="background-color: #3b82f6; color: #fff; margin-top: 0; flex: 1;">🖼️ Gerar Imagem</button>
+    </div>
+    <button class="btn btn-fechar" onclick="fecharModalGerarMapa()" style="margin-top: 10px;">Cancelar</button>
+</div>
+    
     <div class="overlay" id="overlay-senha" style="z-index: 2000;" onclick="fecharModalSenha()"></div>
     <div class="modal" id="modal-senha" style="z-index: 2001; width: 280px; text-align: center;">
         <h3 style="border-bottom: none; margin-bottom: 5px;">🔒 Acesso Restrito</h3>
@@ -920,6 +940,92 @@ function atualizarMesaNaTela(idMesa) {
 
         iniciarContadorRegressivo();
 
+    function abrirModalGerarMapa() {
+    const seletor = document.getElementById('gerar-mapa-mesa');
+    seletor.innerHTML = '<option value="">-- Selecione uma Mesa Livre --</option>';
+
+    // MONTA A LISTA NA ORDEM CORRETA DO MAPA — SOMENTE MESAS LIVRES
+    for (const chave in CONFIG_MESAS) {
+        const conf = CONFIG_MESAS[chave];
+        let totalMesas = 0;
+        conf.layout.forEach(linha => {
+            linha.forEach(item => { if (typeof item === 'number') totalMesas += item; });
+        });
+        for (let i = 1; i <= totalMesas; i++) {
+            let num = i < 10 ? `0${i}` : `${i}`;
+            let idMesa = `${conf.prefixo}-${num}`;
+            let mesaNoBanco = mesasData.find(m => m.id === idMesa);
+            let status = mesaNoBanco ? (mesaNoBanco.status || "Livre").toLowerCase() : "livre";
+            if (status === "livre") {
+                seletor.innerHTML += `<option value="${idMesa}">${idMesa} — ${conf.nome}</option>`;
+            }
+        }
+    }
+
+    document.getElementById('gerar-mapa-nome').value = '';
+    document.getElementById('overlay-gerar-mapa').style.display = 'block';
+    document.getElementById('modal-gerar-mapa').style.display = 'block';
+}
+
+function fecharModalGerarMapa() {
+    document.getElementById('overlay-gerar-mapa').style.display = 'none';
+    document.getElementById('modal-gerar-mapa').style.display = 'none';
+}
+
+function gerarMapaApresentacao(tipo) {
+    const mesaDestaque = document.getElementById('gerar-mapa-mesa').value;
+    const nomeDestaque = document.getElementById('gerar-mapa-nome').value.trim();
+
+    if (!mesaDestaque) {
+        mostrarAlerta("Selecione uma mesa para destacar!", "erro");
+        return;
+    }
+
+    fecharModalGerarMapa();
+
+    // GUARDA OS DADOS ORIGINAIS DE CADA MESA
+    const todosWrappers = document.querySelectorAll('.wrapper-mesa');
+    todosWrappers.forEach(w => {
+        const textoAbaixo = w.querySelector('.texto-abaixo');
+        const badgePag = w.querySelector('.badge-pagamento');
+        const badgeExtra = w.querySelector('.badge-extra');
+        if (textoAbaixo) textoAbaixo.setAttribute('data-original', textoAbaixo.innerText);
+        if (textoAbaixo) textoAbaixo.innerText = '';
+        if (badgePag) badgePag.style.display = 'none';
+        if (badgeExtra) badgeExtra.style.display = 'none';
+
+        // APLICA DESTAQUE MÁXIMO NA MESA SELECIONADA
+        const bolinha = w.querySelector('.bolinha-mesa');
+        if (bolinha && bolinha.textContent.trim() === mesaDestaque) {
+            w.classList.add('destaque');
+            if (textoAbaixo && nomeDestaque) textoAbaixo.innerText = nomeDestaque;
+        }
+    });
+
+    // GERA O ARQUIVO
+    setTimeout(() => {
+        if (tipo === 'pdf') {
+            window.print();
+            window.onafterprint = () => restaurarMapaAposGeracao(todosWrappers);
+        } else {
+            mostrarAlerta("Para gerar imagem, use a opção PDF e salve como PDF no Chrome, depois converta para imagem se necessário.", "info");
+            restaurarMapaAposGeracao(todosWrappers);
+        }
+    }, 400);
+}
+
+function restaurarMapaAposGeracao(todosWrappers) {
+    todosWrappers.forEach(w => {
+        const textoAbaixo = w.querySelector('.texto-abaixo');
+        const badgePag = w.querySelector('.badge-pagamento');
+        const badgeExtra = w.querySelector('.badge-extra');
+        if (textoAbaixo) textoAbaixo.innerText = textoAbaixo.getAttribute('data-original') || '';
+        if (badgePag) badgePag.style.display = '';
+        if (badgeExtra) badgeExtra.style.display = '';
+        w.classList.remove('destaque');
+    });
+}
+    
     </script>
 </body>
 </html>
