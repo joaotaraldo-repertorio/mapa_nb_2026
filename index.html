@@ -725,6 +725,19 @@ async function verificarSenha() {
 async function gravarMesaServidor(idMesa, status, nome, telefone, email, logo) {
     const pacoteDeDados = { id: idMesa, status: status, nome: nome, telefone: telefone, email: email, logo: logo };
 
+    // SE ESTÁ SENDO VENDIDA/RESERVADA E AINDA NÃO TEM VALOR, PREENCHE O VALOR BASE
+    const prefixo = idMesa.charAt(0).toUpperCase();
+    const setorConfig = Object.values(CONFIG_MESAS).find(c => c.prefixo === prefixo);
+    const mesaAtual = mesasData.find(m => m.id === idMesa);
+    const statusNovo = status.toLowerCase();
+    const jaTemValor = mesaAtual && parseFloat(mesaAtual.valorTotal) > 0;
+
+    if ((statusNovo === "vendida" || statusNovo === "reservada") && !jaTemValor && setorConfig) {
+        pacoteDeDados.valorTotal = setorConfig.valorBase;
+        pacoteDeDados.valorPago = 0;
+        pacoteDeDados.saldo = setorConfig.valorBase;
+    }
+
     await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
@@ -740,8 +753,17 @@ async function gravarMesaServidor(idMesa, status, nome, telefone, email, logo) {
         mesasData[mesaIndex].email = email;
         mesasData[mesaIndex].logo = logo;
         mesasData[mesaIndex].ultimaAtualizacao = agora;
+        if(pacoteDeDados.valorTotal) {
+            mesasData[mesaIndex].valorTotal = pacoteDeDados.valorTotal;
+            mesasData[mesaIndex].valorPago = 0;
+            mesasData[mesaIndex].saldo = pacoteDeDados.saldo;
+        }
     } else {
-        mesasData.push({ id: idMesa, status, nome, telefone, email, logo, ultimaAtualizacao: agora });
+        mesasData.push({ id: idMesa, status, nome, telefone, email, logo, 
+            valorTotal: pacoteDeDados.valorTotal || 0,
+            valorPago: 0,
+            saldo: pacoteDeDados.saldo || 0,
+            ultimaAtualizacao: agora });
     }
 
     // ATUALIZAÇÃO PARCIAL — só redesenha a mesa alterada, não o mapa inteiro
