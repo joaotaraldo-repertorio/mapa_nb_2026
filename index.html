@@ -891,6 +891,19 @@ function atualizarMesaNaTela(idMesa) {
 
         montarCabecalho();
         carregarMesas();
+
+// VERIFICA CACHE DE LOGIN AO CARREGAR A PÁGINA
+const cacheStr = localStorage.getItem('nb_auth');
+if (cacheStr) {
+    const cache = JSON.parse(cacheStr);
+    const oitoHoras = 8 * 60 * 60 * 1000;
+    if (cache.autorizado && (new Date().getTime() - cache.hora) < oitoHoras) {
+        isAdmin = true;
+        document.getElementById('btn-login').style.display = 'none';
+        document.getElementById('botoes-admin').style.display = 'flex';
+        renderizarMapaDinamico();
+    }
+}
         
         function iniciarContadorRegressivo() {
     const dataEvento = new Date('2026-10-17T20:00:00');
