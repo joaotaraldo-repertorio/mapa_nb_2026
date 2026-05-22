@@ -798,38 +798,52 @@ function atualizarMesaNaTela(idMesa) {
         }
 
         async function limparMesaVerdadeiro() {
-            const idMesa = document.getElementById('modal-title').innerText.replace('Mesa ', '').trim();
-            const btnLimpar = document.getElementById('btn-limpar');
-            
-            btnLimpar.innerText = "⏳ Excluindo...";
-            btnLimpar.disabled = true;
+    const idMesa = document.getElementById('modal-title').innerText.replace('Mesa ', '').trim();
+    const btnLimpar = document.getElementById('btn-limpar');
+    
+    btnLimpar.innerText = "⏳ Excluindo...";
+    btnLimpar.disabled = true;
 
-            const pacoteZero = { 
-                id: idMesa, status: "Livre", nome: "", telefone: "", email: "", logo: "Não", cadeirasExtra: 0,
-                valorTotal: 0, valorPago: 0, saldo: 0, obs: "", detalhesJSON: ""
-            };
+    const pacoteZero = { 
+        id: idMesa, 
+        status: "Livre", 
+        nome: "", 
+        telefone: "", 
+        email: "", 
+        logo: "Não", 
+        cadeirasExtra: 0,
+        valorTotal: 0, 
+        valorPago: 0, 
+        saldo: 0, 
+        obs: "", 
+        detalhesJSON: ""
+    };
 
-            try {
-                await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' },
-                    body: JSON.stringify(pacoteZero)
-                });
+    try {
+        await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify(pacoteZero)
+        });
 
-                const mesaIndex = mesasData.findIndex(m => m.id === idMesa);
-                if(mesaIndex !== -1) mesasData[mesaIndex] = pacoteZero; 
-
-                renderizarMapaDinamico(); 
-                fecharModal();
-                mostrarAlerta(`A Mesa ${idMesa} foi limpa e todos os seus registros financeiros foram apagados!`, "sucesso");
-
-            } catch (error) {
-                mostrarAlerta("Erro de conexão ao tentar excluir os dados. Verifique a internet.", "erro");
-            } finally {
-                btnLimpar.innerHTML = "🗑️ Excluir Todos os Dados";
-                btnLimpar.disabled = false;
-            }
+        // ATUALIZA OS DADOS LOCAIS COMPLETAMENTE
+        const mesaIndex = mesasData.findIndex(m => m.id === idMesa);
+        if(mesaIndex !== -1) {
+            mesasData[mesaIndex] = {...pacoteZero, ultimaAtualizacao: new Date().getTime()};
         }
+
+        // ATUALIZA APENAS A BOLINHA DESSA MESA NA TELA
+        atualizarMesaNaTela(idMesa);
+        fecharModal();
+        mostrarAlerta(`A Mesa ${idMesa} foi limpa com sucesso!<br><br>Todos os dados financeiros foram apagados.`, "sucesso");
+
+    } catch (error) {
+        mostrarAlerta("Erro de conexão ao tentar excluir os dados. Verifique a internet.", "erro");
+    } finally {
+        btnLimpar.innerHTML = "🗑️ Excluir Todos os Dados";
+        btnLimpar.disabled = false;
+    }
+}
 
         function gerarLinkAprovacao() {
             const idMesa = document.getElementById('modal-title').innerText.replace('Mesa ', '').trim();

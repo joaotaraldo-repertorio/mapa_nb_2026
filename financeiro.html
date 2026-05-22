@@ -986,8 +986,10 @@ async function gravarDadosFinanceirosServidor() {
             mesasDataBanco.push({...pacoteDeDados, ultimaAtualizacao: agora}); 
         }
 
-        calcularDashboardERelatorios(); 
+        // ATUALIZA O DASHBOARD EM SEGUNDO PLANO SEM TRAVAR A TELA
+        setTimeout(() => { calcularDashboardERelatorios(); }, 100);
         mostrarAlerta("✅ Dados da Mesa guardados com sucesso!", "sucesso");
+
     } catch (error) { 
         mostrarAlerta("🔴 Erro de ligação! Verifique a internet.", "erro"); 
     } finally { 
@@ -1001,19 +1003,16 @@ async function gravarDadosFinanceirosServidor() {
         mostrarAlerta(
             "⚠️ Você pode ter alterações não salvas na mesa <b>" + mesaAtualID + "</b>.<br><br>Deseja fechar mesmo assim?",
             "confirmacao",
-            function() { window.close(); }
+            function() { 
+                window._fechandoIntencional = true;
+                window.close(); 
+            }
         );
     } else {
+        window._fechandoIntencional = true;
         window.close();
     }
 }
-
-    window.addEventListener('beforeunload', function(e) {
-        if (mesaAtualID && document.getElementById('btnSalvarFinanceiro').style.display !== 'none') {
-            e.preventDefault();
-            e.returnValue = '';
-    }
-});
 
         function exportarBackupExcel() {
     if (!mesasDataBanco || mesasDataBanco.length === 0) {
