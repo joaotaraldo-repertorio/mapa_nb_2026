@@ -456,18 +456,24 @@
         }
 
         window.onload = async function() {
-            carregarSeletorDeMesas();
-            await carregarDadosDaPlanilha();
-            
-            const urlParams = new URLSearchParams(window.location.search);
-            const mesaPuxada = urlParams.get('mesa');
-            const nomeDigitadoNoMapa = urlParams.get('nome'); 
-            if(mesaPuxada) {
-                document.getElementById('seletor-mesas').value = mesaPuxada;
-                trocarMesaSelecionada(mesaPuxada, nomeDigitadoNoMapa ? decodeURIComponent(nomeDigitadoNoMapa) : null);
-                mudarAba('aba-lancamentos', document.querySelectorAll('.menu-item')[2]);
-            }
-        };
+    carregarSeletorDeMesas();
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const mesaPuxada = urlParams.get('mesa');
+    const nomeDigitadoNoMapa = urlParams.get('nome');
+
+    // CARREGA OS DADOS PRIMEIRO E SÓ DEPOIS ABRE A MESA
+    await carregarDadosDaPlanilha();
+
+    if(mesaPuxada) {
+        // AGUARDA UM MOMENTO EXTRA PARA GARANTIR QUE OS DADOS ESTÃO PRONTOS
+        setTimeout(() => {
+            document.getElementById('seletor-mesas').value = mesaPuxada;
+            trocarMesaSelecionada(mesaPuxada, nomeDigitadoNoMapa ? decodeURIComponent(nomeDigitadoNoMapa) : null);
+            mudarAba('aba-lancamentos', document.querySelectorAll('.menu-item')[2]);
+        }, 500);
+    }
+};
 
         async function carregarDadosDaPlanilha() {
             try {

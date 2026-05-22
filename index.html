@@ -779,7 +779,11 @@ function atualizarMesaNaTela(idMesa) {
     let nomeParaMostrar = mesaObj.nome || "";
     let htmlBadgeExtra = mesaObj.cadeirasExtra && parseInt(mesaObj.cadeirasExtra) > 0
         ? `<div class="badge-extra">+${mesaObj.cadeirasExtra}</div>` : "";
-    let htmlBadgePagamento = parseFloat(mesaObj.saldo) > 0 && statusClass !== "livre"
+
+    // CORRIGIDO — verifica saldo E valorTotal para mostrar o badge corretamente
+    let temSaldo = parseFloat(mesaObj.saldo) > 0;
+    let temValorSemPagamento = parseFloat(mesaObj.valorTotal) > 0 && parseFloat(mesaObj.valorPago || 0) === 0;
+    let htmlBadgePagamento = (temSaldo || temValorSemPagamento) && statusClass !== "livre"
         ? `<div class="badge-pagamento" title="Possui saldo devedor">💲</div>` : "";
 
     wrapperEncontrado.innerHTML = `
