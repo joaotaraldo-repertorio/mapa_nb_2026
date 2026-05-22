@@ -422,11 +422,35 @@ async function verificarSenha() {
     btnEntrar.innerText = "Verificando...";
     btnEntrar.disabled = true;
 
+    // VERIFICA SE JÁ TEM CACHE LOCAL VÁLIDO (expira em 8 horas)
+    const cacheStr = localStorage.getItem('nb_auth');
+    if (cacheStr) {
+        const cache = JSON.parse(cacheStr);
+        const oitoHoras = 8 * 60 * 60 * 1000;
+        if (cache.autorizado && (new Date().getTime() - cache.hora) < oitoHoras) {
+            isAdmin = true;
+            fecharModalSenha();
+            document.getElementById('btn-login').style.display = 'none';
+            document.getElementById('botoes-admin').style.display = 'flex';
+            renderizarMapaDinamico();
+            mostrarAlerta("Acesso à edição liberado com sucesso!", "sucesso");
+            btnEntrar.innerText = "Entrar no Sistema";
+            btnEntrar.disabled = false;
+            return;
+        }
+    }
+
+    // SE NÃO TEM CACHE, VERIFICA NO SERVIDOR
     try {
         const response = await fetch(`${API_URL}?acao=verificarSenha&senha=${encodeURIComponent(digitado)}`);
         const resultado = await response.json();
 
         if (resultado.autorizado === true) {
+            // SALVA O CACHE LOCAL
+            localStorage.setItem('nb_auth', JSON.stringify({
+                autorizado: true,
+                hora: new Date().getTime()
+            }));
             isAdmin = true;
             fecharModalSenha();
             document.getElementById('btn-login').style.display = 'none';
@@ -434,6 +458,7 @@ async function verificarSenha() {
             renderizarMapaDinamico();
             mostrarAlerta("Acesso à edição liberado com sucesso!", "sucesso");
         } else {
+            localStorage.removeItem('nb_auth');
             mostrarAlerta("Senha incorreta! Verifique se digitou corretamente.", "erro");
         }
     } catch (error) {
