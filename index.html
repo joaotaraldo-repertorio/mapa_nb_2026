@@ -266,8 +266,8 @@
     <h3 style="color: #a855f7; border-bottom-color: #a855f7;">🗺️ Gerar Mapa para Apresentação</h3>
     
     <label style="color: #8892b0; font-size: 13px; font-weight: bold; display: block; margin-top: 10px;">Mesa a Destacar:</label>
-    <select id="gerar-mapa-mesa" style="width: 100%; margin-top: 5px; padding: 10px; box-sizing: border-box; border: 1px solid #a855f7; border-radius: 6px; background: #0A192F; color: #a855f7; font-size: 15px; font-weight: bold; outline: none;">
-        <option value="">-- Selecione uma Mesa Livre --</option>
+    <select id="gerar-mapa-mesa" onchange="aoSelecionarMesaGeraMapa()" style="width: 100%; margin-top: 5px; padding: 10px; box-sizing: border-box; border: 1px solid #a855f7; border-radius: 6px; background: #0A192F; color: #a855f7; font-size: 15px; font-weight: bold; outline: none;">
+        <option value="">-- Selecione uma Mesa --</option>
     </select>
 
     <label style="color: #8892b0; font-size: 13px; font-weight: bold; display: block; margin-top: 15px;">Nome da Pessoa (opcional):</label>
@@ -941,9 +941,9 @@ function atualizarMesaNaTela(idMesa) {
 
     function abrirModalGerarMapa() {
     const seletor = document.getElementById('gerar-mapa-mesa');
-    seletor.innerHTML = '<option value="">-- Selecione uma Mesa Livre --</option>';
+    seletor.innerHTML = '<option value="">-- Selecione uma Mesa --</option>';
 
-    // MONTA A LISTA NA ORDEM CORRETA DO MAPA — SOMENTE MESAS LIVRES
+    // MONTA A LISTA NA ORDEM CORRETA DO MAPA — MESAS LIVRES E RESERVADAS
     for (const chave in CONFIG_MESAS) {
         const conf = CONFIG_MESAS[chave];
         let totalMesas = 0;
@@ -955,8 +955,9 @@ function atualizarMesaNaTela(idMesa) {
             let idMesa = `${conf.prefixo}-${num}`;
             let mesaNoBanco = mesasData.find(m => m.id === idMesa);
             let status = mesaNoBanco ? (mesaNoBanco.status || "Livre").toLowerCase() : "livre";
-            if (status === "livre") {
-                seletor.innerHTML += `<option value="${idMesa}">${idMesa} — ${conf.nome}</option>`;
+            if (status === "livre" || status === "reservada") {
+                let label = status === "reservada" ? `${idMesa} — ${conf.nome} (Reservada)` : `${idMesa} — ${conf.nome}`;
+                seletor.innerHTML += `<option value="${idMesa}" data-status="${status}">${label}</option>`;
             }
         }
     }
@@ -969,6 +970,25 @@ function atualizarMesaNaTela(idMesa) {
 function fecharModalGerarMapa() {
     document.getElementById('overlay-gerar-mapa').style.display = 'none';
     document.getElementById('modal-gerar-mapa').style.display = 'none';
+}
+
+function aoSelecionarMesaGeraMapa() {
+    const seletor = document.getElementById('gerar-mapa-mesa');
+    const idSelecionado = seletor.value;
+    const campoNome = document.getElementById('gerar-mapa-nome');
+
+    if (!idSelecionado) {
+        campoNome.value = '';
+        return;
+    }
+
+    // SE A MESA FOR RESERVADA, PREENCHE O NOME AUTOMATICAMENTE
+    const mesaNoBanco = mesasData.find(m => m.id === idSelecionado);
+    if (mesaNoBanco && (mesaNoBanco.status || "").toLowerCase() === "reservada") {
+        campoNome.value = mesaNoBanco.nome || '';
+    } else {
+        campoNome.value = '';
+    }
 }
 
 function gerarMapaApresentacao(tipo) {
