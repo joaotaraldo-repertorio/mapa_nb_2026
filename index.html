@@ -199,6 +199,7 @@
                     <button class="botao-acao" onclick="gerarRelatorioMarketing()" style="background-color: #a855f7; color: #fff;">📸 Relatório Marketing</button>
                     <button class="botao-acao" id="btn-buffet" onclick="toggleBuffet()" style="background-color: #10b981; color: #000;">🍽️ Visão Buffet</button>
                     <button class="botao-acao" onclick="abrirCofre()" style="background-color: #f59e0b; color: #000; border: 1px solid #fff;">📊 Cofre</button>
+                    <button class="botao-acao" onclick="abrirModalGerarMapa()" style="background-color: #a855f7; color: #fff;">🗺️ Gerar Mapa</button>
                 </div>
             </div>
         </div>
@@ -273,6 +274,23 @@
         <button class="btn btn-salvar" onclick="verificarSenha()">Entrar no Sistema</button>
         <button class="btn btn-fechar" onclick="fecharModalSenha()">Cancelar</button>
     </div>
+
+    <div class="overlay" id="overlay-gerar-mapa" style="z-index: 2000;" onclick="fecharModalGerarMapa()"></div>
+<div class="modal" id="modal-gerar-mapa" style="z-index: 2001; width: 380px;">
+    <h3 style="color: #a855f7; border-bottom-color: #a855f7;">🗺️ Gerar Mapa para Apresentação</h3>
+    
+    <label style="color: #8892b0; font-size: 13px; font-weight: bold; display: block; margin-top: 10px;">Mesa a Destacar:</label>
+    <select id="gerar-mapa-mesa" style="width: 100%; margin-top: 5px; padding: 10px; box-sizing: border-box; border: 1px solid #a855f7; border-radius: 6px; background: #0A192F; color: #a855f7; font-size: 15px; font-weight: bold; outline: none;">
+        <option value="">-- Selecione uma Mesa --</option>
+    </select>
+
+    <label style="color: #8892b0; font-size: 13px; font-weight: bold; display: block; margin-top: 15px;">Nome da Pessoa (opcional):</label>
+    <input type="text" id="gerar-mapa-nome" placeholder="Ex: João Silva..." style="width: 100%; margin-top: 5px; padding: 10px; box-sizing: border-box; border: 1px solid #233554; border-radius: 6px; background: #0A192F; color: #fff; font-size: 15px; font-weight: bold; outline: none;">
+
+    <button class="btn" onclick="gerarMapaApresentacao('pdf')" style="background-color: #a855f7; color: #fff; margin-top: 20px;">📄 Gerar PDF</button>
+    <button class="btn" onclick="gerarMapaApresentacao('imagem')" style="background-color: #3b82f6; color: #fff; margin-top: 10px;">🖼️ Gerar Imagem</button>
+    <button class="btn btn-fechar" onclick="fecharModalGerarMapa()" style="margin-top: 10px;">Cancelar</button>
+</div>
 
     <div class="overlay" id="overlay-alerta" style="z-index: 3000;"></div>
     <div class="modal" id="modal-alerta" style="z-index: 3001; width: 340px; text-align: center;">
@@ -892,7 +910,7 @@ function atualizarMesaNaTela(idMesa) {
         montarCabecalho();
         carregarMesas();
 
-        
+            
         function iniciarContadorRegressivo() {
     const dataEvento = new Date('2026-10-17T20:00:00');
     
@@ -920,6 +938,123 @@ function atualizarMesaNaTela(idMesa) {
 
         iniciarContadorRegressivo();
 
+    function abrirModalGerarMapa() {
+    // PREENCHE O SELETOR APENAS COM MESAS LIVRES E RESERVADAS
+    const seletor = document.getElementById('gerar-mapa-mesa');
+    seletor.innerHTML = '<option value="">-- Selecione uma Mesa --</option>';
+    
+    const mesasDisponiveis = mesasData.filter(m => 
+        (m.status || "livre").toLowerCase() !== "vendida"
+    );
+
+    // ORDENA POR ID
+    mesasDisponiveis.sort((a, b) => a.id.localeCompare(b.id));
+
+    // ADICIONA AS MESAS LIVRES E RESERVADAS
+    mesasDisponiveis.forEach(m => {
+        const status = (m.status || "Livre");
+        seletor.innerHTML += `<option value="${m.id}">${m.id} — ${status}</option>`;
+    });
+
+    // ADICIONA TAMBÉM AS MESAS QUE NÃO ESTÃO NO BANCO (AINDA NÃO FORAM TOCADAS)
+    for (const chave in CONFIG_MESAS) {
+        const conf = CONFIG_MESAS[chave];
+        let totalMesas = 0;
+        conf.layout.forEach(linha => { 
+            linha.forEach(item => { if (typeof item === 'number') totalMesas += item; }); 
+        });
+        for (let i = 1; i <= totalMesas; i++) {
+            let num = i < 10 ? `0${i}` : `${i}`;
+            let idMesa = `${conf.prefixo}-${num}`;
+            let jaExiste = mesasData.find(m => m.id === idMesa);
+            if (!jaExiste) {
+                seletor.innerHTML += `<option value="${idMesa}">${idMesa} — Livre</option>`;
+            }
+        }
+    }
+
+    document.getElementById('gerar-mapa-nome').value = '';
+    document.getElementById('overlay-gerar-mapa').style.display = 'block';
+    document.getElementById('modal-gerar-mapa').style.display = 'block';
+}
+
+function fecharModalGerarMapa() {
+    document.getElementById('overlay-gerar-mapa').style.display = 'none';
+    document.getElementById('modal-gerar-mapa').style.display = 'none';
+}
+
+function gerarMapaApresentacao(tipo) {
+    const mesaDestaque = document.getElementById('gerar-mapa-mesa').value;
+    const nomeDestaque = document.getElementById('gerar-mapa-nome').value.trim();
+
+    if (!mesaDestaque) {
+        mostrarAlerta("Selecione uma mesa para destacar!", "erro");
+        return;
+    }
+
+    fecharModalGerarMapa();
+
+    // ESCONDE OS ELEMENTOS QUE NÃO DEVEM APARECER NO ARQUIVO
+    const painelTopo = document.querySelector('.painel-topo');
+    painelTopo.style.display = 'none';
+
+    // GUARDA OS NOMES ORIGINAIS E LIMPA O MAPA
+    const todosWrappers = document.querySelectorAll('.wrapper-mesa');
+    todosWrappers.forEach(w => {
+        const textoAbaixo = w.querySelector('.texto-abaixo');
+        const badge = w.querySelector('.badge-pagamento');
+        if (textoAbaixo) textoAbaixo.setAttribute('data-original', textoAbaixo.innerText);
+        if (textoAbaixo) textoAbaixo.innerText = '';
+        if (badge) badge.style.display = 'none';
+
+        // APLICA O DESTAQUE MÁXIMO NA MESA SELECIONADA
+        const bolinha = w.querySelector('.bolinha-mesa');
+        if (bolinha && bolinha.textContent.trim() === mesaDestaque) {
+            w.classList.add('destaque');
+            if (textoAbaixo && nomeDestaque) textoAbaixo.innerText = nomeDestaque;
+        }
+    });
+
+    // GERA O ARQUIVO APÓS UM BREVE MOMENTO PARA O DOM ATUALIZAR
+    setTimeout(() => {
+        if (tipo === 'pdf') {
+            window.print();
+        } else {
+            // GERA IMAGEM
+            import('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js').then(() => {
+                html2canvas(document.getElementById('area-exportacao'), { 
+                    backgroundColor: '#0A192F',
+                    scale: 1.5
+                }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = `Mapa_NB2026_${mesaDestaque}.png`;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    restaurarMapa(painelTopo, todosWrappers);
+                });
+            });
+        }
+
+        if (tipo === 'pdf') {
+            // RESTAURA APÓS IMPRESSÃO
+            window.onafterprint = () => {
+                restaurarMapa(painelTopo, todosWrappers);
+            };
+        }
+    }, 300);
+}
+
+function restaurarMapa(painelTopo, todosWrappers) {
+    painelTopo.style.display = '';
+    todosWrappers.forEach(w => {
+        const textoAbaixo = w.querySelector('.texto-abaixo');
+        const badge = w.querySelector('.badge-pagamento');
+        if (textoAbaixo) textoAbaixo.innerText = textoAbaixo.getAttribute('data-original') || '';
+        if (badge) badge.style.display = '';
+        w.classList.remove('destaque');
+    });
+}
+    
     </script>
 </body>
 </html>
