@@ -939,24 +939,12 @@ function atualizarMesaNaTela(idMesa) {
         iniciarContadorRegressivo();
 
     function abrirModalGerarMapa() {
-    // PREENCHE O SELETOR APENAS COM MESAS LIVRES E RESERVADAS
     const seletor = document.getElementById('gerar-mapa-mesa');
     seletor.innerHTML = '<option value="">-- Selecione uma Mesa --</option>';
     
-    const mesasDisponiveis = mesasData.filter(m => 
-        (m.status || "livre").toLowerCase() !== "vendida"
-    );
+    // MONTA A LISTA NA ORDEM CORRETA DO MAPA
+    const mesasLivresOrdenadas = [];
 
-    // ORDENA POR ID
-    mesasDisponiveis.sort((a, b) => a.id.localeCompare(b.id));
-
-    // ADICIONA AS MESAS LIVRES E RESERVADAS
-    mesasDisponiveis.forEach(m => {
-        const status = (m.status || "Livre");
-        seletor.innerHTML += `<option value="${m.id}">${m.id} — ${status}</option>`;
-    });
-
-    // ADICIONA TAMBÉM AS MESAS QUE NÃO ESTÃO NO BANCO (AINDA NÃO FORAM TOCADAS)
     for (const chave in CONFIG_MESAS) {
         const conf = CONFIG_MESAS[chave];
         let totalMesas = 0;
@@ -966,12 +954,21 @@ function atualizarMesaNaTela(idMesa) {
         for (let i = 1; i <= totalMesas; i++) {
             let num = i < 10 ? `0${i}` : `${i}`;
             let idMesa = `${conf.prefixo}-${num}`;
-            let jaExiste = mesasData.find(m => m.id === idMesa);
-            if (!jaExiste) {
-                seletor.innerHTML += `<option value="${idMesa}">${idMesa} — Livre</option>`;
+            
+            // VERIFICA SE A MESA ESTÁ NO BANCO
+            let mesaNoBanco = mesasData.find(m => m.id === idMesa);
+            let status = mesaNoBanco ? (mesaNoBanco.status || "Livre").toLowerCase() : "livre";
+            
+            // SOMENTE MESAS LIVRES
+            if (status === "livre") {
+                mesasLivresOrdenadas.push({ id: idMesa, setor: conf.nome });
             }
         }
     }
+
+    mesasLivresOrdenadas.forEach(m => {
+        seletor.innerHTML += `<option value="${m.id}">${m.id} — ${m.setor}</option>`;
+    });
 
     document.getElementById('gerar-mapa-nome').value = '';
     document.getElementById('overlay-gerar-mapa').style.display = 'block';
@@ -996,10 +993,13 @@ function gerarMapaApresentacao(tipo) {
 
     // ESCONDE OS ELEMENTOS QUE NÃO DEVEM APARECER NO ARQUIVO
     const painelTopo = document.querySelector('.painel-topo');
+    const painelRodape = document.querySelector('.painel-rodape');
     painelTopo.style.display = 'none';
 
     // GUARDA OS NOMES ORIGINAIS E LIMPA O MAPA
     const todosWrappers = document.querySelectorAll('.wrapper-mesa');
+    let wrapperDestaque = null;
+
     todosWrappers.forEach(w => {
         const textoAbaixo = w.querySelector('.texto-abaixo');
         const badge = w.querySelector('.badge-pagamento');
@@ -1007,44 +1007,78 @@ function gerarMapaApresentacao(tipo) {
         if (textoAbaixo) textoAbaixo.innerText = '';
         if (badge) badge.style.display = 'none';
 
-        // APLICA O DESTAQUE MÁXIMO NA MESA SELECIONADA
         const bolinha = w.querySelector('.bolinha-mesa');
         if (bolinha && bolinha.textContent.trim() === mesaDestaque) {
+            wrapperDestaque = w;
             w.classList.add('destaque');
             if (textoAbaixo && nomeDestaque) textoAbaixo.innerText = nomeDestaque;
         }
     });
 
+    // ADICIONA A SETA APONTANDO PARA A MESA DESTACADA
+    let setaEl = null;
+    if (wrapperDestaque) {
+        setaEl = document.createElement('div');
+        setaEl.id = 'seta-destaque';
+        setaEl.innerHTML = '⬇️';
+        setaEl.style.cssText = `
+            position: absolute;
+            font-size: 40px;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: piscarSeta 0.6s infinite alternate;
+            z-index: 20;
+            filter: drop-shadow(0 0 8px #66FFFF);
+        `;
+        wrapperDestaque.style.position = 'relative';
+        wrapperDestaque.appendChild(setaEl);
+
+        // ADICIONA ANIMAÇÃO DA SETA
+        const styleEl = document.createElement('style');
+        styleEl.id = 'style-seta';
+        styleEl.innerHTML = `
+            @keyframes piscarSeta {
+                0% { transform: translateX(-50%) translateY(0px); opacity: 1; }
+                100% { transform: translateX(-50%) translateY(-8px); opacity: 0.6; }
+            }
+            @media print {
+                #seta-destaque { animation: none !important; transform: translateX(-50%) !important; }
+            }
+        `;
+        document.head.appendChild(styleEl);
+    }
+
     // GERA O ARQUIVO APÓS UM BREVE MOMENTO PARA O DOM ATUALIZAR
     setTimeout(() => {
         if (tipo === 'pdf') {
             window.print();
+            window.onafterprint = () => {
+                restaurarMapa(painelTopo, todosWrappers, setaEl);
+            };
         } else {
             // GERA IMAGEM
-            import('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js').then(() => {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+            script.onload = () => {
                 html2canvas(document.getElementById('area-exportacao'), { 
                     backgroundColor: '#0A192F',
-                    scale: 1.5
+                    scale: 1.5,
+                    useCORS: true
                 }).then(canvas => {
                     const link = document.createElement('a');
                     link.download = `Mapa_NB2026_${mesaDestaque}.png`;
                     link.href = canvas.toDataURL('image/png');
                     link.click();
-                    restaurarMapa(painelTopo, todosWrappers);
+                    restaurarMapa(painelTopo, todosWrappers, setaEl);
                 });
-            });
-        }
-
-        if (tipo === 'pdf') {
-            // RESTAURA APÓS IMPRESSÃO
-            window.onafterprint = () => {
-                restaurarMapa(painelTopo, todosWrappers);
             };
+            document.head.appendChild(script);
         }
     }, 300);
 }
 
-function restaurarMapa(painelTopo, todosWrappers) {
+function restaurarMapa(painelTopo, todosWrappers, setaEl) {
     painelTopo.style.display = '';
     todosWrappers.forEach(w => {
         const textoAbaixo = w.querySelector('.texto-abaixo');
@@ -1053,8 +1087,8 @@ function restaurarMapa(painelTopo, todosWrappers) {
         if (badge) badge.style.display = '';
         w.classList.remove('destaque');
     });
+    // REMOVE A SETA E O ESTILO
+    if (setaEl && setaEl.parentNode) setaEl.parentNode.removeChild(setaEl);
+    const styleEl = document.getElementById('style-seta');
+    if (styleEl) styleEl.parentNode.removeChild(styleEl);
 }
-    
-    </script>
-</body>
-</html>
