@@ -712,28 +712,8 @@ async function verificarSenha() {
     const logo = document.getElementById('modal-logo').value;
 
     const btnSalvar = document.getElementById('btn-salvar');
-    btnSalvar.innerText = "Verificando...";
+    btnSalvar.innerText = "⏳ Salvando...";
     btnSalvar.disabled = true;
-
-    // VERIFICAÇÃO DE CONFLITO — usa apenas os dados já em memória (sem viagem extra ao servidor)
-    const mesaNoServidor = mesasData.find(m => m.id === idMesa);
-    const mesaLocal = mesasData.find(m => m.id === idMesa);
-
-    if (mesaNoServidor && mesaLocal &&
-        mesaNoServidor.ultimaAtualizacao && mesaLocal.ultimaAtualizacao &&
-        mesaNoServidor.ultimaAtualizacao > mesaLocal.ultimaAtualizacao) {
-
-        const horaConflito = new Date(mesaNoServidor.ultimaAtualizacao).toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
-
-        btnSalvar.innerText = "Gravar na Planilha";
-        btnSalvar.disabled = false;
-
-        mostrarAlerta(
-            `🔴 <b>Mesa indisponível!</b><br><br>A Mesa <b>${idMesa}</b> foi alterada por outra pessoa às <b>${horaConflito}</b>.<br><br>Feche esta janela e atualize o mapa antes de tentar novamente.`,
-            "erro"
-        );
-        return;
-    }
 
     await gravarMesaServidor(idMesa, status, nome, telefone, email, logo);
 
@@ -744,50 +724,80 @@ async function verificarSenha() {
 async function gravarMesaServidor(idMesa, status, nome, telefone, email, logo) {
     const pacoteDeDados = { id: idMesa, status: status, nome: nome, telefone: telefone, email: email, logo: logo };
 
-    // SE ESTÁ SENDO VENDIDA/RESERVADA E AINDA NÃO TEM VALOR, PREENCHE O VALOR BASE
+    const mesaAtual = mesasData.find(m => m.id === idMesa);
+
+    // ENVIA O CARIMBO DE TEMPO QUE ESTA MÁQUINA CONHECE — o servidor compara
+    pacoteDeDados.tsConhecido = (mesaAtual && mesaAtual.ultimaAtualizacao) ? mesaAtual.ultimaAtualizacao : 0;
+
+    // SE ESTÁ SENDO VENDIDA/RESERVADA, ENVIA O VALOR BASE COM PROTEÇÃO
+    // O servidor só grava esses valores se a planilha ainda não tiver valor lançado
     const prefixo = idMesa.charAt(0).toUpperCase();
     const setorConfig = Object.values(CONFIG_MESAS).find(c => c.prefixo === prefixo);
-    const mesaAtual = mesasData.find(m => m.id === idMesa);
     const statusNovo = status.toLowerCase();
-    const jaTemValor = mesaAtual && parseFloat(mesaAtual.valorTotal) > 0;
 
-    if ((statusNovo === "vendida" || statusNovo === "reservada") && !jaTemValor && setorConfig) {
+    if ((statusNovo === "vendida" || statusNovo === "reservada") && setorConfig) {
         pacoteDeDados.valorTotal = setorConfig.valorBase;
         pacoteDeDados.valorPago = 0;
         pacoteDeDados.saldo = setorConfig.valorBase;
+        pacoteDeDados.valoresApenasSeVazio = true;
     }
 
-    await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify(pacoteDeDados)
-    });
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain' },
+            body: JSON.stringify(pacoteDeDados)
+        });
+        const resultado = await response.json();
 
-    const mesaIndex = mesasData.findIndex(m => m.id === idMesa);
-    const agora = new Date().getTime();
-    if(mesaIndex !== -1) {
-        mesasData[mesaIndex].status = status;
-        mesasData[mesaIndex].nome = nome;
-        mesasData[mesaIndex].telefone = telefone;
-        mesasData[mesaIndex].email = email;
-        mesasData[mesaIndex].logo = logo;
-        mesasData[mesaIndex].ultimaAtualizacao = agora;
-        if(pacoteDeDados.valorTotal) {
-            mesasData[mesaIndex].valorTotal = pacoteDeDados.valorTotal;
-            mesasData[mesaIndex].valorPago = 0;
-            mesasData[mesaIndex].saldo = pacoteDeDados.saldo;
+        // CONFLITO — outra pessoa salvou antes
+        if (resultado.conflito === true) {
+            const horaConflito = new Date(resultado.ultimaAtualizacao).toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+            mostrarAlerta(
+                `🔴 <b>Mesa indisponível!</b><br><br>A Mesa <b>${idMesa}</b> foi alterada por outra pessoa às <b>${horaConflito}</b>.<br><br>O mapa será atualizado com os dados mais recentes.`,
+                "erro"
+            );
+            fecharModal();
+            carregarMesas();
+            return;
         }
-    } else {
-        mesasData.push({ id: idMesa, status, nome, telefone, email, logo, 
-            valorTotal: pacoteDeDados.valorTotal || 0,
-            valorPago: 0,
-            saldo: pacoteDeDados.saldo || 0,
-            ultimaAtualizacao: agora });
-    }
 
-    // ATUALIZAÇÃO PARCIAL — só redesenha a mesa alterada, não o mapa inteiro
-    atualizarMesaNaTela(idMesa);
-    fecharModal();
+        // ERRO DO SERVIDOR — nada foi gravado
+        if (resultado.erro) {
+            mostrarAlerta(`🔴 <b>Não foi possível salvar!</b><br><br>${resultado.erro}<br><br>Tente novamente.`, "erro");
+            return;
+        }
+
+        // SUCESSO CONFIRMADO PELO SERVIDOR — atualiza os dados locais
+        const mesaIndex = mesasData.findIndex(m => m.id === idMesa);
+        const novoTs = resultado.ultimaAtualizacao || new Date().getTime();
+        if(mesaIndex !== -1) {
+            mesasData[mesaIndex].status = status;
+            mesasData[mesaIndex].nome = nome;
+            mesasData[mesaIndex].telefone = telefone;
+            mesasData[mesaIndex].email = email;
+            mesasData[mesaIndex].logo = logo;
+            mesasData[mesaIndex].ultimaAtualizacao = novoTs;
+            if(pacoteDeDados.valorTotal && !(parseFloat(mesasData[mesaIndex].valorTotal) > 0)) {
+                mesasData[mesaIndex].valorTotal = pacoteDeDados.valorTotal;
+                mesasData[mesaIndex].valorPago = 0;
+                mesasData[mesaIndex].saldo = pacoteDeDados.saldo;
+            }
+        } else {
+            mesasData.push({ id: idMesa, status, nome, telefone, email, logo, 
+                valorTotal: pacoteDeDados.valorTotal || 0,
+                valorPago: 0,
+                saldo: pacoteDeDados.saldo || 0,
+                ultimaAtualizacao: novoTs });
+        }
+
+        // ATUALIZAÇÃO PARCIAL — só redesenha a mesa alterada
+        atualizarMesaNaTela(idMesa);
+        fecharModal();
+
+    } catch (error) {
+        mostrarAlerta("🔴 <b>Erro de conexão!</b><br><br>Não foi possível confirmar o salvamento. Verifique a internet e tente novamente.", "erro");
+    }
 }
 
 function atualizarMesaNaTela(idMesa) {
