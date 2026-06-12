@@ -662,7 +662,10 @@ async function verificarSenha() {
                                 
                                 if(isAdmin) {
                                     mesaWrapper.classList.add('clicavel');
-                                    mesaWrapper.onclick = () => abrirModal(mesaObj);
+                                    mesaWrapper.onclick = () => {
+                                        const mesaAtualizada = mesasData.find(m => m.id === mesaObj.id) || mesaObj;
+                                        abrirModal(mesaAtualizada);
+                                    };
                                 }
 
                                 mesaWrapper.innerHTML = `
@@ -884,7 +887,8 @@ function atualizarMesaNaTela(idMesa) {
         // ATUALIZA OS DADOS LOCAIS COMPLETAMENTE
         const mesaIndex = mesasData.findIndex(m => m.id === idMesa);
         if(mesaIndex !== -1) {
-            mesasData[mesaIndex] = {...pacoteZero, ultimaAtualizacao: new Date().getTime()};
+            Object.assign(mesasData[mesaIndex], pacoteZero);
+            mesasData[mesaIndex].ultimaAtualizacao = new Date().getTime();
         }
 
         // ATUALIZA APENAS A BOLINHA DESSA MESA NA TELA
