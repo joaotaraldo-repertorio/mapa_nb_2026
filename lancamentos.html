@@ -490,6 +490,10 @@
             }
         });
 
+        function removerAcentos(texto) {
+    return texto.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/ç/g, 'c').replace(/Ç/g, 'C');
+}
+
         function filtrarBusca(termo) {
     const lista = document.getElementById('listaBusca');
     
@@ -498,7 +502,7 @@
         return;
     }
 
-    const termoLower = termo.toLowerCase().trim();
+    const termoLower = removerAcentos(termo.toLowerCase().trim());
     const resultados = [];
 
     // BUSCA EM TODAS AS MESAS
@@ -517,13 +521,13 @@
             let textoMatch = "";
 
             // BUSCA NO ID DA MESA
-            if (idMesa.toLowerCase().includes(termoLower)) {
+            if (removerAcentos(idMesa.toLowerCase()).includes(termoLower)) {
                 encontrou = true;
                 textoMatch = `Mesa ${idMesa}`;
             }
 
             // BUSCA NO NOME EXIBIDO
-            if (!encontrou && nomeExibido.toLowerCase().includes(termoLower)) {
+            if (!encontrou && removerAcentos(nomeExibido.toLowerCase()).includes(termoLower)) {
                 encontrou = true;
                 textoMatch = nomeExibido;
             }
@@ -534,7 +538,7 @@
                     let pagadores = JSON.parse(mesaNoBanco.detalhesJSON);
                     if (Array.isArray(pagadores)) {
                         pagadores.forEach(p => {
-                            if (!encontrou && p.nome && p.nome.toLowerCase().includes(termoLower)) {
+                            if (!encontrou && p.nome && removerAcentos(p.nome.toLowerCase()).includes(termoLower)) {
                                 encontrou = true;
                                 textoMatch = `${p.nome} (Pagador)`;
                             }
