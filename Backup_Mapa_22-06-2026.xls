@@ -1,0 +1,1075 @@
+
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel">
+        <head><meta charset="UTF-8">
+        <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets>
+        <x:ExcelWorksheet><x:Name>Backup Mapa</x:Name>
+        <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
+        </x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+        </head><body>
+        <table border="1">
+            <thead>
+                <tr style="background-color:#0A192F; color:#66FFFF; font-weight:bold;">
+                    <th>ID Mesa</th>
+                    <th>Setor</th>
+                    <th>Status</th>
+                    <th>Nome</th>
+                    <th>Telefone</th>
+                    <th>Cadeiras Extra</th>
+                    <th>Valor Total</th>
+                    <th>Valor Pago</th>
+                    <th>Saldo Devedor</th>
+                    <th>Observações</th>
+                </tr>
+            </thead>
+            <tbody>
+    
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">F-01</td>
+                <td>Cota Família</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>JF CITRUS</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 25.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 25.000,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">F-02</td>
+                <td>Cota Família</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Grupo Ras</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 25.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 25.000,00</td>
+                <td style="max-width:300px;">Visita realizada em 31/03/2026. Hagna nos recebeu e ficou de passr para Mohamed. Em 06/05/2026 ficou fechado o pagamento da cota família de R$ 25.000,00 mais uma doação complementar de 15.000,00 (Junte-se), totalizando R$ 40.000,00. Forma de Pagamento: 4 x de 10.000,00 (10/05; 10/06; 10/07 e 10/08)</td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">F-03</td>
+                <td>Cota Família</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Solfarma</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 25.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 25.000,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">F-04</td>
+                <td>Cota Família</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Digisonic</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 25.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 25.000,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 0,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">F-05</td>
+                <td>Cota Família</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>IT</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 25.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 25.000,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">F-08</td>
+                <td>Cota Família</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Pieris</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 25.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 25.000,00</td>
+                <td style="max-width:300px;">08/04 - Visita realizada e venda confirmada. Aguardando forma de pagamento.</td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">F-09</td>
+                <td>Cota Família</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Mafra</td>
+                <td>34 9315-0342</td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 25.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 25.000,00</td>
+                <td style="max-width:300px;">Em 20/05/26 mensagem enviada via whatsapp_adm para Deise.  Reserva confirmada. Em 29/05 - Ficha de adesão encaminhada. Em 01/06 - Boletos encaminhados.</td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">F-10</td>
+                <td>Cota Família</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Confiseg</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 25.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 25.000,00</td>
+                <td style="max-width:300px;">Em 13/05/26 - Compra confirmada pelo Marcel em visita na Confiseg Aguardando ficha de adesão/forma de pagamento</td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">F-11</td>
+                <td>Cota Família</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Rocinholli transportes ltda</td>
+                <td>17 98177-0660</td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 25.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 25.000,00</td>
+                <td style="max-width:300px;">Confirmado por Tati dia 10/04. Passar forma de pagamento. 11/06/2026 - Boletos gerados e encaminhados via whatsapp</td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">C-01</td>
+                <td>Cota Criança</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Entrelinhas</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 12.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 12.000,00</td>
+                <td style="max-width:300px;">07/04 - Mensagem whatsapp encaminha para Débora / 29/05 - Débora confirmou a adesão. Em Julho entrar em contato novamente para verificar forma de pagamento.</td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">C-02</td>
+                <td>Cota Criança</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Convívio</td>
+                <td>17 99142-5351</td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 12.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 12.000,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 0,00</td>
+                <td style="max-width:300px;">Boleto em 3x (abr/mai/jun) - vencimentos todo dia 15 </td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">P-01</td>
+                <td>Mesa Premium</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Simões</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 8.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 8.000,00</td>
+                <td style="max-width:300px;">07/04 - Mensagem whatsapp encaminha para Débora / 29/05 - Débora confirmou a adesão. Em Julho entrar em contato novamente para verificar forma de pagamento. </td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">P-02</td>
+                <td>Mesa Premium</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Unimed</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 8.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 8.000,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">P-03</td>
+                <td>Mesa Premium</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Aquacenter</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 8.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 8.000,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">P-04</td>
+                <td>Mesa Premium</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Ricardo</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 8.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 8.000,00</td>
+                <td style="max-width:300px;"> 07/04 - Passei para Ricardo que ficou de ver com o pessoal que vai com ele.</td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">P-05</td>
+                <td>Mesa Premium</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Roberto Campanelli</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 8.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 8.000,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 0,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">C-03</td>
+                <td>Cota Criança</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Reis Advogados</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 12.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 12.000,00</td>
+                <td style="max-width:300px;">Em 15/06/26 - Encaminhei msg para Felipe Reis solicitando agendamento da visita.</td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">C-04</td>
+                <td>Cota Criança</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>RPA</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 12.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 12.000,00</td>
+                <td style="max-width:300px;">Em 21/05 - Mensagem encaminhada via whatsapp para Leandro Lian. Aguardando retorno.</td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">C-05</td>
+                <td>Cota Criança</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Campanelli</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 12.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 12.000,00</td>
+                <td style="max-width:300px;">Em 03/06 em visita Sr Antonio Confirmou a adesão. Material entregue para o Diretor de Relacionamentos, Danilo. Solicitar contato e orientações com Márcia.</td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">C-06</td>
+                <td>Cota Criança</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Campanelli</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 12.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 12.000,00</td>
+                <td style="max-width:300px;">Em 03/06 em visita Sr Antonio Confirmou a adesão. Material entregue para o Diretor de Relacionamentos, Danilo. Solicitar contato e orientações com Márcia. </td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">C-07</td>
+                <td>Cota Criança</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Fernanda Oliveira / Kátia e Stocler de Andrade / Ana / Casal 4</td>
+                <td>17 99773-7885</td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 12.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 600,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 11.400,00</td>
+                <td style="max-width:300px;">Em 27/05/26 - Venda confirmada por Márcia. Fernanda Ribeiro: gerar 10 boletos de $300,00 com vencimento todo dia 10 de cada mês, a partir de junho. Kátia: gerar 10 boletos de $300,00 com vencimento todo dia 10 de cada mês, a partir de junho. </td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">C-08</td>
+                <td>Cota Criança</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Ibene</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 12.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 2.400,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 9.600,00</td>
+                <td style="max-width:300px;">Em 27/05/26 - Msg encaminhada diretamente para Dr. Leandro. Em 01/06/26 - Retorno: Pode manter tudo o mesmo. Combinar forma de pagamento com  Renata ou Jaqueline. Aguardando ficha de adesão. 11/06/26 - Encaminhada ficha de adesão e envio dos boletos.</td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">C-09</td>
+                <td>Cota Criança</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Dr. Betanho</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 12.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 12.000,00</td>
+                <td style="max-width:300px;">Em 21/05/26 - Compra confirmada por Silvinha Betanho. Aguardando Ficha de Adesão</td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">C-10</td>
+                <td>Cota Criança</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Soft Metais</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 12.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 12.000,00</td>
+                <td style="max-width:300px;">Em 21/05/26 - Mensagem encaminhada via whatsapp_adm para Dra Daniela (filha Sr. Pedro Sarri). </td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">C-11</td>
+                <td>Cota Criança</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Forno Paulista</td>
+                <td>17 3343 2677</td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 12.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 9.000,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 3.000,00</td>
+                <td style="max-width:300px;">Boleto em 4x (abr/mai/jun/jul) - vencimentos todo dia 08</td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">C-12</td>
+                <td>Cota Criança</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Credicitrus</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 12.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 12.000,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">C-13</td>
+                <td>Cota Criança</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Dudarillo</td>
+                <td>17 98136-0900</td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 12.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 1.200,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 10.800,00</td>
+                <td style="max-width:300px;">26/05/26 - Márcia confirmou a reserva - Providenciar Boletos, em 10x, vencimento todo dia 10 de cada mês. Glaucia Lotierzo</td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">C-16</td>
+                <td>Cota Criança</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Lucas Seren</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 12.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 12.000,00</td>
+                <td style="max-width:300px;">Em 27/05/26 - Lucas Seren confirmou reserva. Pagamento parcelado, como nos anos anteriores.</td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">C-17</td>
+                <td>Cota Criança</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Coopercitrus</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 12.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 12.000,00</td>
+                <td style="max-width:300px;">Em 09/06/26 - visita realizada e adesão confirmada por José Geraldo da Silveira Mello. Aguardando ficha de adesão.</td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">C-18</td>
+                <td>Cota Criança</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Recon</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 12.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 12.000,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">C-19</td>
+                <td>Cota Criança</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Credicitrus</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 12.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 12.000,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">C-20</td>
+                <td>Cota Criança</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>TATU Marchesan</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 12.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 12.000,00</td>
+                <td style="max-width:300px;">Em 29/05 msg encaminhada à Luiz Varella. Aguardando retorno. Em 08/06, Luiz entrou em contato informando que irá passar no conselho diretor na reunião do final de junho. </td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">C-21</td>
+                <td>Cota Criança</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Bevale</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 12.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 12.000,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">P-12</td>
+                <td>Mesa Premium</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Mercado Pet</td>
+                <td>17 98815-5695</td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 8.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 1.333,34</td>
+                <td style="text-align:right; color:#cc0000;">R$ 6.666,66</td>
+                <td style="max-width:300px;">08/06 - Mudança de mesa - M13 para P12 Aguardando ficha de adesão.</td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">P-13</td>
+                <td>Mesa Premium</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Atlas</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 8.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 8.000,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">P-14</td>
+                <td>Mesa Premium</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Gustavo Fiori</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 8.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 8.000,00</td>
+                <td style="max-width:300px;">Em 17/06/26 - Gustavo confirmou reserva. Aguardando link do cartão.</td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">M-01</td>
+                <td>Mesa Master</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Dreyfus</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 5.400,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 5.400,00</td>
+                <td style="max-width:300px;">Em 29/05/26 - msg enviada para Robson que ficou de dar encaminhamento e também verificar uma data para visita. Apresentei duas opções P-10 e M-01</td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">M-02</td>
+                <td>Mesa Master</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Boldrini</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 5.400,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 5.400,00</td>
+                <td style="max-width:300px;">09/04 - ofereci para o Junior deixar como reservada. Aguardando retorno.</td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">M-03</td>
+                <td>Mesa Master</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Audiplan</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 5.400,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 5.400,00</td>
+                <td style="max-width:300px;">08/04 - Venda confirmada. Aguardando ficha de adesão</td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">M-04</td>
+                <td>Mesa Master</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Julio Brioso</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 5.400,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 5.400,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">M-05</td>
+                <td>Mesa Master</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Tati / Clariana</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 5.400,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 5.400,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">M-06</td>
+                <td>Mesa Master</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Transmob</td>
+                <td>17-99626-9581</td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 5.400,00</td>
+                <td style="text-align:right; color:#006600;">R$ 1.800,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 3.600,00</td>
+                <td style="max-width:300px;">Encaminhada Ficha de Adesão - 6 x no boleto - vencimento todo dia 30 - OK, Boletos encaminhados.</td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">M-07</td>
+                <td>Mesa Master</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Sindicato Rural</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 5.400,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 5.400,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">M-08</td>
+                <td>Mesa Master</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Sindicato Rural</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 5.400,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 5.400,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">M-10</td>
+                <td>Mesa Master</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Gabriela Souza</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 5.400,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 5.400,00</td>
+                <td style="max-width:300px;">Em 27/05/26 - Msg enviada via whatsapp_adm. Aguardando retorno.</td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">M-11</td>
+                <td>Mesa Master</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Confiseg Cortesia</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 5.400,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 5.400,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">M-13</td>
+                <td>Mesa Master</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Usina Pitangueiras</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 5.400,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 5.400,00</td>
+                <td style="max-width:300px;">Em 09/06/26 - José Geraldo vai entregar em mãos.</td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">M-14</td>
+                <td>Mesa Master</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Virálcool</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 5.400,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 5.400,00</td>
+                <td style="max-width:300px;">Em 09/06/26 - José Geraldo vai entregar em mãos.</td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">M-15</td>
+                <td>Mesa Master</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Jacto</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 5.400,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 5.400,00</td>
+                <td style="max-width:300px;">Em 09/06/26 - Por recomendação de José Geraldo o material foi encaminhado via Sedex.</td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">M-16</td>
+                <td>Mesa Master</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Reis</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 5.400,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 5.400,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">M-17</td>
+                <td>Mesa Master</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Reis</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 5.400,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 5.400,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">M-18</td>
+                <td>Mesa Master</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>CMA</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 5.400,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 5.400,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">M-19</td>
+                <td>Mesa Master</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Edna Rodrigues</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 5.400,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 5.400,00</td>
+                <td style="max-width:300px;">Em 17/06/26 Edna confirmou reserva. Aguardando ficha de adesão.</td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">D-02</td>
+                <td>Mesa Diamante</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>UPL</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 4.800,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 4.800,00</td>
+                <td style="max-width:300px;">Em 29/05, Márcio Galhardo, confirmou reserva. Msg whatsapp. Aguardando ficha de adesão.</td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">D-03</td>
+                <td>Mesa Diamante</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Zezé Guessi</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 4.800,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 4.800,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">D-04</td>
+                <td>Mesa Diamante</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Uniodonto</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 4.800,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 4.800,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">D-06</td>
+                <td>Mesa Diamante</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Madalena</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 4.800,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 4.800,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">D-12</td>
+                <td>Mesa Diamante</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Fina Flor</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 4.800,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 4.800,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">D-19</td>
+                <td>Mesa Diamante</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>NP Mídia</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 4.800,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 4.800,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">F-12</td>
+                <td>Cota Família</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Quintella</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 25.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 25.000,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">P-06</td>
+                <td>Mesa Premium</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Cotram</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 8.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 8.000,00</td>
+                <td style="max-width:300px;">07/04 - Confirmada por Rogério Azevedo.  Podemos pagar no mes de setembro em 1 parcela. Fazer contato em agosto para lembrete e informação de nossos dados bancários.</td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">F-07</td>
+                <td>Cota Família</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Rede Savegnago / Cifal</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 0,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 0,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">F-06</td>
+                <td>Cota Família</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Iquegami Supermercados</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 25.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 25.000,00</td>
+                <td style="max-width:300px;">20/0526 - Mensagem encaminhada para venda.</td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">D-05</td>
+                <td>Mesa Diamante</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Constele</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 4.800,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 4.800,00</td>
+                <td style="max-width:300px;">07/04 - Venda confirmada.  Aguardando ficha de adesão.</td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">C-25</td>
+                <td>Cota Criança</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Denise Paro</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 12.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 12.000,00</td>
+                <td style="max-width:300px;">Link gerado. </td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">C-26</td>
+                <td>Cota Criança</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Tereos</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 12.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 12.000,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">M-09</td>
+                <td>Mesa Master</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Walter Marciano</td>
+                <td>17 99718-4577</td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 5.400,00</td>
+                <td style="text-align:right; color:#006600;">R$ 5.400,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 0,00</td>
+                <td style="max-width:300px;">Em 09/06/26 - Walter Marciano confirmou a reserva. Encaminhar ficha de adesão. Em 12/06/26 - Boleto encaminhado, não vai parcelar (boleto direto).</td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">D-09</td>
+                <td>Mesa Diamante</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Nova Tintas</td>
+                <td>17 98816-5539</td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 4.800,00</td>
+                <td style="text-align:right; color:#006600;">R$ 960,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 3.840,00</td>
+                <td style="max-width:300px;">Em 19/05 - Compra confirmada pela Juliana.  Aguardando ficha de adesão</td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">C-24</td>
+                <td>Cota Criança</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Ralston</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 12.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 12.000,00</td>
+                <td style="max-width:300px;">27/05/26 - Confirmada com Tânia Ralston. Combinar os boletos com Renata Ralston.</td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">C-27</td>
+                <td>Cota Criança</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Tereos</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 12.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 12.000,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">D-10</td>
+                <td>Mesa Diamante</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>André Scardua</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 4.800,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 4.800,00</td>
+                <td style="max-width:300px;">Em 15/06/26 - André confirmou a mesa para compra pessoal. Vai ver com os sócios se querem outra mesa para a empresa. Não deixou pré reserva.</td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">P-11</td>
+                <td>Mesa Premium</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Marines Lian Rosa | Janaina Gamboni | Casal 3 | Casal 4 / Fabiana A. P. Gumieri</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 8.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 2.000,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 6.000,00</td>
+                <td style="max-width:300px;">Em 25/05/26 - Janaina Gamboni confirmou com Márcia Iquegami. Entrar em contato para combinar os pagamentos - link de cartão</td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">P-07</td>
+                <td>Mesa Premium</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Família Gregorini</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 8.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 8.000,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 0,00</td>
+                <td style="max-width:300px;">Em 28/05/26 Valéria confirmou a reserva. Forma de Pagamento Pix.</td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">M-12</td>
+                <td>Mesa Master</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Alexandra de Freitas</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 5.400,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 5.400,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">P-10</td>
+                <td>Mesa Premium</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Dreyfus</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 8.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 8.000,00</td>
+                <td style="max-width:300px;">Em 29/05/26 - msg enviada para Robson que ficou de dar encaminhamento e também verificar uma data para visita. Apresentei duas opções P-10 e M-01</td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">D-11</td>
+                <td>Mesa Diamante</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Cristina Guessi</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 4.800,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 4.800,00</td>
+                <td style="max-width:300px;">29/05 - Cris Guessi confirmou com a Márcia Iquegami. Vai consultar Vel e Ana e depois retorna, caso queiram mudar de localização.</td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">C-23</td>
+                <td>Cota Criança</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Rede Tonin Superatacado</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 12.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 12.000,00</td>
+                <td style="max-width:300px;">Em 09/06/26 - Material encaminhado via whatsapp_adm para Cleide Prates com reserva no mapa da C-23 e P-09. Aguardando retorno.</td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">P-09</td>
+                <td>Mesa Premium</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Rede Tonin Superatacado</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 8.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 8.000,00</td>
+                <td style="max-width:300px;">Em 09/06/26 - Material encaminhado via whatsapp_adm para Cleide Prates com reserva no mapa da C-23 e P-09. Aguardando retorno.</td>
+            </tr>
+        
+            <tr style="background-color:#fff0f0;">
+                <td style="font-weight:bold;">P-08</td>
+                <td>Mesa Premium</td>
+                <td style="font-weight:bold; color:#cc0000">Vendida</td>
+                <td>Paulo Bianchini</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 8.000,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 8.000,00</td>
+                <td style="max-width:300px;">Em 09/06/26 - Paulo Bianchini confirmou reserva. Aguardando ficha de adesão.</td>
+            </tr>
+        
+            <tr style="background-color:#fffbe6;">
+                <td style="font-weight:bold;">D-01</td>
+                <td>Mesa Diamante</td>
+                <td style="font-weight:bold; color:#cc7700">Reservada</td>
+                <td>Buffet Gold</td>
+                <td></td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:right;">R$ 0,00</td>
+                <td style="text-align:right; color:#006600;">R$ 0,00</td>
+                <td style="text-align:right; color:#cc0000;">R$ 0,00</td>
+                <td style="max-width:300px;"></td>
+            </tr>
+        
+            <tr style="background-color:#0A192F; color:#66FFFF; font-weight:bold;">
+                <td colspan="5">TOTAIS — 80 mesa(s) vendida(s)/reservada(s)</td>
+                <td></td>
+                <td style="text-align:right;">R$ 825.600,00</td>
+                <td style="text-align:right;">R$ 77.693,34</td>
+                <td style="text-align:right;">R$ 747.906,66</td>
+                <td></td>
+            </tr>
+        </tbody></table></body></html>
+    

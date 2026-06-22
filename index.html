@@ -256,7 +256,7 @@
         
         <button class="btn btn-salvar" id="btn-salvar" onclick="salvarMesa()">Gravar na Planilha</button>
         <button class="btn btn-link" onclick="gerarLinkAprovacao()">🔗 Copiar Link de Aprovação</button>
-        <button class="btn" onclick="pularParaFinanceiro()" style="background-color: #f59e0b; color: #000; margin-top: 10px;">💰 Financeiro Completo da Mesa</button>
+        <button class="btn" onclick="pularParaFinanceiro()" style="background-color: #f59e0b; color: #000; margin-top: 10px;">📝 Lançamentos da Mesa</button>
         <button class="btn btn-excluir" id="btn-limpar" onclick="confirmarExclusaoMesa()">🗑️ Excluir Todos os Dados</button>
         <button class="btn btn-fechar" onclick="fecharModal()">Cancelar</button>
     </div>
@@ -919,11 +919,8 @@ function atualizarMesaNaTela(idMesa) {
         function pularParaFinanceiro() {
             const idMesa = document.getElementById('modal-title').innerText.replace('Mesa ', '').trim();
             const nomeDigitado = encodeURIComponent(document.getElementById('modal-nome').value);
-            window.open(`financeiro.html?mesa=${idMesa}&nome=${nomeDigitado}`, '_blank');
+            window.open(`lancamentos.html?mesa=${idMesa}&nome=${nomeDigitado}`, '_blank');
         }
-
-        montarCabecalho();
-        carregarMesas();
 
         
         function iniciarContadorRegressivo() {
