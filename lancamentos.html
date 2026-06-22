@@ -74,6 +74,13 @@
     <div class="cabecalho">
         <h2>📝 Lançamentos da Mesa</h2>
         <div class="cabecalho-direita">
+            <div style="position: relative;">
+                <input type="text" id="campoBusca" placeholder="🔍 Buscar por nome ou mesa..." 
+                    style="padding: 10px; border-radius: 6px; background-color: #0A192F; border: 1px solid var(--ciano-destaque); color: #fff; font-size: 15px; font-weight: bold; outline: none; min-width: 280px;"
+                    oninput="filtrarBusca(this.value)"
+                    onkeydown="if(event.key === 'Enter') selecionarPrimeiroBusca()">
+                <div id="listaBusca" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background-color: #112240; border: 1px solid var(--ciano-destaque); border-radius: 6px; max-height: 300px; overflow-y: auto; z-index: 500; margin-top: 4px; box-shadow: 0 8px 20px rgba(0,0,0,0.8);"></div>
+            </div>
             <select id="seletor-mesas" class="seletor-mesas" onchange="trocarMesaSelecionada(this.value)">
                 <option value="">-- Selecione uma Mesa --</option>
             </select>
@@ -482,6 +489,109 @@
                 e.returnValue = '';
             }
         });
+
+        function filtrarBusca(termo) {
+    const lista = document.getElementById('listaBusca');
+    
+    if (!termo || termo.trim().length < 2) {
+        lista.style.display = 'none';
+        return;
+    }
+
+    const termoLower = termo.toLowerCase().trim();
+    const resultados = [];
+
+    // BUSCA EM TODAS AS MESAS
+    for (const prefixo in CONFIG_MESAS) {
+        const conf = CONFIG_MESAS[prefixo];
+        let totalMesas = 0;
+        conf.layout.forEach(linha => { linha.forEach(item => { if (typeof item === 'number') totalMesas += item; }); });
+        
+        for (let i = 1; i <= totalMesas; i++) {
+            let num = i < 10 ? `0${i}` : `${i}`;
+            let idMesa = `${prefixo}-${num}`;
+            let mesaNoBanco = mesasDataBanco.find(m => m.id === idMesa);
+
+            let nomeExibido = mesaNoBanco ? (mesaNoBanco.nome || "") : "";
+            let encontrou = false;
+            let textoMatch = "";
+
+            // BUSCA NO ID DA MESA
+            if (idMesa.toLowerCase().includes(termoLower)) {
+                encontrou = true;
+                textoMatch = `Mesa ${idMesa}`;
+            }
+
+            // BUSCA NO NOME EXIBIDO
+            if (!encontrou && nomeExibido.toLowerCase().includes(termoLower)) {
+                encontrou = true;
+                textoMatch = nomeExibido;
+            }
+
+            // BUSCA NOS PAGADORES
+            if (!encontrou && mesaNoBanco && mesaNoBanco.detalhesJSON) {
+                try {
+                    let pagadores = JSON.parse(mesaNoBanco.detalhesJSON);
+                    if (Array.isArray(pagadores)) {
+                        pagadores.forEach(p => {
+                            if (!encontrou && p.nome && p.nome.toLowerCase().includes(termoLower)) {
+                                encontrou = true;
+                                textoMatch = `${p.nome} (Pagador)`;
+                            }
+                        });
+                    }
+                } catch(e) {}
+            }
+
+            if (encontrou) {
+                resultados.push({ id: idMesa, setor: conf.nome, match: textoMatch, nome: nomeExibido });
+            }
+        }
+    }
+
+    if (resultados.length === 0) {
+        lista.innerHTML = `<div style="padding: 12px; color: #8892b0; text-align: center;">Nenhuma mesa encontrada</div>`;
+        lista.style.display = 'block';
+        return;
+    }
+
+    lista.innerHTML = resultados.map(r => `
+        <div onclick="selecionarDaBusca('${r.id}')" 
+            style="padding: 12px 15px; cursor: pointer; border-bottom: 1px solid #233554; display: flex; justify-content: space-between; align-items: center;"
+            onmouseover="this.style.backgroundColor='rgba(102,255,255,0.1)'"
+            onmouseout="this.style.backgroundColor='transparent'">
+            <div>
+                <span style="color: var(--ciano-destaque); font-weight: bold;">${r.id}</span>
+                <span style="color: #8892b0; font-size: 13px; margin-left: 8px;">${r.setor}</span>
+            </div>
+            <div style="color: var(--texto-claro); font-size: 14px; max-width: 200px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">${r.match}</div>
+        </div>
+    `).join('');
+    lista.style.display = 'block';
+}
+
+function selecionarDaBusca(idMesa) {
+    document.getElementById('campoBusca').value = '';
+    document.getElementById('listaBusca').style.display = 'none';
+    document.getElementById('seletor-mesas').value = idMesa;
+    trocarMesaSelecionada(idMesa);
+}
+
+function selecionarPrimeiroBusca() {
+    const lista = document.getElementById('listaBusca');
+    const primeiro = lista.querySelector('div[onclick]');
+    if (primeiro) primeiro.click();
+}
+
+// FECHA A LISTA SE CLICAR FORA
+document.addEventListener('click', function(e) {
+    const campo = document.getElementById('campoBusca');
+    const lista = document.getElementById('listaBusca');
+    if (campo && lista && !campo.contains(e.target) && !lista.contains(e.target)) {
+        lista.style.display = 'none';
+    }
+});
+        
     </script>
 </body>
 </html>
