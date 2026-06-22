@@ -948,9 +948,7 @@ function atualizarMesaNaTela(idMesa) {
         setInterval(atualizar, 1000);
 }
 
-        iniciarContadorRegressivo();
-
-    function abrirModalGerarMapa() {
+        function abrirModalGerarMapa() {
     const seletor = document.getElementById('gerar-mapa-mesa');
     seletor.innerHTML = '<option value="">-- Selecione uma Mesa --</option>';
 
@@ -1064,6 +1062,8 @@ function restaurarMapaAposGeracao(todosWrappers) {
         w.classList.remove('destaque');
     });
 }
+
+        iniciarContadorRegressivo();
     
     </script>
 </body>
