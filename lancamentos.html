@@ -677,12 +677,13 @@ function gerarRelatorioObservacoesPDF(mesas, dataHoje, horaAgora) {
             </div>
     `;
 
-    mesas.forEach(m => {
+    mesas.forEach((m, index) => {
         let statusHtml = m.status.toLowerCase() === "vendida" 
             ? `<span class="mesa-status-vendida">● VENDIDA</span>`
             : `<span class="mesa-status-reservada">● RESERVADA</span>`;
+        let corFundo = index % 2 === 0 ? "#fff0f0" : "#fffbe6";
         conteudo += `
-            <div class="mesa-linha">
+            <div class="mesa-linha" style="background-color: ${corFundo};">
                 <div class="mesa-titulo">
                     <div>
                         <span class="mesa-nome">${m.nome}</span>
@@ -696,7 +697,6 @@ function gerarRelatorioObservacoesPDF(mesas, dataHoje, horaAgora) {
             </div>
         `;
     });
-
     conteudo += `
             <div class="rodape">Relatório gerado pelo sistema Mapa de Vendas — Noite Beneficente 2026</div>
         </body></html>
