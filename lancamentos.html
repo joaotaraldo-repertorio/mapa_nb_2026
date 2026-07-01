@@ -71,7 +71,7 @@
 </head>
 <body>
 
-    <div class="cabecalho">
+    <div <div class="cabecalho">
         <h2>📝 Lançamentos da Mesa</h2>
         <div class="cabecalho-direita">
             <div style="position: relative;">
@@ -84,6 +84,8 @@
             <select id="seletor-mesas" class="seletor-mesas" onchange="trocarMesaSelecionada(this.value)">
                 <option value="">-- Selecione uma Mesa --</option>
             </select>
+            <button class="botao-acao" onclick="gerarRelatorioObservacoes('pdf')" style="background-color: #3b82f6; color: #fff; font-size: 14px;">📋 Relatório PDF</button>
+            <button class="botao-acao" onclick="gerarRelatorioObservacoes('excel')" style="background-color: #10b981; color: #000; font-size: 14px;">📊 Relatório Excel</button>
             <button class="botao-acao" id="btnSalvarFinanceiro" onclick="salvarDadosFinanceiros()" style="background-color: var(--ciano-destaque); color: #000; display: none; font-size: 16px;">💾 Salvar Lançamentos</button>
         </div>
     </div>
@@ -595,6 +597,175 @@ document.addEventListener('click', function(e) {
         lista.style.display = 'none';
     }
 });
+
+function gerarRelatorioObservacoes(tipo) {
+    if (!mesasDataBanco || mesasDataBanco.length === 0) {
+        mostrarAlerta("Nenhum dado carregado ainda. Aguarde o carregamento completo.", "erro");
+        return;
+    }
+
+    const dataHoje = new Date().toLocaleDateString('pt-BR');
+    const horaAgora = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+
+    // MONTA A LISTA NA ORDEM CORRETA DO MAPA
+    const mesasOrdenadas = [];
+    for (const prefixo in CONFIG_MESAS) {
+        const conf = CONFIG_MESAS[prefixo];
+        let totalMesas = 0;
+        conf.layout.forEach(linha => { linha.forEach(item => { if (typeof item === 'number') totalMesas += item; }); });
+        for (let i = 1; i <= totalMesas; i++) {
+            let num = i < 10 ? `0${i}` : `${i}`;
+            let idMesa = `${prefixo}-${num}`;
+            let mesaNoBanco = mesasDataBanco.find(m => m.id === idMesa);
+            if (mesaNoBanco) {
+                let status = (mesaNoBanco.status || "livre").toLowerCase();
+                if (status === "vendida" || status === "reservada") {
+                    mesasOrdenadas.push({
+                        id: idMesa,
+                        setor: conf.nome,
+                        nome: mesaNoBanco.nome || "Sem Nome",
+                        status: mesaNoBanco.status,
+                        valorTotal: parseFloat(mesaNoBanco.valorTotal) || 0,
+                        obs: mesaNoBanco.obs || ""
+                    });
+                }
+            }
+        }
+    }
+
+    if (mesasOrdenadas.length === 0) {
+        mostrarAlerta("Nenhuma mesa vendida ou reservada encontrada.", "erro");
+        return;
+    }
+
+    if (tipo === 'pdf') {
+        gerarRelatorioObservacoesPDF(mesasOrdenadas, dataHoje, horaAgora);
+    } else {
+        gerarRelatorioObservacoesExcel(mesasOrdenadas, dataHoje, horaAgora);
+    }
+}
+
+function gerarRelatorioObservacoesPDF(mesas, dataHoje, horaAgora) {
+    let conteudo = `
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <style>
+                body { font-family: Arial, sans-serif; margin: 30px; color: #000; }
+                .cabecalho-rel { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; }
+                .cabecalho-rel h1 { margin: 0; font-size: 20px; }
+                .cabecalho-rel p { margin: 5px 0 0 0; font-size: 13px; color: #555; }
+                .mesa-linha { border: 1px solid #ccc; border-radius: 6px; padding: 12px 15px; margin-bottom: 12px; page-break-inside: avoid; }
+                .mesa-titulo { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+                .mesa-nome { font-size: 16px; font-weight: bold; }
+                .mesa-id { font-size: 13px; color: #555; margin-left: 8px; font-weight: normal; }
+                .mesa-valor { font-size: 16px; font-weight: bold; color: #000; }
+                .mesa-status-vendida { font-size: 12px; color: #cc0000; font-weight: bold; margin-left: 8px; }
+                .mesa-status-reservada { font-size: 12px; color: #cc7700; font-weight: bold; margin-left: 8px; }
+                .mesa-obs-label { font-size: 12px; color: #555; font-weight: bold; margin-top: 6px; border-top: 1px dashed #ccc; padding-top: 6px; }
+                .mesa-obs { font-size: 14px; color: #000; margin-top: 3px; white-space: pre-wrap; }
+                .sem-obs { font-size: 13px; color: #999; font-style: italic; margin-top: 3px; }
+                .rodape { text-align: center; margin-top: 30px; font-size: 12px; color: #888; border-top: 1px solid #ccc; padding-top: 10px; }
+                @media print { .mesa-linha { page-break-inside: avoid; } }
+            </style>
+        </head>
+        <body>
+            <div class="cabecalho-rel">
+                <h1>📋 Relatório Financeiro - Observações</h1>
+                <p>19ª Noite Beneficente 2026 — Educandário Santo Antônio de Bebedouro</p>
+                <p>Gerado em: ${dataHoje} às ${horaAgora} | Total de mesas: ${mesas.length}</p>
+            </div>
+    `;
+
+    mesas.forEach(m => {
+        let statusHtml = m.status.toLowerCase() === "vendida" 
+            ? `<span class="mesa-status-vendida">● VENDIDA</span>`
+            : `<span class="mesa-status-reservada">● RESERVADA</span>`;
+        conteudo += `
+            <div class="mesa-linha">
+                <div class="mesa-titulo">
+                    <div>
+                        <span class="mesa-nome">${m.nome}</span>
+                        <span class="mesa-id">(${m.id} — ${m.setor})</span>
+                        ${statusHtml}
+                    </div>
+                    <div class="mesa-valor">R$ ${m.valorTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+                </div>
+                <div class="mesa-obs-label">📝 Observações:</div>
+                ${m.obs ? `<div class="mesa-obs">${m.obs}</div>` : `<div class="sem-obs">Sem observações registradas.</div>`}
+            </div>
+        `;
+    });
+
+    conteudo += `
+            <div class="rodape">Relatório gerado pelo sistema Mapa de Vendas — Noite Beneficente 2026</div>
+        </body></html>
+    `;
+
+    const janela = window.open('', '_blank');
+    janela.document.write(conteudo);
+    janela.document.close();
+    setTimeout(() => { janela.print(); }, 500);
+}
+
+function gerarRelatorioObservacoesExcel(mesas, dataHoje, horaAgora) {
+    let html = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel">
+        <head><meta charset="UTF-8">
+        <!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets>
+        <x:ExcelWorksheet><x:Name>Observações</x:Name>
+        <x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions>
+        </x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->
+        </head><body>
+        <table border="1" style="border-collapse: collapse; font-family: Arial; font-size: 13px;">
+            <tr>
+                <td colspan="4" style="background-color: #0A192F; color: #66FFFF; font-size: 16px; font-weight: bold; text-align: center; padding: 12px;">
+                    Relatório Financeiro - Observações
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4" style="text-align: center; color: #555; font-size: 12px; padding: 6px;">
+                    19ª Noite Beneficente 2026 — Gerado em: ${dataHoje} às ${horaAgora} | Total de mesas: ${mesas.length}
+                </td>
+            </tr>
+            <tr style="background-color: #1d2d50; color: #fff; font-weight: bold;">
+                <th style="padding: 10px; text-align: left; width: 80px;">Mesa</th>
+                <th style="padding: 10px; text-align: left;">Nome / Empresa</th>
+                <th style="padding: 10px; text-align: center; width: 100px;">Status</th>
+                <th style="padding: 10px; text-align: right; width: 120px;">Valor Total</th>
+            </tr>
+    `;
+
+    mesas.forEach(m => {
+        let corStatus = m.status.toLowerCase() === "vendida" ? "#cc0000" : "#cc7700";
+        let corLinha = m.status.toLowerCase() === "vendida" ? "#fff0f0" : "#fffbe6";
+        let obsLimpa = (m.obs || "").replace(/\n/g, " ").replace(/\r/g, " ");
+
+        html += `
+            <tr style="background-color: ${corLinha};">
+                <td style="padding: 10px; font-weight: bold;">${m.id}</td>
+                <td style="padding: 10px;">${m.nome}<br><span style="font-size: 11px; color: #666;">${m.setor}</span></td>
+                <td style="padding: 10px; text-align: center; color: ${corStatus}; font-weight: bold;">${m.status}</td>
+                <td style="padding: 10px; text-align: right; font-weight: bold;">R$ ${m.valorTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+            </tr>
+            <tr style="background-color: #f9f9f9;">
+                <td style="padding: 8px 10px; color: #555; font-size: 11px; font-weight: bold;">Obs:</td>
+                <td colspan="3" style="padding: 8px 10px; color: #333; font-size: 12px;">${obsLimpa || "Sem observações registradas."}</td>
+            </tr>
+        `;
+    });
+
+    html += `</table></body></html>`;
+
+    let nomeArquivo = `Relatorio_Observacoes_${dataHoje.replace(/\//g, '-')}.xls`;
+    let blob = new Blob([html], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+    let link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = nomeArquivo;
+    link.click();
+
+    mostrarAlerta(`✅ Relatório exportado com sucesso!<br><br>Arquivo: <b>${nomeArquivo}</b>`, "sucesso");
+}
         
     </script>
 </body>
