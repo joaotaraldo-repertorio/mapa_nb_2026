@@ -72,9 +72,14 @@
         .tamanho-g { width: 115px; height: 115px; font-size: 30px; }
         .tamanho-m { width: 90px; height: 90px; font-size: 24px; }
         .tamanho-p { width: 75px; height: 75px; font-size: 19px; }
+        .tamanho-p { width: 75px; height: 75px; font-size: 19px; }
+        .tamanho-pp { width: 62px; height: 62px; font-size: 15px; }
+        .tamanho-mini { width: 46px; height: 46px; font-size: 11px; }
 
         .texto-acima { font-size: 12px; font-weight: bold; text-transform: uppercase; height: 14px; letter-spacing: 1px; margin-bottom: 2px;}
         .texto-abaixo { font-size: 16px; color: #ffffff; text-align: center; width: 120px; white-space: normal; word-wrap: break-word; line-height: 1.1; font-weight: bold; min-height: 15px; margin-top: 2px;}
+        .texto-abaixo { font-size: 16px; color: #ffffff; text-align: center; width: 120px; white-space: normal; word-wrap: break-word; line-height: 1.1; font-weight: bold; min-height: 15px; margin-top: 2px;}
+        .texto-abaixo-compacta { width: 78px !important; font-size: 11px !important; }
 
         /* BADGES (Cadeiras Extras e Cifrão de Devedor) */
         .badge-extra {
@@ -344,10 +349,10 @@
 
         const CONFIG_MESAS = {
             "Familia": { prefixo: "F", nome: "Cota Família", classeTamanho: "tamanho-g", corNormal: "#FFFF00", corVendida: "#FFFFD1", layout: [ [5], [6] ], bgTranslucido: "rgba(255, 255, 0, 0.08)", bordaFina: "rgba(255, 255, 0, 0.3)" },
-            "Crianca": { prefixo: "C", nome: "Cota Criança", classeTamanho: "tamanho-m", corNormal: "#00FFFF", corVendida: "#66CCCC", layout: [ [7], [7], [7], [7] ], bgTranslucido: "rgba(0, 255, 255, 0.08)", bordaFina: "rgba(0, 255, 255, 0.3)" },
-            "Premium": { prefixo: "P", nome: "Mesa Premium", classeTamanho: "tamanho-m", corNormal: "#47D359", corVendida: "#75D982", layout: [ [10] ], bgTranslucido: "rgba(71, 211, 89, 0.08)", bordaFina: "rgba(71, 211, 89, 0.3)" },
-            "Master": { prefixo: "M", nome: "Mesa Master", classeTamanho: "tamanho-p", corNormal: "#FF9900", corVendida: "#FFE2B7", layout: [ [11], [11] ], bgTranslucido: "rgba(255, 153, 0, 0.08)", bordaFina: "rgba(255, 153, 0, 0.3)" },
-            "Diamante": { prefixo: "D", nome: "Mesa Diamante", classeTamanho: "tamanho-p", corNormal: "#FF0000", corVendida: "#FFCDCD", layout: [ [11], [11], [3] ], bgTranslucido: "rgba(255, 0, 0, 0.08)", bordaFina: "rgba(255, 0, 0, 0.3)" }
+            "Crianca": { prefixo: "C", nome: "Cota Criança", classeTamanho: "tamanho-pp", compacto: true, corNormal: "#00FFFF", corVendida: "#66CCCC", layout: [ [7], [7], [7], [7] ], bgTranslucido: "rgba(0, 255, 255, 0.08)", bordaFina: "rgba(0, 255, 255, 0.3)" },
+            "Premium": { prefixo: "P", nome: "Mesa Premium", classeTamanho: "tamanho-pp", compacto: true, corNormal: "#47D359", corVendida: "#75D982", layout: [ [10] ], bgTranslucido: "rgba(71, 211, 89, 0.08)", bordaFina: "rgba(71, 211, 89, 0.3)" },
+            "Master": { prefixo: "M", nome: "Mesa Master", classeTamanho: "tamanho-pp", compacto: true, corNormal: "#FF9900", corVendida: "#FFE2B7", layout: [ [11], [11] ], bgTranslucido: "rgba(255, 153, 0, 0.08)", bordaFina: "rgba(255, 153, 0, 0.3)" },
+            "Diamante": { prefixo: "D", nome: "Mesa Diamante", classeTamanho: "tamanho-pp", compacto: true, corNormal: "#FF0000", corVendida: "#FFCDCD", layout: [ [11], [11], [3] ], bgTranslucido: "rgba(255, 0, 0, 0.08)", bordaFina: "rgba(255, 0, 0, 0.3)" }
         };
 
         function montarCabecalho() {
@@ -663,7 +668,7 @@ async function verificarSenha() {
                         ${htmlBadgeExtra}
                         ${htmlBadgePagamento}
                     </div>
-                    <div class="texto-abaixo">${nomeParaMostrar}</div>
+                    <div class="texto-abaixo ${corConfigVisual.compacto ? 'texto-abaixo-compacta' : ''}">${nomeParaMostrar}</div>
                 `;
 
                 return mesaWrapper;
@@ -701,17 +706,19 @@ async function verificarSenha() {
                     filaFantasma.style.height = '0px';
                     filaFantasma.style.width = '100%';
 
-                    const wrapperC09 = criarBolinhaMesa(obterMesaObjPorNumero("C", 9), setorConfig);
+                    const configFantasma = Object.assign({}, setorConfig, { classeTamanho: 'tamanho-mini' });
+
+                    const wrapperC09 = criarBolinhaMesa(obterMesaObjPorNumero("C", 9), configFantasma);
                     wrapperC09.style.position = 'absolute';
-                    wrapperC09.style.left = '10px';
-                    wrapperC09.style.top = '-45px';
+                    wrapperC09.style.left = '20px';
+                    wrapperC09.style.top = '-38px';
                     wrapperC09.style.zIndex = '3';
                     filaFantasma.appendChild(wrapperC09);
 
-                    const wrapperC18 = criarBolinhaMesa(obterMesaObjPorNumero("C", 18), setorConfig);
+                    const wrapperC18 = criarBolinhaMesa(obterMesaObjPorNumero("C", 18), configFantasma);
                     wrapperC18.style.position = 'absolute';
-                    wrapperC18.style.right = '10px';
-                    wrapperC18.style.top = '-45px';
+                    wrapperC18.style.right = '20px';
+                    wrapperC18.style.top = '-38px';
                     wrapperC18.style.zIndex = '3';
                     filaFantasma.appendChild(wrapperC18);
 
@@ -744,9 +751,25 @@ async function verificarSenha() {
                 let listaMesasDaPlanilha = mesasPorPrefixo[setorConfig.prefixo] || [];
                 let numeroEsperadoNaPosicaoFisica = 1;
 
+                let maiorFileiraDoSetor = 0;
+                setorConfig.layout.forEach(f => {
+                    let soma = 0;
+                    f.forEach(it => { if (typeof it === "number") soma += it; });
+                    if (soma > maiorFileiraDoSetor) maiorFileiraDoSetor = soma;
+                });
+
                 setorConfig.layout.forEach(fileira => {
                     const divFileira = document.createElement('div');
                     divFileira.className = 'fileira-mesas';
+
+                    if (chave === "Diamante") {
+                        let somaFileiraAtual = 0;
+                        fileira.forEach(it => { if (typeof it === "number") somaFileiraAtual += it; });
+                        if (somaFileiraAtual < maiorFileiraDoSetor) {
+                            divFileira.style.justifyContent = "flex-start";
+                            divFileira.style.paddingLeft = "10px";
+                        }
+                    }
 
                     fileira.forEach(item => {
                         if (item === "BIG_MIX") {
