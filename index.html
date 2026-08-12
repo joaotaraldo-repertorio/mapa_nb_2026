@@ -54,7 +54,6 @@
         .setor { padding: 12px 20px; border-radius: 8px; width: 100%; box-sizing: border-box; z-index: 2; margin-bottom: 30px;}
         .setor h3 { margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; text-align: center; font-size: 22px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); text-transform: uppercase;}
         .fileira-mesas { display: flex; justify-content: space-evenly; align-items: flex-start; margin-bottom: 25px; width: 100%; flex-wrap: wrap; gap: 10px;}
-        .fileira-mesas { display: flex; justify-content: space-evenly; align-items: flex-start; margin-bottom: 25px; width: 100%; flex-wrap: wrap; gap: 10px;}
         .fileira-compacta-crianca { justify-content: center !important; gap: 34px !important; }
         .fileira-fantasma-bordas { justify-content: space-between !important; margin-bottom: 25px !important; }
         
@@ -703,11 +702,27 @@ async function verificarSenha() {
                     }
                     divSetor.appendChild(fila1);
 
-                    // FILA FANTASMA: C-09 e C-18, encaixadas nas bordas livres deixadas pelas filas compactas
+                    // FILA FANTASMA: C-09 e C-18, flutuando no vão entre a Fila 1 e a Fila 2 (sem ocupar espaço vertical próprio)
                     const filaFantasma = document.createElement('div');
-                    filaFantasma.className = 'fileira-mesas fileira-fantasma-bordas';
-                    filaFantasma.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("C", 9), setorConfig));
-                    filaFantasma.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("C", 18), setorConfig));
+                    filaFantasma.style.position = 'relative';
+                    filaFantasma.style.height = '0px';
+                    filaFantasma.style.width = '100%';
+                    filaFantasma.style.marginTop = '-25px';
+
+                    const wrapperC09 = criarBolinhaMesa(obterMesaObjPorNumero("C", 9), setorConfig);
+                    wrapperC09.style.position = 'absolute';
+                    wrapperC09.style.left = '10px';
+                    wrapperC09.style.top = '-25px';
+                    wrapperC09.style.zIndex = '3';
+                    filaFantasma.appendChild(wrapperC09);
+
+                    const wrapperC18 = criarBolinhaMesa(obterMesaObjPorNumero("C", 18), setorConfig);
+                    wrapperC18.style.position = 'absolute';
+                    wrapperC18.style.right = '10px';
+                    wrapperC18.style.top = '-25px';
+                    wrapperC18.style.zIndex = '3';
+                    filaFantasma.appendChild(wrapperC18);
+
                     divSetor.appendChild(filaFantasma);
 
                     // FILA 2: C-10 a C-17
