@@ -700,28 +700,11 @@ async function verificarSenha() {
                     }
                     divSetor.appendChild(fila1);
 
-                    // FILA FANTASMA: C-09 (esquerda) e C-18 (direita), flutuando no vão
+                    // FILA FANTASMA: C-09 e C-18, mesma fileira comum das outras (espaçamento automático igual às demais)
                     const filaFantasma = document.createElement('div');
-                    filaFantasma.style.position = 'relative';
-                    filaFantasma.style.height = '0px';
-                    filaFantasma.style.width = '100%';
-
-                    const configFantasma = Object.assign({}, setorConfig, { classeTamanho: 'tamanho-mini' });
-
-                    const wrapperC09 = criarBolinhaMesa(obterMesaObjPorNumero("C", 9), configFantasma);
-                    wrapperC09.style.position = 'absolute';
-                    wrapperC09.style.left = '20px';
-                    wrapperC09.style.top = '-38px';
-                    wrapperC09.style.zIndex = '3';
-                    filaFantasma.appendChild(wrapperC09);
-
-                    const wrapperC18 = criarBolinhaMesa(obterMesaObjPorNumero("C", 18), configFantasma);
-                    wrapperC18.style.position = 'absolute';
-                    wrapperC18.style.right = '20px';
-                    wrapperC18.style.top = '-38px';
-                    wrapperC18.style.zIndex = '3';
-                    filaFantasma.appendChild(wrapperC18);
-
+                    filaFantasma.className = 'fileira-mesas';
+                    filaFantasma.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("C", 9), setorConfig));
+                    filaFantasma.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("C", 18), setorConfig));
                     divSetor.appendChild(filaFantasma);
 
                     // FILA 2: C-10 a C-17
@@ -766,8 +749,8 @@ async function verificarSenha() {
                         let somaFileiraAtual = 0;
                         fileira.forEach(it => { if (typeof it === "number") somaFileiraAtual += it; });
                         if (somaFileiraAtual < maiorFileiraDoSetor) {
-                            divFileira.style.justifyContent = "flex-start";
-                            divFileira.style.paddingLeft = "10px";
+                            divFileira.style.justifyContent = "flex-end";
+                            divFileira.style.paddingRight = "10px";
                         }
                     }
 
