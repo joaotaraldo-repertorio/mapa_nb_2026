@@ -54,6 +54,9 @@
         .setor { padding: 12px 20px; border-radius: 8px; width: 100%; box-sizing: border-box; z-index: 2; margin-bottom: 30px;}
         .setor h3 { margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; text-align: center; font-size: 22px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); text-transform: uppercase;}
         .fileira-mesas { display: flex; justify-content: space-evenly; align-items: flex-start; margin-bottom: 25px; width: 100%; flex-wrap: wrap; gap: 10px;}
+        .fileira-mesas { display: flex; justify-content: space-evenly; align-items: flex-start; margin-bottom: 25px; width: 100%; flex-wrap: wrap; gap: 10px;}
+        .fileira-compacta-crianca { justify-content: center !important; gap: 16px !important; }
+        .fileira-fantasma-bordas { justify-content: space-between !important; margin-bottom: 25px !important; }
         
         .wrapper-mesa { display: flex; flex-direction: column; align-items: center; gap: 5px; position: relative; transition: transform 0.2s; }
         .wrapper-mesa.clicavel:hover { transform: scale(1.05); cursor: pointer; }
@@ -694,22 +697,22 @@ async function verificarSenha() {
                 if (chave === "Crianca") {
                     // FILA 1: C-01 a C-08
                     const fila1 = document.createElement('div');
-                    fila1.className = 'fileira-mesas';
+                    fila1.className = 'fileira-mesas fileira-compacta-crianca';
                     for (let n = 1; n <= 8; n++) {
                         fila1.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("C", n), setorConfig));
                     }
                     divSetor.appendChild(fila1);
 
-                    // FILA FANTASMA: C-09 e C-18, mesma fileira comum das outras (espaçamento automático igual às demais)
+                    // FILA FANTASMA: C-09 e C-18, encaixadas nas bordas livres deixadas pelas filas compactas
                     const filaFantasma = document.createElement('div');
-                    filaFantasma.className = 'fileira-mesas';
+                    filaFantasma.className = 'fileira-mesas fileira-fantasma-bordas';
                     filaFantasma.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("C", 9), setorConfig));
                     filaFantasma.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("C", 18), setorConfig));
                     divSetor.appendChild(filaFantasma);
 
                     // FILA 2: C-10 a C-17
                     const fila2 = document.createElement('div');
-                    fila2.className = 'fileira-mesas';
+                    fila2.className = 'fileira-mesas fileira-compacta-crianca';
                     for (let n = 10; n <= 17; n++) {
                         fila2.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("C", n), setorConfig));
                     }
