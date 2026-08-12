@@ -200,6 +200,7 @@
                     <button class="botao-acao" id="btn-buffet" onclick="toggleBuffet()" style="background-color: #10b981; color: #000;">🍽️ Visão Buffet</button>
                     <button class="botao-acao" onclick="abrirCofre()" style="background-color: #f59e0b; color: #000; border: 1px solid #fff;">📊 Cofre</button>
 <button class="botao-acao" onclick="abrirModalGerarMapa()" style="background-color: #a855f7; color: #fff;">🗺️ Gerar Mapa</button>
+                    <button class="botao-acao" onclick="abrirModalMoverMesa()" style="background-color: #ec4899; color: #fff;">🔄 Mover Mesa</button>
                 </div>
             </div>
         </div>
@@ -261,7 +262,31 @@
         <button class="btn btn-fechar" onclick="fecharModal()">Cancelar</button>
     </div>
 
-    <div class="overlay" id="overlay-gerar-mapa" style="z-index: 2000;"></div>
+    
+
+    <div class="overlay" id="overlay-mover-mesa" style="z-index: 2000;"></div>
+<div class="modal" id="modal-mover-mesa" style="z-index: 2001; width: 420px;">
+    <h3 style="color: #ec4899; border-bottom-color: #ec4899;">🔄 Mover / Trocar Mesa</h3>
+
+    <label style="color: #8892b0; font-size: 13px; font-weight: bold; display: block; margin-top: 10px;">Mesa 1:</label>
+    <select id="mover-mesa-1" onchange="atualizarPreviaMoverMesa()" style="width: 100%; margin-top: 5px; padding: 10px; box-sizing: border-box; border: 1px solid #ec4899; border-radius: 6px; background: #0A192F; color: #ec4899; font-size: 15px; font-weight: bold; outline: none;">
+        <option value="">-- Selecione a Mesa 1 --</option>
+    </select>
+    <div id="previa-mesa-1" style="font-size: 13px; color: #8892b0; margin-top: 6px; min-height: 18px;"></div>
+
+    <label style="color: #8892b0; font-size: 13px; font-weight: bold; display: block; margin-top: 15px;">Mesa 2:</label>
+    <select id="mover-mesa-2" onchange="atualizarPreviaMoverMesa()" style="width: 100%; margin-top: 5px; padding: 10px; box-sizing: border-box; border: 1px solid #ec4899; border-radius: 6px; background: #0A192F; color: #ec4899; font-size: 15px; font-weight: bold; outline: none;">
+        <option value="">-- Selecione a Mesa 2 --</option>
+    </select>
+    <div id="previa-mesa-2" style="font-size: 13px; color: #8892b0; margin-top: 6px; min-height: 18px;"></div>
+
+    <div id="resumo-movimentacao" style="background-color: #061020; border: 1px dashed #ec4899; border-radius: 6px; padding: 12px; margin-top: 18px; font-size: 14px; color: #fff; display: none; line-height: 1.5;"></div>
+
+    <button class="btn" id="btn-confirmar-mover" onclick="confirmarMoverMesa()" style="background-color: #ec4899; color: #fff; margin-top: 20px;" disabled>Confirmar Movimentação</button>
+    <button class="btn btn-fechar" onclick="fecharModalMoverMesa()" style="margin-top: 10px;">Cancelar</button>
+</div>
+
+<div class="overlay" id="overlay-gerar-mapa" style="z-index: 2000;"></div>
 <div class="modal" id="modal-gerar-mapa" style="z-index: 2001; width: 400px;">
     <h3 style="color: #a855f7; border-bottom-color: #a855f7;">🗺️ Gerar Mapa para Apresentação</h3>
     
@@ -1066,6 +1091,137 @@ function restaurarMapaAposGeracao(todosWrappers) {
         montarCabecalho();
         carregarMesas();
         iniciarContadorRegressivo();
+
+function abrirModalMoverMesa() {
+    const seletor1 = document.getElementById('mover-mesa-1');
+    const seletor2 = document.getElementById('mover-mesa-2');
+    seletor1.innerHTML = '<option value="">-- Selecione a Mesa 1 --</option>';
+    seletor2.innerHTML = '<option value="">-- Selecione a Mesa 2 --</option>';
+
+    // MONTA A LISTA NA ORDEM CORRETA DO MAPA — TODAS AS MESAS
+    for (const chave in CONFIG_MESAS) {
+        const conf = CONFIG_MESAS[chave];
+        let totalMesas = 0;
+        conf.layout.forEach(linha => {
+            linha.forEach(item => { if (typeof item === 'number') totalMesas += item; });
+        });
+        for (let i = 1; i <= totalMesas; i++) {
+            let num = i < 10 ? `0${i}` : `${i}`;
+            let idMesa = `${conf.prefixo}-${num}`;
+            let mesaNoBanco = mesasData.find(m => m.id === idMesa);
+            let status = mesaNoBanco ? (mesaNoBanco.status || "Livre").toLowerCase() : "livre";
+            let labelStatus = status === "vendida" ? " (Vendida)" : status === "reservada" ? " (Reservada)" : " (Livre)";
+            let opcao = `<option value="${idMesa}">${idMesa} — ${conf.nome}${labelStatus}</option>`;
+            seletor1.innerHTML += opcao;
+            seletor2.innerHTML += opcao;
+        }
+    }
+
+    document.getElementById('previa-mesa-1').innerText = '';
+    document.getElementById('previa-mesa-2').innerText = '';
+    document.getElementById('resumo-movimentacao').style.display = 'none';
+    document.getElementById('btn-confirmar-mover').disabled = true;
+
+    document.getElementById('overlay-mover-mesa').style.display = 'block';
+    document.getElementById('modal-mover-mesa').style.display = 'block';
+}
+
+function fecharModalMoverMesa() {
+    document.getElementById('overlay-mover-mesa').style.display = 'none';
+    document.getElementById('modal-mover-mesa').style.display = 'none';
+}
+
+function descreverMesaParaPrevia(idMesa) {
+    const mesa = mesasData.find(m => m.id === idMesa);
+    const status = mesa ? (mesa.status || "Livre") : "Livre";
+    if (!mesa || status.toLowerCase() === "livre") {
+        return `${idMesa} está <b style="color:#4ade80;">Livre</b>`;
+    }
+    const nome = mesa.nome || "Sem nome";
+    const valor = parseFloat(mesa.valorTotal) || 0;
+    return `${idMesa}: <b>${nome}</b> — ${status} — R$ ${valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+}
+
+function atualizarPreviaMoverMesa() {
+    const id1 = document.getElementById('mover-mesa-1').value;
+    const id2 = document.getElementById('mover-mesa-2').value;
+    const resumo = document.getElementById('resumo-movimentacao');
+    const btnConfirmar = document.getElementById('btn-confirmar-mover');
+
+    document.getElementById('previa-mesa-1').innerHTML = id1 ? descreverMesaParaPrevia(id1) : '';
+    document.getElementById('previa-mesa-2').innerHTML = id2 ? descreverMesaParaPrevia(id2) : '';
+
+    if (!id1 || !id2) {
+        resumo.style.display = 'none';
+        btnConfirmar.disabled = true;
+        return;
+    }
+
+    if (id1 === id2) {
+        resumo.innerHTML = '⚠️ Selecione duas mesas diferentes.';
+        resumo.style.display = 'block';
+        btnConfirmar.disabled = true;
+        return;
+    }
+
+    const mesa1 = mesasData.find(m => m.id === id1);
+    const mesa2 = mesasData.find(m => m.id === id2);
+    const status1 = mesa1 ? (mesa1.status || "Livre").toLowerCase() : "livre";
+    const status2 = mesa2 ? (mesa2.status || "Livre").toLowerCase() : "livre";
+
+    let texto = '';
+    if (status1 !== "livre" && status2 !== "livre") {
+        texto = `🔄 <b>TROCA:</b> os dados de <b>${id1}</b> e <b>${id2}</b> vão trocar de lugar entre si.`;
+    } else if (status1 !== "livre" && status2 === "livre") {
+        texto = `➡️ <b>MOVER:</b> os dados de <b>${id1}</b> vão para <b>${id2}</b>. A mesa <b>${id1}</b> ficará livre.`;
+    } else if (status1 === "livre" && status2 !== "livre") {
+        texto = `➡️ <b>MOVER:</b> os dados de <b>${id2}</b> vão para <b>${id1}</b>. A mesa <b>${id2}</b> ficará livre.`;
+    } else {
+        texto = `ℹ️ As duas mesas estão livres — não há nada para mover.`;
+    }
+
+    resumo.innerHTML = texto;
+    resumo.style.display = 'block';
+    btnConfirmar.disabled = (status1 === "livre" && status2 === "livre");
+}
+
+async function confirmarMoverMesa() {
+    const id1 = document.getElementById('mover-mesa-1').value;
+    const id2 = document.getElementById('mover-mesa-2').value;
+    if (!id1 || !id2 || id1 === id2) return;
+
+    mostrarAlerta(
+        `Confirma a movimentação entre <b>${id1}</b> e <b>${id2}</b>?<br><br>Essa ação não pode ser desfeita automaticamente.`,
+        "confirmacao",
+        async () => {
+            const btnConfirmar = document.getElementById('btn-confirmar-mover');
+            btnConfirmar.innerText = "⏳ Movendo...";
+            btnConfirmar.disabled = true;
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain' },
+                    body: JSON.stringify({ acao: "MOVER_MESA", origem: id1, destino: id2 })
+                });
+                const resultado = await response.json();
+
+                if (resultado.erro) {
+                    mostrarAlerta(`🔴 <b>Não foi possível mover!</b><br><br>${resultado.erro}`, "erro");
+                } else {
+                    mostrarAlerta(`✅ Movimentação entre <b>${id1}</b> e <b>${id2}</b> concluída com sucesso!`, "sucesso");
+                    fecharModalMoverMesa();
+                    await carregarMesas();
+                }
+            } catch (error) {
+                mostrarAlerta("🔴 <b>Erro de conexão!</b><br><br>Verifique a internet e tente novamente.", "erro");
+            } finally {
+                btnConfirmar.innerText = "Confirmar Movimentação";
+                btnConfirmar.disabled = false;
+            }
+        }
+    );
+}
     
     </script>
 </body>
