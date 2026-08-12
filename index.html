@@ -343,11 +343,11 @@
         };
 
         const CONFIG_MESAS = {
-            "Familia": { prefixo: "F", nome: "Cota Família", classeTamanho: "tamanho-g", corNormal: "#FFFF00", corVendida: "#FFFFD1", layout: [ [6], [6] ], bgTranslucido: "rgba(255, 255, 0, 0.08)", bordaFina: "rgba(255, 255, 0, 0.3)" },
+            "Familia": { prefixo: "F", nome: "Cota Família", classeTamanho: "tamanho-g", corNormal: "#FFFF00", corVendida: "#FFFFD1", layout: [ [5], [6] ], bgTranslucido: "rgba(255, 255, 0, 0.08)", bordaFina: "rgba(255, 255, 0, 0.3)" },
             "Crianca": { prefixo: "C", nome: "Cota Criança", classeTamanho: "tamanho-m", corNormal: "#00FFFF", corVendida: "#66CCCC", layout: [ [7], [7], [7], [7] ], bgTranslucido: "rgba(0, 255, 255, 0.08)", bordaFina: "rgba(0, 255, 255, 0.3)" },
-            "Premium": { prefixo: "P", nome: "Mesa Premium", classeTamanho: "tamanho-m", corNormal: "#47D359", corVendida: "#75D982", layout: [ [7], [7] ], bgTranslucido: "rgba(71, 211, 89, 0.08)", bordaFina: "rgba(71, 211, 89, 0.3)" },
-            "Master": { prefixo: "M", nome: "Mesa Master", classeTamanho: "tamanho-p", corNormal: "#FF9900", corVendida: "#FFE2B7", layout: [ [3, "BIG_MIX", 3], [3, "GAP", 3], [7] ], bgTranslucido: "rgba(255, 153, 0, 0.08)", bordaFina: "rgba(255, 153, 0, 0.3)" },
-            "Diamante": { prefixo: "D", nome: "Mesa Diamante", classeTamanho: "tamanho-p", corNormal: "#FF0000", corVendida: "#FFCDCD", layout: [ [7], [7], [7] ], bgTranslucido: "rgba(255, 0, 0, 0.08)", bordaFina: "rgba(255, 0, 0, 0.3)" }
+            "Premium": { prefixo: "P", nome: "Mesa Premium", classeTamanho: "tamanho-m", corNormal: "#47D359", corVendida: "#75D982", layout: [ [10] ], bgTranslucido: "rgba(71, 211, 89, 0.08)", bordaFina: "rgba(71, 211, 89, 0.3)" },
+            "Master": { prefixo: "M", nome: "Mesa Master", classeTamanho: "tamanho-p", corNormal: "#FF9900", corVendida: "#FFE2B7", layout: [ [11], [11] ], bgTranslucido: "rgba(255, 153, 0, 0.08)", bordaFina: "rgba(255, 153, 0, 0.3)" },
+            "Diamante": { prefixo: "D", nome: "Mesa Diamante", classeTamanho: "tamanho-p", corNormal: "#FF0000", corVendida: "#FFCDCD", layout: [ [11], [11], [3] ], bgTranslucido: "rgba(255, 0, 0, 0.08)", bordaFina: "rgba(255, 0, 0, 0.3)" }
         };
 
         function montarCabecalho() {
@@ -585,6 +585,90 @@ async function verificarSenha() {
                 mesasPorPrefixo[prefixo].push(mesa);
             });
 
+            // ================================================
+            // FUNÇÕES AUXILIARES (usadas pelo caso especial da Cota Criança)
+            // ================================================
+            function obterMesaObjPorNumero(prefixo, numero) {
+                const lista = mesasPorPrefixo[prefixo] || [];
+                let mesaEncontrada = lista.find(m => {
+                    let numMesaPlanilha = parseInt(m.id.replace(/\D/g, '')) || 0;
+                    return numMesaPlanilha === numero;
+                });
+                if (mesaEncontrada) return mesaEncontrada;
+                let idFormatado = numero < 10 ? `0${numero}` : `${numero}`;
+                return { id: `${prefixo}-${idFormatado}`, status: "Livre", nome: "", logo: "Não" };
+            }
+
+            function criarBolinhaMesa(mesaObj, corConfigVisual) {
+                const statusClass = (mesaObj.status || "livre").toLowerCase().trim();
+                
+                let nomeParaMostrar = "";
+                let cssDestaqueUrl = "";
+                let htmlBadgeExtra = "";
+                let htmlBadgePagamento = "";
+
+                if (isAdmin) {
+                    nomeParaMostrar = mesaObj.nome ? mesaObj.nome : "";
+                    if (mesaObj.cadeirasExtra && parseInt(mesaObj.cadeirasExtra) > 0) {
+                        htmlBadgeExtra = `<div class="badge-extra">+${mesaObj.cadeirasExtra}</div>`;
+                    }
+                    if (!isBuffetMode && parseFloat(mesaObj.saldo) > 0 && statusClass !== "livre") {
+                        htmlBadgePagamento = `<div class="badge-pagamento" title="Possui saldo devedor">💲</div>`;
+                    }
+                } else {
+                    nomeParaMostrar = "";
+                    if (mesasParaDestacarArray.includes(mesaObj.id.toUpperCase())) {
+                        nomeParaMostrar = mesaObj.nome || "Sua Mesa";
+                        cssDestaqueUrl = "destaque"; 
+                    }
+                }
+
+                let corBase = (statusClass === "vendida" || statusClass === "reservada") ? corConfigVisual.corVendida : corConfigVisual.corNormal;
+                let corStatusTexto = "var(--cor-livre)";
+                if(statusClass === "vendida") corStatusTexto = "var(--cor-vendida)";
+                if(statusClass === "reservada") corStatusTexto = "var(--cor-reservada)";
+
+                let estiloBordaCss = (statusClass !== "livre") ? "borda-pontilhada" : "borda-solida";
+                
+                let textoStatusAcima = mesaObj.status || "Livre";
+                let classeMesaBuffet = "";
+                let conteudoBolinha = mesaObj.id;
+
+                if (isBuffetMode) {
+                    textoStatusAcima = ""; 
+                    if (statusClass === "livre") {
+                        corBase = "#112240"; 
+                        estiloBordaCss = "borda-solida";
+                        nomeParaMostrar = ""; 
+                        classeMesaBuffet = "mesa-escura-buffet";
+                        conteudoBolinha = `<span style="font-size: 1.8em; color: #8892b0;">✖</span>`; 
+                    }
+                }
+
+                const mesaWrapper = document.createElement('div');
+                mesaWrapper.className = `wrapper-mesa ${cssDestaqueUrl}`;
+                
+                if(isAdmin) {
+                    mesaWrapper.classList.add('clicavel');
+                    mesaWrapper.onclick = () => {
+                        const mesaAtualizada = mesasData.find(m => m.id === mesaObj.id) || mesaObj;
+                        abrirModal(mesaAtualizada);
+                    };
+                }
+
+                mesaWrapper.innerHTML = `
+                    <div class="texto-acima" style="color: ${corStatusTexto};">${textoStatusAcima}</div>
+                    <div style="position: relative;" class="${classeMesaBuffet}">
+                        <div class="bolinha-mesa ${corConfigVisual.classeTamanho} ${estiloBordaCss}" style="background-color: ${corBase};">${conteudoBolinha}</div>
+                        ${htmlBadgeExtra}
+                        ${htmlBadgePagamento}
+                    </div>
+                    <div class="texto-abaixo">${nomeParaMostrar}</div>
+                `;
+
+                return mesaWrapper;
+            }
+
             for (const chave in CONFIG_MESAS) {
                 const setorConfig = CONFIG_MESAS[chave];
                 
@@ -599,6 +683,64 @@ async function verificarSenha() {
                 tituloSetor.style.color = setorConfig.corNormal;
                 divSetor.appendChild(tituloSetor);
 
+                // ================================================
+                // CASO ESPECIAL: COTA CRIANÇA (fila fantasma + P-11 camuflada)
+                // ================================================
+                if (chave === "Crianca") {
+                    // FILA 1: C-01 a C-08
+                    const fila1 = document.createElement('div');
+                    fila1.className = 'fileira-mesas';
+                    for (let n = 1; n <= 8; n++) {
+                        fila1.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("C", n), setorConfig));
+                    }
+                    divSetor.appendChild(fila1);
+
+                    // FILA FANTASMA: C-09 (esquerda) e C-18 (direita), flutuando no vão
+                    const filaFantasma = document.createElement('div');
+                    filaFantasma.style.position = 'relative';
+                    filaFantasma.style.height = '0px';
+                    filaFantasma.style.width = '100%';
+
+                    const wrapperC09 = criarBolinhaMesa(obterMesaObjPorNumero("C", 9), setorConfig);
+                    wrapperC09.style.position = 'absolute';
+                    wrapperC09.style.left = '10px';
+                    wrapperC09.style.top = '-45px';
+                    wrapperC09.style.zIndex = '3';
+                    filaFantasma.appendChild(wrapperC09);
+
+                    const wrapperC18 = criarBolinhaMesa(obterMesaObjPorNumero("C", 18), setorConfig);
+                    wrapperC18.style.position = 'absolute';
+                    wrapperC18.style.right = '10px';
+                    wrapperC18.style.top = '-45px';
+                    wrapperC18.style.zIndex = '3';
+                    filaFantasma.appendChild(wrapperC18);
+
+                    divSetor.appendChild(filaFantasma);
+
+                    // FILA 2: C-10 a C-17
+                    const fila2 = document.createElement('div');
+                    fila2.className = 'fileira-mesas';
+                    for (let n = 10; n <= 17; n++) {
+                        fila2.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("C", n), setorConfig));
+                    }
+                    divSetor.appendChild(fila2);
+
+                    // FILA 3: C-19 a C-26 + P-11 (camuflada — é Premium de verdade no financeiro)
+                    const fila3 = document.createElement('div');
+                    fila3.className = 'fileira-mesas';
+                    for (let n = 19; n <= 26; n++) {
+                        fila3.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("C", n), setorConfig));
+                    }
+                    fila3.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("P", 11), setorConfig));
+                    divSetor.appendChild(fila3);
+
+                    container.appendChild(divSetor);
+                    continue;
+                }
+
+                // ================================================
+                // TODOS OS OUTROS SETORES — RENDERIZAÇÃO PADRÃO (inalterada)
+                // ================================================
                 let listaMesasDaPlanilha = mesasPorPrefixo[setorConfig.prefixo] || [];
                 let numeroEsperadoNaPosicaoFisica = 1;
 
@@ -634,76 +776,7 @@ async function verificarSenha() {
                                     mesaObj = { id: `${setorConfig.prefixo}-${idFormatado}`, status: "Livre", nome: "", logo: "Não" };
                                 }
 
-                                const statusClass = (mesaObj.status || "livre").toLowerCase().trim();
-                                
-                                let nomeParaMostrar = "";
-                                let cssDestaqueUrl = "";
-                                let htmlBadgeExtra = "";
-                                let htmlBadgePagamento = "";
-
-                                if (isAdmin) {
-                                    nomeParaMostrar = mesaObj.nome ? mesaObj.nome : "";
-                                    
-                                    if (mesaObj.cadeirasExtra && parseInt(mesaObj.cadeirasExtra) > 0) {
-                                        htmlBadgeExtra = `<div class="badge-extra">+${mesaObj.cadeirasExtra}</div>`;
-                                    }
-
-                                    if (!isBuffetMode && parseFloat(mesaObj.saldo) > 0 && statusClass !== "livre") {
-                                        htmlBadgePagamento = `<div class="badge-pagamento" title="Possui saldo devedor">💲</div>`;
-                                    }
-
-                                } else {
-                                    nomeParaMostrar = "";
-                                    if (mesasParaDestacarArray.includes(mesaObj.id.toUpperCase())) {
-                                        nomeParaMostrar = mesaObj.nome || "Sua Mesa";
-                                        cssDestaqueUrl = "destaque"; 
-                                    }
-                                }
-
-                                let corBase = (statusClass === "vendida" || statusClass === "reservada") ? setorConfig.corVendida : setorConfig.corNormal;
-                                let corStatusTexto = "var(--cor-livre)";
-                                if(statusClass === "vendida") corStatusTexto = "var(--cor-vendida)";
-                                if(statusClass === "reservada") corStatusTexto = "var(--cor-reservada)";
-
-                                let estiloBordaCss = (statusClass !== "livre") ? "borda-pontilhada" : "borda-solida";
-                                
-                                let textoStatusAcima = mesaObj.status || "Livre";
-                                let classeMesaBuffet = "";
-                                let conteudoBolinha = mesaObj.id;
-
-                                if (isBuffetMode) {
-                                    textoStatusAcima = ""; 
-                                    if (statusClass === "livre") {
-                                        corBase = "#112240"; 
-                                        estiloBordaCss = "borda-solida";
-                                        nomeParaMostrar = ""; 
-                                        classeMesaBuffet = "mesa-escura-buffet";
-                                        conteudoBolinha = `<span style="font-size: 1.8em; color: #8892b0;">✖</span>`; 
-                                    }
-                                }
-
-                                const mesaWrapper = document.createElement('div');
-                                mesaWrapper.className = `wrapper-mesa ${cssDestaqueUrl}`;
-                                
-                                if(isAdmin) {
-                                    mesaWrapper.classList.add('clicavel');
-                                    mesaWrapper.onclick = () => {
-                                        const mesaAtualizada = mesasData.find(m => m.id === mesaObj.id) || mesaObj;
-                                        abrirModal(mesaAtualizada);
-                                    };
-                                }
-
-                                mesaWrapper.innerHTML = `
-                                    <div class="texto-acima" style="color: ${corStatusTexto};">${textoStatusAcima}</div>
-                                    <div style="position: relative;" class="${classeMesaBuffet}">
-                                        <div class="bolinha-mesa ${setorConfig.classeTamanho} ${estiloBordaCss}" style="background-color: ${corBase};">${conteudoBolinha}</div>
-                                        ${htmlBadgeExtra}
-                                        ${htmlBadgePagamento}
-                                    </div>
-                                    <div class="texto-abaixo">${nomeParaMostrar}</div>
-                                `;
-
-                                divFileira.appendChild(mesaWrapper);
+                                divFileira.appendChild(criarBolinhaMesa(mesaObj, setorConfig));
                                 numeroEsperadoNaPosicaoFisica++;
                             }
                         }
