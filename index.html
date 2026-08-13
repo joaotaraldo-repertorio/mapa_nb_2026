@@ -831,34 +831,7 @@ async function verificarSenha() {
             }
 
             // ALINHA OS APARADORES COM AS ALTURAS CORRETAS DE CADA SETOR
-            const setorMaster = document.getElementById('setor-Master');
-            const setorFamilia = document.getElementById('setor-Familia');
-
-            if (setorMaster) {
-                const topoMaster = setorMaster.offsetTop;
-                const alturaMaster = setorMaster.offsetHeight;
-
-                // ESQUERDO: alinhado com a Mesa Master
-                const aparadorEsq = document.querySelector('.tarja-aparador-esq');
-                if (aparadorEsq) {
-                    aparadorEsq.style.top = topoMaster + 'px';
-                    aparadorEsq.style.height = alturaMaster + 'px';
-                }
-
-                // DIREITO (dir2): alinhado com a Mesa Master também
-                const aparadorDir2 = document.querySelector('.tarja-aparador-dir2');
-                if (aparadorDir2) {
-                    aparadorDir2.style.top = topoMaster + 'px';
-                    aparadorDir2.style.height = alturaMaster + 'px';
-                }
-            }
-
-            // DIREITO (dir1): alinhado com a Cota Família
-            const aparadorDir1 = document.querySelector('.tarja-aparador-dir1');
-            if (aparadorDir1 && setorFamilia) {
-                aparadorDir1.style.top = setorFamilia.offsetTop + 'px';
-                aparadorDir1.style.height = setorFamilia.offsetHeight + 'px';
-            }
+            alinharAparadores();
         }
 
         function abrirModal(mesa) {
@@ -1238,6 +1211,39 @@ function restaurarMapaAposGeracao(todosWrappers) {
         montarCabecalho();
         carregarMesas();
         iniciarContadorRegressivo();
+
+        // RECALCULA A POSIÇÃO DOS APARADORES QUANDO ENTRA EM MODO IMPRESSÃO
+        window.addEventListener('beforeprint', function() {
+            alinharAparadores();
+        });
+
+        function alinharAparadores() {
+            const setorMaster = document.getElementById('setor-Master');
+            const setorFamilia = document.getElementById('setor-Familia');
+
+            if (setorMaster) {
+                const topoMaster = setorMaster.offsetTop;
+                const alturaMaster = setorMaster.offsetHeight;
+
+                const aparadorEsq = document.querySelector('.tarja-aparador-esq');
+                if (aparadorEsq) {
+                    aparadorEsq.style.top = topoMaster + 'px';
+                    aparadorEsq.style.height = alturaMaster + 'px';
+                }
+
+                const aparadorDir2 = document.querySelector('.tarja-aparador-dir2');
+                if (aparadorDir2) {
+                    aparadorDir2.style.top = topoMaster + 'px';
+                    aparadorDir2.style.height = alturaMaster + 'px';
+                }
+            }
+
+            const aparadorDir1 = document.querySelector('.tarja-aparador-dir1');
+            if (aparadorDir1 && setorFamilia) {
+                aparadorDir1.style.top = setorFamilia.offsetTop + 'px';
+                aparadorDir1.style.height = setorFamilia.offsetHeight + 'px';
+            }
+        }
 
 function abrirModalMoverMesa() {
     const seletor1 = document.getElementById('mover-mesa-1');
