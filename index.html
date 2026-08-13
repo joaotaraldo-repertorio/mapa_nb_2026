@@ -767,8 +767,14 @@ async function verificarSenha() {
                         let somaFileiraAtual = 0;
                         fileira.forEach(it => { if (typeof it === "number") somaFileiraAtual += it; });
                         if (somaFileiraAtual < maiorFileiraDoSetor) {
-                            divFileira.style.justifyContent = "flex-end";
-                            divFileira.style.paddingRight = "10px";
+                            let faltantes = maiorFileiraDoSetor - somaFileiraAtual;
+                            for (let f = 0; f < faltantes; f++) {
+                                const espacoInvisivel = document.createElement('div');
+                                espacoInvisivel.className = 'wrapper-mesa';
+                                espacoInvisivel.style.visibility = 'hidden';
+                                espacoInvisivel.innerHTML = `<div class="texto-acima">.</div><div class="bolinha-mesa ${setorConfig.classeTamanho}"></div><div class="texto-abaixo ${setorConfig.compacto ? 'texto-abaixo-compacta' : ''}">.</div>`;
+                                divFileira.appendChild(espacoInvisivel);
+                            }
                         }
                     }
 
