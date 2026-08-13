@@ -830,17 +830,13 @@ async function verificarSenha() {
                 container.appendChild(divSetor);
             }
 
-            // ALINHA OS APARADORES (esquerdo e direito-superior) COM A ALTURA DA MESA MASTER
+            // ALINHA OS APARADORES COM AS ALTURAS CORRETAS DE CADA SETOR
             const setorMaster = document.getElementById('setor-Master');
+            const setorFamilia = document.getElementById('setor-Familia');
             if (setorMaster) {
                 const topoMaster = setorMaster.offsetTop;
                 const alturaMaster = setorMaster.offsetHeight;
-                const aparadorEsq = document.querySelector('.tarja-aparador-esq');
                 const aparadorDir1 = document.querySelector('.tarja-aparador-dir1');
-                if (aparadorEsq) {
-                    aparadorEsq.style.top = topoMaster + 'px';
-                    aparadorEsq.style.height = alturaMaster + 'px';
-                }
                 if (aparadorDir1) {
                     aparadorDir1.style.top = topoMaster + 'px';
                     aparadorDir1.style.height = alturaMaster + 'px';
@@ -855,6 +851,13 @@ async function verificarSenha() {
                     aparadorDir2.style.top = inicioDir2 + 'px';
                     aparadorDir2.style.height = (fimDiamante - inicioDir2) + 'px';
                 }
+            }
+
+            // APARADOR ESQUERDO ALINHADO COM A COTA FAMÍLIA
+            const aparadorEsq = document.querySelector('.tarja-aparador-esq');
+            if (aparadorEsq && setorFamilia) {
+                aparadorEsq.style.top = setorFamilia.offsetTop + 'px';
+                aparadorEsq.style.height = setorFamilia.offsetHeight + 'px';
             }
         }
 
