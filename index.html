@@ -151,7 +151,7 @@
            ========================================= */
         @media print {
             @page { margin: 10mm; } 
-            body { background-color: var(--azul-fundo) !important; margin: 0; padding: 0; }
+            body { background-color: #E8F4FD !important; margin: 0; padding: 0; }
             #area-exportacao { max-width: 100%; width: 100%; box-shadow: none; border: none; }
             
             /* Esconde apenas os menus e modais do topo */
@@ -166,6 +166,7 @@
 
             /* Setores mantêm as cores da tela */
             .setor { margin-bottom: 15px; break-inside: avoid; page-break-inside: avoid; }
+            #setor-Master { break-before: page; page-break-before: always; }
             
             /* Escala para caber na folha, mantendo o espaço das tarjas laterais */
             #container-salao { zoom: 0.65; }
@@ -677,6 +678,7 @@ async function verificarSenha() {
                 
                 const divSetor = document.createElement('div');
                 divSetor.className = 'setor';
+                divSetor.id = `setor-${chave}`;
                 divSetor.style.backgroundColor = setorConfig.bgTranslucido;
                 divSetor.style.border = `1px solid ${setorConfig.bordaFina}`;
                 divSetor.style.boxShadow = `0 0 15px ${setorConfig.bgTranslucido}`;
