@@ -830,16 +830,22 @@ async function verificarSenha() {
                 container.appendChild(divSetor);
             }
 
-            // COLOCA OS APARADORES DENTRO DO BLOCO CORRETO (viajam junto na quebra de página)
+            // COLOCA OS APARADORES DENTRO DO BLOCO CORRETO (viajam junto na quebra de página) — só na primeira vez
             const setorFamiliaFinal = document.getElementById('setor-Familia');
             const setorMasterFinal = document.getElementById('setor-Master');
             const tarjaEsq = document.getElementById('tarja-aparador-esq');
             const tarjaDir1 = document.getElementById('tarja-aparador-dir1');
             const tarjaDir2 = document.getElementById('tarja-aparador-dir2');
 
-            if (setorFamiliaFinal && tarjaDir1) setorFamiliaFinal.appendChild(tarjaDir1);
-            if (setorMasterFinal && tarjaEsq) setorMasterFinal.appendChild(tarjaEsq);
-            if (setorMasterFinal && tarjaDir2) setorMasterFinal.appendChild(tarjaDir2);
+            if (setorFamiliaFinal && tarjaDir1 && tarjaDir1.parentElement !== setorFamiliaFinal) {
+                setorFamiliaFinal.appendChild(tarjaDir1);
+            }
+            if (setorMasterFinal && tarjaEsq && tarjaEsq.parentElement !== setorMasterFinal) {
+                setorMasterFinal.appendChild(tarjaEsq);
+            }
+            if (setorMasterFinal && tarjaDir2 && tarjaDir2.parentElement !== setorMasterFinal) {
+                setorMasterFinal.appendChild(tarjaDir2);
+            }
         }
 
         function abrirModal(mesa) {
