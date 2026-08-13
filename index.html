@@ -43,9 +43,9 @@
         
         .tarja-banheiro { left: 0; top: 40%; height: 10%; border-color: #3b82f6; background-color: rgba(59, 130, 246, 0.15); color: #3b82f6; }
         .tarja-saida { left: 0; top: 82%; height: 12%; border-color: #ec4899; background-color: rgba(236, 72, 153, 0.15); color: #ec4899; }
-        .tarja-aparador-esq { left: 0; top: 63%; height: 15%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
-        .tarja-aparador-dir1 { right: 0; top: 4%; height: 16%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
-        .tarja-aparador-dir2 { right: 0; top: 58%; height: 16%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+        .tarja-aparador-esq { left: -55px; top: 0; height: 100%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+        .tarja-aparador-dir1 { right: -55px; top: 0; height: 100%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+        .tarja-aparador-dir2 { right: -55px; top: 0; height: 100%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
 
         .faixa-inferior-mapa { display: flex; justify-content: center; align-items: center; width: 100%; margin: -8px 0 0 0; box-sizing: border-box; position: relative; }
         .aparador-linha-entrada { position: absolute; right: 0; border: 2px solid #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; border-radius: 8px; text-align: center; font-weight: bold; font-size: 14px; letter-spacing: 1px; text-transform: uppercase; padding: 12px 70px; }
@@ -55,7 +55,7 @@
         /* =========================================
            4. SETORES E MESAS
            ========================================= */
-        .setor { padding: 12px 20px; border-radius: 8px; width: 100%; box-sizing: border-box; z-index: 2; margin-bottom: 30px;}
+        .setor { padding: 12px 20px; border-radius: 8px; width: 100%; box-sizing: border-box; z-index: 2; margin-bottom: 30px; position: relative;}
         .setor h3 { margin-top: 0; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; text-align: center; font-size: 22px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); text-transform: uppercase;}
         .fileira-mesas { display: flex; justify-content: space-evenly; align-items: flex-start; margin-bottom: 25px; width: 100%; flex-wrap: wrap; gap: 10px;}
         .fileira-compacta-crianca { justify-content: center !important; gap: 34px !important; }
@@ -210,9 +210,9 @@
             <div class="palco">PALCO</div>
             <div class="tarja-lateral tarja-banheiro"><span class="tarja-texto">Banheiros</span></div>
             <div class="tarja-lateral tarja-saida"><span class="tarja-texto">Saída</span></div>
-            <div class="tarja-lateral tarja-aparador-esq"><span class="tarja-texto">Aparador</span></div>
-            <div class="tarja-lateral tarja-aparador-dir1"><span class="tarja-texto">Aparador</span></div>
-            <div class="tarja-lateral tarja-aparador-dir2"><span class="tarja-texto">Aparador</span></div>
+            <div class="tarja-lateral tarja-aparador-esq" id="tarja-aparador-esq"><span class="tarja-texto">Aparador</span></div>
+            <div class="tarja-lateral tarja-aparador-dir1" id="tarja-aparador-dir1"><span class="tarja-texto">Aparador</span></div>
+            <div class="tarja-lateral tarja-aparador-dir2" id="tarja-aparador-dir2"><span class="tarja-texto">Aparador</span></div>
             
 
             <div id="mapa-dinamico" style="width: 100%;"></div>
@@ -830,8 +830,16 @@ async function verificarSenha() {
                 container.appendChild(divSetor);
             }
 
-            // ALINHA OS APARADORES COM AS ALTURAS CORRETAS DE CADA SETOR
-            alinharAparadores();
+            // COLOCA OS APARADORES DENTRO DO BLOCO CORRETO (viajam junto na quebra de página)
+            const setorFamiliaFinal = document.getElementById('setor-Familia');
+            const setorMasterFinal = document.getElementById('setor-Master');
+            const tarjaEsq = document.getElementById('tarja-aparador-esq');
+            const tarjaDir1 = document.getElementById('tarja-aparador-dir1');
+            const tarjaDir2 = document.getElementById('tarja-aparador-dir2');
+
+            if (setorFamiliaFinal && tarjaDir1) setorFamiliaFinal.appendChild(tarjaDir1);
+            if (setorMasterFinal && tarjaEsq) setorMasterFinal.appendChild(tarjaEsq);
+            if (setorMasterFinal && tarjaDir2) setorMasterFinal.appendChild(tarjaDir2);
         }
 
         function abrirModal(mesa) {
@@ -1212,38 +1220,6 @@ function restaurarMapaAposGeracao(todosWrappers) {
         carregarMesas();
         iniciarContadorRegressivo();
 
-        // RECALCULA A POSIÇÃO DOS APARADORES QUANDO ENTRA EM MODO IMPRESSÃO
-        window.addEventListener('beforeprint', function() {
-            alinharAparadores();
-        });
-
-        function alinharAparadores() {
-            const setorMaster = document.getElementById('setor-Master');
-            const setorFamilia = document.getElementById('setor-Familia');
-
-            if (setorMaster) {
-                const topoMaster = setorMaster.offsetTop;
-                const alturaMaster = setorMaster.offsetHeight;
-
-                const aparadorEsq = document.querySelector('.tarja-aparador-esq');
-                if (aparadorEsq) {
-                    aparadorEsq.style.top = topoMaster + 'px';
-                    aparadorEsq.style.height = alturaMaster + 'px';
-                }
-
-                const aparadorDir2 = document.querySelector('.tarja-aparador-dir2');
-                if (aparadorDir2) {
-                    aparadorDir2.style.top = topoMaster + 'px';
-                    aparadorDir2.style.height = alturaMaster + 'px';
-                }
-            }
-
-            const aparadorDir1 = document.querySelector('.tarja-aparador-dir1');
-            if (aparadorDir1 && setorFamilia) {
-                aparadorDir1.style.top = setorFamilia.offsetTop + 'px';
-                aparadorDir1.style.height = setorFamilia.offsetHeight + 'px';
-            }
-        }
 
 function abrirModalMoverMesa() {
     const seletor1 = document.getElementById('mover-mesa-1');
