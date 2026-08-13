@@ -767,8 +767,16 @@ async function verificarSenha() {
                 setorConfig.layout.forEach((fileira, indiceFileira) => {
                     if (chave === "Diamante" && indiceFileira === 2) {
                         const divCaixaSom = document.createElement('div');
-                        divCaixaSom.className = 'caixa-som-filmagem';
-                        divCaixaSom.innerHTML = `<div class="caixa-som-item">Filmagem</div><div class="caixa-som-item">Mesa de Som</div>`;
+                        divCaixaSom.style.position = 'relative';
+                        divCaixaSom.style.height = '0px';
+                        divCaixaSom.style.width = '100%';
+                        divCaixaSom.style.marginTop = '-15px';
+                        divCaixaSom.innerHTML = `
+                            <div class="caixa-som-filmagem" style="position: absolute; top: -95px; left: 50%; transform: translateX(-50%); margin: 0;">
+                                <div class="caixa-som-item">Filmagem</div>
+                                <div class="caixa-som-item">Mesa de Som</div>
+                            </div>
+                        `;
                         divSetor.appendChild(divCaixaSom);
                     }
                     const divFileira = document.createElement('div');
