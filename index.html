@@ -210,9 +210,6 @@
             <div class="palco">PALCO</div>
             <div class="tarja-lateral tarja-banheiro"><span class="tarja-texto">Banheiros</span></div>
             <div class="tarja-lateral tarja-saida"><span class="tarja-texto">Saída</span></div>
-            <div class="tarja-lateral tarja-aparador-esq" id="tarja-aparador-esq"><span class="tarja-texto">Aparador</span></div>
-            <div class="tarja-lateral tarja-aparador-dir1" id="tarja-aparador-dir1"><span class="tarja-texto">Aparador</span></div>
-            <div class="tarja-lateral tarja-aparador-dir2" id="tarja-aparador-dir2"><span class="tarja-texto">Aparador</span></div>
             
 
             <div id="mapa-dinamico" style="width: 100%;"></div>
@@ -685,6 +682,25 @@ async function verificarSenha() {
                 divSetor.style.border = `1px solid ${setorConfig.bordaFina}`;
                 divSetor.style.boxShadow = `0 0 15px ${setorConfig.bgTranslucido}`;
 
+                // CRIA OS APARADORES DIRETO DENTRO DO BLOCO CORRETO
+                if (chave === "Familia") {
+                    const tarjaDir1 = document.createElement('div');
+                    tarjaDir1.className = 'tarja-lateral tarja-aparador-dir1';
+                    tarjaDir1.innerHTML = `<span class="tarja-texto">Aparador</span>`;
+                    divSetor.appendChild(tarjaDir1);
+                }
+                if (chave === "Master") {
+                    const tarjaEsq = document.createElement('div');
+                    tarjaEsq.className = 'tarja-lateral tarja-aparador-esq';
+                    tarjaEsq.innerHTML = `<span class="tarja-texto">Aparador</span>`;
+                    divSetor.appendChild(tarjaEsq);
+
+                    const tarjaDir2 = document.createElement('div');
+                    tarjaDir2.className = 'tarja-lateral tarja-aparador-dir2';
+                    tarjaDir2.innerHTML = `<span class="tarja-texto">Aparador</span>`;
+                    divSetor.appendChild(tarjaDir2);
+                }
+
                 const tituloSetor = document.createElement('h3');
                 tituloSetor.textContent = setorConfig.nome;
                 tituloSetor.style.color = setorConfig.corNormal;
@@ -830,23 +846,7 @@ async function verificarSenha() {
                 container.appendChild(divSetor);
             }
 
-            // COLOCA OS APARADORES DENTRO DO BLOCO CORRETO (viajam junto na quebra de página) — só na primeira vez
-            const setorFamiliaFinal = document.getElementById('setor-Familia');
-            const setorMasterFinal = document.getElementById('setor-Master');
-            const tarjaEsq = document.getElementById('tarja-aparador-esq');
-            const tarjaDir1 = document.getElementById('tarja-aparador-dir1');
-            const tarjaDir2 = document.getElementById('tarja-aparador-dir2');
-
-            if (setorFamiliaFinal && tarjaDir1 && tarjaDir1.parentElement !== setorFamiliaFinal) {
-                setorFamiliaFinal.appendChild(tarjaDir1);
             }
-            if (setorMasterFinal && tarjaEsq && tarjaEsq.parentElement !== setorMasterFinal) {
-                setorMasterFinal.appendChild(tarjaEsq);
-            }
-            if (setorMasterFinal && tarjaDir2 && tarjaDir2.parentElement !== setorMasterFinal) {
-                setorMasterFinal.appendChild(tarjaDir2);
-            }
-        }
 
         function abrirModal(mesa) {
             document.getElementById('modal-title').innerText = `Mesa ${mesa.id}`;
