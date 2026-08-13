@@ -152,7 +152,7 @@
         @media print {
             @page { margin: 10mm; } 
             body { background-color: #E8F4FD !important; margin: 0; padding: 0; }
-            #area-exportacao { max-width: 100%; width: 100%; box-shadow: none; border: none; }
+            #area-exportacao { max-width: 100%; width: 100%; box-shadow: none; border: none; background-color: transparent !important; }
             
             /* Esconde apenas os menus e modais do topo */
             .painel-topo, .modal, .overlay { display: none !important; }
@@ -173,6 +173,8 @@
             .fileira-mesas { break-inside: avoid; page-break-inside: avoid; margin-bottom: 15px;}
             .wrapper-mesa { break-inside: avoid; page-break-inside: avoid; }
             
+            .tarja-lateral { break-inside: avoid !important; page-break-inside: avoid !important; }
+
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
     </style>
