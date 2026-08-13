@@ -42,12 +42,12 @@
         .tarja-texto { writing-mode: vertical-rl; transform: rotate(180deg); margin-top: 10px; }
         
         .tarja-banheiro { left: 0; top: 41%; height: 7%; border-color: #3b82f6; background-color: rgba(59, 130, 246, 0.15); color: #3b82f6; }
-        .tarja-saida { left: 0; top: 90%; height: 4%; border-color: #ec4899; background-color: rgba(236, 72, 153, 0.15); color: #ec4899; }
-        .tarja-entrada { right: 0; top: 91%; height: 5%; border-color: var(--ciano-destaque); background-color: rgba(102, 255, 255, 0.15); color: var(--ciano-destaque); }
+        .tarja-saida { left: 0; bottom: 0; top: auto; height: 10%; border-color: #ec4899; background-color: rgba(236, 72, 153, 0.15); color: #ec4899; }
+        .tarja-entrada { right: 0; bottom: 0; top: auto; height: 6%; border-color: var(--ciano-destaque); background-color: rgba(102, 255, 255, 0.15); color: var(--ciano-destaque); }
         .tarja-aparador-esq { left: 0; top: 66%; height: 10%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
-        .tarja-aparador-dir1 { right: 0; top: 3%; height: 19%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
-        .tarja-aparador-dir2 { right: 0; top: 52%; height: 18%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
-        .tarja-aparador-inferior { right: 0; top: 80%; height: 7%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+        .tarja-aparador-dir1 { right: 0; top: 4%; height: 16%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+        .tarja-aparador-dir2 { right: 0; top: 58%; height: 16%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
+        .tarja-aparador-inferior { right: 0; bottom: 8%; top: auto; height: 8%; border-color: #f59e0b; background-color: rgba(245, 158, 11, 0.15); color: #f59e0b; }
 
         /* =========================================
            4. SETORES E MESAS
@@ -106,7 +106,7 @@
         .grande-house-mix { position: absolute; top: 0; left: 0; width: 180px; height: 190px; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #1d2d50; border: 2px dashed var(--ciano-destaque); border-radius: 8px; color: var(--ciano-destaque); font-size: 16px; font-weight: bold; text-transform: uppercase; box-shadow: 0 4px 8px rgba(0,0,0,0.5); z-index: 5;}
         .grande-house-mix { position: absolute; top: 0; left: 0; width: 180px; height: 190px; display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #1d2d50; border: 2px dashed var(--ciano-destaque); border-radius: 8px; color: var(--ciano-destaque); font-size: 16px; font-weight: bold; text-transform: uppercase; box-shadow: 0 4px 8px rgba(0,0,0,0.5); z-index: 5;}
         .caixa-som-filmagem { display: flex; gap: 15px; justify-content: center; margin: 10px 0 25px 0; width: 100%; box-sizing: border-box; }
-        .caixa-som-item { background-color: #FFFF00; color: #000; font-weight: bold; font-size: 16px; text-transform: uppercase; padding: 18px 35px; border-radius: 8px; border: 2px solid #000; text-align: center; min-width: 140px; }
+        .caixa-som-item { background-color: #FFFF00; color: #000; font-weight: bold; font-size: 18px; text-transform: uppercase; padding: 30px 40px; border-radius: 8px; border: 2px solid #000; text-align: center; min-width: 150px; }
         .grande-house-mix span.icone { font-size: 60px; margin-bottom: 5px; }
 
         /* =========================================
@@ -772,7 +772,7 @@ async function verificarSenha() {
                         divCaixaSom.style.width = '100%';
                         divCaixaSom.style.marginTop = '-15px';
                         divCaixaSom.innerHTML = `
-                            <div class="caixa-som-filmagem" style="position: absolute; top: -95px; left: 50%; transform: translateX(-50%); margin: 0;">
+                            <div class="caixa-som-filmagem" style="position: absolute; top: -50px; left: 50%; transform: translateX(-50%); margin: 0;">
                                 <div class="caixa-som-item">Filmagem</div>
                                 <div class="caixa-som-item">Mesa de Som</div>
                             </div>
