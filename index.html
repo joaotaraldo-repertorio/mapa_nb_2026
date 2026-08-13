@@ -829,6 +829,33 @@ async function verificarSenha() {
                 });
                 container.appendChild(divSetor);
             }
+
+            // ALINHA OS APARADORES (esquerdo e direito-superior) COM A ALTURA DA MESA MASTER
+            const setorMaster = document.getElementById('setor-Master');
+            if (setorMaster) {
+                const topoMaster = setorMaster.offsetTop;
+                const alturaMaster = setorMaster.offsetHeight;
+                const aparadorEsq = document.querySelector('.tarja-aparador-esq');
+                const aparadorDir1 = document.querySelector('.tarja-aparador-dir1');
+                if (aparadorEsq) {
+                    aparadorEsq.style.top = topoMaster + 'px';
+                    aparadorEsq.style.height = alturaMaster + 'px';
+                }
+                if (aparadorDir1) {
+                    aparadorDir1.style.top = topoMaster + 'px';
+                    aparadorDir1.style.height = alturaMaster + 'px';
+                }
+
+                // O APARADOR DE BAIXO (dir2) COMEÇA LOGO APÓS O TÉRMINO DA MASTER
+                const setorDiamante = document.getElementById('setor-Diamante');
+                const aparadorDir2 = document.querySelector('.tarja-aparador-dir2');
+                if (aparadorDir2 && setorDiamante) {
+                    const inicioDir2 = topoMaster + alturaMaster;
+                    const fimDiamante = setorDiamante.offsetTop + setorDiamante.offsetHeight;
+                    aparadorDir2.style.top = inicioDir2 + 'px';
+                    aparadorDir2.style.height = (fimDiamante - inicioDir2) + 'px';
+                }
+            }
         }
 
         function abrirModal(mesa) {
