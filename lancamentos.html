@@ -267,7 +267,12 @@
             valorBaseDaMesa = CONFIG_MESAS[prefixo] ? CONFIG_MESAS[prefixo].valorBase : 0;
             let mesaNoBanco = mesasDataBanco.find(m => m.id === novoId) || { nome: "", telefone: "", obs: "", cadeirasExtra: 0, detalhesJSON: "" };
             qtdCadeirasExtrasGlobais = parseInt(mesaNoBanco.cadeirasExtra) || 0;
-            valorCadeirasExtrasGlobais = qtdCadeirasExtrasGlobais * PRECO_FIXO_CADEIRA;
+            let valorTotalSalvoMesa = parseFloat(mesaNoBanco.valorTotal) || 0;
+            if (qtdCadeirasExtrasGlobais > 0 && valorTotalSalvoMesa > valorBaseDaMesa) {
+                valorCadeirasExtrasGlobais = valorTotalSalvoMesa - valorBaseDaMesa;
+            } else {
+                valorCadeirasExtrasGlobais = qtdCadeirasExtrasGlobais * PRECO_FIXO_CADEIRA;
+            }
             document.getElementById('campoQtdCadeirasGlobais').value = qtdCadeirasExtrasGlobais;
             document.getElementById('campoValorCadeirasGlobais').value = formatarNumeroLimpo(valorCadeirasExtrasGlobais);
             document.getElementById('campoObs').value = mesaNoBanco.obs || "";
@@ -317,19 +322,32 @@
         function atualizarCalculoTotalMesa() { valorTotalFinalDaMesa = valorBaseDaMesa + valorCadeirasExtrasGlobais; atualizarResumoGlobal(); }
         function dividirTotalIgualmente() {
             if (pagadoresAtuais.length === 0) return;
-            let valorPorCabeca = valorTotalFinalDaMesa / pagadoresAtuais.length;
-            pagadoresAtuais.forEach(p => { p.valorCota = valorPorCabeca; p.parcelas.forEach(parc => parc.valor = valorPorCabeca / p.qtdParcelas); });
+            let travados = pagadoresAtuais.filter(p => p.travado);
+            let destravados = pagadoresAtuais.filter(p => !p.travado);
+            let somaTravada = travados.reduce((acc, p) => acc + (p.valorCota || 0), 0);
+            let saldoRestante = valorTotalFinalDaMesa - somaTravada;
+            if (destravados.length > 0) {
+                let valorPorCabeca = saldoRestante / destravados.length;
+                destravados.forEach(p => { p.valorCota = valorPorCabeca; p.parcelas.forEach(parc => parc.valor = valorPorCabeca / p.qtdParcelas); });
+            }
             renderizarPagadores();
         }
         function ajustarFatiasEmCascata(pagadorEditadoIndex) {
-            let somaTravada = pagadoresAtuais[pagadorEditadoIndex].valorCota;
+            pagadoresAtuais[pagadorEditadoIndex].travado = true;
+            let travados = pagadoresAtuais.filter(p => p.travado);
+            let destravados = pagadoresAtuais.filter(p => !p.travado);
+            let somaTravada = travados.reduce((acc, p) => acc + (p.valorCota || 0), 0);
             let saldoParaOsOutros = valorTotalFinalDaMesa - somaTravada;
-            let pagadoresRestantes = pagadoresAtuais.length - 1;
-            if (pagadoresRestantes > 0) {
-                let valorProResto = saldoParaOsOutros / pagadoresRestantes;
-                pagadoresAtuais.forEach((p, i) => { if (i !== pagadorEditadoIndex) { p.valorCota = valorProResto; p.parcelas.forEach(parc => parc.valor = valorProResto / p.qtdParcelas); } });
+            if (destravados.length > 0) {
+                let valorProResto = saldoParaOsOutros / destravados.length;
+                destravados.forEach(p => { p.valorCota = valorProResto; p.parcelas.forEach(parc => parc.valor = valorProResto / p.qtdParcelas); });
             }
             renderizarPagadores();
+        }
+        function alternarTravamento(pIndex) {
+            pagadoresAtuais[pIndex].travado = !pagadoresAtuais[pIndex].travado;
+            renderizarPagadores();
+            atualizarResumoGlobal();
         }
         function marcarNomeEditadoManualmente() { nomeEditadoManualmente = true; }
         function atualizarNomeExibidoAutomaticamente() {
@@ -397,7 +415,7 @@
                             <div class="form-group"><label>Telefone</label><input type="text" value="${p.telefone}" onchange="atualizarPagador(${pIndex}, 'telefone', this.value)"></div>
                         </div>
                         <div class="form-row">
-                            <div class="form-group"><label>Fatia da Mesa (R$)</label><input type="text" value="${formatarNumeroLimpo(p.valorCota)}" onchange="atualizarPagador(${pIndex}, 'valorCota', this.value)" style="color: var(--ciano-destaque);"></div>
+                            <div class="form-group"><label>Fatia da Mesa (R$) ${p.travado ? `<span onclick="alternarTravamento(${pIndex})" style="cursor:pointer; color:#f59e0b;" title="Valor travado - clique para destravar">🔒</span>` : `<span onclick="alternarTravamento(${pIndex})" style="cursor:pointer; color:#8892b0;" title="Clique para travar este valor">🔓</span>`}</label><input type="text" value="${formatarNumeroLimpo(p.valorCota)}" onchange="atualizarPagador(${pIndex}, 'valorCota', this.value)" style="color: var(--ciano-destaque);"></div>
                             <div class="form-group"><label>Forma Pgto</label><select onchange="atualizarPagador(${pIndex}, 'pagamento', this.value)">
                                 <option value="Dinheiro" ${p.pagamento === 'Dinheiro' ? 'selected' : ''}>Dinheiro</option>
                                 <option value="Pix" ${p.pagamento === 'Pix' ? 'selected' : ''}>Pix</option>
