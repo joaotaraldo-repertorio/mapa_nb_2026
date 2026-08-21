@@ -734,7 +734,7 @@ async function verificarSenha() {
                     }
                     divSetor.appendChild(fila1);
 
-                    // FILA FANTASMA: C-09 e C-18, flutuando no vão entre a Fila 1 e a Fila 2 (sem ocupar espaço vertical próprio)
+                    // FILA FANTASMA 1: C-09 e C-18, flutuando no vão entre a Fila 1 e a Fila 2
                     const filaFantasma = document.createElement('div');
                     filaFantasma.style.position = 'relative';
                     filaFantasma.style.height = '0px';
@@ -765,13 +765,35 @@ async function verificarSenha() {
                     }
                     divSetor.appendChild(fila2);
 
-                    // FILA 3: C-19 a C-26 + P-11 (camuflada — é Premium de verdade no financeiro)
+                    // FILA FANTASMA 2: C-30 (esquerda) e P-11 (direita), flutuando no vão entre a Fila 2 e a Fila 3
+                    const filaFantasma2 = document.createElement('div');
+                    filaFantasma2.style.position = 'relative';
+                    filaFantasma2.style.height = '0px';
+                    filaFantasma2.style.width = '100%';
+                    filaFantasma2.style.marginTop = '-25px';
+
+                    const wrapperC30 = criarBolinhaMesa(obterMesaObjPorNumero("C", 30), setorConfig);
+                    wrapperC30.style.position = 'absolute';
+                    wrapperC30.style.left = '10px';
+                    wrapperC30.style.top = '-25px';
+                    wrapperC30.style.zIndex = '3';
+                    filaFantasma2.appendChild(wrapperC30);
+
+                    const wrapperP11 = criarBolinhaMesa(obterMesaObjPorNumero("P", 11), setorConfig);
+                    wrapperP11.style.position = 'absolute';
+                    wrapperP11.style.right = '10px';
+                    wrapperP11.style.top = '-25px';
+                    wrapperP11.style.zIndex = '3';
+                    filaFantasma2.appendChild(wrapperP11);
+
+                    divSetor.appendChild(filaFantasma2);
+
+                    // FILA 3: C-19 a C-26, alinhada exatamente embaixo das filas 1 e 2
                     const fila3 = document.createElement('div');
-                    fila3.className = 'fileira-mesas';
+                    fila3.className = 'fileira-mesas fileira-compacta-crianca';
                     for (let n = 19; n <= 26; n++) {
                         fila3.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("C", n), setorConfig));
                     }
-                    fila3.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("P", 11), setorConfig));
                     divSetor.appendChild(fila3);
 
                     container.appendChild(divSetor);
