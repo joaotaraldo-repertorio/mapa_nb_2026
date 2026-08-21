@@ -352,11 +352,11 @@
         let categoriasPadrao = ["Atração Musical", "Estrutura e Som", "Bebidas", "Buffet", "Decoração", "Publicidade", "Taxas e Impostos", "Outras Demandas"];
 
         const CONFIG_MESAS = {
-            "F": { nome: "Cota Família", valorBase: 25000, layout: [[6],[6]], lugares: 12 },
-            "C": { nome: "Cota Criança", valorBase: 12000, layout: [[7],[7],[7],[7]], lugares: 8 },
-            "P": { nome: "Mesa Premium", valorBase: 8000, layout: [[7],[7]], lugares: 8 },
-            "M": { nome: "Mesa Master", valorBase: 5400, layout: [[3, "MIX", 3],[3, "GAP", 3],[7]], lugares: 6 },
-            "D": { nome: "Mesa Diamante", valorBase: 4800, layout: [[7],[7],[7]], lugares: 6 }
+            "F": { nome: "Cota Família", valorBase: 25000, layout: [[11]], lugares: 12 },
+            "C": { nome: "Cota Criança", valorBase: 12000, layout: [[26]], lugares: 8 },
+            "P": { nome: "Mesa Premium", valorBase: 8000, layout: [[12]], lugares: 8 },
+            "M": { nome: "Mesa Master", valorBase: 5400, layout: [[22]], lugares: 6 },
+            "D": { nome: "Mesa Diamante", valorBase: 4800, layout: [[25]], lugares: 6 }
         };
 
         let mesaAtualID = ""; 
@@ -493,12 +493,24 @@
             let totalFechado = 0; let totalRecebido = 0; let totalPendente = 0; let totalCustos = 0;
             let totalPessoas = 0;
 
+            function obterTotalMesasSetor(prefixo) {
+                let total = 0;
+                CONFIG_MESAS[prefixo].layout.forEach(linha => { linha.forEach(item => { if (typeof item === 'number') total += item; }); });
+                return total;
+            }
+
+            let totalF = obterTotalMesasSetor('F');
+            let totalC = obterTotalMesasSetor('C');
+            let totalP = obterTotalMesasSetor('P');
+            let totalM = obterTotalMesasSetor('M');
+            let totalD = obterTotalMesasSetor('D');
+
             let det = {
-                F: { total: 12, prev: 12*25000, vendidas: 0, fechado: 0, recebido: 0, saldo: 0 },
-                C: { total: 28, prev: 28*12000, vendidas: 0, fechado: 0, recebido: 0, saldo: 0 },
-                P: { total: 14, prev: 14*8000, vendidas: 0, fechado: 0, recebido: 0, saldo: 0 },
-                M: { total: 19, prev: 19*5400, vendidas: 0, fechado: 0, recebido: 0, saldo: 0 },
-                D: { total: 21, prev: 21*4800, vendidas: 0, fechado: 0, recebido: 0, saldo: 0 },
+                F: { total: totalF, prev: totalF*CONFIG_MESAS.F.valorBase, vendidas: 0, fechado: 0, recebido: 0, saldo: 0 },
+                C: { total: totalC, prev: totalC*CONFIG_MESAS.C.valorBase, vendidas: 0, fechado: 0, recebido: 0, saldo: 0 },
+                P: { total: totalP, prev: totalP*CONFIG_MESAS.P.valorBase, vendidas: 0, fechado: 0, recebido: 0, saldo: 0 },
+                M: { total: totalM, prev: totalM*CONFIG_MESAS.M.valorBase, vendidas: 0, fechado: 0, recebido: 0, saldo: 0 },
+                D: { total: totalD, prev: totalD*CONFIG_MESAS.D.valorBase, vendidas: 0, fechado: 0, recebido: 0, saldo: 0 },
                 Avulsas: { vendidas: 0, fechado: 0, recebido: 0, saldo: 0 }
             };
 
@@ -597,7 +609,7 @@
             
             document.getElementById('tfootDetalhes').innerHTML = `<tr>
                 <td style="color: var(--ciano-destaque);">TOTAIS GERAIS</td>
-                <td style="text-align: center;">94</td>
+                <td style="text-align: center;">${det.F.total + det.C.total + det.P.total + det.M.total + det.D.total}</td>
                 <td>${formatarMoeda(prevGeral)}</td>
                 <td style="text-align: center;">${det.F.vendidas+det.C.vendidas+det.P.vendidas+det.M.vendidas+det.D.vendidas}</td>
                 <td style="color: var(--ciano-destaque);">${formatarMoeda(totalFechado)}</td>
