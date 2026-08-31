@@ -111,6 +111,10 @@
                 <input type="text" id="campoValorCadeirasGlobais" class="campo-extra" value="0,00" onchange="atualizarCadeirasAvulsasGlobaisValorEditado(this.value)">
             </div>
             <div class="form-group">
+                <label style="color: #ec4899;">Desconto (R$)</label>
+                <input type="text" id="campoDesconto" class="campo-extra" style="border-color: #ec4899; color: #ec4899;" value="0,00" onchange="atualizarDesconto(this.value)">
+            </div>
+            <div class="form-group">
                 <label>Total Fechado (R$)</label>
                 <input type="text" id="campoValorTotal" class="campo-bloqueado" readonly value="R$ 0,00">
             </div>
@@ -157,6 +161,7 @@
         let qtdCadeirasExtrasGlobais = 0;
         let valorCadeirasExtrasGlobais = 0;
         let valorTotalFinalDaMesa = 0;
+        let valorDescontoGlobal = 0;
         const PRECO_FIXO_CADEIRA = 800;
         let pagadoresAtuais = [];
         let nomeEditadoManualmente = false;
@@ -252,7 +257,7 @@
             } catch (error) { console.error("Erro ao puxar dados."); }
         }
 
-        function trocarMesaSelecionada(novoId, nomeDoMapa = null) {
+       function trocarMesaSelecionada(novoId, nomeDoMapa = null) {
             if (!novoId) {
                 document.getElementById('alerta-nenhuma-mesa').style.display = 'block';
                 document.getElementById('area-edicao-mesa').style.display = 'none';
@@ -267,14 +272,16 @@
             valorBaseDaMesa = CONFIG_MESAS[prefixo] ? CONFIG_MESAS[prefixo].valorBase : 0;
             let mesaNoBanco = mesasDataBanco.find(m => m.id === novoId) || { nome: "", telefone: "", obs: "", cadeirasExtra: 0, detalhesJSON: "" };
             qtdCadeirasExtrasGlobais = parseInt(mesaNoBanco.cadeirasExtra) || 0;
+            valorDescontoGlobal = parseFloat(mesaNoBanco.desconto) || 0;
             let valorTotalSalvoMesa = parseFloat(mesaNoBanco.valorTotal) || 0;
-            if (qtdCadeirasExtrasGlobais > 0 && valorTotalSalvoMesa > valorBaseDaMesa) {
-                valorCadeirasExtrasGlobais = valorTotalSalvoMesa - valorBaseDaMesa;
+            if (qtdCadeirasExtrasGlobais > 0 && (valorTotalSalvoMesa + valorDescontoGlobal) > valorBaseDaMesa) {
+                valorCadeirasExtrasGlobais = (valorTotalSalvoMesa + valorDescontoGlobal) - valorBaseDaMesa;
             } else {
                 valorCadeirasExtrasGlobais = qtdCadeirasExtrasGlobais * PRECO_FIXO_CADEIRA;
             }
             document.getElementById('campoQtdCadeirasGlobais').value = qtdCadeirasExtrasGlobais;
             document.getElementById('campoValorCadeirasGlobais').value = formatarNumeroLimpo(valorCadeirasExtrasGlobais);
+            document.getElementById('campoDesconto').value = formatarNumeroLimpo(valorDescontoGlobal);
             document.getElementById('campoObs').value = mesaNoBanco.obs || "";
             document.getElementById('campoValorBaseInfo').value = formatarMoeda(valorBaseDaMesa);
             document.getElementById('alerta-nenhuma-mesa').style.display = 'none';
@@ -299,7 +306,7 @@
                 } catch (e) { pagadoresAtuais = []; }
             }
             if (pagadoresAtuais.length === 0) {
-                let cotaSug = valorBaseDaMesa + valorCadeirasExtrasGlobais;
+                let cotaSug = valorBaseDaMesa + valorCadeirasExtrasGlobais - valorDescontoGlobal;
                 pagadoresAtuais.push({ id: 'pag_1', nome: nomeParaUsar, telefone: mesaNoBanco.telefone || "", cadeirasExtra: 0, valorCota: cotaSug, pagamento: "Dinheiro", qtdParcelas: 1, parcelas: [{ numero: 1, valor: cotaSug, pago: false, vencimento: "" }] });
             } else if (pagadoresAtuais.length === 1 && pagadoresAtuais[0].nome === "" && nomeParaUsar !== "") {
                 pagadoresAtuais[0].nome = nomeParaUsar;
@@ -319,7 +326,14 @@
             document.getElementById('campoValorCadeirasGlobais').value = formatarNumeroLimpo(valorCadeirasExtrasGlobais);
             atualizarCalculoTotalMesa(); dividirTotalIgualmente();
         }
-        function atualizarCalculoTotalMesa() { valorTotalFinalDaMesa = valorBaseDaMesa + valorCadeirasExtrasGlobais; atualizarResumoGlobal(); }
+        function atualizarCalculoTotalMesa() { valorTotalFinalDaMesa = valorBaseDaMesa + valorCadeirasExtrasGlobais - valorDescontoGlobal; atualizarResumoGlobal(); }
+
+        function atualizarDesconto(novoValorStr) {
+            valorDescontoGlobal = converterParaNumero(novoValorStr);
+            document.getElementById('campoDesconto').value = formatarNumeroLimpo(valorDescontoGlobal);
+            atualizarCalculoTotalMesa();
+            dividirTotalIgualmente();
+        }
         function dividirTotalIgualmente() {
             if (pagadoresAtuais.length === 0) return;
             let travados = pagadoresAtuais.filter(p => p.travado);
@@ -463,7 +477,8 @@
                 valorPago: totalPago,
                 saldo: saldo,
                 obs: document.getElementById('campoObs').value,
-                detalhesJSON: JSON.stringify(pagadoresAtuais)
+                detalhesJSON: JSON.stringify(pagadoresAtuais),
+                desconto: valorDescontoGlobal
             };
 
             if (pagadoresAtuais.length > 0 && pagadoresAtuais[0].telefone) {
