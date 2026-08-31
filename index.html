@@ -798,6 +798,13 @@ async function verificarSenha() {
                     fila3.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("P", 11), setorConfig));
                     divSetor.appendChild(fila3);
 
+                    // TEMPORÁRIO: C-27 e C-28 visíveis só para permitir a movimentação. Remover depois.
+                    const filaTemp = document.createElement('div');
+                    filaTemp.className = 'fileira-mesas';
+                    filaTemp.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("C", 27), setorConfig));
+                    filaTemp.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("C", 28), setorConfig));
+                    divSetor.appendChild(filaTemp);
+
                     container.appendChild(divSetor);
                     continue;
                 }
