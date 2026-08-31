@@ -357,7 +357,7 @@
         const CONFIG_MESAS = {
             "Familia": { prefixo: "F", nome: "Cota Família", classeTamanho: "tamanho-g", corNormal: "#FFFF00", corVendida: "#FFFFD1", layout: [ [5], [6] ], bgTranslucido: "rgba(255, 255, 0, 0.08)", bordaFina: "rgba(255, 255, 0, 0.3)" },
             "Crianca": { prefixo: "C", nome: "Cota Criança", classeTamanho: "tamanho-pp", compacto: true, corNormal: "#00FFFF", corVendida: "#66CCCC", layout: [ [7], [7], [7], [7] ], totalMesas: 28, bgTranslucido: "rgba(0, 255, 255, 0.08)", bordaFina: "rgba(0, 255, 255, 0.3)" },
-            "Premium": { prefixo: "P", nome: "Mesa Premium", classeTamanho: "tamanho-pp", compacto: true, corNormal: "#47D359", corVendida: "#75D982", layout: [ [10] ], totalMesas: 12, bgTranslucido: "rgba(71, 211, 89, 0.08)", bordaFina: "rgba(71, 211, 89, 0.3)" },
+            "Premium": { prefixo: "P", nome: "Mesa Premium", classeTamanho: "tamanho-pp", compacto: true, corNormal: "#47D359", corVendida: "#75D982", layout: [ [10] ], bgTranslucido: "rgba(71, 211, 89, 0.08)", bordaFina: "rgba(71, 211, 89, 0.3)" },
             "Master": { prefixo: "M", nome: "Mesa Master", classeTamanho: "tamanho-pp", compacto: true, corNormal: "#FF9900", corVendida: "#FFE2B7", layout: [ [11], [11] ], bgTranslucido: "rgba(255, 153, 0, 0.08)", bordaFina: "rgba(255, 153, 0, 0.3)" },
             "Diamante": { prefixo: "D", nome: "Mesa Diamante", classeTamanho: "tamanho-pp", compacto: true, corNormal: "#FF0000", corVendida: "#FFCDCD", layout: [ [11], [11], [3] ], bgTranslucido: "rgba(255, 0, 0, 0.08)", bordaFina: "rgba(255, 0, 0, 0.3)" }
         };
@@ -765,7 +765,7 @@ async function verificarSenha() {
                     }
                     divSetor.appendChild(fila2);
 
-                    // FILA FANTASMA 2: C-19 (esquerda) e C-26 (direita), flutuando no vão entre a Fila 2 e a Fila 3
+                    // FILA FANTASMA 2: C-19 (esquerda) e C-28 (direita), flutuando no vão entre a Fila 2 e a Fila 3
                     const filaFantasma2 = document.createElement('div');
                     filaFantasma2.style.position = 'relative';
                     filaFantasma2.style.height = '0px';
@@ -779,32 +779,24 @@ async function verificarSenha() {
                     wrapperC19.style.zIndex = '3';
                     filaFantasma2.appendChild(wrapperC19);
 
-                    const wrapperC26 = criarBolinhaMesa(obterMesaObjPorNumero("C", 26), setorConfig);
-                    wrapperC26.style.position = 'absolute';
-                    wrapperC26.style.right = '10px';
-                    wrapperC26.style.top = '-25px';
-                    wrapperC26.style.zIndex = '3';
-                    filaFantasma2.appendChild(wrapperC26);
+                    const wrapperC28 = criarBolinhaMesa(obterMesaObjPorNumero("C", 28), setorConfig);
+                    wrapperC28.style.position = 'absolute';
+                    wrapperC28.style.right = '10px';
+                    wrapperC28.style.top = '-25px';
+                    wrapperC28.style.zIndex = '3';
+                    filaFantasma2.appendChild(wrapperC28);
 
                     divSetor.appendChild(filaFantasma2);
 
-                    // FILA 3: P-12 (camuflada) + C-20 a C-25 + P-11 (camuflada) — ambas Premium de verdade no financeiro
+                    // FILA 3: C-20 a C-27 (as antigas P-11 e P-12 agora são Cota Criança de verdade)
                     const fila3 = document.createElement('div');
                     fila3.className = 'fileira-mesas fileira-compacta-crianca';
-                    fila3.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("P", 12), setorConfig));
-                    for (let n = 20; n <= 25; n++) {
+                    for (let n = 20; n <= 27; n++) {
                         fila3.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("C", n), setorConfig));
                     }
-                    fila3.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("P", 11), setorConfig));
                     divSetor.appendChild(fila3);
 
-                    // TEMPORÁRIO: C-27 e C-28 visíveis só para permitir a movimentação. Remover depois.
-                    const filaTemp = document.createElement('div');
-                    filaTemp.className = 'fileira-mesas';
-                    filaTemp.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("C", 27), setorConfig));
-                    filaTemp.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("C", 28), setorConfig));
-                    divSetor.appendChild(filaTemp);
-
+                    
                     container.appendChild(divSetor);
                     continue;
                 }
