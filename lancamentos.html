@@ -108,7 +108,7 @@
             </div>
             <div class="form-group">
                 <label style="color: #f59e0b;">Valor Extras (R$)</label>
-                <input type="text" id="campoValorCadeirasGlobais" class="campo-extra" value="0,00" onchange="atualizarCadeirasAvulsasGlobaisValorEditado(this.value)">
+                <input type="text" id="campoValorCadeirasGlobais" class="campo-extra" value="0,00" onchange="atualizarValorExtraGlobal(this.value)">
             </div>
             <div class="form-group">
                 <label style="color: #ec4899;">Desconto (R$)</label>
@@ -273,12 +273,7 @@
             let mesaNoBanco = mesasDataBanco.find(m => m.id === novoId) || { nome: "", telefone: "", obs: "", cadeirasExtra: 0, detalhesJSON: "" };
             qtdCadeirasExtrasGlobais = parseInt(mesaNoBanco.cadeirasExtra) || 0;
             valorDescontoGlobal = parseFloat(mesaNoBanco.desconto) || 0;
-            let valorTotalSalvoMesa = parseFloat(mesaNoBanco.valorTotal) || 0;
-            if (qtdCadeirasExtrasGlobais > 0 && (valorTotalSalvoMesa + valorDescontoGlobal) > valorBaseDaMesa) {
-                valorCadeirasExtrasGlobais = (valorTotalSalvoMesa + valorDescontoGlobal) - valorBaseDaMesa;
-            } else {
-                valorCadeirasExtrasGlobais = qtdCadeirasExtrasGlobais * PRECO_FIXO_CADEIRA;
-            }
+            valorCadeirasExtrasGlobais = parseFloat(mesaNoBanco.valorExtra) || 0;
             document.getElementById('campoQtdCadeirasGlobais').value = qtdCadeirasExtrasGlobais;
             document.getElementById('campoValorCadeirasGlobais').value = formatarNumeroLimpo(valorCadeirasExtrasGlobais);
             document.getElementById('campoDesconto').value = formatarNumeroLimpo(valorDescontoGlobal);
@@ -317,11 +312,8 @@
 
         function atualizarCadeirasAvulsasGlobais() {
             qtdCadeirasExtrasGlobais = parseInt(document.getElementById('campoQtdCadeirasGlobais').value) || 0;
-            valorCadeirasExtrasGlobais = qtdCadeirasExtrasGlobais * PRECO_FIXO_CADEIRA;
-            document.getElementById('campoValorCadeirasGlobais').value = formatarNumeroLimpo(valorCadeirasExtrasGlobais);
-            atualizarCalculoTotalMesa(); dividirTotalIgualmente();
         }
-        function atualizarCadeirasAvulsasGlobaisValorEditado(novoValorStr) {
+        function atualizarValorExtraGlobal(novoValorStr) {
             valorCadeirasExtrasGlobais = converterParaNumero(novoValorStr);
             document.getElementById('campoValorCadeirasGlobais').value = formatarNumeroLimpo(valorCadeirasExtrasGlobais);
             atualizarCalculoTotalMesa(); dividirTotalIgualmente();
@@ -473,6 +465,7 @@
                 id: mesaAtualID,
                 nome: document.getElementById('campoNomeExibido').value,
                 cadeirasExtra: qtdCadeirasExtrasGlobais,
+                valorExtra: valorCadeirasExtrasGlobais,
                 valorTotal: valorTotalFinalDaMesa,
                 valorPago: totalPago,
                 saldo: saldo,

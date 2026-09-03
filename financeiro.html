@@ -255,7 +255,7 @@
                         </div>
                         <div class="form-group">
                             <label style="color: #f59e0b;">Valor Extras (R$)</label>
-                            <input type="text" id="campoValorCadeirasGlobais" class="campo-extra" value="0,00" onchange="atualizarCadeirasAvulsasGlobaisValorEditado(this.value)">
+                            <input type="text" id="campoValorCadeirasGlobais" class="campo-extra" value="0,00" onchange="atualizarValorExtraGlobal(this.value)">
                         </div>
                         <div class="form-group">
                             <label style="color: #ec4899;">Desconto (R$)</label>
@@ -497,6 +497,7 @@
         function calcularDashboardERelatorios() {
             let totalFechado = 0; let totalRecebido = 0; let totalPendente = 0; let totalCustos = 0;
             let totalPessoas = 0;
+            let totalValorExtra = 0;
 
             function obterTotalMesasSetor(prefixo) {
                 let total = 0;
@@ -516,7 +517,8 @@
                 P: { total: totalP, prev: totalP*CONFIG_MESAS.P.valorBase, vendidas: 0, fechado: 0, recebido: 0, saldo: 0 },
                 M: { total: totalM, prev: totalM*CONFIG_MESAS.M.valorBase, vendidas: 0, fechado: 0, recebido: 0, saldo: 0 },
                 D: { total: totalD, prev: totalD*CONFIG_MESAS.D.valorBase, vendidas: 0, fechado: 0, recebido: 0, saldo: 0 },
-                Avulsas: { vendidas: 0, fechado: 0, recebido: 0, saldo: 0 }
+                Avulsas: { vendidas: 0 },
+                ValorExtra: { fechado: 0, recebido: 0, saldo: 0 }
             };
 
             mesasDataBanco.forEach(m => {
@@ -526,6 +528,7 @@
                 let vPago = parseFloat(m.valorPago) || 0;
                 let vSaldo = parseFloat(m.saldo) || 0;
                 let cExtra = parseInt(m.cadeirasExtra) || 0;
+                let vExtra = parseFloat(m.valorExtra) || 0;
 
                 if (status === "vendida" || status === "reservada") {
                     totalFechado += vTotal;
@@ -534,25 +537,26 @@
                     if (det[prefixo]) {
                         det[prefixo].vendidas++;
                         totalPessoas += CONFIG_MESAS[prefixo].lugares;
-                        
-                        let vCadeiras = cExtra * PRECO_FIXO_CADEIRA;
-                        let vMesaLivre = vTotal - vCadeiras;
-                        
-                        let ratio = vTotal > 0 ? vCadeiras / vTotal : 0;
-                        let pagoCadeiras = vPago * ratio;
-                        let pagoMesa = vPago - pagoCadeiras;
-                        let saldoCadeiras = vSaldo * ratio;
-                        let saldoMesa = vSaldo - saldoCadeiras;
+
+                        let vMesaLivre = vTotal - vExtra;
+
+                        let ratio = vTotal > 0 ? vExtra / vTotal : 0;
+                        let pagoExtra = vPago * ratio;
+                        let pagoMesa = vPago - pagoExtra;
+                        let saldoExtra = vSaldo * ratio;
+                        let saldoMesa = vSaldo - saldoExtra;
 
                         det[prefixo].fechado += vMesaLivre;
                         det[prefixo].recebido += pagoMesa;
                         det[prefixo].saldo += saldoMesa;
 
+                        det.ValorExtra.fechado += vExtra;
+                        det.ValorExtra.recebido += pagoExtra;
+                        det.ValorExtra.saldo += saldoExtra;
+                        totalValorExtra += vExtra;
+
                         if(cExtra > 0) {
                             det.Avulsas.vendidas += cExtra;
-                            det.Avulsas.fechado += vCadeiras;
-                            det.Avulsas.recebido += pagoCadeiras;
-                            det.Avulsas.saldo += saldoCadeiras;
                             totalPessoas += cExtra;
                         }
                     }
@@ -595,13 +599,21 @@
                 </tr>`;
                 tbodyDet.innerHTML += tr;
             });
+
+            tbodyDet.innerHTML += `<tr style="background-color: rgba(16, 185, 129, 0.05);">
+                <td style="color: #10b981;">💰 Valor Extra</td><td style="text-align: center;">-</td><td style="color: #8892b0;">-</td>
+                <td style="text-align: center; color: #8892b0;">-</td>
+                <td style="color: var(--ciano-destaque);">${formatarMoeda(det.ValorExtra.fechado)}</td>
+                <td style="color: #10b981;">${formatarMoeda(det.ValorExtra.recebido)}</td>
+                <td style="color: #ff4d4d;">${formatarMoeda(det.ValorExtra.saldo)}</td>
+            </tr>`;
             
             tbodyDet.innerHTML += `<tr style="background-color: rgba(245, 158, 11, 0.05);">
                 <td style="color: #f59e0b;">🪑 Cadeiras Avulsas</td><td style="text-align: center;">-</td><td style="color: #8892b0;">-</td>
                 <td style="text-align: center; color: var(--texto-claro);">${det.Avulsas.vendidas}</td>
-                <td style="color: var(--ciano-destaque);">${formatarMoeda(det.Avulsas.fechado)}</td>
-                <td style="color: #10b981;">${formatarMoeda(det.Avulsas.recebido)}</td>
-                <td style="color: #ff4d4d;">${formatarMoeda(det.Avulsas.saldo)}</td>
+                <td style="color: #8892b0;">-</td>
+                <td style="color: #8892b0;">-</td>
+                <td style="color: #8892b0;">-</td>
             </tr>`;
             
             tbodyDet.innerHTML += `<tr style="background-color: #112240;">
@@ -630,7 +642,7 @@
             container.innerHTML = '';
             
             let memStr = localStorage.getItem('simulador_noite_beneficente');
-            let memoria = memStr ? JSON.parse(memStr) : { F: 0, C: 0, P: 0, M: 0, D: 0, Avulsas: 0 };
+            let memoria = memStr ? JSON.parse(memStr) : { F: 0, C: 0, P: 0, M: 0, D: 0, ValorExtra: 0 };
 
             let chaves = ['F', 'C', 'P', 'M', 'D'];
             chaves.forEach(k => {
@@ -651,13 +663,12 @@
             });
 
             container.innerHTML += `
-                <div class="sim-item" style="border-color: #f59e0b;">
-                    <label style="color: #f59e0b;">🪑 Cadeiras Avulsas</label>
+                <div class="sim-item" style="border-color: #10b981;">
+                    <label style="color: #10b981;">💰 Valor Extra</label>
                     <div class="sim-input-row">
-                        <input type="number" id="sim_Avulsas" min="0" value="${memoria.Avulsas || 0}" oninput="if(this.value < 0) this.value = 0; calcularSimulacao();">
-                        <span style="font-size: 14px;">x R$ 800</span>
+                        <input type="text" id="sim_ValorExtra" value="${formatarNumeroLimpo(memoria.ValorExtra || 0)}" onchange="if(converterParaNumero(this.value) < 0) this.value = '0,00'; calcularSimulacao();">
                     </div>
-                    <span>(Venda Extra Opcional)</span>
+                    <span>(Valor total extra previsto)</span>
                 </div>
             `;
             calcularSimulacao(); 
@@ -670,13 +681,13 @@
                 P: parseInt(document.getElementById('sim_P').value) || 0,
                 M: parseInt(document.getElementById('sim_M').value) || 0,
                 D: parseInt(document.getElementById('sim_D').value) || 0,
-                Avulsas: parseInt(document.getElementById('sim_Avulsas').value) || 0
+                ValorExtra: converterParaNumero(document.getElementById('sim_ValorExtra').value) || 0
             };
 
             localStorage.setItem('simulador_noite_beneficente', JSON.stringify(inputs));
 
-            let extraReceita = (inputs.F * 25000) + (inputs.C * 12000) + (inputs.P * 8000) + (inputs.M * 5400) + (inputs.D * 4800) + (inputs.Avulsas * 800);
-            let extraPessoas = (inputs.F * 12) + (inputs.C * 8) + (inputs.P * 8) + (inputs.M * 6) + (inputs.D * 6) + inputs.Avulsas;
+            let extraReceita = (inputs.F * 25000) + (inputs.C * 12000) + (inputs.P * 8000) + (inputs.M * 5400) + (inputs.D * 4800) + inputs.ValorExtra;
+            let extraPessoas = (inputs.F * 12) + (inputs.C * 8) + (inputs.P * 8) + (inputs.M * 6) + (inputs.D * 6);
 
             let recProj = G_receitaReal + extraReceita;
             let saldoProj = recProj - G_custosReais;
@@ -805,12 +816,7 @@
             let mesaNoBanco = mesasDataBanco.find(m => m.id === novoId) || {nome: "", telefone: "", obs: "", cadeirasExtra: 0, detalhesJSON: ""};
             qtdCadeirasExtrasGlobais = parseInt(mesaNoBanco.cadeirasExtra) || 0; 
             valorDescontoGlobal = parseFloat(mesaNoBanco.desconto) || 0;
-            let valorTotalSalvoMesaCofre = parseFloat(mesaNoBanco.valorTotal) || 0;
-            if (qtdCadeirasExtrasGlobais > 0 && (valorTotalSalvoMesaCofre + valorDescontoGlobal) > valorBaseDaMesa) {
-                valorCadeirasExtrasGlobais = (valorTotalSalvoMesaCofre + valorDescontoGlobal) - valorBaseDaMesa;
-            } else {
-                valorCadeirasExtrasGlobais = qtdCadeirasExtrasGlobais * PRECO_FIXO_CADEIRA;
-            }
+            valorCadeirasExtrasGlobais = parseFloat(mesaNoBanco.valorExtra) || 0;
             
             document.getElementById('campoQtdCadeirasGlobais').value = qtdCadeirasExtrasGlobais; 
             document.getElementById('campoValorCadeirasGlobais').value = formatarNumeroLimpo(valorCadeirasExtrasGlobais);
@@ -846,11 +852,10 @@
         }
 
         function atualizarCadeirasAvulsasGlobais() {
-            qtdCadeirasExtrasGlobais = parseInt(document.getElementById('campoQtdCadeirasGlobais').value) || 0; valorCadeirasExtrasGlobais = qtdCadeirasExtrasGlobais * PRECO_FIXO_CADEIRA;
-            document.getElementById('campoValorCadeirasGlobais').value = formatarNumeroLimpo(valorCadeirasExtrasGlobais); atualizarCalculoTotalMesa(); dividirTotalIgualmente(); 
+            qtdCadeirasExtrasGlobais = parseInt(document.getElementById('campoQtdCadeirasGlobais').value) || 0;
         }
 
-        function atualizarCadeirasAvulsasGlobaisValorEditado(novoValorStr) {
+        function atualizarValorExtraGlobal(novoValorStr) {
             valorCadeirasExtrasGlobais = converterParaNumero(novoValorStr); document.getElementById('campoValorCadeirasGlobais').value = formatarNumeroLimpo(valorCadeirasExtrasGlobais);
             atualizarCalculoTotalMesa(); dividirTotalIgualmente();
         }
@@ -992,6 +997,7 @@ async function gravarDadosFinanceirosServidor() {
         id: mesaAtualID, 
         nome: document.getElementById('campoNomeExibido').value, 
         cadeirasExtra: qtdCadeirasExtrasGlobais, 
+        valorExtra: valorCadeirasExtrasGlobais,
         valorTotal: valorTotalFinalDaMesa, 
         valorPago: totalPago, 
         saldo: saldo, 
