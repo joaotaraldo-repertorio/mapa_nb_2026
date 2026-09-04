@@ -359,7 +359,7 @@
             "Crianca": { prefixo: "C", nome: "Cota Criança", classeTamanho: "tamanho-pp", compacto: true, corNormal: "#00FFFF", corVendida: "#66CCCC", layout: [ [7], [7], [7], [7] ], totalMesas: 28, bgTranslucido: "rgba(0, 255, 255, 0.08)", bordaFina: "rgba(0, 255, 255, 0.3)" },
             "Premium": { prefixo: "P", nome: "Mesa Premium", classeTamanho: "tamanho-pp", compacto: true, corNormal: "#47D359", corVendida: "#75D982", layout: [ [10] ], bgTranslucido: "rgba(71, 211, 89, 0.08)", bordaFina: "rgba(71, 211, 89, 0.3)" },
             "Master": { prefixo: "M", nome: "Mesa Master", classeTamanho: "tamanho-pp", compacto: true, corNormal: "#FF9900", corVendida: "#FFE2B7", layout: [ [11], [11] ], bgTranslucido: "rgba(255, 153, 0, 0.08)", bordaFina: "rgba(255, 153, 0, 0.3)" },
-            "Diamante": { prefixo: "D", nome: "Mesa Diamante", classeTamanho: "tamanho-pp", compacto: true, corNormal: "#FF0000", corVendida: "#FFCDCD", layout: [ [11], [11], [3] ], bgTranslucido: "rgba(255, 0, 0, 0.08)", bordaFina: "rgba(255, 0, 0, 0.3)" }
+            "Diamante": { prefixo: "D", nome: "Mesa Diamante", classeTamanho: "tamanho-pp", compacto: true, corNormal: "#FF0000", corVendida: "#FFCDCD", layout: [ [11], [11], [5] ], bgTranslucido: "rgba(255, 0, 0, 0.08)", bordaFina: "rgba(255, 0, 0, 0.3)" }
         };
 
         function montarCabecalho() {
@@ -814,38 +814,79 @@ async function verificarSenha() {
                     if (soma > maiorFileiraDoSetor) maiorFileiraDoSetor = soma;
                 });
 
-                setorConfig.layout.forEach((fileira, indiceFileira) => {
-                    if (chave === "Diamante" && indiceFileira === 2) {
-                        const divCaixaSom = document.createElement('div');
-                        divCaixaSom.style.position = 'relative';
-                        divCaixaSom.style.height = '0px';
-                        divCaixaSom.style.width = '100%';
-                        divCaixaSom.style.marginTop = '-15px';
-                        divCaixaSom.innerHTML = `
-                            <div class="caixa-som-filmagem" style="position: absolute; top: 15px; left: 50%; transform: translateX(-50%); margin: 0;">
-                                <div class="caixa-som-item">Filmagem</div>
-                                <div class="caixa-som-item">Mesa de Som</div>
-                            </div>
-                        `;
-                        divSetor.appendChild(divCaixaSom);
+                if (chave === "Diamante") {
+                    // FILA 1: D-01 a D-11
+                    const filaD1 = document.createElement('div');
+                    filaD1.className = 'fileira-mesas';
+                    for (let n = 1; n <= 11; n++) {
+                        filaD1.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("D", n), setorConfig));
                     }
+                    divSetor.appendChild(filaD1);
+
+                    // FILA 2: D-12 a D-22
+                    const filaD2 = document.createElement('div');
+                    filaD2.className = 'fileira-mesas';
+                    for (let n = 12; n <= 22; n++) {
+                        filaD2.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("D", n), setorConfig));
+                    }
+                    divSetor.appendChild(filaD2);
+
+                    // CAIXA FILMAGEM/MESA DE SOM — flutuando centralizada sobre D-15 a D-19
+                    const divCaixaSom = document.createElement('div');
+                    divCaixaSom.style.position = 'relative';
+                    divCaixaSom.style.height = '0px';
+                    divCaixaSom.style.width = '100%';
+                    divCaixaSom.style.marginTop = '-15px';
+                    divCaixaSom.innerHTML = `
+                        <div class="caixa-som-filmagem" style="position: absolute; top: 15px; left: 50%; transform: translateX(-50%); margin: 0;">
+                            <div class="caixa-som-item">Filmagem</div>
+                            <div class="caixa-som-item">Mesa de Som</div>
+                        </div>
+                    `;
+                    divSetor.appendChild(divCaixaSom);
+
+                    // FILA 3: D-23, D-24, (vazio), (espaço da caixa acima), D-25, D-26, D-27
+                    const filaD3 = document.createElement('div');
+                    filaD3.className = 'fileira-mesas';
+
+                    function criarEspacoInvisivelDiamante() {
+                        const espaco = document.createElement('div');
+                        espaco.className = 'wrapper-mesa';
+                        espaco.style.visibility = 'hidden';
+                        espaco.innerHTML = `<div class="texto-acima">.</div><div class="bolinha-mesa ${setorConfig.classeTamanho}"></div><div class="texto-abaixo ${setorConfig.compacto ? 'texto-abaixo-compacta' : ''}">.</div>`;
+                        return espaco;
+                    }
+
+                    filaD3.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("D", 23), setorConfig));
+                    filaD3.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("D", 24), setorConfig));
+                    for (let i = 0; i < 6; i++) { filaD3.appendChild(criarEspacoInvisivelDiamante()); }
+                    filaD3.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("D", 25), setorConfig));
+                    filaD3.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("D", 26), setorConfig));
+                    filaD3.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("D", 27), setorConfig));
+
+                    divSetor.appendChild(filaD3);
+
+                    // TARJA SAÍDA + FAIXA INFERIOR (Entrada/Recepção + Aparador)
+                    const tarjaSaida = document.createElement('div');
+                    tarjaSaida.className = 'tarja-lateral tarja-saida';
+                    tarjaSaida.innerHTML = `<span class="tarja-texto">Saída</span>`;
+                    divSetor.appendChild(tarjaSaida);
+
+                    const divFaixaInferior = document.createElement('div');
+                    divFaixaInferior.className = 'faixa-inferior-mapa';
+                    divFaixaInferior.innerHTML = `
+                        <div class="caixa-inferior-item caixa-entrada-inferior">Entrada/Recepção</div>
+                        <div class="aparador-linha-entrada">Aparador</div>
+                    `;
+                    divSetor.appendChild(divFaixaInferior);
+
+                    container.appendChild(divSetor);
+                    continue;
+                }
+
+                setorConfig.layout.forEach((fileira) => {
                     const divFileira = document.createElement('div');
                     divFileira.className = 'fileira-mesas';
-
-                    if (chave === "Diamante") {
-                        let somaFileiraAtual = 0;
-                        fileira.forEach(it => { if (typeof it === "number") somaFileiraAtual += it; });
-                        if (somaFileiraAtual < maiorFileiraDoSetor) {
-                            let faltantes = maiorFileiraDoSetor - somaFileiraAtual;
-                            for (let f = 0; f < faltantes; f++) {
-                                const espacoInvisivel = document.createElement('div');
-                                espacoInvisivel.className = 'wrapper-mesa';
-                                espacoInvisivel.style.visibility = 'hidden';
-                                espacoInvisivel.innerHTML = `<div class="texto-acima">.</div><div class="bolinha-mesa ${setorConfig.classeTamanho}"></div><div class="texto-abaixo ${setorConfig.compacto ? 'texto-abaixo-compacta' : ''}">.</div>`;
-                                divFileira.appendChild(espacoInvisivel);
-                            }
-                        }
-                    }
 
                     fileira.forEach(item => {
                         if (item === "BIG_MIX") {
@@ -882,21 +923,6 @@ async function verificarSenha() {
                     });
                     divSetor.appendChild(divFileira);
                 });
-
-                if (chave === "Diamante") {
-                    const tarjaSaida = document.createElement('div');
-                    tarjaSaida.className = 'tarja-lateral tarja-saida';
-                    tarjaSaida.innerHTML = `<span class="tarja-texto">Saída</span>`;
-                    divSetor.appendChild(tarjaSaida);
-
-                    const divFaixaInferior = document.createElement('div');
-                    divFaixaInferior.className = 'faixa-inferior-mapa';
-                    divFaixaInferior.innerHTML = `
-                        <div class="caixa-inferior-item caixa-entrada-inferior">Entrada/Recepção</div>
-                        <div class="aparador-linha-entrada">Aparador</div>
-                    `;
-                    divSetor.appendChild(divFaixaInferior);
-                }
 
                 container.appendChild(divSetor);
             }
