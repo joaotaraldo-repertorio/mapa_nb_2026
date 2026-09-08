@@ -175,7 +175,7 @@
             .item-legenda { font-size: 11px !important; color: #000 !important; }
             .cor-box { width: 14px !important; height: 14px !important; }
             .sub-legenda { font-size: 10px !important; color: #333 !important; }
-            .info-contato { font-size: 10px !important; padding-top: 0 !important; margin-top: 0 !important; border-top: none !important; color: #000 !important; text-align: left !important; }
+            .info-contato { font-size: 10px !important; padding-top: 0 !important; margin-top: 0 !important; border-top: none !important; color: #000 !important; text-align: center !important; display: flex !important; flex-direction: column !important; justify-content: center !important; align-items: center !important; }
             .info-contato span.realizacao { font-size: 9px !important; display: block !important; }
 
             /* Setores mais compactos */
@@ -194,6 +194,8 @@
             /* Escala para caber na folha, mantendo o espaço das tarjas laterais */
             #container-salao { zoom: 0.65; }
             .fileira-mesas { break-inside: avoid; page-break-inside: avoid; margin-bottom: 10px !important;}
+            .ghost-container { position: relative !important; height: auto !important; width: auto !important; margin-top: 0 !important; margin-bottom: 10px !important; display: flex !important; justify-content: space-between !important; align-items: flex-start !important; }
+            .ghost-mesa { position: static !important; left: auto !important; right: auto !important; top: auto !important; z-index: auto !important; }
             .wrapper-mesa { break-inside: avoid; page-break-inside: avoid; }
             
             .tarja-lateral { break-inside: avoid !important; page-break-inside: avoid !important; }
@@ -746,12 +748,14 @@ async function verificarSenha() {
 
                     // FILA FANTASMA 1: C-09 e C-18, flutuando no vão entre a Fila 1 e a Fila 2
                     const filaFantasma = document.createElement('div');
+                    filaFantasma.className = 'ghost-container';
                     filaFantasma.style.position = 'relative';
                     filaFantasma.style.height = '0px';
                     filaFantasma.style.width = '100%';
                     filaFantasma.style.marginTop = '-25px';
 
                     const wrapperC09 = criarBolinhaMesa(obterMesaObjPorNumero("C", 9), setorConfig);
+                    wrapperC09.className += ' ghost-mesa';
                     wrapperC09.style.position = 'absolute';
                     wrapperC09.style.left = '10px';
                     wrapperC09.style.top = '-25px';
@@ -759,6 +763,7 @@ async function verificarSenha() {
                     filaFantasma.appendChild(wrapperC09);
 
                     const wrapperC18 = criarBolinhaMesa(obterMesaObjPorNumero("C", 18), setorConfig);
+                    wrapperC18.className += ' ghost-mesa';
                     wrapperC18.style.position = 'absolute';
                     wrapperC18.style.right = '10px';
                     wrapperC18.style.top = '-25px';
@@ -777,12 +782,14 @@ async function verificarSenha() {
 
                     // FILA FANTASMA 2: C-19 (esquerda) e C-28 (direita), flutuando no vão entre a Fila 2 e a Fila 3
                     const filaFantasma2 = document.createElement('div');
+                    filaFantasma2.className = 'ghost-container';
                     filaFantasma2.style.position = 'relative';
                     filaFantasma2.style.height = '0px';
                     filaFantasma2.style.width = '100%';
                     filaFantasma2.style.marginTop = '-25px';
 
                     const wrapperC19 = criarBolinhaMesa(obterMesaObjPorNumero("C", 19), setorConfig);
+                    wrapperC19.className += ' ghost-mesa';
                     wrapperC19.style.position = 'absolute';
                     wrapperC19.style.left = '10px';
                     wrapperC19.style.top = '-25px';
@@ -790,6 +797,7 @@ async function verificarSenha() {
                     filaFantasma2.appendChild(wrapperC19);
 
                     const wrapperC28 = criarBolinhaMesa(obterMesaObjPorNumero("C", 28), setorConfig);
+                    wrapperC28.className += ' ghost-mesa';
                     wrapperC28.style.position = 'absolute';
                     wrapperC28.style.right = '10px';
                     wrapperC28.style.top = '-25px';
