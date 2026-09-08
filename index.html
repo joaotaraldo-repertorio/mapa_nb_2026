@@ -185,8 +185,11 @@
             /* Bolinhas da Cota Família só um pouco maiores que as demais */
             .tamanho-g { width: 70px !important; height: 70px !important; font-size: 17px !important; }
 
-            /* Aproxima a legenda VENDIDA/RESERVADA da bolinha */
+            /* Aproxima a legenda VENDIDA/RESERVADA da bolinha (tela pública) */
             .texto-acima { margin-bottom: -4px !important; }
+
+            /* No modo Admin (depois da senha), esconde VENDIDA/RESERVADA e mostra só o nome */
+            .modo-admin .texto-acima { display: none !important; }
 
             /* Nome do comprador limitado a 2 linhas, mesmo tamanho em todos os setores */
             .texto-abaixo { color: #000 !important; width: 78px !important; font-size: 11px !important; line-height: 1.15 !important; display: -webkit-box !important; -webkit-line-clamp: 2 !important; -webkit-box-orient: vertical !important; overflow: hidden !important; max-height: 2.4em !important; margin-top: 3px !important; }
@@ -497,6 +500,7 @@ async function verificarSenha() {
         const oitoHoras = 8 * 60 * 60 * 1000;
         if (cache.autorizado && (new Date().getTime() - cache.hora) < oitoHoras) {
             isAdmin = true;
+            document.body.classList.add('modo-admin');
             fecharModalSenha();
             document.getElementById('btn-login').style.display = 'none';
             document.getElementById('botoes-admin').style.display = 'flex';
@@ -520,6 +524,7 @@ async function verificarSenha() {
                 hora: new Date().getTime()
             }));
             isAdmin = true;
+            document.body.classList.add('modo-admin');
             fecharModalSenha();
             document.getElementById('btn-login').style.display = 'none';
             document.getElementById('botoes-admin').style.display = 'flex';
