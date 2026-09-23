@@ -493,26 +493,7 @@ async function verificarSenha() {
     btnEntrar.innerText = "Verificando...";
     btnEntrar.disabled = true;
 
-    // VERIFICA SE JÁ TEM CACHE LOCAL VÁLIDO (expira em 8 horas)
-    const cacheStr = localStorage.getItem('nb_auth');
-    if (cacheStr) {
-        const cache = JSON.parse(cacheStr);
-        const oitoHoras = 8 * 60 * 60 * 1000;
-        if (cache.autorizado && (new Date().getTime() - cache.hora) < oitoHoras) {
-            isAdmin = true;
-            document.body.classList.add('modo-admin');
-            fecharModalSenha();
-            document.getElementById('btn-login').style.display = 'none';
-            document.getElementById('botoes-admin').style.display = 'flex';
-            renderizarMapaDinamico();
-            mostrarAlerta("Acesso à edição liberado com sucesso!", "sucesso");
-            btnEntrar.innerText = "Entrar no Sistema";
-            btnEntrar.disabled = false;
-            return;
-        }
-    }
-
-    // SE NÃO TEM CACHE, VERIFICA NO SERVIDOR
+    // SEMPRE VERIFICA NO SERVIDOR — sem atalhos de cache
     try {
         const response = await fetch(`${API_URL}?acao=verificarSenha&senha=${encodeURIComponent(digitado)}`);
         const resultado = await response.json();
