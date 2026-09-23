@@ -124,9 +124,11 @@
         <div id="aba-dashboard" class="aba-conteudo ativo">
             <div class="cofre-header">
                 <h2><span>📊</span> Painel Financeiro Geral (DRE)</h2>
-                <div style="display: flex; gap: 10px;">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                     <button class="botao-acao" onclick="carregarDadosDaPlanilha()" style="background-color: #3b82f6; color: #fff;">🔄 Atualizar Dados</button>
                     <button class="botao-acao" onclick="exportarBackupExcel()" style="background-color: #10b981; color: #000;">📥 Exportar Backup</button>
+                    <button class="botao-acao" onclick="gerarRelatorioDevedoresTotal()" style="background-color: #ef4444; color: #fff;">📋 Devedores - Total</button>
+                    <button class="botao-acao" onclick="gerarRelatorioDevedoresMensal()" style="background-color: #f59e0b; color: #000;">📅 Devedores - Mês a Mês</button>
                 </div>
             </div>
             
@@ -1173,6 +1175,261 @@ async function gravarDadosFinanceirosServidor() {
     mostrarAlerta(`✅ Backup exportado com sucesso!<br><br>Arquivo: <b>${nomeArquivo}</b><br>Abre direto no Excel, organizado e formatado.`, "sucesso");
 }
 
+// ==========================================
+// RELATÓRIO DE DEVEDORES (TOTAL E MÊS A MÊS)
+// ==========================================
+
+function formatarDataBR(vencimento) {
+    if (!vencimento) return '';
+    let p = vencimento.split('-');
+    if (p.length !== 3) return vencimento;
+    return `${p[2]}/${p[1]}/${p[0]}`;
+}
+
+function obterChaveMes(vencimento) {
+    let p = vencimento.split('-');
+    let ano = p[0], mesNum = parseInt(p[1]);
+    let nomesMeses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+    return { chave: `${ano}-${p[1]}`, label: `${nomesMeses[mesNum - 1]}/${ano}` };
+}
+
+function coletarDevedores() {
+    let semData = [];
+    let porMesa = [];
+    let totalGeral = 0;
+
+    const ordemPrefixos = ['F', 'C', 'P', 'M', 'D'];
+    let mesasOrdenadas = mesasDataBanco.filter(m => {
+        let status = (m.status || 'livre').toLowerCase();
+        return status === 'vendida' || status === 'reservada';
+    }).sort((a, b) => {
+        let pa = ordemPrefixos.indexOf(a.id.charAt(0).toUpperCase());
+        let pb = ordemPrefixos.indexOf(b.id.charAt(0).toUpperCase());
+        if (pa !== pb) return pa - pb;
+        let na = parseInt(a.id.replace(/\D/g, '')) || 0;
+        let nb = parseInt(b.id.replace(/\D/g, '')) || 0;
+        return na - nb;
+    });
+
+    mesasOrdenadas.forEach(m => {
+        let prefixo = m.id.charAt(0).toUpperCase();
+        let setorNome = CONFIG_MESAS[prefixo] ? CONFIG_MESAS[prefixo].nome : 'Sem Setor';
+        let pagadores = [];
+        if (m.detalhesJSON && m.detalhesJSON.trim() !== '') {
+            try {
+                let parsed = JSON.parse(m.detalhesJSON);
+                pagadores = Array.isArray(parsed) ? parsed : [parsed];
+            } catch (e) { pagadores = []; }
+        }
+
+        let itensMesa = [];
+        let subtotalMesa = 0;
+
+        pagadores.forEach(p => {
+            if (!p.parcelas || !Array.isArray(p.parcelas)) return;
+            p.parcelas.forEach(parc => {
+                if (parc.pago) return;
+                let valor = parseFloat(parc.valor) || 0;
+                if (valor <= 0) return;
+
+                let item = {
+                    mesaId: m.id,
+                    setorNome: setorNome,
+                    pagadorNome: p.nome || 'Sem Nome',
+                    numeroParcela: parc.numero,
+                    totalParcelas: p.qtdParcelas || p.parcelas.length,
+                    valor: valor,
+                    vencimento: parc.vencimento || ''
+                };
+                totalGeral += valor;
+
+                if (!item.vencimento) {
+                    semData.push(item);
+                } else {
+                    itensMesa.push(item);
+                    subtotalMesa += valor;
+                }
+            });
+        });
+
+        if (itensMesa.length > 0) {
+            porMesa.push({ id: m.id, setorNome: setorNome, itens: itensMesa, subtotal: subtotalMesa });
+        }
+    });
+
+    let totalSemData = semData.reduce((acc, i) => acc + i.valor, 0);
+
+    return { porMesa, semData, totalSemData, totalGeral };
+}
+
+function montarCabecalhoRelatorioDevedores(titulo, dataHoje, horaAgora) {
+    return `
+        <html><head><meta charset="UTF-8">
+        <style>
+            body { font-family: Arial, sans-serif; margin: 30px; color: #0A192F; background:#fff; }
+            .cabecalho-rel { display:flex; align-items:center; gap:15px; border-bottom: 3px solid #66FFFF; padding-bottom: 12px; margin-bottom: 20px; }
+            .cabecalho-rel img { height: 60px; }
+            .cabecalho-rel h1 { margin: 0; font-size: 20px; color: #0A192F; }
+            .cabecalho-rel p { margin: 4px 0 0 0; font-size: 12px; color: #555; }
+            .mesa-bloco { border: 1px solid #ccc; border-radius: 8px; margin-bottom: 14px; overflow: hidden; page-break-inside: avoid; }
+            .mesa-titulo { background: #0A192F; color: #66FFFF; padding: 8px 15px; font-weight: bold; font-size: 14px; display:flex; justify-content: space-between; }
+            table { width: 100%; border-collapse: collapse; }
+            th { background: #f0f8ff; text-align: left; font-size: 11px; text-transform: uppercase; color: #555; padding: 6px 15px; }
+            td { padding: 6px 15px; font-size: 13px; border-top: 1px solid #eee; }
+            .valor { text-align: right; font-weight: bold; color: #cc0000; }
+            .subtotal-linha td { background: #fafafa; font-weight: bold; border-top: 2px solid #ccc; }
+            .semdata-bloco { border: 2px dashed #f59e0b; border-radius: 8px; margin-top: 10px; margin-bottom: 20px; overflow: hidden; }
+            .semdata-titulo { background: #fff8e1; color: #b45309; padding: 8px 15px; font-weight: bold; font-size: 14px; }
+            .total-geral { background: #0A192F; color: #66FFFF; padding: 15px; border-radius: 8px; text-align: right; font-size: 18px; font-weight: bold; margin-top: 15px; }
+            .rodape { text-align:center; margin-top: 25px; font-size: 11px; color: #888; }
+        </style>
+        </head><body>
+        <div class="cabecalho-rel">
+            <img src="logo.png" onerror="this.style.display='none'">
+            <div>
+                <h1>${titulo}</h1>
+                <p>19ª Noite Beneficente 2026 — Educandário Santo Antônio de Bebedouro</p>
+                <p>Gerado em ${dataHoje} às ${horaAgora}</p>
+            </div>
+        </div>
+    `;
+}
+
+function montarBlocoSemData(dados) {
+    if (dados.semData.length === 0) return '';
+    let html = `
+        <div class="semdata-bloco">
+            <div class="semdata-titulo">⚠️ Parcelas sem data de vencimento definida</div>
+            <table>
+                <thead><tr><th>Mesa</th><th>Pagador</th><th>Parcela</th><th style="text-align:right;">Valor</th></tr></thead>
+                <tbody>
+    `;
+    dados.semData.forEach(item => {
+        html += `
+            <tr>
+                <td>${item.mesaId} — ${item.setorNome}</td>
+                <td>${item.pagadorNome}</td>
+                <td>${item.numeroParcela}/${item.totalParcelas}</td>
+                <td class="valor">R$ ${item.valor.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+            </tr>
+        `;
+    });
+    html += `
+                <tr class="subtotal-linha"><td colspan="3">Subtotal sem data</td><td style="text-align:right;">R$ ${dados.totalSemData.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td></tr>
+            </tbody></table>
+        </div>
+    `;
+    return html;
+}
+
+function abrirJanelaEImprimir(conteudo) {
+    const janela = window.open('', '_blank');
+    janela.document.write(conteudo);
+    janela.document.close();
+    setTimeout(() => { janela.print(); }, 500);
+}
+
+function gerarRelatorioDevedoresTotal() {
+    const dados = coletarDevedores();
+    const dataHoje = new Date().toLocaleDateString('pt-BR');
+    const horaAgora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+    if (dados.porMesa.length === 0 && dados.semData.length === 0) {
+        mostrarAlerta("Nenhum valor pendente encontrado. Parabéns, tudo em dia! 🎉", "sucesso");
+        return;
+    }
+
+    let conteudo = montarCabecalhoRelatorioDevedores("📋 Relatório de Devedores — Visão Total", dataHoje, horaAgora);
+
+    dados.porMesa.forEach(mesa => {
+        conteudo += `
+            <div class="mesa-bloco">
+                <div class="mesa-titulo"><span>Mesa ${mesa.id} — ${mesa.setorNome}</span><span>R$ ${mesa.subtotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span></div>
+                <table>
+                    <thead><tr><th>Pagador</th><th>Parcela</th><th>Vencimento</th><th style="text-align:right;">Valor</th></tr></thead>
+                    <tbody>
+        `;
+        mesa.itens.forEach(item => {
+            conteudo += `
+                <tr>
+                    <td>${item.pagadorNome}</td>
+                    <td>${item.numeroParcela}/${item.totalParcelas}</td>
+                    <td>${formatarDataBR(item.vencimento)}</td>
+                    <td class="valor">R$ ${item.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                </tr>
+            `;
+        });
+        conteudo += `</tbody></table></div>`;
+    });
+
+    conteudo += montarBlocoSemData(dados);
+
+    conteudo += `
+        <div class="total-geral">TOTAL GERAL A RECEBER: R$ ${dados.totalGeral.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+        <div class="rodape">Relatório gerado pelo sistema Mapa de Vendas — Noite Beneficente 2026</div>
+        </body></html>
+    `;
+
+    abrirJanelaEImprimir(conteudo);
+}
+
+function gerarRelatorioDevedoresMensal() {
+    const dados = coletarDevedores();
+    const dataHoje = new Date().toLocaleDateString('pt-BR');
+    const horaAgora = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+    let porMes = {};
+    dados.porMesa.forEach(mesa => {
+        mesa.itens.forEach(item => {
+            let { chave, label } = obterChaveMes(item.vencimento);
+            if (!porMes[chave]) porMes[chave] = { label, itens: [], subtotal: 0 };
+            porMes[chave].itens.push(item);
+            porMes[chave].subtotal += item.valor;
+        });
+    });
+
+    let chavesOrdenadas = Object.keys(porMes).sort();
+
+    if (chavesOrdenadas.length === 0 && dados.semData.length === 0) {
+        mostrarAlerta("Nenhum valor pendente encontrado. Parabéns, tudo em dia! 🎉", "sucesso");
+        return;
+    }
+
+    let conteudo = montarCabecalhoRelatorioDevedores("📅 Relatório de Devedores — Mês a Mês", dataHoje, horaAgora);
+
+    chavesOrdenadas.forEach(chave => {
+        let bloco = porMes[chave];
+        conteudo += `
+            <div class="mesa-bloco">
+                <div class="mesa-titulo"><span>🗓️ ${bloco.label}</span><span>R$ ${bloco.subtotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span></div>
+                <table>
+                    <thead><tr><th>Mesa</th><th>Pagador</th><th>Parcela</th><th>Vencimento</th><th style="text-align:right;">Valor</th></tr></thead>
+                    <tbody>
+        `;
+        bloco.itens.forEach(item => {
+            conteudo += `
+                <tr>
+                    <td>${item.mesaId} — ${item.setorNome}</td>
+                    <td>${item.pagadorNome}</td>
+                    <td>${item.numeroParcela}/${item.totalParcelas}</td>
+                    <td>${formatarDataBR(item.vencimento)}</td>
+                    <td class="valor">R$ ${item.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                </tr>
+            `;
+        });
+        conteudo += `</tbody></table></div>`;
+    });
+
+    conteudo += montarBlocoSemData(dados);
+
+    conteudo += `
+        <div class="total-geral">TOTAL GERAL A RECEBER: R$ ${dados.totalGeral.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+        <div class="rodape">Relatório gerado pelo sistema Mapa de Vendas — Noite Beneficente 2026</div>
+        </body></html>
+    `;
+
+    abrirJanelaEImprimir(conteudo);
+}
 
     </script>
 </body>
