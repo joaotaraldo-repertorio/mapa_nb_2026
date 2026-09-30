@@ -766,7 +766,7 @@ async function verificarSenha() {
                     }
                     divSetor.appendChild(fila2);
 
-                   // FILA FANTASMA 2: P-01 (esquerda, era C-19) e C-28 (direita), flutuando no vão entre a Fila 2 e a Fila 3
+                   // FILA FANTASMA 2: P-01 (esquerda, era C-19) e C-27 (direita, era C-28), flutuando no vão entre a Fila 2 e a Fila 3
                     const filaFantasma2 = document.createElement('div');
                     filaFantasma2.className = 'ghost-container';
                     filaFantasma2.style.position = 'relative';
@@ -782,23 +782,24 @@ async function verificarSenha() {
                     wrapperP01.style.zIndex = '3';
                     filaFantasma2.appendChild(wrapperP01);
 
-                    const wrapperC28 = criarBolinhaMesa(obterMesaObjPorNumero("C", 28), setorConfig);
-                    wrapperC28.className += ' ghost-mesa';
-                    wrapperC28.style.position = 'absolute';
-                    wrapperC28.style.right = '10px';
-                    wrapperC28.style.top = '-25px';
-                    wrapperC28.style.zIndex = '3';
-                    filaFantasma2.appendChild(wrapperC28);
+                    const wrapperC27 = criarBolinhaMesa(obterMesaObjPorNumero("C", 27), setorConfig);
+                    wrapperC27.className += ' ghost-mesa';
+                    wrapperC27.style.position = 'absolute';
+                    wrapperC27.style.right = '10px';
+                    wrapperC27.style.top = '-25px';
+                    wrapperC27.style.zIndex = '3';
+                    filaFantasma2.appendChild(wrapperC27);
 
                     divSetor.appendChild(filaFantasma2);
 
-                    // FILA 3: P-02 (era C-20) + C-21 a C-27
+                    // FILA 3: P-02 (era C-20) + C-21 a C-26 + P-03 (era C-27)
                     const fila3 = document.createElement('div');
                     fila3.className = 'fileira-mesas fileira-compacta-crianca';
                     fila3.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("P", 2), CONFIG_MESAS["Premium"]));
-                    for (let n = 21; n <= 27; n++) {
+                    for (let n = 21; n <= 26; n++) {
                         fila3.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("C", n), setorConfig));
                     }
+                    fila3.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("P", 3), CONFIG_MESAS["Premium"]));
                     divSetor.appendChild(fila3);
 
                     
@@ -909,8 +910,8 @@ async function verificarSenha() {
                         } else if (typeof item === "number") {
                             for (let i = 0; i < item; i++) {
 
-                                // NO SETOR PREMIUM, AS MESAS 1 E 2 (P-01 E P-02) JÁ APARECEM NA COTA CRIANÇA — não desenha aqui de novo
-                                if (chave === "Premium" && (numeroEsperadoNaPosicaoFisica === 1 || numeroEsperadoNaPosicaoFisica === 2)) {
+                                // NO SETOR PREMIUM, AS MESAS 1, 2 E 3 (P-01, P-02 E P-03) JÁ APARECEM NA COTA CRIANÇA — não desenha aqui de novo
+                                if (chave === "Premium" && (numeroEsperadoNaPosicaoFisica === 1 || numeroEsperadoNaPosicaoFisica === 2 || numeroEsperadoNaPosicaoFisica === 3)) {
                                     numeroEsperadoNaPosicaoFisica++;
                                     continue;
                                 }
