@@ -199,6 +199,8 @@
             .fileira-mesas { break-inside: avoid; page-break-inside: avoid; margin-bottom: 10px !important;}
             .ghost-container { margin-top: -20px !important; }
             .ghost-mesa { top: -20px !important; }
+            .ghost-mesa.ghost-p01 { top: 5px !important; }
+            .c28-topo-flutuante { top: -5px !important; }
             .wrapper-mesa { break-inside: avoid; page-break-inside: avoid; }
             
             .tarja-lateral { break-inside: avoid !important; page-break-inside: avoid !important; }
@@ -726,6 +728,7 @@ async function verificarSenha() {
                 if (chave === "Crianca") {
                     // C-28 flutuando acima da Fila 1, alinhada à direita (mesma coluna de C-18/C-27)
                     const wrapperC28Topo = criarBolinhaMesa(obterMesaObjPorNumero("C", 28), setorConfig);
+                    wrapperC28Topo.className += ' c28-topo-flutuante';
                     wrapperC28Topo.style.position = 'absolute';
                     wrapperC28Topo.style.right = '30px';
                     wrapperC28Topo.style.top = '15px';
@@ -783,7 +786,7 @@ async function verificarSenha() {
                     filaFantasma2.style.marginTop = '-25px';
 
                     const wrapperP01 = criarBolinhaMesa(obterMesaObjPorNumero("P", 1), CONFIG_MESAS["Premium"]);
-                    wrapperP01.className += ' ghost-mesa';
+                    wrapperP01.className += ' ghost-mesa ghost-p01';
                     wrapperP01.style.position = 'absolute';
                     wrapperP01.style.left = '10px';
                     wrapperP01.style.top = '25px';
