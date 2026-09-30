@@ -724,6 +724,12 @@ async function verificarSenha() {
                 // CASO ESPECIAL: COTA CRIANÇA (fila fantasma + P-11 camuflada)
                 // ================================================
                 if (chave === "Crianca") {
+                    // C-28 flutuando acima da Fila 1
+                    const wrapperC28Topo = criarBolinhaMesa(obterMesaObjPorNumero("C", 28), setorConfig);
+                    wrapperC28Topo.style.position = 'relative';
+                    wrapperC28Topo.style.margin = '0 auto 8px auto';
+                    divSetor.appendChild(wrapperC28Topo);
+
                     // FILA 1: C-01 a C-08
                     const fila1 = document.createElement('div');
                     fila1.className = 'fileira-mesas fileira-compacta-crianca';
@@ -778,7 +784,7 @@ async function verificarSenha() {
                     wrapperP01.className += ' ghost-mesa';
                     wrapperP01.style.position = 'absolute';
                     wrapperP01.style.left = '10px';
-                    wrapperP01.style.top = '-25px';
+                    wrapperP01.style.top = '-8px';
                     wrapperP01.style.zIndex = '3';
                     filaFantasma2.appendChild(wrapperP01);
 
@@ -936,15 +942,7 @@ async function verificarSenha() {
                     divSetor.appendChild(divFileira);
                 });
 
-                if (chave === "Familia") {
-                    const wrapperC28Familia = criarBolinhaMesa(obterMesaObjPorNumero("C", 28), CONFIG_MESAS["Crianca"]);
-                    wrapperC28Familia.style.position = 'absolute';
-                    wrapperC28Familia.style.bottom = '8px';
-                    wrapperC28Familia.style.right = '40px';
-                    wrapperC28Familia.style.zIndex = '3';
-                    divSetor.appendChild(wrapperC28Familia);
-                }
-
+                
                 container.appendChild(divSetor);
             }
 
