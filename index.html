@@ -370,7 +370,7 @@
         };
 
        const CONFIG_MESAS = {
-            "Familia": { prefixo: "F", nome: "Cota Família", classeTamanho: "tamanho-g", corNormal: "#FFFF00", corVendida: "#FFFFD1", layout: [ [5], [6] ], bgTranslucido: "rgba(255, 255, 0, 0.08)", bordaFina: "rgba(255, 255, 0, 0.3)" },
+            "Familia": { prefixo: "F", nome: "Cota Família", classeTamanho: "tamanho-g", corNormal: "#FFFF00", corVendida: "#FFFFD1", layout: [ [5], [5] ], bgTranslucido: "rgba(255, 255, 0, 0.08)", bordaFina: "rgba(255, 255, 0, 0.3)" },
             "Crianca": { prefixo: "C", nome: "Cota Criança", classeTamanho: "tamanho-pp", compacto: true, corNormal: "#00FFFF", corVendida: "#66CCCC", layout: [ [7], [7], [7], [7] ], totalMesas: 28, bgTranslucido: "rgba(0, 255, 255, 0.08)", bordaFina: "rgba(0, 255, 255, 0.3)" },
             "Premium": { prefixo: "P", nome: "Mesa Premium", classeTamanho: "tamanho-pp", compacto: true, corNormal: "#47D359", corVendida: "#75D982", layout: [ [13] ], bgTranslucido: "rgba(71, 211, 89, 0.08)", bordaFina: "rgba(71, 211, 89, 0.3)" },
             "Master": { prefixo: "M", nome: "Mesa Master", classeTamanho: "tamanho-pp", compacto: true, corNormal: "#FF9900", corVendida: "#FFE2B7", layout: [ [11], [11] ], bgTranslucido: "rgba(255, 153, 0, 0.08)", bordaFina: "rgba(255, 153, 0, 0.3)" },
@@ -934,6 +934,15 @@ async function verificarSenha() {
                     });
                     divSetor.appendChild(divFileira);
                 });
+
+                if (chave === "Familia") {
+                    const wrapperC28Familia = criarBolinhaMesa(obterMesaObjPorNumero("C", 28), CONFIG_MESAS["Crianca"]);
+                    wrapperC28Familia.style.position = 'absolute';
+                    wrapperC28Familia.style.bottom = '8px';
+                    wrapperC28Familia.style.right = '40px';
+                    wrapperC28Familia.style.zIndex = '3';
+                    divSetor.appendChild(wrapperC28Familia);
+                }
 
                 container.appendChild(divSetor);
             }
