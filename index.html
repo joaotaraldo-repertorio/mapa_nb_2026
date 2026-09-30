@@ -766,7 +766,7 @@ async function verificarSenha() {
                     }
                     divSetor.appendChild(fila2);
 
-                    // FILA FANTASMA 2: C-19 (esquerda) e C-28 (direita), flutuando no vão entre a Fila 2 e a Fila 3
+                   // FILA FANTASMA 2: P-01 (esquerda, era C-19) e C-28 (direita), flutuando no vão entre a Fila 2 e a Fila 3
                     const filaFantasma2 = document.createElement('div');
                     filaFantasma2.className = 'ghost-container';
                     filaFantasma2.style.position = 'relative';
@@ -774,13 +774,13 @@ async function verificarSenha() {
                     filaFantasma2.style.width = '100%';
                     filaFantasma2.style.marginTop = '-25px';
 
-                    const wrapperC19 = criarBolinhaMesa(obterMesaObjPorNumero("C", 19), setorConfig);
-                    wrapperC19.className += ' ghost-mesa';
-                    wrapperC19.style.position = 'absolute';
-                    wrapperC19.style.left = '10px';
-                    wrapperC19.style.top = '-25px';
-                    wrapperC19.style.zIndex = '3';
-                    filaFantasma2.appendChild(wrapperC19);
+                    const wrapperP01 = criarBolinhaMesa(obterMesaObjPorNumero("P", 1), CONFIG_MESAS["Premium"]);
+                    wrapperP01.className += ' ghost-mesa';
+                    wrapperP01.style.position = 'absolute';
+                    wrapperP01.style.left = '10px';
+                    wrapperP01.style.top = '-25px';
+                    wrapperP01.style.zIndex = '3';
+                    filaFantasma2.appendChild(wrapperP01);
 
                     const wrapperC28 = criarBolinhaMesa(obterMesaObjPorNumero("C", 28), setorConfig);
                     wrapperC28.className += ' ghost-mesa';
@@ -792,10 +792,11 @@ async function verificarSenha() {
 
                     divSetor.appendChild(filaFantasma2);
 
-                    // FILA 3: C-20 a C-27 (as antigas P-11 e P-12 agora são Cota Criança de verdade)
+                    // FILA 3: P-02 (era C-20) + C-21 a C-27
                     const fila3 = document.createElement('div');
                     fila3.className = 'fileira-mesas fileira-compacta-crianca';
-                    for (let n = 20; n <= 27; n++) {
+                    fila3.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("P", 2), CONFIG_MESAS["Premium"]));
+                    for (let n = 21; n <= 27; n++) {
                         fila3.appendChild(criarBolinhaMesa(obterMesaObjPorNumero("C", n), setorConfig));
                     }
                     divSetor.appendChild(fila3);
