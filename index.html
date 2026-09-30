@@ -908,6 +908,12 @@ async function verificarSenha() {
                             divFileira.appendChild(divGap);
                         } else if (typeof item === "number") {
                             for (let i = 0; i < item; i++) {
+
+                                // NO SETOR PREMIUM, AS MESAS 1 E 2 (P-01 E P-02) JÁ APARECEM NA COTA CRIANÇA — não desenha aqui de novo
+                                if (chave === "Premium" && (numeroEsperadoNaPosicaoFisica === 1 || numeroEsperadoNaPosicaoFisica === 2)) {
+                                    numeroEsperadoNaPosicaoFisica++;
+                                    continue;
+                                }
                                 
                                 let mesaEncontrada = listaMesasDaPlanilha.find(m => {
                                     let numMesaPlanilha = parseInt(m.id.replace(/\D/g, '')) || 0;
