@@ -200,9 +200,12 @@
         <div id="aba-custos" class="aba-conteudo">
             <div class="cofre-header">
                 <h2><span>💸</span> Gestão de Custos e Despesas</h2>
-                <div style="display: flex; gap: 10px; align-items: center;">
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
                     <select id="filtro-categoria-custos" class="seletor-mesas" onchange="renderizarTabelaCustos()" style="border-color: #ef4444; color: #ef4444;">
                         <option value="TODAS">Mostrando: Todas as Categorias</option>
+                    </select>
+                    <select id="filtro-fornecedor-custos" class="seletor-mesas" onchange="renderizarTabelaCustos()" style="border-color: #f59e0b; color: #f59e0b;">
+                        <option value="TODOS">Mostrando: Todos os Fornecedores</option>
                     </select>
                     <button class="botao-acao" onclick="abrirModalCusto()" style="background-color: #ef4444; color: #fff; font-size: 16px;">➕ Lançar Nova Despesa</button>
                 </div>
@@ -461,6 +464,24 @@
             let valorAtual = filtro.value; 
             filtro.innerHTML = '<option value="TODAS">Mostrando: Todas as Categorias</option>' + todasCategorias.map(c => `<option value="${c}">Filtrar: ${c}</option>`).join('');
             filtro.value = valorAtual || "TODAS";
+            atualizarFiltroFornecedores();
+        }
+
+        function normalizarFornecedor(texto) {
+            return (texto || '').toString().trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        }
+
+        function atualizarFiltroFornecedores() {
+            let filtroF = document.getElementById('filtro-fornecedor-custos');
+            let valorAtualF = filtroF.value;
+            let mapaNomes = {};
+            custosDataBanco.forEach(c => {
+                let chave = normalizarFornecedor(c.fornecedor);
+                if (chave && !mapaNomes[chave]) mapaNomes[chave] = c.fornecedor.toString().trim();
+            });
+            let chaves = Object.keys(mapaNomes).sort((a, b) => mapaNomes[a].localeCompare(mapaNomes[b], 'pt-BR'));
+            filtroF.innerHTML = '<option value="TODOS">Mostrando: Todos os Fornecedores</option>' + chaves.map(k => `<option value="${k.replace(/"/g, '&quot;')}">Filtrar: ${mapaNomes[k]}</option>`).join('');
+            filtroF.value = (valorAtualF && mapaNomes[valorAtualF]) ? valorAtualF : "TODOS";
         }
 
         window.onload = async function() {
@@ -782,7 +803,9 @@
         function renderizarTabelaCustos() {
             const tbody = document.getElementById('tbodyCustos'); const tfoot = document.getElementById('tfootCustos'); tbody.innerHTML = ''; tfoot.innerHTML = '';
             let filtroSelecionado = document.getElementById('filtro-categoria-custos').value; let custosFiltrados = custosDataBanco;
-            if (filtroSelecionado !== "TODAS") custosFiltrados = custosDataBanco.filter(c => c.categoria === filtroSelecionado);
+            if (filtroSelecionado !== "TODAS") custosFiltrados = custosFiltrados.filter(c => c.categoria === filtroSelecionado);
+            let filtroFornecedor = document.getElementById('filtro-fornecedor-custos').value;
+            if (filtroFornecedor !== "TODOS") custosFiltrados = custosFiltrados.filter(c => normalizarFornecedor(c.fornecedor) === filtroFornecedor);
             if(custosFiltrados.length === 0) { tbody.innerHTML = '<tr><td style="text-align:center;" colspan="5">Nenhuma despesa encontrada nesta visão.</td></tr>'; return; }
             let somaVisaoAtual = 0;
             custosFiltrados.forEach(c => {
