@@ -215,8 +215,8 @@
                 <table class="tabela-financeira" style="border-bottom: 2px solid #ef4444; min-width: 900px;">
                     <thead>
                         <tr>
-                            <th style="border-bottom-color: #ef4444;">Categoria</th>
-                            <th style="border-bottom-color: #ef4444;">Fornecedor / Descrição</th>
+                            <th style="border-bottom-color: #ef4444; cursor: pointer; user-select: none;" onclick="ordenarCustosPor('categoria')" title="Clique para ordenar por Categoria">Categoria<span id="setaOrdemCategoria"></span></th>
+                            <th style="border-bottom-color: #ef4444; cursor: pointer; user-select: none;" onclick="ordenarCustosPor('fornecedor')" title="Clique para ordenar por Fornecedor">Fornecedor / Descrição<span id="setaOrdemFornecedor"></span></th>
                             <th style="border-bottom-color: #ef4444;">Qtd</th>
                             <th style="border-bottom-color: #ef4444;">Valor Unit.</th>
                             <th style="border-bottom-color: #ef4444;">Valor Total</th>
@@ -802,12 +802,48 @@
             } catch(e) { mostrarAlerta("Erro ao excluir.", "erro"); }
         }
 
-                function renderizarTabelaCustos() {
+                    // ORDENAÇÃO DA TABELA DE CUSTOS (clique no título da coluna)
+        let ordemCustosColuna = null;   // 'categoria', 'fornecedor' ou null (ordem original)
+        let ordemCustosAscendente = true;
+
+        function ordenarCustosPor(coluna) {
+            if (ordemCustosColuna === coluna) { ordemCustosAscendente = !ordemCustosAscendente; }
+            else { ordemCustosColuna = coluna; ordemCustosAscendente = true; }
+            renderizarTabelaCustos();
+        }
+
+        function comparaTextoCustos(a, b) {
+            return String(a || '').localeCompare(String(b || ''), 'pt-BR', { sensitivity: 'base' });
+        }
+
+        function renderizarTabelaCustos() {
             const tbody = document.getElementById('tbodyCustos'); const tfoot = document.getElementById('tfootCustos'); tbody.innerHTML = ''; tfoot.innerHTML = '';
             let filtroSelecionado = document.getElementById('filtro-categoria-custos').value; let custosFiltrados = custosDataBanco;
             if (filtroSelecionado !== "TODAS") custosFiltrados = custosFiltrados.filter(c => c.categoria === filtroSelecionado);
             let filtroFornecedor = document.getElementById('filtro-fornecedor-custos').value;
             if (filtroFornecedor !== "TODOS") custosFiltrados = custosFiltrados.filter(c => normalizarFornecedor(c.fornecedor) === filtroFornecedor);
+
+            // Setinhas ▲ ▼ nos títulos das colunas
+            const setaCat = document.getElementById('setaOrdemCategoria'); const setaForn = document.getElementById('setaOrdemFornecedor');
+            const simboloSeta = ordemCustosAscendente ? ' ▲' : ' ▼';
+            if (setaCat) setaCat.innerText = (ordemCustosColuna === 'categoria') ? simboloSeta : '';
+            if (setaForn) setaForn.innerText = (ordemCustosColuna === 'fornecedor') ? simboloSeta : '';
+
+            // Ordena uma CÓPIA da lista (a lista original do banco não é alterada)
+            if (ordemCustosColuna) {
+                custosFiltrados = custosFiltrados.slice().sort((x, y) => {
+                    let r;
+                    if (ordemCustosColuna === 'categoria') {
+                        r = comparaTextoCustos(x.categoria, y.categoria);
+                        if (r === 0) r = comparaTextoCustos(x.fornecedor, y.fornecedor);
+                    } else {
+                        r = comparaTextoCustos(x.fornecedor, y.fornecedor);
+                        if (r === 0) r = comparaTextoCustos(x.descricao, y.descricao);
+                    }
+                    return ordemCustosAscendente ? r : -r;
+                });
+            }
+
             if(custosFiltrados.length === 0) { tbody.innerHTML = '<tr><td style="text-align:center;" colspan="6">Nenhuma despesa encontrada nesta visão.</td></tr>'; return; }
             let somaVisaoAtual = 0;
             custosFiltrados.forEach(c => {
