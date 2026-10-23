@@ -218,6 +218,7 @@
                             <th style="border-bottom-color: #ef4444;">Categoria</th>
                             <th style="border-bottom-color: #ef4444;">Fornecedor / Descrição</th>
                             <th style="border-bottom-color: #ef4444;">Qtd</th>
+                            <th style="border-bottom-color: #ef4444;">Valor Unit.</th>
                             <th style="border-bottom-color: #ef4444;">Valor Total</th>
                             <th style="border-bottom-color: #ef4444; text-align: center;">Aprovado / Ações</th>
                         </tr>
@@ -801,29 +802,31 @@
             } catch(e) { mostrarAlerta("Erro ao excluir.", "erro"); }
         }
 
-        function renderizarTabelaCustos() {
+                function renderizarTabelaCustos() {
             const tbody = document.getElementById('tbodyCustos'); const tfoot = document.getElementById('tfootCustos'); tbody.innerHTML = ''; tfoot.innerHTML = '';
             let filtroSelecionado = document.getElementById('filtro-categoria-custos').value; let custosFiltrados = custosDataBanco;
             if (filtroSelecionado !== "TODAS") custosFiltrados = custosFiltrados.filter(c => c.categoria === filtroSelecionado);
             let filtroFornecedor = document.getElementById('filtro-fornecedor-custos').value;
             if (filtroFornecedor !== "TODOS") custosFiltrados = custosFiltrados.filter(c => normalizarFornecedor(c.fornecedor) === filtroFornecedor);
-            if(custosFiltrados.length === 0) { tbody.innerHTML = '<tr><td style="text-align:center;" colspan="5">Nenhuma despesa encontrada nesta visão.</td></tr>'; return; }
+            if(custosFiltrados.length === 0) { tbody.innerHTML = '<tr><td style="text-align:center;" colspan="6">Nenhuma despesa encontrada nesta visão.</td></tr>'; return; }
             let somaVisaoAtual = 0;
             custosFiltrados.forEach(c => {
                 somaVisaoAtual += parseFloat(c.valorTotal) || 0;
+                let valorUnitarioExibido = parseFloat(c.valorUnit) || 0;
+                if (!valorUnitarioExibido) { let qtdCalc = parseInt(c.qtd) || 1; valorUnitarioExibido = (parseFloat(c.valorTotal) || 0) / qtdCalc; }
                 let htmlObs = c.obs ? `<br><span style="font-size: 12px; color: #f59e0b; font-style: italic;">📝 Obs: ${c.obs}</span>` : '';
                 let botoesAcao = `<button class="btn-editar" onclick="editarCusto('${c.id}')" title="Editar">✏️</button><button class="btn-remover" onclick="confirmarExclusaoCusto('${c.id}')" title="Excluir">🗑️</button>`;
                 if(c.travada) botoesAcao = `<span style="font-size: 18px;" title="Despesa Aprovada e Travada">🔒</span>`;
                 let tr = document.createElement('tr'); tr.className = c.travada ? 'linha-custo travada' : 'linha-custo';
                 tr.innerHTML = `<td style="text-align: left; font-size: 14px; font-weight: normal; color: var(--ciano-destaque);">${c.categoria}</td>
                     <td style="text-align: left; font-size: 15px;">${c.fornecedor}<br><span style="font-size: 13px; color: #8892b0; font-weight: normal;">${c.descricao}</span>${htmlObs}</td>
-                    <td>${c.qtd}x</td><td style="color: #ef4444;">${formatarMoeda(c.valorTotal)}</td>
+                    <td>${c.qtd}x</td><td style="color: #8892b0;">${formatarMoeda(valorUnitarioExibido)}</td><td style="color: #ef4444;">${formatarMoeda(c.valorTotal)}</td>
                     <td style="text-align: center; display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 45px;">
                         <input type="checkbox" style="width: 18px; height: 18px; cursor: pointer; margin-right: 10px;" ${c.travada ? 'checked' : ''} onchange="travarCusto('${c.id}', this.checked)" title="Marcar como Aprovado">${botoesAcao}
                     </td>`;
                 tbody.appendChild(tr);
             });
-            tfoot.innerHTML = `<tr><td colspan="3" style="text-align: right; font-size: 16px; color: #fff;">TOTAL DESTA VISÃO:</td><td style="color: #ef4444; font-size: 20px;">${formatarMoeda(somaVisaoAtual)}</td><td></td></tr>`;
+            tfoot.innerHTML = `<tr><td colspan="4" style="text-align: right; font-size: 16px; color: #fff;">TOTAL DESTA VISÃO:</td><td style="color: #ef4444; font-size: 20px;">${formatarMoeda(somaVisaoAtual)}</td><td></td></tr>`;
         }
 
         // ==========================================
