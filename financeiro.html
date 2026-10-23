@@ -129,6 +129,7 @@
                     <button class="botao-acao" onclick="exportarBackupExcel()" style="background-color: #10b981; color: #000;">📥 Exportar Backup</button>
                     <button class="botao-acao" onclick="gerarRelatorioDevedoresTotal()" style="background-color: #ef4444; color: #fff;">📋 Devedores - Total</button>
                     <button class="botao-acao" onclick="gerarRelatorioDevedoresMensal()" style="background-color: #f59e0b; color: #000;">📅 Devedores - Mês a Mês</button>
+                    <button class="botao-acao" onclick="if (typeof gerarRelatorioRecebimentos === 'function') { gerarRelatorioRecebimentos(); } else { alert('Relatório em preparação.'); }" style="background-color: #8b5cf6; color: #fff;">📈 Recebimentos Mês a Mês</button>
                 </div>
             </div>
             
@@ -1453,6 +1454,164 @@ function gerarRelatorioDevedoresMensal() {
 
     abrirJanelaEImprimir(conteudo);
 }
+
+        // ==========================================
+        // RELATÓRIO: RECEBIMENTOS MÊS A MÊS (apresentação)
+        // ==========================================
+        function agregarRecebimentosPorMes(listaMesas) {
+            const meses = {};
+            const semData = { recebido: 0, aReceber: 0 };
+            (listaMesas || []).forEach(m => {
+                const status = String(m.status || 'livre').toLowerCase();
+                if (status !== 'vendida' && status !== 'reservada') return;
+                let pagadores = [];
+                try {
+                    if (m.detalhesJSON && String(m.detalhesJSON).trim() !== '') {
+                        const parsed = JSON.parse(m.detalhesJSON);
+                        if (Array.isArray(parsed)) pagadores = parsed;
+                        else if (parsed && typeof parsed === 'object') pagadores = [parsed];
+                    }
+                } catch (e) { pagadores = []; }
+                pagadores.forEach(p => {
+                    if (!p || !Array.isArray(p.parcelas)) return;
+                    p.parcelas.forEach(parc => {
+                        const valor = parseFloat(parc.valor) || 0;
+                        if (valor <= 0) return;
+                        const venc = String(parc.vencimento || '');
+                        let alvo;
+                        if (/^\d{4}-\d{2}-\d{2}$/.test(venc)) {
+                            const chave = venc.substring(0, 7);
+                            if (!meses[chave]) meses[chave] = { recebido: 0, aReceber: 0 };
+                            alvo = meses[chave];
+                        } else { alvo = semData; }
+                        if (parc.pago) alvo.recebido += valor; else alvo.aReceber += valor;
+                    });
+                });
+            });
+            return { meses, semData };
+        }
+
+        function montarLinhaDoTempoMeses(meses) {
+            const chaves = Object.keys(meses).sort();
+            if (chaves.length === 0) return [];
+            let [a, m] = chaves[0].split('-').map(Number);
+            const [af, mf] = chaves[chaves.length - 1].split('-').map(Number);
+            const lista = [];
+            while (a < af || (a === af && m <= mf)) {
+                const k = a + '-' + String(m).padStart(2, '0');
+                const d = meses[k] || { recebido: 0, aReceber: 0 };
+                lista.push({ ano: a, mes: m, recebido: d.recebido, aReceber: d.aReceber });
+                m++; if (m > 12) { m = 1; a++; }
+            }
+            return lista;
+        }
+
+        function gerarRelatorioRecebimentos() {
+            const { meses, semData } = agregarRecebimentosPorMes(mesasDataBanco);
+            const linha = montarLinhaDoTempoMeses(meses);
+            const NOMES = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+            const pct = (r, t) => t > 0 ? Math.round((r / t) * 100) : 0;
+
+            let totRec = semData.recebido, totRes = semData.aReceber;
+            linha.forEach(l => { totRec += l.recebido; totRes += l.aReceber; });
+            const totGeral = totRec + totRes;
+
+            let linhasHtml = '';
+            let anoAtual = null, accRec = 0, accRes = 0;
+            const fechaAno = () => {
+                if (anoAtual === null) return;
+                linhasHtml += `<tr class="total-ano"><td>TOTAL ${anoAtual}</td><td class="v">${formatarMoeda(accRec)}</td><td class="r">${formatarMoeda(accRes)}</td><td class="t">${formatarMoeda(accRec + accRes)}</td><td></td></tr>`;
+            };
+            linha.forEach(l => {
+                if (l.ano !== anoAtual) {
+                    fechaAno();
+                    anoAtual = l.ano; accRec = 0; accRes = 0;
+                    linhasHtml += `<tr class="ano"><td colspan="5">${l.ano}</td></tr>`;
+                }
+                accRec += l.recebido; accRes += l.aReceber;
+                const t = l.recebido + l.aReceber;
+                const pr = pct(l.recebido, t);
+                const vazio = t === 0;
+                linhasHtml += `<tr class="${vazio ? 'vazio' : ''}"><td>${NOMES[l.mes - 1]}/${l.ano}</td><td class="v">${formatarMoeda(l.recebido)}</td><td class="r">${formatarMoeda(l.aReceber)}</td><td class="t">${formatarMoeda(t)}</td><td><div class="barra"><span style="width:${pr}%"></span></div></td></tr>`;
+            });
+            fechaAno();
+
+            const semDataTotal = semData.recebido + semData.aReceber;
+            const blocoSemData = semDataTotal > 0 ? `
+                <div class="sem-data">
+                    <h3>Lançamentos sem data definida</h3>
+                    <div class="sd-linha"><span>Recebido</span><b class="v">${formatarMoeda(semData.recebido)}</b></div>
+                    <div class="sd-linha"><span>A receber</span><b class="r">${formatarMoeda(semData.aReceber)}</b></div>
+                    <div class="sd-linha"><span>Total</span><b class="t">${formatarMoeda(semDataTotal)}</b></div>
+                </div>` : '';
+
+            const logoUrl = new URL('logo.png', window.location.href).href;
+            const dataHoje = new Date().toLocaleDateString('pt-BR');
+            const tabela = linha.length > 0 ? `
+                <table>
+                    <thead><tr><th>Mês / Ano</th><th>Recebido</th><th>A receber</th><th>Total do mês</th><th>% recebido</th></tr></thead>
+                    <tbody>${linhasHtml}</tbody>
+                </table>` : '<p style="text-align:center;color:#8892b0;">Nenhuma parcela com data de vencimento encontrada.</p>';
+
+            const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
+            <title>Recebimentos Mês a Mês - Noite Beneficente</title>
+            <style>
+                * { box-sizing: border-box; }
+                body { margin: 0; padding: 30px; background: #0A192F; color: #e6f1ff; font-family: 'Segoe UI', Arial, sans-serif; }
+                .topo { display: flex; align-items: center; gap: 18px; border-bottom: 2px solid #66FFFF; padding-bottom: 16px; margin-bottom: 24px; }
+                .topo img { height: 70px; }
+                .topo h1 { margin: 0; color: #66FFFF; font-size: 26px; }
+                .topo p { margin: 4px 0 0; color: #8892b0; font-size: 13px; }
+                .cards { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 26px; }
+                .card { flex: 1; min-width: 200px; background: #112240; border-radius: 10px; padding: 18px; border-top: 4px solid #66FFFF; }
+                .card small { color: #8892b0; text-transform: uppercase; letter-spacing: 1px; font-size: 11px; }
+                .card .n { font-size: 26px; font-weight: bold; margin-top: 8px; }
+                .card.verde { border-top-color: #10b981; } .card.verde .n { color: #10b981; }
+                .card.ambar { border-top-color: #f59e0b; } .card.ambar .n { color: #f59e0b; }
+                .card.ciano .n { color: #66FFFF; }
+                .prog { height: 10px; background: #233554; border-radius: 6px; margin-top: 10px; overflow: hidden; }
+                .prog span { display: block; height: 100%; background: #10b981; }
+                table { width: 100%; border-collapse: collapse; background: #112240; border-radius: 10px; overflow: hidden; }
+                th { background: #0d1f3c; color: #66FFFF; text-align: right; padding: 12px; font-size: 12px; text-transform: uppercase; }
+                th:first-child { text-align: left; }
+                td { padding: 11px 12px; text-align: right; border-bottom: 1px solid #1d2d50; font-size: 15px; }
+                td:first-child { text-align: left; font-weight: 600; }
+                .v { color: #10b981; } .r { color: #f59e0b; } .t { color: #e6f1ff; font-weight: bold; }
+                tr.ano td { background: #0d1f3c; color: #66FFFF; font-weight: bold; text-align: left; letter-spacing: 2px; }
+                tr.total-ano td { background: #162b50; font-weight: bold; border-bottom: 2px solid #66FFFF; }
+                tr.vazio td { color: #4a5a7a; } tr.vazio .v, tr.vazio .r, tr.vazio .t { color: #4a5a7a; }
+                .barra { height: 8px; background: #f59e0b55; border-radius: 6px; overflow: hidden; min-width: 90px; }
+                .barra span { display: block; height: 100%; background: #10b981; }
+                .sem-data { margin-top: 26px; border: 2px dashed #f59e0b; border-radius: 10px; padding: 18px; background: #112240; }
+                .sem-data h3 { margin: 0 0 12px; color: #f59e0b; }
+                .sd-linha { display: flex; justify-content: space-between; padding: 6px 0; font-size: 16px; }
+                .geral { margin-top: 26px; background: #112240; border: 2px solid #66FFFF; border-radius: 10px; padding: 20px; }
+                .geral h3 { margin: 0 0 12px; color: #66FFFF; letter-spacing: 1px; }
+                .geral .g-linha { display: flex; justify-content: space-between; padding: 6px 0; font-size: 18px; }
+                .nota { margin-top: 20px; color: #8892b0; font-size: 12px; line-height: 1.5; }
+                @media print { body { background: #0A192F; -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
+            </style></head><body>
+            <div class="topo"><img src="${logoUrl}" alt="Logo" onerror="this.style.display='none'">
+                <div><h1>Recebimentos Mês a Mês</h1><p>Noite Beneficente • Posição em ${dataHoje}</p></div></div>
+            <div class="cards">
+                <div class="card verde"><small>Total recebido</small><div class="n">${formatarMoeda(totRec)}</div></div>
+                <div class="card ambar"><small>Total a receber</small><div class="n">${formatarMoeda(totRes)}</div></div>
+                <div class="card ciano"><small>Total geral</small><div class="n">${formatarMoeda(totGeral)}</div></div>
+                <div class="card"><small>% já recebido</small><div class="n">${pct(totRec, totGeral)}%</div><div class="prog"><span style="width:${pct(totRec, totGeral)}%"></span></div></div>
+            </div>
+            ${tabela}
+            ${blocoSemData}
+            <div class="geral"><h3>TOTAL GERAL</h3>
+                <div class="g-linha"><span>Recebido</span><b class="v">${formatarMoeda(totRec)}</b></div>
+                <div class="g-linha"><span>A receber</span><b class="r">${formatarMoeda(totRes)}</b></div>
+                <div class="g-linha"><span>Total</span><b class="t">${formatarMoeda(totGeral)}</b></div></div>
+            <p class="nota">Observação: o sistema não registra a data em que cada pagamento foi feito. Por isso, cada parcela aparece no mês do seu vencimento, tanto as recebidas quanto as a receber.</p>
+            </body></html>`;
+
+            const janela = window.open('', '_blank');
+            if (!janela) { mostrarAlerta("O navegador bloqueou a nova janela. Libere os pop-ups deste site e tente de novo.", "erro"); return; }
+            janela.document.open(); janela.document.write(html); janela.document.close();
+        }
 
     </script>
 </body>
